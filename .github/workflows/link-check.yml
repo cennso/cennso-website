@@ -1,0 +1,38 @@
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: Link check
+on:
+  pull_request:
+    paths:
+      - "**.md"
+      - "**.gotmpl"
+      - .github/workflows/link-check.yml
+jobs:
+  link-checker:
+    name: Link check
+    runs-on:
+      - ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Install lychee
+        run: |-
+          curl -LO "https://github.com/lycheeverse/lychee/releases/download/v0.11.1/lychee-v0.11.1-x86_64-unknown-linux-gnu.tar.gz"
+          tar -xvzf lychee-v0.11.1-x86_64-unknown-linux-gnu.tar.gz
+          chmod 755 lychee
+          sudo mv lychee /usr/local/bin/lychee
+      - name: Run link check
+        run: |-
+          wget -nv https://raw.githubusercontent.com/lycheeverse/lychee-action/v1.6.1/entrypoint.sh -O lychee-entrypoint.sh
+          chmod +x ./lychee-entrypoint.sh
+          ./lychee-entrypoint.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GOVERNANCE_GITHUB_TOKEN }}
+          INPUT_GITHUB_TOKEN: ${{ secrets.GOVERNANCE_GITHUB_TOKEN }}
+          INPUT_ARGS: --verbose --no-progress "**/*.md"
+          INPUT_DEBUG: false
+          INPUT_FORMAT: markdown
+          INPUT_OUTPUT: lychee/out.md
+          INPUT_FAIL: true
+          INPUT_JOBSUMMARY: true

@@ -1,0 +1,7 @@
+page:
+  title: 404 Page not found
+  description: The page doesn't exist 
+
+buttons:
+  previous: Go back to previous page
+  main: Go to main page

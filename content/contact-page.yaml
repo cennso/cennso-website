@@ -1,0 +1,31 @@
+page:
+  title: Contact us
+  description: Bring Cennso to life with the help of our Solution and Channel Partners! They’re excited to learn about your use case and ready to help you build the perfect Cennso Network Solution.
+
+form:
+  statusMessages:
+    sending: Sending...
+    success: Message sent successfully.
+    error: An error occurred while sending message.
+
+sections:
+  travelping:
+    title: Cennso Solution Provider
+    company: Travelping
+    description:
+      - As a trusted Cennso Solution Provider, Travelping specializes in creating high-performance, scalable Cennso Network Solutions tailored to your needs. With deep expertise in network design and integration, Travelping delivers end-to-end solutions for top clients worldwide.
+      - Contact us today, and the solution team will get back to you!
+    contact:
+      phone: '+49 (391) 660 98560'
+      email: info@travelping.com
+    person: sina-mara-friede
+
+  ibm:
+    title: Cennso Channel Partner
+    company: IBM Cloud
+    description:
+      - Cennso is now integrated with IBM Cloud Technologies, making Cennso Network Solutions globally available to IBM customers. Find Cennso in the IBM Cloud Catalog to streamline your network needs with ease.
+      - Contact your IBM representative for global mobile connectivity solutions!
+    contact:
+      email: info@cennso.com
+    person: frank-haupt

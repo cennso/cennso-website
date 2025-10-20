@@ -1,0 +1,51 @@
+# See https://github.com/lycheeverse/lychee/blob/master/lychee.example.toml
+#############################  Display  #############################
+
+# Verbose program output
+
+#############################  Cache  ###############################
+
+# Enable link caching. This can be helpful to avoid checking the same links on
+# multiple runs.
+cache = true
+
+# Discard all cached requests older than this duration.
+max_cache_age = "1d"
+
+#############################  Requests  ############################
+
+# Comma-separated list of accepted status codes for valid links.
+accept = [200, 429]
+
+# Proceed for server connections considered insecure (invalid TLS).
+insecure = false
+
+# When links are available using HTTPS, treat HTTP links as errors.
+require_https = true
+
+#############################  Exclusions  ##########################
+
+# Check links inside `<code>` and `<pre>` blocks as well as Markdown code
+# blocks.
+include_verbatim = true
+
+# Ignore case of paths when matching glob patterns.
+glob_ignore_case = false
+
+# Exclude URLs from checking (supports regex).
+exclude = [
+    "https://github.com/travelping/*",
+    "https://github.com/cennso/*",
+    "file:///*"
+]
+
+# Exclude these filesystem paths from getting checked.
+exclude_path = []
+
+# Exclude all private IPs from checking.
+# Equivalent to setting `exclude_private`, `exclude_link_local`, and
+# `exclude_loopback` to true.
+exclude_all_private = true
+
+# Exclude all mail addresses from checking.
+exclude_mail = true

@@ -1,0 +1,36 @@
+authors:
+  holger-winkelmann:
+    name: Holger Winkelmann
+    position: Founder and Managing Director
+    company: Travelping GmbH
+    socialLink: https://linkedin.com/in/holger-winkelamnn
+    avatar: '/assets/avatars/holger-winkelmann.jpeg'
+  lukasz-gornicki:
+    name: Lukasz Gornicki
+    position: HR-Manager
+    company: Cennso Technologies GmbH
+    email: 'info@cennso.com'
+    socialLink: https://www.linkedin.com/in/lukasz-gornicki-a621914/
+    avatar: '/assets/avatars/lukasz-gornicki.jpeg'
+  timo-lindhorst:
+    name: Timo Lindhorst
+    position: Solution Architect
+    company: Travelping GmbH
+    socialLink: https://linkedin.com/in/timo-lindhorst
+    avatar: '/assets/avatars/timo-lindhorst.jpeg'
+  sina-mara-friede:
+    name: Sina-Mara Friede
+    position: Project Manager
+    company: Travelping GmbH
+    socialLink: https://linkedin.com/in/sina-mara-friede
+    avatar: '/assets/avatars/sina-mara-friede.jpeg'
+  frank-haupt:
+    name: Frank Haupt
+    position: Senior Customer Success Manager and IT Architect
+    company: IBM
+    avatar: '/assets/avatars/frank-haupt.jpeg'
+  younes-allaki:
+    name: Younes Allaki
+    position: CTO
+    company: 1NCE GmbH
+    avatar: '/assets/avatars/younes-allaki.jpeg'

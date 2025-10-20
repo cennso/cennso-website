@@ -1,0 +1,47 @@
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: Verify Cennso Website
+on:
+  pull_request:
+    paths:
+      - "**"
+      - .github/workflows/nodejs.yml
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+jobs:
+  verify:
+    name: Verify the Cennso Website code
+    defaults:
+      run:
+        working-directory: ./
+    runs-on:
+      - ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Yarn
+        run: |-
+          npm install -g yarn
+          yarn -v
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Check linting
+        run: yarn lint
+      - name: Check formatting
+        run: yarn format
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check accessibility (WCAG 2.1 AA compliance)
+        run: yarn a11y
+      - name: Run tests
+        run: yarn test

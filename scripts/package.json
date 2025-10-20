@@ -1,0 +1,19 @@
+{
+  "name": "@cennso/portal-scripts",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate-og-images": "NODE_OPTIONS='--loader ts-node/esm' node generate-og-images/index.tsx"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/node": "^20.6.2",
+    "front-matter": "^4.0.2",
+    "react": "^18.3.1",
+    "satori": "^0.11.2",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2"
+  }
+}

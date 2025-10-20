@@ -1,0 +1,48 @@
+page:
+  title: About Us
+  description: Our mission at Cennso is to enable a new era of infrastructure management that is automated, reliable, efficient and empowers application teams to accelerate innovations.
+
+introduction:
+  title: What is Cennso
+  description: >
+    **Cennso Cloud** is a cloud-based service that allows users to create network service solutions deployed and managed within their own network topology and using their infrastructure.
+
+    **Cennso Network Solutions** (CNS) are composed of a set of supported infrastructure (IaaS) services typically provided by cloud infrastructure providers, such as AWS, IBM, Equinx Metal, or GCE, and **Cennso Network Functions** (CNFs) implementing the respective network services.
+
+    The composition of these services is based on cloud-native technologies and implemented as a collection of Kubernetes **Custom Resources Definitions** (CRDs) and Operators on top of a distributed topology of Kubernetes clusters.
+
+mission:
+  title: Meet our team, mission and values
+  description: Our mission at Cennso is to enable a new era of infrastructure management that is automated, reliable, efficient and empowers application teams to accelerate innovation by delivering software faster.
+  sections:
+    - title: Cennso cloud-tailored network solutions
+      description: >
+        Create, manage, and deploy with ease. Cennso Cloud enables the effortless creation of custom network solutions for your business. Unleash the full potential of your network infrastructure.
+      cover: /assets/about-page/icon-cloud-solutions.svg
+    - title: Cennso Network Solutions (CNS) all-in-one
+      description: >
+        Combine infrastructure and network services into a comprehensive solution. Benefit from the support provided by leading cloud infrastructure providers like AWS and IBM to optimize your network services.
+      cover: /assets/about-page/icon-cns.svg
+    - title: Cloud-native technologies for agility and scalability
+      description: >
+        Harness the power of cloud-native technologies and leverage Kubernetes CRDs and operators for efficient network management. Achieve agile deployment and scalability of your network services.
+      cover: /assets/about-page/icon-kubernetes.svg
+    - title: Reliable network infrastructure with Kubernetes
+      description: >
+        Build a robust network infrastructure. Distributed Kubernetes clusters ensure high availability, fault tolerance, and optimal resource use. Enhance the performance of your network services.
+      cover: /assets/about-page/icon-clusters.svg
+
+team:
+  title: Meet our growing team
+  description: Cennso leadership team and founding members.
+  members:
+    - holger-winkelmann
+    - anja-winkelmann
+    - timo-lindhorst
+    - sina-mara-friede
+
+recruitment:
+  title: Join Our Fast Growing Team
+  description: Come build the next generation of the cloud with us. We’re looking for problem solvers, builders, and innovators who love open source and pushing technological boundaries!Come build the next generation of the cloud with us. We’re looking for problem solvers, builders, and innovators who love open source and pushing technological boundaries!
+  link: '/contact'
+  linkContent: Contact us

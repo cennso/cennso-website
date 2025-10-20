@@ -1,0 +1,13 @@
+page:
+  title: Jobs
+  description: Job offers at Cennso
+
+content:
+  description: At Cennso we’re continuously looking to add new talent to our growing team. We design, develop and operate carrier-grade network solutions for customers all over the world.
+  zeroJobs: Currently we don't have opened any job offers. Please check in the near future.
+
+form:
+  statusMessages:
+    sending: Sending...
+    success: Submission sent successfully.
+    error: An error occurred while sending your submission.

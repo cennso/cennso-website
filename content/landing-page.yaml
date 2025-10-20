@@ -1,0 +1,44 @@
+page:
+  title: Cennso 
+  description: Your mobile core deployed within 24 hours
+
+sections:
+  main:
+    title: Your mobile core deployed within 24 hours
+    description: Use Cennso Network Solutions to create your global mobile core platform, ready to deploy in over 170 cloud locations.
+    link: https://cloud.cennso.com
+    linkContent: 'Start now'
+
+  overview:
+    title: Why Cennso?
+    description: >
+      Cennso lets you build custom network solutions with cloud-native technology, making central operations simpler and more efficient. With easy integration through standard APIs and real-time insights powered by analytics and automation, Cennso helps you proactively keep your network reliable and optimized.
+    link: https://docs.cennso.com
+    linkContent: 'Learn more'
+
+  features:
+    - title: Cennso in over 50 countries
+      description: Cennso solutions empower networks in over 50 countries across the globe, delivering scalable services for consumers and IoT. Join us to build your own global network services across multi-cloud and edge locations.
+      cover: /assets/landing-page/features/map.png
+      link: '/contact'
+      linkContent: 'More info'
+    - title: 20 years of experience
+      description: Cennso brings over 20 years of experience in developing, integrating, and operating telecommunication networks into one powerful solution. Our trusted partners are here to assist you in creating your custom Cennso Network Solution, tailored to your specific needs.
+      cover: /assets/landing-page/features/20_years.png
+      link: '/contact'
+      linkContent: 'More info'
+    - title: 3.000 Gbit/s peak bandwidth
+      description: 	Cennso’s powerful network functions let you create cost-effective services by maximizing your hardware and infrastructure investments. Enjoy high performance and efficiency as you build your network.
+      cover: /assets/landing-page/features/3000_gb.png
+      link: '/contact'
+      linkContent: 'More info'
+    - title: 24 billion sessions per year
+      description: Cennso solutions handle over 24 billion user sessions each year. Our AAA and Control Plane applications are designed to scale easily, ensuring your network can grow without limits. Let’s explore your needs together in one of our Discovery Workshops!
+      cover: /assets/landing-page/features/user_sessions.png
+      link: '/contact'
+      linkContent: 'More info'
+
+  partners:
+    title: Join the Cennso family!
+    link: '/contact'
+    linkContent: 'Join us now'
