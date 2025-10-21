@@ -48,3 +48,8 @@ next-env.d.ts
 # rss feeds artifacts
 /public/feeds
 .DS_Store
+
+# Python virtual environment
+/scripts/.venv
+/scripts/__pycache__
+*.pyc

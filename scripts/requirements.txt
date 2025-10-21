@@ -1,0 +1,5 @@
+# Python dependencies for image optimization and validation scripts
+# Install with: pip install -r scripts/requirements.txt
+
+# Image processing library for optimization
+Pillow>=10.0.0

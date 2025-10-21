@@ -28,7 +28,9 @@
     "a11y:input-assistance": "python3 scripts/check-input-assistance.py",
     "a11y:compatible": "python3 scripts/check-compatible.py",
     "a11y": "yarn a11y:contrast && yarn a11y:text-alternatives && yarn a11y:media && yarn a11y:semantic && yarn a11y:distinguishable && yarn a11y:keyboard && yarn a11y:enough-time && yarn a11y:seizures && yarn a11y:navigable && yarn a11y:input-modalities && yarn a11y:readable && yarn a11y:predictable && yarn a11y:input-assistance && yarn a11y:compatible",
-    "check:all": "yarn format && yarn lint && yarn a11y && yarn build"
+    "perf:images": "python3 scripts/check-image-optimization.py",
+    "perf:images:optimize": "./scripts/run-python.sh optimize-images.py",
+    "check:all": "yarn format && yarn lint && yarn a11y && yarn perf:images && yarn build"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.10",
