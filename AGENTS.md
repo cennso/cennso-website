@@ -50,6 +50,8 @@ yarn lint:fix              # autofix ESLint check
 yarn format                # Prettier check
 yarn format:fix            # Auto-fix Prettier formatting issues
 yarn a11y                  # Run all accessibility checks
+yarn perf:images           # Validate all images are WebP and under 150KB
+yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn check:all             # Run all checks (format, lint, a11y, build)
 ```
 
@@ -61,6 +63,7 @@ yarn check:all             # Run all checks (format, lint, a11y, build)
 - **All UI text MUST come from YAML files in `/content` directory** - no hardcoded strings in components
 - File paths in content must be absolute from `/public` (e.g., `/assets/image.png`)
 - Link checking configured in `lychee.toml` and runs with dedicated GitHub Action workflow
+- **Images MUST be optimized**: WebP format, maximum 150KB per file (validated by `yarn perf:images`)
 
 ## Quality Standards
 
@@ -72,6 +75,7 @@ All code changes must comply with constitution principles:
   - Text alternatives: All images, icons, buttons have alt/aria-label (validated by `yarn a11y:text-alternatives`)
   - Keyboard navigation, ARIA, semantic HTML
 - **Performance**: Lighthouse score ≥100, bundles <500KB, SSG only (no client-side content fetching)
+  - Images: WebP format, ≤150KB each (validated by `yarn perf:images`)
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed
 - **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, build)
 

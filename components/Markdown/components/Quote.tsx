@@ -17,7 +17,7 @@ export const Quote: FunctionComponent<QuoteProps> = ({
   children,
 }) => {
   return (
-    <FeatureCard className='flex flex-row items-center bg-[3rem_1.5rem] bg-no-repeat bg-auto bg-[url("/assets/landing-page/quotes.png")] bg-secondary-600 rounded-[32px] px-8'>
+    <FeatureCard className='flex flex-row items-center bg-[3rem_1.5rem] bg-no-repeat bg-auto bg-[url("/assets/landing-page/quotes.webp")] bg-secondary-600 rounded-[32px] px-8'>
       <div className="flex flex-col gap-6 px-8">
         <figure className="flex flex-col">
           <blockquote className="text-sm lg:text-base text-secondary-600 border-none pl-9">

@@ -57,7 +57,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
               className="w-[112.5%] max-w-[112.5%] -ml-8 sm-ml-16 pointer-events-none"
               width={1290}
               height={779}
-              src="/assets/backgrounds/bg-paper-models.jpg"
+              src="/assets/backgrounds/bg-paper-models.webp"
               title="Cennso main background"
               alt="Cennso main background"
             />
@@ -71,7 +71,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
             className="w-[16rem] lg:w-[20rem] pointer-events-none"
             width={947}
             height={737}
-            src="/assets/landing-page/cennso-icon.jpg"
+            src="/assets/landing-page/cennso-icon.webp"
             title="Cennso logo inside hexagon"
             alt="Cennso logo inside hexagon"
           />

@@ -44,7 +44,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-contact-3.jpg',
+          src: '/assets/backgrounds/bg-header-contact-3.webp',
           title: 'Contact page background',
           alt: 'Contact page background',
           width: 180,

@@ -54,7 +54,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-success-story.jpeg',
+          src: '/assets/backgrounds/bg-header-success-story.webp',
           title: 'Success story page background',
           alt: 'Success story page background',
           width: 425,

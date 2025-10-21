@@ -7,8 +7,8 @@ const siteMetadata = {
   locale: 'en-US',
   theme: 'light',
   siteUrl: 'https://cennso.com',
-  siteLogo: '/assets/logo.png',
-  socialBanner: '/assets/thumbnails/cennso-thumbnail.jpeg',
+  siteLogo: '/logo.svg',
+  socialBanner: '/assets/thumbnails/cennso-thumbnail.webp',
   companyName: 'Cennso Technologies GmbH',
   contact: {
     phone: '+49 (391) 660 98560',

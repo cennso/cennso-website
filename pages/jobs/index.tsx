@@ -37,7 +37,7 @@ const JobsPage: NextPage<JobsPageProps> = ({ content, jobs }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-success-story.jpeg',
+          src: '/assets/backgrounds/bg-header-success-story.webp',
           title: 'Jobs page background',
           alt: 'Jobs page background',
           width: 550,

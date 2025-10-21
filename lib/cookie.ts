@@ -1,7 +1,6 @@
 import Cookies from 'js-cookie'
 //TODO imho cookies that we use, for token storing, is not something that requires cookie banner consent. Something to evaluate later
 
-
 export function getCookie(name: string) {
   if (typeof window === 'undefined') {
     return
