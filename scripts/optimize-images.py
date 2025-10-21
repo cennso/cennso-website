@@ -149,18 +149,29 @@ def optimize_image(
         
         # Open and convert image
         with Image.open(input_path) as img:
-            # Convert RGBA to RGB if necessary (WebP lossy doesn't support transparency well)
+            # Determine if we should preserve alpha channel
+            preserve_alpha = False
             save_img = img
+            
             if img.mode in ('RGBA', 'LA', 'P'):
-                # For images with transparency from PNG/GIF, keep transparency
-                if input_path.suffix.lower() in {'.png', '.gif'}:
-                    pass  # Keep original image with alpha
+                if input_path.suffix.lower() in {'.png', '.gif', '.jpg', '.jpeg'}:
+                    # PNG/GIF/misnamed JPG files - check if they actually have transparency
+                    # Convert palette mode to RGBA first
+                    if img.mode == 'P':
+                        if 'transparency' in img.info:
+                            save_img = img.convert('RGBA')
+                            preserve_alpha = True
+                        else:
+                            save_img = img.convert('RGB')
+                    elif img.mode in ('RGBA', 'LA'):
+                        save_img = img
+                        preserve_alpha = True
                 else:
-                    # Convert to RGB for JPEG-like images
+                    # Other formats - convert to RGB with white background
                     background = Image.new('RGB', img.size, (255, 255, 255))
                     if img.mode == 'P':
                         img = img.convert('RGBA')
-                    background.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                    background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
                     save_img = background
             
             # Iteratively reduce quality until image is under 100KB
@@ -169,8 +180,11 @@ def optimize_image(
             min_quality = 20  # Don't go below this to maintain reasonable image quality
             
             while current_quality >= min_quality:
-                # Save as WebP with current quality
-                save_img.save(output_path, 'WEBP', quality=current_quality, method=6)
+                # Save as WebP with current quality, preserving alpha if needed
+                if preserve_alpha:
+                    save_img.save(output_path, 'WEBP', quality=current_quality, method=6, lossless=False)
+                else:
+                    save_img.save(output_path, 'WEBP', quality=current_quality, method=6)
                 new_size = output_path.stat().st_size
                 
                 # Check if we're under 100KB
