@@ -176,11 +176,12 @@ All user-facing features MUST maintain consistent experience:
 Performance requirements that MUST be met:
 
 - All pages MUST use Static Site Generation (SSG) via `getStaticProps` - no client-side data fetching for content
-- Images MUST be optimized: WebP format preferred, proper sizing via Next.js Image optimization
+- Images MUST be optimized: WebP format preferred (maximum 150KB per image), proper sizing via Next.js Image optimization
 - Bundle size: No single page bundle > 500KB (analyze with `next build`)
 - Lighthouse performance score MUST be 100 for production builds
 - OG images MUST be auto-generated during build (via `prebuild` script)
 - No blocking JavaScript on initial page load; use dynamic imports for heavy components
+- Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 150KB
 
 **Rationale**: Static generation provides fastest load times and best SEO. Performance directly impacts user retention and search rankings.
 

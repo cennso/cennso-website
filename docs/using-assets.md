@@ -4,6 +4,31 @@ Each asset must be located in the `/public/assets` folder. To organise the conte
 
 > **NOTE**: `CONTENT_KIND` should be named identically to the folders in the `/content` folder.
 
+### Image Optimization Requirements
+
+All raster images (photos, screenshots, graphics) **MUST** be optimized before committing:
+
+- **Format**: WebP format (use `yarn perf:images:optimize` to convert automatically)
+- **Size**: Maximum 150KB per image file
+- **Validation**: Run `yarn perf:images` to verify all images meet requirements
+
+**To optimize images:**
+
+```bash
+# Check if images need optimization
+yarn perf:images
+
+# Automatically optimize all images (converts to WebP, compresses to <150KB)
+yarn perf:images:optimize
+
+# Optimize with custom quality (1-100, default: 80)
+yarn perf:images:optimize --quality 85
+```
+
+> **NOTE**: SVG files (vector graphics) are excluded from size requirements and don't need conversion.
+
+### Adding Images to Markdown
+
 Follow this pattern to add assets, such as images or `.yaml` files, to markdown content:
 
 ```markdown
@@ -20,9 +45,13 @@ You can use an absolute link instead of a relative path to the image.
 Example:
 
 ```markdown
-# local asset
+# local asset (optimized WebP)
 
-![Diagram](/assets/blog-posts/release-notes-1.0.0/diagram.svg 'This is a diagram!')
+![Diagram](/assets/blog-posts/release-notes-1.0.0/diagram.webp 'This is a diagram!')
+
+# vector graphic (SVG - no optimization needed)
+
+![Logo](/assets/common/logo.svg 'Company Logo')
 
 # asset from web
 
