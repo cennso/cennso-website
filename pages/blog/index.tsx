@@ -103,7 +103,7 @@ const BlogPage: NextPage<BlogPageProps> = ({ content, posts, categories }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-blog.jpg',
+          src: '/assets/backgrounds/bg-header-blog.webp',
           title: 'Blog page background',
           alt: 'Blog page background',
           width: 750,

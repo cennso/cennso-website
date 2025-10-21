@@ -38,7 +38,7 @@ const PrivacyPolicyPage: NextPage<PrivacyPolicyPageProps> = ({ mdxSource }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-contact-3.jpg',
+          src: '/assets/backgrounds/bg-header-contact-3.webp',
           title: 'Privacy policy page background',
           alt: 'Privacy policy page background',
           width: 180,

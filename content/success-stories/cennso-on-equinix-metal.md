@@ -3,7 +3,7 @@ title: Cennso on Equinix Metal
 company:
   name: Equinix
   website: https://www.equinix.com/
-  logo: /assets/success-stories/cennso-on-equinix-metal/equinix-logo.png
+  logo: /assets/success-stories/cennso-on-equinix-metal/equinix-logo.webp
   industry: Cloud infrastructure
 cover: /assets/blog-posts/ssg-ssr/cover.webp
 excerpt: The combined solution from Cennso and Equinix Metal brought immediate improvements to the German automaker's connected-car services, including faster in-car Wi-Fi, real-time data exchange, and smoother over-the-air updates.
@@ -13,7 +13,7 @@ layout: new
 # Localized traffic and data sovereignty with Cennso and Equinix Metal
 
 <Image
-  src="/assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.jpg"
+  src="/assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp"
   title="Equinix story picture"
   alt="Equinix story picture"
   width={1943}
@@ -32,7 +32,7 @@ Thanks to Cennso’s seamless integration with cloud and edge environments, the 
 </ContentBlock>
 
 <Image
-  src="/assets/success-stories/cennso-on-equinix-metal/equinix-cennso-diagram.png"
+  src="/assets/success-stories/cennso-on-equinix-metal/equinix-cennso-diagram.webp"
   title="Equinix & Cennso diagram"
   alt="Equinix & Cennso diagram"
   width={1943}

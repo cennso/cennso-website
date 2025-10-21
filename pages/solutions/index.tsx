@@ -39,7 +39,7 @@ const SolutionsPage: NextPage<SolutionsPageProps> = ({
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-solutions.jpg',
+          src: '/assets/backgrounds/bg-header-solutions.webp',
           title: 'Solutions page background',
           alt: 'Solutions page background',
           width: 550,

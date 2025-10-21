@@ -6,41 +6,41 @@ partners:
   - name: IBM Cloud
     content: >
       Lorem gardenum sit amet, plantae adipiscing elit. Vivamus hortus semper, sem sem semper tellus, eget floribus lectus lacus vitae ligula. Nulla semina risus vitae tellus rhoncus, sed radices magna fringilla. Phasellus solum arcu non tellus pulvinar, et irrigationis nisl tempus. Mauris herba nunc at tellus sodales, vitae compost magna viverra.
-    logo: /assets/ecosystem-partners/logo-ibm-cloud.png
+    logo: /assets/ecosystem-partners/logo-ibm-cloud.webp
     link: '/'
   - name: 1NCE
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-1nce.png
+    logo: /assets/ecosystem-partners/logo-1nce.webp
   - name: 3GPP
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-3gpp.png
+    logo: /assets/ecosystem-partners/logo-3gpp.webp
   - name: Broadband Forum
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-broadband-forum.png
+    logo: /assets/ecosystem-partners/logo-broadband-forum.webp
   - name: Deustche Telekom
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-d-telekom.png
+    logo: /assets/ecosystem-partners/logo-d-telekom.webp
   - name: Hochbahn
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-hochbahn.png
+    logo: /assets/ecosystem-partners/logo-hochbahn.webp
   - name: Telna
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-telna.png
+    logo: /assets/ecosystem-partners/logo-telna.webp
     link: '/'
   - name: Travelping
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-travelping.png
+    logo: /assets/ecosystem-partners/logo-travelping.webp
   - name: Wilhelm.tel
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-wilhelm-tel.png
+    logo: /assets/ecosystem-partners/logo-wilhelm-tel.webp
     link: '/'
   - name: 5G
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-5g.png
+    logo: /assets/ecosystem-partners/logo-5g.webp
     link: '/'
   - name: Cloud Native Computing Foundation
     content: Lorem ipsum
-    logo: /assets/ecosystem-partners/logo-cloud-native.png
+    logo: /assets/ecosystem-partners/logo-cloud-native.webp
     link: '/'
   - name: Bejuno
     content: Lorem ipsum

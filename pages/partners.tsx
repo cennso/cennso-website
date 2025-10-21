@@ -37,7 +37,7 @@ const PartnersPage: NextPage<PartnersPageProps> = ({ content, partners }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-success-stories.jpg',
+          src: '/assets/backgrounds/bg-header-success-stories.webp',
           title: 'Partners page background',
           alt: 'Partners page background',
           width: 900,

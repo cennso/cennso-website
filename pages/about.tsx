@@ -50,7 +50,7 @@ const AboutPage: NextPage<AboutPageProps> = ({ content, members }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-about.jpg',
+          src: '/assets/backgrounds/bg-header-about.webp',
           title: 'About page background',
           alt: 'About page background',
           width: 500,

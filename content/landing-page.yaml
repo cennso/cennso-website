@@ -19,22 +19,22 @@ sections:
   features:
     - title: Cennso in over 50 countries
       description: Cennso solutions empower networks in over 50 countries across the globe, delivering scalable services for consumers and IoT. Join us to build your own global network services across multi-cloud and edge locations.
-      cover: /assets/landing-page/features/map.png
+      cover: /assets/landing-page/features/map.webp
       link: '/contact'
       linkContent: 'More info'
     - title: 20 years of experience
       description: Cennso brings over 20 years of experience in developing, integrating, and operating telecommunication networks into one powerful solution. Our trusted partners are here to assist you in creating your custom Cennso Network Solution, tailored to your specific needs.
-      cover: /assets/landing-page/features/20_years.png
+      cover: /assets/landing-page/features/20_years.webp
       link: '/contact'
       linkContent: 'More info'
     - title: 3.000 Gbit/s peak bandwidth
       description: 	Cennso’s powerful network functions let you create cost-effective services by maximizing your hardware and infrastructure investments. Enjoy high performance and efficiency as you build your network.
-      cover: /assets/landing-page/features/3000_gb.png
+      cover: /assets/landing-page/features/3000_gb.webp
       link: '/contact'
       linkContent: 'More info'
     - title: 24 billion sessions per year
       description: Cennso solutions handle over 24 billion user sessions each year. Our AAA and Control Plane applications are designed to scale easily, ensuring your network can grow without limits. Let’s explore your needs together in one of our Discovery Workshops!
-      cover: /assets/landing-page/features/user_sessions.png
+      cover: /assets/landing-page/features/user_sessions.webp
       link: '/contact'
       linkContent: 'More info'
 

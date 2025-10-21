@@ -38,7 +38,7 @@ const ImprintPage: NextPage<ImprintPageProps> = ({ mdxSource }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-contact-3.jpg',
+          src: '/assets/backgrounds/bg-header-contact-3.webp',
           title: 'Imprint page background',
           alt: 'Imprint page background',
           width: 180,
