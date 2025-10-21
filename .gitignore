@@ -53,3 +53,7 @@ next-env.d.ts
 /scripts/.venv
 /scripts/__pycache__
 *.pyc
+
+# Lighthouse artifacts
+/lighthouse-results.json
+/.lighthouse

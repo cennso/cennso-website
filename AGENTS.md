@@ -52,8 +52,39 @@ yarn format:fix            # Auto-fix Prettier formatting issues
 yarn a11y                  # Run all accessibility checks
 yarn perf:images           # Validate all images are WebP and under 150KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
+yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn check:all             # Run all checks (format, lint, a11y, build)
 ```
+
+## Lighthouse Automation
+
+### Local Testing
+
+Run in parallel:
+
+- **Terminal 1**: `yarn dev` (starts dev server on localhost:3000)
+- **Terminal 2**: `yarn lighthouse` (runs audit, saves to lighthouse-results.json)
+
+### Quality Requirements
+
+All PRs must pass Lighthouse audits with **100% scores** on:
+
+- **Performance** - Page speed, optimization
+- **Accessibility** - WCAG 2.1 AA compliance
+- **Best Practices** - Security, standards compliance
+- **SEO** - Search engine optimization
+
+Configuration in `.lighthouserc.js` enforces these standards.
+
+### GitHub Actions Integration
+
+Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
+
+1. Builds production bundle (`yarn build`)
+2. Starts server with `yarn start:ci`
+3. Runs audit via `yarn lighthouse`
+4. Posts results to PR
+5. Blocks merge if any category < 100%
 
 ## Important Notes
 
@@ -74,15 +105,23 @@ All code changes must comply with constitution principles:
   - Contrast ratios: ≥4.5:1 for normal text, ≥3:1 for large text (validated by `yarn a11y:contrast`)
   - Text alternatives: All images, icons, buttons have alt/aria-label (validated by `yarn a11y:text-alternatives`)
   - Keyboard navigation, ARIA, semantic HTML
-- **Performance**: Lighthouse score ≥100, bundles <500KB, SSG only (no client-side content fetching)
+- **Performance**: **Lighthouse 100% on all categories** (Performance, Accessibility, Best Practices, SEO)
+  - Bundles <500KB, SSG only (no client-side content fetching)
   - Images: WebP format, ≤150KB each (validated by `yarn perf:images`)
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed
-- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, build)
+- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, images, build) + Lighthouse 100%
 
 **Before committing, run:**
 
 ```bash
 yarn check:all
+```
+
+Then verify locally with Lighthouse:
+
+```bash
+yarn dev          # Terminal 1
+yarn lighthouse   # Terminal 2
 ```
 
 ## AI Agent Instructions

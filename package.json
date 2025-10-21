@@ -8,6 +8,7 @@
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
+    "start:ci": "PORT=3000 HOST=0.0.0.0 node .next/standalone/server.js",
     "test": "echo 'No tests.'",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -30,6 +31,7 @@
     "a11y": "yarn a11y:contrast && yarn a11y:text-alternatives && yarn a11y:media && yarn a11y:semantic && yarn a11y:distinguishable && yarn a11y:keyboard && yarn a11y:enough-time && yarn a11y:seizures && yarn a11y:navigable && yarn a11y:input-modalities && yarn a11y:readable && yarn a11y:predictable && yarn a11y:input-assistance && yarn a11y:compatible",
     "perf:images": "python3 scripts/check-image-optimization.py",
     "perf:images:optimize": "./scripts/run-python.sh optimize-images.py",
+    "lighthouse": "lighthouse http://localhost:3000 --chrome-flags='--headless --no-sandbox' --output=json --output-path=./lighthouse-results.json --emulated-form-factor=desktop --throttling-method=simulate",
     "check:all": "yarn format && yarn lint && yarn a11y && yarn perf:images && yarn build"
   },
   "dependencies": {
@@ -82,6 +84,7 @@
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
     "eslint-config-prettier": "^9.1.0",
+    "lighthouse": "^11.4.0",
     "postcss": "^8.4.33",
     "prettier": "^3.2.4",
     "tailwind-scrollbar": "^3.0.5",

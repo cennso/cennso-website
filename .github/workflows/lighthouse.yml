@@ -1,0 +1,85 @@
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+name: Lighthouse Performance Check
+on:
+  pull_request:
+    paths:
+      - "**"
+      - .github/workflows/lighthouse.yml
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+jobs:
+  lighthouse:
+    name: Run Lighthouse audits
+    defaults:
+      run:
+        working-directory: ./
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up NodeJS
+        uses: actions/setup-node@v4
+      - name: Install Yarn
+        run: |-
+          npm install -g yarn
+          yarn -v
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build production-ready website
+        run: yarn build
+      - name: Start production server
+        run: yarn start:ci & # & - The ampersand runs the command in the background, allowing the workflow to continue to the next step without waiting for the server to finish
+      - name: Wait for server to be ready
+        run: |
+          timeout 60 bash -c 'until curl -f http://localhost:3000 > /dev/null 2>&1; do sleep 1; done'
+      - name: Run Lighthouse audit
+        run: yarn lighthouse
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: lighthouse-results.json
+      - name: Check Lighthouse scores (100% required)
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = JSON.parse(fs.readFileSync('./lighthouse-results.json', 'utf8'));
+            const scores = results.categories;
+            
+            let comment = '## 🔍 Lighthouse Audit Results\n\n';
+            comment += '| Category | Score | Status |\n';
+            comment += '|----------|-------|--------|\n';
+            
+            let allPassed = true;
+            for (const [key, value] of Object.entries(scores)) {
+              const score = Math.round(value.score * 100);
+              const status = score === 100 ? '✅ PASS' : '❌ FAIL';
+              if (score !== 100) allPassed = false;
+              comment += `| ${value.title} | ${score} | ${status} |\n`;
+            }
+            
+            comment += '\n';
+            if (allPassed) {
+              comment += '✅ **All scores are 100%** - Quality gate passed!';
+            } else {
+              comment += '❌ **Some scores below 100%** - Please improve Lighthouse scores to 100% on all categories.';
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+            
+            if (!allPassed) {
+              core.setFailed('Lighthouse scores must be 100% on all categories');
+            }
