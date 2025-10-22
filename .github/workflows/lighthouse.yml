@@ -15,6 +15,9 @@ on:
 jobs:
   lighthouse:
     name: Run Lighthouse audits
+    permissions:
+      contents: read
+      issues: write
     defaults:
       run:
         working-directory: ./
