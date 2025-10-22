@@ -31,7 +31,7 @@
     "a11y": "yarn a11y:contrast && yarn a11y:text-alternatives && yarn a11y:media && yarn a11y:semantic && yarn a11y:distinguishable && yarn a11y:keyboard && yarn a11y:enough-time && yarn a11y:seizures && yarn a11y:navigable && yarn a11y:input-modalities && yarn a11y:readable && yarn a11y:predictable && yarn a11y:input-assistance && yarn a11y:compatible",
     "perf:images": "python3 scripts/check-image-optimization.py",
     "perf:images:optimize": "./scripts/run-python.sh optimize-images.py",
-    "lighthouse": "lighthouse http://localhost:3000 --chrome-flags='--headless --no-sandbox' --output=json --output-path=./lighthouse-results.json --emulated-form-factor=desktop --throttling-method=simulate && lighthouse http://localhost:3000 --chrome-flags='--headless --no-sandbox' --output=json --output-path=./lighthouse-mobile-results.json --emulated-form-factor=mobile --throttling-method=simulate",
+    "lighthouse": "lhci collect --config=.lighthouserc.js && lighthouse http://localhost:3000 --chrome-flags='--headless --no-sandbox' --output=json --output-path=./lighthouse-mobile-results.json --emulated-form-factor=mobile --throttling-method=simulate",
     "check:all": "yarn format && yarn lint && yarn a11y && yarn perf:images && yarn build"
   },
   "dependencies": {
