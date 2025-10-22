@@ -40,29 +40,48 @@ jobs:
       - name: Wait for server to be ready
         run: |
           timeout 60 bash -c 'until curl -f http://localhost:3000 > /dev/null 2>&1; do sleep 1; done'
-      - name: Run Lighthouse audit
+      - name: Run Lighthouse audit (Desktop + Mobile)
         run: yarn lighthouse
       - name: Upload Lighthouse results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: lighthouse-results
-          path: lighthouse-results.json
+          path: |
+            lighthouse-results.json
+            lighthouse-mobile-results.json
       - name: Check Lighthouse scores (100% required)
         if: always()
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const results = JSON.parse(fs.readFileSync('./lighthouse-results.json', 'utf8'));
-            const scores = results.categories;
+            const desktopResults = JSON.parse(fs.readFileSync('./lighthouse-results.json', 'utf8'));
+            const mobileResults = JSON.parse(fs.readFileSync('./lighthouse-mobile-results.json', 'utf8'));
             
             let comment = '## 🔍 Lighthouse Audit Results\n\n';
+            
+            // Desktop scores
+            comment += '### 🖥️ Desktop\n\n';
             comment += '| Category | Score | Status |\n';
             comment += '|----------|-------|--------|\n';
             
             let allPassed = true;
-            for (const [key, value] of Object.entries(scores)) {
+            for (const [key, value] of Object.entries(desktopResults.categories)) {
+              if (key === 'pwa') continue; // Skip PWA category
+              const score = Math.round(value.score * 100);
+              const status = score === 100 ? '✅ PASS' : '❌ FAIL';
+              if (score !== 100) allPassed = false;
+              comment += `| ${value.title} | ${score} | ${status} |\n`;
+            }
+            
+            // Mobile scores
+            comment += '\n### 📱 Mobile\n\n';
+            comment += '| Category | Score | Status |\n';
+            comment += '|----------|-------|--------|\n';
+            
+            for (const [key, value] of Object.entries(mobileResults.categories)) {
+              if (key === 'pwa') continue; // Skip PWA category
               const score = Math.round(value.score * 100);
               const status = score === 100 ? '✅ PASS' : '❌ FAIL';
               if (score !== 100) allPassed = false;
@@ -73,7 +92,7 @@ jobs:
             if (allPassed) {
               comment += '✅ **All scores are 100%** - Quality gate passed!';
             } else {
-              comment += '❌ **Some scores below 100%** - Please improve Lighthouse scores to 100% on all categories.';
+              comment += '❌ **Some scores below 100%** - Please improve Lighthouse scores to 100% on all categories (Performance, Accessibility, Best Practices, SEO).';
             }
             
             github.rest.issues.createComment({
