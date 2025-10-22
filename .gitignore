@@ -56,4 +56,6 @@ next-env.d.ts
 
 # Lighthouse artifacts
 /lighthouse-results.json
+/lighthouse-mobile-results.json
 /.lighthouse
+/.lighthouseci

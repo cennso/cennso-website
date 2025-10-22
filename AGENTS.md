@@ -63,7 +63,14 @@ yarn check:all             # Run all checks (format, lint, a11y, build)
 Run in parallel:
 
 - **Terminal 1**: `yarn dev` (starts dev server on localhost:3000)
-- **Terminal 2**: `yarn lighthouse` (runs audit, saves to lighthouse-results.json)
+- **Terminal 2**: `yarn lighthouse` (runs lighthouse-ci with .lighthouserc.js config, enforces 100% scores)
+
+The `yarn lighthouse` command uses **lighthouse-ci** (`@lhci/cli`) which reads `.lighthouserc.js` configuration:
+
+- Audits 4 categories: Performance, Accessibility, Best Practices, SEO
+- Enforces 100% minimum score on each category
+- Fails with exit code 1 if any category < 100%
+- Saves detailed results to `.lighthouse/` directory
 
 ### Quality Requirements
 
@@ -74,7 +81,7 @@ All PRs must pass Lighthouse audits with **100% scores** on:
 - **Best Practices** - Security, standards compliance
 - **SEO** - Search engine optimization
 
-Configuration in `.lighthouserc.js` enforces these standards.
+Configuration in `.lighthouserc.js` enforces 100% minimum scores locally and on CI. When running `yarn lighthouse` locally, it will fail with exit code 1 if scores don't reach 100%, providing detailed failure information for each category.
 
 ### GitHub Actions Integration
 
