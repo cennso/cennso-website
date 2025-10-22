@@ -20,6 +20,8 @@ module.exports = {
           'best-practices',
           'seo',
         ],
+        output: ['json', 'html'],
+        outputPath: './lighthouse-desktop',
       },
     },
     upload: {
