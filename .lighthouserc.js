@@ -1,7 +1,11 @@
 module.exports = {
   ci: {
     collect: {
-      url: ['http://localhost:3000/', 'http://localhost:3000/success-stories', 'http://localhost:3000/contact'],
+      url: [
+        'http://localhost:3000/',
+        'http://localhost:3000/success-stories',
+        'http://localhost:3000/contact',
+      ],
       numberOfRuns: 3,
       settings: {
         formFactor: 'desktop',
