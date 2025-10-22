@@ -10,18 +10,18 @@ module.exports = {
       url: urls,
       numberOfRuns: 3,
       settings: {
-        formFactor: 'desktop',
+        formFactor: 'mobile',
         screenEmulation: {
-          mobile: false,
-          width: 1350,
-          height: 940,
-          deviceScaleFactor: 1,
+          mobile: true,
+          width: 360,
+          height: 640,
+          deviceScaleFactor: 3,
           disabled: false,
         },
         throttling: {
-          rttMs: 40,
-          throughputKbps: 10240,
-          cpuSlowdownMultiplier: 2, // Simulate slower CPU (was 1, now 2x slowdown)
+          rttMs: 150,
+          throughputKbps: 1638,
+          cpuSlowdownMultiplier: 4,
         },
         onlyCategories: [
           'performance',
@@ -33,12 +33,11 @@ module.exports = {
     },
     upload: {
       target: 'filesystem',
-      outputDir: './.lighthouse',
+      outputDir: './.lighthouse-mobile',
     },
     assert: {
       preset: 'lighthouse:recommended',
       assertions: {
-        // Enforce 100% on all categories
         'categories:performance': ['error', { minScore: 1.0 }],
         'categories:accessibility': ['error', { minScore: 1.0 }],
         'categories:best-practices': ['error', { minScore: 1.0 }],
