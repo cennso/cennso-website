@@ -39,12 +39,18 @@ jobs:
           timeout 60 bash -c 'until curl -f http://localhost:3000 > /dev/null 2>&1; do sleep 1; done'
       - name: Run Lighthouse audit (Desktop + Mobile)
         run: |
-          # Run both desktop and mobile audits (generates JSON + HTML reports)
+          # Run both desktop and mobile audits
           yarn lighthouse
           
-          # Rename files for clarity
-          mv lighthouse-desktop.report.json lighthouse-results.json
-          mv lighthouse-desktop.report.html lighthouse-desktop.html
+          # lhci outputs to .lighthouse directory - find the latest desktop result
+          LATEST_DESKTOP=$(ls -t .lighthouse/*.json | head -1)
+          cp "$LATEST_DESKTOP" lighthouse-results.json
+          
+          # lhci also outputs HTML - find and copy
+          LATEST_DESKTOP_HTML=$(ls -t .lighthouse/*.html | head -1)
+          cp "$LATEST_DESKTOP_HTML" lighthouse-desktop.html
+          
+          # Mobile files are already named correctly
           mv lighthouse-mobile.report.json lighthouse-mobile-results.json
           mv lighthouse-mobile.report.html lighthouse-mobile.html
       - name: Upload Lighthouse results
