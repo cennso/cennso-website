@@ -214,7 +214,10 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
               onPointerEnterCapture={undefined}
               onPointerLeaveCapture={undefined}
             >
-              <ul className="flex flex-col gap-0 outline-none outline-0" role="menu">
+              <ul
+                className="flex flex-col gap-0 outline-none outline-0"
+                role="menu"
+              >
                 {items}
               </ul>
             </MenuList>
