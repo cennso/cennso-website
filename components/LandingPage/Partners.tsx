@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
@@ -42,12 +43,14 @@ export const Partners: FunctionComponent<PartnersProps> = ({
                 className="relative partners-orbit-item-1 flex flex-row items-center justify-center"
               >
                 <div className="flex flex-row items-center justify-center rounded-full border-2 border-secondary-200 bg-secondary-400 w-[100px] h-[100px]">
-                  <div className="flex flex-row items-center justify-center min-w-[100px] min-h-[100px]">
-                    <img
+                  <div className="relative flex min-w-[100px] min-h-[100px] items-center justify-center">
+                    <Image
                       src={orbit.logo}
                       alt={`${orbit.name} logo`}
                       title={`${orbit.name} logo`}
-                      className="max-w-[80px] p-1.5 contrast-200 brightness-200"
+                      fill={true}
+                      className="p-1.5 contrast-200 brightness-200 object-contain"
+                      sizes="100px"
                     />
                   </div>
                 </div>
@@ -87,12 +90,14 @@ export const Partners: FunctionComponent<PartnersProps> = ({
                 className="relative partners-orbit-item-2 flex flex-row items-center justify-center"
               >
                 <div className="flex flex-row items-center justify-center rounded-full border-2 border-secondary-200 bg-secondary-400 w-[100px] h-[100px]">
-                  <div className="flex flex-row items-center justify-center min-w-[100px] min-h-[100px]">
-                    <img
+                  <div className="relative flex min-w-[100px] min-h-[100px] items-center justify-center">
+                    <Image
                       src={orbit.logo}
                       alt={`${orbit.name} logo`}
                       title={`${orbit.name} logo`}
-                      className="max-w-[80px] p-1.5 contrast-200 brightness-200"
+                      fill={true}
+                      className="p-1.5 contrast-200 brightness-200 object-contain"
+                      sizes="100px"
                     />
                   </div>
                 </div>
@@ -121,12 +126,15 @@ export const Partners: FunctionComponent<PartnersProps> = ({
           <div className="partners-logos mb-8 mt-2">
             <div className="partners-logos-slide flex flex-row">
               {mobilePartners.map((partner) => (
-                <img
+                <Image
                   src={partner.logo}
                   key={partner.name}
                   alt={`${partner.name} logo`}
                   title={`${partner.name} logo`}
+                  width={160}
+                  height={80}
                   className="inline-block"
+                  sizes="160px"
                 />
               ))}
             </div>

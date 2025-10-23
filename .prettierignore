@@ -47,3 +47,11 @@ helm/charts/cennso-website/README.md
 # Docs
 /docs
 /content
+
+# Lighthouse reports
+/.lighthouse
+/.lighthouse-mobile
+/lighthouse-desktop
+/lighthouse-mobile
+lighthouse-*.json
+lighthouse-*.html

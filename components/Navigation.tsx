@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { motion, useCycle } from 'framer-motion'
@@ -73,11 +74,14 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
                   variant="primary"
                   className="flex flex-row items-center gap-2"
                 >
-                  <img
+                  <Image
                     src="/assets/common/cloud.svg"
                     alt="Cloud icon"
                     title="Cloud icon"
+                    width={24}
+                    height={24}
                     className="w-6 h-6"
+                    sizes="24px"
                   />
                   Sign in
                 </Button>

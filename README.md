@@ -55,9 +55,46 @@ yarn start
 
 Then, go to the `http://localhost:3000` page.
 
+### Quality Assurance & Performance Testing
+
+#### Run all quality checks
+
+To run all quality checks (formatting, linting, accessibility, image optimization, build):
+
+```bash
+yarn check:all
+```
+
+#### Lighthouse Performance & Quality Audits
+
+To audit the website for Performance, Accessibility, Best Practices, and SEO:
+
+1. Start the dev server:
+
+```bash
+yarn dev
+```
+
+2. In another terminal, run Lighthouse:
+
+```bash
+yarn lighthouse
+```
+
+Results are saved to `lighthouse-results.json`. All categories must achieve **100% score** on PR submissions.
+
+See [AGENTS.md](./AGENTS.md#lighthouse-automation) for detailed configuration and CI automation.
+
 ## Development and AI Agents
 
 This project uses **[Spec-kit](https://github.com/github/spec-kit)**, a structured workflow for planning and implementing features with AI agents.
+
+### AI Code Review Tools
+
+This repository is enhanced with AI-powered code review and support:
+
+- **[CodeRabbit](https://coderabbit.ai/)** - Automated AI code reviews on pull requests. Provides contextual feedback on code quality, potential bugs, and improvement suggestions.
+- **[Dosu](https://dosu.dev/)** - AI assistant for issue triage and developer support. Helps with answering questions, providing documentation links, and initial issue analysis.
 
 ### Quick Reference Files
 
