@@ -68,9 +68,12 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const desktopResults = JSON.parse(fs.readFileSync('./lighthouse-results.json', 'utf8'));
-            const mobileResults = JSON.parse(fs.readFileSync('./lighthouse-mobile-results.json', 'utf8'));
+            const fs = require('fs').promises;
+            const path = require('path');
+            
+            // github-script runs from repo root, files are in repo root
+            const desktopResults = JSON.parse(await fs.readFile('lighthouse-results.json', 'utf8'));
+            const mobileResults = JSON.parse(await fs.readFile('lighthouse-mobile-results.json', 'utf8'));
             
             let comment = '## 🔍 Lighthouse Audit Results\n\n';
             
