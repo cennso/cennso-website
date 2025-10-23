@@ -185,8 +185,9 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           >
             <MenuHandler>
               <Typography
-                as="div"
+                as="button"
                 variant="small"
+                className="p-0"
                 placeholder={undefined}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
@@ -201,6 +202,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
                   placeholder={undefined}
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
+                  role="button"
                 >
                   {content}
                 </ListItem>
