@@ -42,6 +42,15 @@ EXCLUDE_FILES = {
 class NavigableIssue:
     """Represents a navigable accessibility issue"""
     def __init__(self, file_path: str, line_num: int, issue_type: str, message: str, sc: str):
+        """Initialize a navigable accessibility issue.
+        
+        Args:
+            file_path: Path to the file containing the issue
+            line_num: Line number where issue occurs
+            issue_type: Type of navigable issue
+            message: Description of the issue
+            sc: WCAG Success Criterion reference
+        """
         self.file_path = file_path
         self.line_num = line_num
         self.issue_type = issue_type
