@@ -24,7 +24,7 @@ jobs:
           max_timeout: 300
       
       - name: Run accessibility scanner
-        uses: github/accessibility-scanner@v2
+        uses: github/accessibility-scanner@dab8a8a3e066babb83677cd31fdc393c3580163e
         with:
           urls: |
             ${{ steps.vercel-deployment.outputs.url }}
