@@ -1,0 +1,39 @@
+name: Accessibility Scanner
+on:
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+
+jobs:
+  accessibility_scanner:
+    name: Scan for accessibility issues
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Wait for Vercel deployment
+        uses: patrickedqvist/wait-for-vercel-preview@06c79330064b0e6ef7a2574603b62d3c98789125 #1.3.2 release
+        id: vercel-deployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          max_timeout: 300
+      
+      - name: Run accessibility scanner
+        uses: github/accessibility-scanner@v2
+        with:
+          urls: |
+            ${{ steps.vercel-deployment.outputs.url }}
+            ${{ steps.vercel-deployment.outputs.url }}/success-stories
+            ${{ steps.vercel-deployment.outputs.url }}/contact
+            ${{ steps.vercel-deployment.outputs.url }}/about
+            ${{ steps.vercel-deployment.outputs.url }}/blog
+            ${{ steps.vercel-deployment.outputs.url }}/solutions
+          repository: cennso/cennso-website
+          token: ${{ secrets.GITHUB_TOKEN }}
+          cache_key: cached_results-cennso-main.json
+          skip_copilot_assignment: true  # Set to false to enable GitHub Copilot auto-fix
