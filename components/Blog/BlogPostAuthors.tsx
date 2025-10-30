@@ -38,6 +38,7 @@ export const BlogPostAuthors: FunctionComponent<BlogPostAuthorsProps> = ({
                 src={author.avatar}
                 title={`${author.name}, ${author.position}`}
                 alt={`${author.name}, ${author.position}`}
+                sizes="50px"
               />
             </li>
           ))}

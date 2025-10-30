@@ -38,6 +38,7 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
               src={company.logo}
               width={150}
               height={150}
+              sizes="150px"
             />
           </div>
         </div>
