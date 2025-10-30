@@ -104,8 +104,6 @@ const tailwindConfig = {
     require('daisyui'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/line-clamp'),
     require('tailwind-scrollbar')({ nocompatible: true }),
     // text shadow
     plugin(function ({ matchUtilities, theme }) {

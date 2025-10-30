@@ -283,6 +283,7 @@ def scan_files() -> Tuple[List[MediaViolation], int, bool]:
     return violations, len(all_files), has_media
 
 def main():
+    """Main entry point for media accessibility validation."""
     print_header()
     
     violations, total_files, has_media = scan_files()

@@ -61,6 +61,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
               title="Cennso main background"
               alt="Cennso main background"
               sizes="(max-width: 768px) 100vw, 50vw"
+              priority
             />
           </div>
         </header>
@@ -70,8 +71,8 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
         <div className="flex flex-col items-center lg:flex-row gap-4 lg:gap-20 w-full my-20">
           <Image
             className="w-[16rem] lg:w-[20rem] pointer-events-none"
-            width={947}
-            height={737}
+            width={640}
+            height={492}
             src="/assets/landing-page/cennso-icon.webp"
             title="Cennso logo inside hexagon"
             alt="Cennso logo inside hexagon"

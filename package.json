@@ -73,9 +73,7 @@
     "@lhci/cli": "0.12.x",
     "@material-tailwind/react": "^2.1.8",
     "@resvg/resvg-js": "^2.6.2",
-    "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.7",
-    "@tailwindcss/line-clamp": "^0.4.4",
     "@tailwindcss/typography": "^0.5.10",
     "@types/js-cookie": "^3.0.6",
     "@types/mime-types": "^2.1.4",
@@ -97,5 +95,16 @@
     "tailwindcss": "^3.4.1",
     "tsx": "^4.20.6",
     "typescript": "^5.3.3"
+  },
+  "browserslist": {
+    "production": [
+      "defaults and supports es6-module",
+      "maintained node versions"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
