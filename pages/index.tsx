@@ -60,6 +60,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
               src="/assets/backgrounds/bg-paper-models.webp"
               title="Cennso main background"
               alt="Cennso main background"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
         </header>
@@ -74,6 +75,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
             src="/assets/landing-page/cennso-icon.webp"
             title="Cennso logo inside hexagon"
             alt="Cennso logo inside hexagon"
+            sizes="(max-width: 1024px) 256px, 320px"
           />
           <div className="flex flex-col gap-4 lg:gap-8">
             <header className="flex flex-row justify-center lg:justify-start">
@@ -110,6 +112,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
                 src={features[0].cover}
                 width={400}
                 height={600}
+                sizes="(max-width: 640px) 275px, 400px"
               />
             </div>
             <div className="flex flex-col gap-4 lg:w-1/2 px-0 md:px-12 lg:px-0">
@@ -138,6 +141,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
                 src={features[1].cover}
                 width={275}
                 height={230}
+                sizes="275px"
               />
             </div>
             <div className="flex flex-col gap-4 lg:w-1/2 px-0 md:px-12 lg:px-0 pb-16 lg:pb-0">
@@ -166,6 +170,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
                 src={features[2].cover}
                 width={300}
                 height={600}
+                sizes="(max-width: 640px) 225px, 400px"
               />
             </div>
             <div className="flex flex-col gap-4 lg:w-1/2 px-0 md:px-12 lg:px-0">
@@ -194,6 +199,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
                 src={features[3].cover}
                 width={175}
                 height={230}
+                sizes="275px"
               />
             </div>
             <div className="flex flex-col gap-4 lg:w-1/2 px-0 md:px-12 lg:px-0">
