@@ -87,11 +87,10 @@ Configuration in `.lighthouserc.js` enforces 100% minimum scores locally and on 
 
 Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 
-1. Builds production bundle (`yarn build`)
-2. Starts server with `yarn start:ci`
-3. Runs audit via `yarn lighthouse`
-4. Posts results to PR
-5. Blocks merge if any category < 100%
+1. Waits for Vercel deployment preview to be ready
+2. Runs audits against the Vercel deployment URL
+3. Posts results to PR
+4. Blocks merge if any category < 100%
 
 ## Important Notes
 

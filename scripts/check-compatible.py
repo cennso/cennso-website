@@ -10,6 +10,8 @@ Checks performed (static heuristics):
 - Detect interactive elements (role, button, link, input, select, textarea) without accessible name
 - Detect elements with role attributes that may be misused or missing semantic equivalents
 - Detect dynamic content/state changes without aria-live or role="status"/role="alert"
+- Validate ARIA attributes match their roles (e.g., aria-expanded requires button/link/etc.)
+- Validate ARIA role hierarchies (e.g., menuitem requires menu parent)
 
 Exit: 0 if no Level A issues; 1 otherwise.
 """
@@ -29,6 +31,31 @@ class CompatibleIssue:
     level: str
     message: str
     code_snippet: str
+
+
+# ARIA attributes that require specific roles
+ARIA_ATTRIBUTE_ROLE_REQUIREMENTS = {
+    'aria-expanded': ['button', 'link', 'menuitem', 'tab', 'combobox', 'gridcell', 'treeitem'],
+    'aria-haspopup': ['button', 'link', 'menuitem', 'tab', 'combobox', 'gridcell', 'treeitem'],
+    'aria-pressed': ['button'],
+    'aria-checked': ['checkbox', 'menuitemcheckbox', 'menuitemradio', 'option', 'radio', 'switch', 'treeitem'],
+    'aria-selected': ['gridcell', 'option', 'row', 'tab', 'treeitem'],
+}
+
+# ARIA roles that require specific parent roles
+ARIA_ROLE_PARENT_REQUIREMENTS = {
+    'menuitem': ['menu', 'menubar', 'group'],
+    'menuitemcheckbox': ['menu', 'menubar', 'group'],
+    'menuitemradio': ['menu', 'menubar', 'group'],
+    'option': ['listbox', 'group'],
+    'tab': ['tablist'],
+    'treeitem': ['tree', 'group'],
+    'listitem': ['list', 'group'],
+    'row': ['table', 'grid', 'treegrid', 'rowgroup'],
+    'gridcell': ['row'],
+    'columnheader': ['row'],
+    'rowheader': ['row'],
+}
 
 
 def read_file_lines(file_path: Path) -> List[str]:
@@ -179,6 +206,103 @@ def detect_missing_status_messages(file_path: Path, lines: List[str]) -> List[Co
     return issues
 
 
+def detect_aria_attribute_role_mismatch(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
+    """Detect ARIA attributes used on elements without compatible roles."""
+    issues = []
+    content = ''.join(lines)
+
+    for aria_attr, required_roles in ARIA_ATTRIBUTE_ROLE_REQUIREMENTS.items():
+        # Find all uses of this ARIA attribute
+        pattern = re.compile(rf'{aria_attr}=', re.IGNORECASE)
+        for m in pattern.finditer(content):
+            start = m.start()
+            line_no = content[:start].count('\n') + 1
+            
+            # Get the element context (look back for opening tag)
+            context_start = max(0, start - 500)
+            context = content[context_start:start + 200]
+            
+            # Check if there's a role attribute nearby
+            role_match = re.search(r'role=["\']([\w-]+)["\']', context, re.IGNORECASE)
+            
+            # Check for implicit roles from element types (look back more thoroughly)
+            # Updated regex to handle JSX/TSX with newlines between tag and attributes
+            element_match = re.search(r'<(button|a|link)(?:\s|$|\n)', context, re.IGNORECASE | re.DOTALL)
+            
+            has_valid_role = False
+            found_role = None
+            
+            if role_match:
+                found_role = role_match.group(1).lower()
+                if found_role in required_roles:
+                    has_valid_role = True
+            elif element_match:
+                elem_type = element_match.group(1).lower()
+                # Map element types to implicit roles
+                implicit_roles = {'button': 'button', 'a': 'link', 'link': 'link'}
+                found_role = implicit_roles.get(elem_type)
+                if found_role and found_role in required_roles:
+                    has_valid_role = True
+            
+            if not has_valid_role and not element_match:
+                # Only report if we can't find any valid element type
+                snippet = content[start:start + 150].strip()
+                role_info = f' (found role="{found_role}")' if found_role else ''
+                issues.append(CompatibleIssue(
+                    file_path=file_path,
+                    line_number=line_no,
+                    criterion='SC 4.1.2',
+                    level='A',
+                    message=f'Attribute "{aria_attr}" requires element to have one of these roles: {", ".join(required_roles)}{role_info}',
+                    code_snippet=snippet
+                ))
+    
+    return issues
+
+
+def detect_aria_role_hierarchy_issues(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
+    """Detect ARIA child roles without proper parent roles."""
+    issues = []
+    content = ''.join(lines)
+    
+    # This is a heuristic check - we look for roles that require parents
+    # and warn if we don't see obvious parent role wrappers nearby
+    for child_role, required_parents in ARIA_ROLE_PARENT_REQUIREMENTS.items():
+        pattern = re.compile(rf'role=["\']{child_role}["\']', re.IGNORECASE)
+        
+        for m in pattern.finditer(content):
+            start = m.start()
+            line_no = content[:start].count('\n') + 1
+            
+            # Look backward for parent container with required role
+            # Check within ~1000 chars back (reasonable component scope)
+            context_start = max(0, start - 1000)
+            context = content[context_start:start]
+            
+            has_valid_parent = False
+            for parent_role in required_parents:
+                if re.search(rf'role=["\']{parent_role}["\']', context, re.IGNORECASE):
+                    has_valid_parent = True
+                    break
+            
+            # Also check for implicit parent roles (ul for list, etc.)
+            if child_role == 'listitem' and re.search(r'<(ul|ol)\s', context, re.IGNORECASE):
+                has_valid_parent = True
+            
+            if not has_valid_parent:
+                snippet = content[start:start + 150].strip()
+                issues.append(CompatibleIssue(
+                    file_path=file_path,
+                    line_number=line_no,
+                    criterion='SC 4.1.2',
+                    level='A',
+                    message=f'Element with role="{child_role}" must be contained by element with role: {" or ".join(required_parents)}',
+                    code_snippet=snippet
+                ))
+    
+    return issues
+
+
 def validate_file(file_path: Path) -> List[CompatibleIssue]:
     lines = read_file_lines(file_path)
     if not lines:
@@ -192,6 +316,8 @@ def validate_file(file_path: Path) -> List[CompatibleIssue]:
         return []
     issues.extend(detect_missing_name_role_value(file_path, lines))
     issues.extend(detect_missing_status_messages(file_path, lines))
+    issues.extend(detect_aria_attribute_role_mismatch(file_path, lines))
+    issues.extend(detect_aria_role_hierarchy_issues(file_path, lines))
     return issues
 
 

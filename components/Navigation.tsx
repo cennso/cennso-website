@@ -185,8 +185,9 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           >
             <MenuHandler>
               <Typography
-                as="div"
+                as="button"
                 variant="small"
+                className="p-0"
                 placeholder={undefined}
                 onPointerEnterCapture={undefined}
                 onPointerLeaveCapture={undefined}
@@ -201,6 +202,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
                   placeholder={undefined}
                   onPointerEnterCapture={undefined}
                   onPointerLeaveCapture={undefined}
+                  role="button"
                 >
                   {content}
                 </ListItem>
@@ -212,7 +214,10 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
               onPointerEnterCapture={undefined}
               onPointerLeaveCapture={undefined}
             >
-              <ul className="flex flex-col gap-0 outline-none outline-0">
+              <ul
+                className="flex flex-col gap-0 outline-none outline-0"
+                role="menu"
+              >
                 {items}
               </ul>
             </MenuList>
@@ -239,6 +244,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           </div>
           <ul
             className={`${isMobileMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 outline-none outline-0 ml-6 mt-1`}
+            role="menu"
           >
             {items}
           </ul>
