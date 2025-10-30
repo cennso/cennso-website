@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "cd scripts/generate-og-images && yarn install && yarn generate-og-images",
+    "generate:ogimages": "tsx scripts/generate-og-images/index.tsx",
+    "prebuild": "yarn generate:ogimages",
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@lhci/cli": "0.12.x",
     "@material-tailwind/react": "^2.1.8",
+    "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/line-clamp": "^0.4.4",
@@ -87,11 +89,14 @@
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
     "eslint-config-prettier": "^9.1.0",
+    "front-matter": "^4.0.2",
     "lighthouse": "^11.4.0",
     "postcss": "^8.4.33",
     "prettier": "^3.2.4",
+    "satori": "^0.11.2",
     "tailwind-scrollbar": "^3.0.5",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.20.6",
     "typescript": "^5.3.3"
   }
 }
