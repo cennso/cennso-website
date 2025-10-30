@@ -10,9 +10,7 @@ module.exports = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     // Supported formats (WebP is automatically optimized)
     formats: ['image/webp'],
-    // Increase compression quality slightly for better Lighthouse scores
-    // Lower values = more compression = smaller files but lower quality
-    // 75 is default, keeping it for now but can reduce if needed
+    // Cache optimized images for 60 seconds
     minimumCacheTTL: 60,
   },
 }
