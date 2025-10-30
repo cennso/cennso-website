@@ -30,6 +30,7 @@ export const BlogPostItem: FunctionComponent<BlogPostItemProps> = ({
             src={frontmatter.cover}
             alt={frontmatter.title}
             className="h-52 object-cover rounded-[32px]"
+            sizes="(max-width: 768px) 0px, (max-width: 1024px) 45vw, 33vw"
           />
         </div>
 

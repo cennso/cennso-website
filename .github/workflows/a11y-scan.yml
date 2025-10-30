@@ -12,7 +12,7 @@ jobs:
     name: Scan for accessibility issues
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write  # Need write to push gh-cache branch
       issues: write
       pull-requests: write
     steps:

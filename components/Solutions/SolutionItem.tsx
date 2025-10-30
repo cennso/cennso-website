@@ -45,6 +45,7 @@ export const SolutionItem: FunctionComponent<SolutionItemProps> = ({
             src={logo}
             width={110}
             height={110}
+            sizes="110px"
           />
         </HexagonDouble>
       </div>

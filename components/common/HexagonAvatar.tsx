@@ -25,6 +25,7 @@ export const HexagonAvatar: FunctionComponent<HexagonAvatarProps> = ({
         alt={`${author.name}, ${author.position} at ${author.company}`}
         width={300}
         height={300}
+        sizes="300px"
       />
     </div>
   )
