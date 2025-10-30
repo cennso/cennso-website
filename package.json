@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "generate-og-images": "tsx scripts/generate-og-images/index.tsx",
-    "prebuild": "yarn generate-og-images",
+    "generate:ogimages": "tsx scripts/generate-og-images/index.tsx",
+    "prebuild": "yarn generate:ogimages",
     "build": "next build",
     "postbuild": "next-sitemap",
     "start": "next start",
