@@ -101,6 +101,11 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 - File paths in content must be absolute from `/public` (e.g., `/assets/image.png`)
 - Link checking configured in `lychee.toml` and runs with dedicated GitHub Action workflow
 - **Images MUST be optimized**: WebP format, maximum 150KB per file (validated by `yarn perf:images`)
+- **Next.js Image components**: ALL `<Image>` components MUST have `sizes` prop
+  - Tells Next.js which image size to serve based on viewport (prevents oversized downloads)
+  - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
+  - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
+  - See Performance section above for `sizes` prop examples
 
 ## Quality Standards
 
@@ -114,6 +119,10 @@ All code changes must comply with constitution principles:
 - **Performance**: **Lighthouse 100% on all categories** (Performance, Accessibility, Best Practices, SEO)
   - Bundles <500KB, SSG only (no client-side content fetching)
   - Images: WebP format, ≤150KB each (validated by `yarn perf:images`)
+  - **Next.js Image `sizes` prop**: REQUIRED on all `<Image>` components for responsive optimization
+    - Fixed size: `sizes="150px"` (avatars, icons)
+    - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
+    - Hidden on mobile: `sizes="(max-width: 768px) 0px, 45vw"` (blog cards)
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed
 - **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, images, build) + Lighthouse 100%
 

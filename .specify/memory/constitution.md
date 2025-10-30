@@ -176,7 +176,15 @@ All user-facing features MUST maintain consistent experience:
 Performance requirements that MUST be met:
 
 - All pages MUST use Static Site Generation (SSG) via `getStaticProps` - no client-side data fetching for content
-- Images MUST be optimized: WebP format preferred (maximum 150KB per image), proper sizing via Next.js Image optimization
+- Images MUST be optimized:
+  - WebP format preferred (maximum 150KB per image)
+  - **All Next.js `<Image>` components MUST have `sizes` prop** to enable responsive optimization
+  - `sizes` prop MUST reflect actual rendered dimensions at different breakpoints
+  - Examples:
+    - Fixed size: `sizes="150px"` (avatars, icons)
+    - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
+    - Hidden on mobile: `sizes="(max-width: 768px) 0px, (max-width: 1024px) 45vw, 33vw"` (blog cards)
+  - `next.config.js` MUST configure image optimization (deviceSizes, imageSizes, formats)
 - Bundle size: No single page bundle > 500KB (analyze with `next build`)
 - **Lighthouse MUST score 100% on ALL categories**:
   - Performance (Page speed, optimization)
@@ -189,7 +197,7 @@ Performance requirements that MUST be met:
 - No blocking JavaScript on initial page load; use dynamic imports for heavy components
 - Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 150KB
 
-**Rationale**: Static generation provides fastest load times and best SEO. Lighthouse 100% ensures consistent performance, accessibility, and best practices across all pages. Performance directly impacts user retention and search rankings. Automated enforcement on PRs prevents regressions.
+**Rationale**: Static generation provides fastest load times and best SEO. Lighthouse 100% ensures consistent performance, accessibility, and best practices across all pages. The `sizes` prop tells Next.js which image size to serve based on viewport, preventing oversized images from being downloaded (e.g., serving 116KB when 54KB would suffice). Performance directly impacts user retention and search rankings. Automated enforcement on PRs prevents regressions.
 
 ### V. Accessibility Standards (WCAG 2.1 AA)
 

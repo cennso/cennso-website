@@ -89,6 +89,7 @@ jobs:
         uses: actions/github-script@v7
         env:
           DEPLOY_URL: ${{ steps.vercel-deployment.outputs.url }}
+          RUN_ID: ${{ github.run_id }}
         with:
           script: |
             const fs = require('fs').promises;
@@ -97,9 +98,9 @@ jobs:
             // github-script runs from repo root, files are in repo root
             const desktopResults = JSON.parse(await fs.readFile('lighthouse-results.json', 'utf8'));
             const mobileResults = JSON.parse(await fs.readFile('lighthouse-mobile-results.json', 'utf8'));
-            const desktopHtml = await fs.readFile('lighthouse-desktop.html', 'utf8');
-            const mobileHtml = await fs.readFile('lighthouse-mobile.html', 'utf8');
             const deployUrl = process.env.DEPLOY_URL;
+            const runId = process.env.RUN_ID;
+            const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${runId}`;
             
             let comment = '## 🔍 Lighthouse Audit Results\n\n';
             comment += `🌐 **Tested deployment**: [${deployUrl}](${deployUrl})\n\n`;
@@ -136,20 +137,19 @@ jobs:
               comment += '✅ **All scores are 100%** - Quality gate passed!';
             } else {
               comment += '❌ **Some scores below 100%** - Please improve Lighthouse scores to 100% on all categories (Performance, Accessibility, Best Practices, SEO).\n\n';
-              comment += '💡 **Expand the detailed reports below** for specific recommendations on what to fix.';
+              comment += '💡 **Download the full HTML reports below** for detailed recommendations on what to fix.';
             }
             
-            // Inline HTML reports in collapsible sections
+            // Link to artifacts instead of inlining HTML
             comment += '\n\n---\n\n';
-            comment += '<details>\n';
-            comment += '<summary>📊 <strong>Full Desktop Report</strong> (click to expand)</summary>\n\n';
-            comment += desktopHtml;
-            comment += '\n</details>\n\n';
-            
-            comment += '<details>\n';
-            comment += '<summary>📱 <strong>Full Mobile Report</strong> (click to expand)</summary>\n\n';
-            comment += mobileHtml;
-            comment += '\n</details>\n';
+            comment += '### 📊 Detailed Reports\n\n';
+            comment += `� **[Download Full Reports (HTML)](${artifactUrl})**\n\n`;
+            comment += 'The workflow run contains detailed HTML reports:\n';
+            comment += '- `lighthouse-desktop.html` - Full desktop audit report\n';
+            comment += '- `lighthouse-mobile.html` - Full mobile audit report\n';
+            comment += '- `lighthouse-results.json` - Desktop results JSON\n';
+            comment += '- `lighthouse-mobile-results.json` - Mobile results JSON\n\n';
+            comment += '> 💡 Click the link above, scroll to "Artifacts" section at the bottom, and download `lighthouse-results`';
             
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
