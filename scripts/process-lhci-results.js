@@ -52,7 +52,13 @@ if (!Array.isArray(manifest) || manifest.length === 0) {
   )
 }
 
-const matchingEntries = manifest.filter((entry) => entry.url === TARGET_URL)
+// Normalize target URL to match manifest entries (handle trailing slash differences)
+const normalizeUrl = (url) => url.replace(/\/$/, '')
+const normalizedTargetUrl = normalizeUrl(TARGET_URL)
+
+const matchingEntries = manifest.filter((entry) => 
+  normalizeUrl(entry.url) === normalizedTargetUrl
+)
 
 if (matchingEntries.length === 0) {
   throw new Error(`No Lighthouse results for ${TARGET_URL} in LHCI manifest.`)
