@@ -56,8 +56,8 @@ if (!Array.isArray(manifest) || manifest.length === 0) {
 const normalizeUrl = (url) => url.replace(/\/$/, '')
 const normalizedTargetUrl = normalizeUrl(TARGET_URL)
 
-const matchingEntries = manifest.filter((entry) => 
-  normalizeUrl(entry.url) === normalizedTargetUrl
+const matchingEntries = manifest.filter(
+  (entry) => normalizeUrl(entry.url) === normalizedTargetUrl
 )
 
 if (matchingEntries.length === 0) {
