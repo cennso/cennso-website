@@ -1,6 +1,7 @@
 import { Navigation } from './Navigation'
 import { Footer } from './Footer'
 import { CookiesBanner } from './CookiesBanner'
+import { Analytics } from "@vercel/analytics/next"
 
 import type { FunctionComponent, PropsWithChildren } from 'react'
 import type { NavigationLink } from '../contexts'
@@ -21,6 +22,7 @@ export const Layout: FunctionComponent<LayoutProps> = ({
 
       <main className="flex-1 flex flex-col z-10 bg-secondary-400">
         {children}
+        <Analytics />
       </main>
 
       <div className="flex-none">
