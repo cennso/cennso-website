@@ -1,7 +1,7 @@
 import { Navigation } from './Navigation'
 import { Footer } from './Footer'
 import { CookiesBanner } from './CookiesBanner'
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from '@vercel/analytics/next'
 
 import type { FunctionComponent, PropsWithChildren } from 'react'
 import type { NavigationLink } from '../contexts'
