@@ -12,6 +12,14 @@ export type ContactFormBody = {
   receiver: string
 }
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '1mb',
+    },
+  },
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.status(405).send({ message: 'Only POST requests allowed' })

@@ -14,6 +14,14 @@ export type JobFormBody = {
   cvName: string
 }
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '2mb',
+    },
+  },
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.status(405).send({ message: 'Only POST requests allowed' })
