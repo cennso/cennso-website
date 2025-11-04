@@ -155,5 +155,5 @@ export async function saveImage(ctx: { image: Buffer; destination: string[] }) {
   await fs.promises.mkdir(directoryPath, { recursive: true })
 
   const imagePath = path.join(directoryPath, 'image.png')
-  await fs.promises.writeFile(imagePath, image)
+  await fs.promises.writeFile(imagePath, Uint8Array.from(image))
 }

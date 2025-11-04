@@ -228,13 +228,11 @@ After running all test cases, verify:
 ## Regression Testing Process
 
 1. **Baseline Testing** (Before Refactoring):
-
    - Run all 6 test cases against current implementation
    - Document all response times, email content, attachment sizes
    - Save email screenshots/samples for comparison
 
 2. **Refactored Testing** (After Migration):
-
    - Run identical 6 test cases against Vercel Functions
    - Compare response times (should be within ±500ms due to cold starts)
    - Compare email content byte-for-byte (should be identical)

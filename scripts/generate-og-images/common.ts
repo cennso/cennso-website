@@ -28,7 +28,7 @@ async function loadFont(ctx: {
 }): Promise<Font> {
   const { name, fileName, weight } = ctx
   const fontPath = path.join(__dirname, 'fonts', 'Poppins', fileName)
-  const font = (await fs.promises.readFile(fontPath)).buffer
+  const font = (await fs.promises.readFile(fontPath)).buffer as ArrayBuffer
 
   return {
     name,

@@ -178,7 +178,6 @@ Comprehensive documentation in [`data-model.md`](./data-model.md):
 OpenAPI 3.0.3 specifications documented in [`contracts/`](./contracts/):
 
 1. **Contact Form** ([`contact-form.json`](./contracts/contact-form.json)):
-
    - POST /api/contact-form
    - Request: 7 properties (4 required)
    - Responses: 200/405/500
