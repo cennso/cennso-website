@@ -11,7 +11,7 @@ import {
 } from '../common'
 
 import type { FunctionComponent } from 'react'
-import type { ContactFormBody } from '../../api/contact-form'
+import type { ContactFormBody } from '../../pages/api/contact-form'
 
 interface ContactFormProps {
   receiverEmail: string

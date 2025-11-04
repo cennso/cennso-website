@@ -11,7 +11,7 @@ import {
 } from '../common'
 
 import type { FunctionComponent, ChangeEvent } from 'react'
-import type { JobFormBody } from '../../api/job-submission-form'
+import type { JobFormBody } from '../../pages/api/job-submission-form'
 
 interface JobFormProps {
   position: string

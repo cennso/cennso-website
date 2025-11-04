@@ -1,4 +1,4 @@
-import { getMailJetClient } from '../lib/mailjet'
+import { getMailJetClient } from '../../lib/mailjet'
 
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
