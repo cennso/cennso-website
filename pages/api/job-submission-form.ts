@@ -1,6 +1,6 @@
 import { getMailJetClient } from '../../lib/mailjet'
 
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 export type JobFormBody = {
   firstName: string
@@ -22,10 +22,7 @@ export const config = {
   },
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.status(405).send({ message: 'Only POST requests allowed' })
     return

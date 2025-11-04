@@ -23,11 +23,11 @@ export function generateToc(markdown: string): TocHeader[] {
 
   markdown
     .split('\n')
-    .map((text) => text.match(/^(?<level>#{2,6})\ (?<content>.+)/))
+    .map((text) => text.match(/^(#{2,6})\ (.+)/))
     .filter(Boolean)
     .forEach((header) => {
-      const level = header?.groups?.level?.length || 2
-      let title = header?.groups?.content || ''
+      const level = header?.[1]?.length || 2
+      let title = header?.[2] || ''
 
       title = title.replace(slugRegex, '')
       const id = slugs.slug(title)

@@ -3,17 +3,17 @@
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "jsx": "react-jsx",
+    "jsx": "react-jsx"
   },
   "ts-node": {
     "esm": true,
-    "experimentalSpecifierResolution": "node",
+    "experimentalSpecifierResolution": "node"
   },
   "include": [
     "**/*.ts",
     "*.ts",
     "generate-og-images.tsx",
-    "generate-og-images/image.tsx",
+    "generate-og-images/image.tsx"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules"]
 }
