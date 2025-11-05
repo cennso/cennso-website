@@ -9,19 +9,19 @@ import type { NavigationLink } from '../contexts'
 /**
  * Navigation is dynamically imported to optimize JavaScript bundle size.
  *
- * Performance optimization: The Navigation component uses framer-motion for mobile menu
- * animations. By using dynamic import, we code-split framer-motion into a separate chunk
- * instead of bundling it in the main _app chunk. This reduces the initial JavaScript
- * payload from 339KB to 281KB (58KB savings / 17.1% reduction).
+ * Performance optimization: The Navigation component previously used framer-motion for
+ * mobile menu animations, which added ~60-100KB to the bundle. We replaced framer-motion
+ * with pure CSS transitions, eliminating this JavaScript dependency while maintaining
+ * smooth animations for the hamburger menu.
  *
  * Technical details:
  * - ssr: true ensures the Navigation still renders on the server (no layout shift)
- * - framer-motion (~100KB) only loads when Navigation component is needed
- * - Mobile menu animations (Navigation.tsx, MenuToggle.tsx) still work perfectly
+ * - Mobile menu animations now use CSS transitions (duration-300, ease-in-out)
+ * - Hamburger icon transforms using pure CSS (rotate, translate, opacity)
  * - No visual regressions or UX impact
  *
- * Impact: Reduces First Load JS by 58KB, improving Lighthouse performance scores
- * and page load times, especially on mobile devices and slow connections.
+ * Impact: Removes 60-100KB JavaScript library, addressing mobile Lighthouse warnings
+ * about unused JavaScript. Desktop experience unaffected since mobile menu never loads.
  */
 const Navigation = dynamic(
   () => import('./Navigation').then((mod) => mod.Navigation),

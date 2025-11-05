@@ -45,6 +45,7 @@ See `/docs` folder for detailed guides.
 ```bash
 yarn dev                   # Local dev server (port 3000)
 yarn build                 # Production build (runs OG image generation first)
+ANALYZE=true yarn build    # Production build with Webpack Bundle Analyzer (opens visualization in browser)
 yarn lint                  # ESLint check
 yarn lint:fix              # autofix ESLint check
 yarn format                # Prettier check
@@ -55,6 +56,26 @@ yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn check:all             # Run all checks (format, lint, a11y, build)
 ```
+
+### Bundle Analysis
+
+To analyze JavaScript bundle sizes and identify optimization opportunities:
+
+```bash
+ANALYZE=true yarn build
+```
+
+This generates interactive HTML reports in `.next/analyze/`:
+- `client.html` - Client-side bundles (main optimization target)
+- `nodejs.html` - Server-side bundles
+- `edge.html` - Edge runtime bundles
+
+The visualization shows:
+- **Largest modules** by size (rectangles sized proportionally)
+- **Drill-down navigation** to see what's inside each chunk
+- **Stat size** (original), **Parsed size** (minified), **Gzipped size**
+
+Use this to identify heavy dependencies that could be code-split or replaced.
 
 ## Lighthouse Automation
 
@@ -105,6 +126,7 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
   - Tells Next.js which image size to serve based on viewport (prevents oversized downloads)
   - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
   - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
+- **Bundle analysis**: `next.config.js` includes `@next/bundle-analyzer` configured via `ANALYZE=true` env var
 
 ## Performance Patterns
 
