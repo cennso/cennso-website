@@ -114,7 +114,7 @@ def optimize_image(
         if dry_run:
             # Estimate size reduction based on file type and quality
             # Compression ratios represent: new_size = original_size * ratio
-            MAX_SIZE = 150 * 1024  # 150KB in bytes
+            MAX_SIZE = 100 * 1024  # 100KB in bytes
             
             if input_path.suffix.lower() == '.webp':
                 # Already WebP, recompression can achieve ~10-15% additional savings
@@ -135,7 +135,7 @@ def optimize_image(
             
             estimated_size = int(original_size * compression_ratio)
             
-            # If still over 150KB, cap it at 150KB (iterative quality reduction will happen)
+            # If still over 100KB, cap it at 100KB (iterative quality reduction will happen)
             if estimated_size > MAX_SIZE:
                 estimated_size = MAX_SIZE
             
@@ -174,8 +174,8 @@ def optimize_image(
                     background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
                     save_img = background
             
-            # Iteratively reduce quality until image is under 150KB
-            MAX_SIZE = 150 * 1024  # 150KB in bytes
+            # Iteratively reduce quality until image is under 100KB
+            MAX_SIZE = 100 * 1024  # 100KB in bytes
             current_quality = quality
             min_quality = 20  # Don't go below this to maintain reasonable image quality
             
@@ -187,7 +187,7 @@ def optimize_image(
                     save_img.save(output_path, 'WEBP', quality=current_quality, method=6)
                 new_size = output_path.stat().st_size
                 
-                # Check if we're under 150KB
+                # Check if we're under 100KB
                 if new_size <= MAX_SIZE:
                     break
                 
@@ -253,14 +253,14 @@ def find_images_to_optimize(root_dir: Path) -> List[Path]:
     
     Includes:
     - All non-WebP images (jpg, jpeg, png, gif, bmp) regardless of size
-    - WebP images that are over 150KB
+    - WebP images that are over 100KB
     
     Skips:
     - SVG files (vector format)
-    - WebP images already under 150KB (already optimized)
+    - WebP images already under 100KB (already optimized)
     """
     images = []
-    MAX_SIZE = 150 * 1024  # 150KB in bytes
+    MAX_SIZE = 100 * 1024  # 100KB in bytes
     
     for image_dir in IMAGE_DIRS:
         dir_path = root_dir / image_dir
@@ -282,7 +282,7 @@ def find_images_to_optimize(root_dir: Path) -> List[Path]:
             # Always include non-WebP convertible formats
             if extension in CONVERTIBLE_EXTENSIONS:
                 images.append(file_path)
-            # Only include WebP files if they're over 150KB
+            # Only include WebP files if they're over 100KB
             elif extension == '.webp':
                 file_size = file_path.stat().st_size
                 if file_size > MAX_SIZE:
@@ -340,7 +340,7 @@ def main():
         print("✅ No images need optimization!")
         print("\nAll images are already:")
         print("  • In WebP format")
-        print("  • Under 150KB in size\n")
+        print("  • Under 100KB in size\n")
         return 0
     
     print(f"🔍 Found {len(images)} image(s) to process...\n")

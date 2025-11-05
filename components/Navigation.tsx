@@ -2,7 +2,6 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { motion, useCycle } from 'framer-motion'
 import {
   Typography,
   ListItem,
@@ -21,7 +20,6 @@ import { useClickOutside } from '../lib/hooks'
 import metadata from '../siteMetadata'
 
 import type { FunctionComponent } from 'react'
-import type { Cycle } from 'framer-motion'
 import type { NavigationLink } from '../contexts'
 
 interface NavigationProps {
@@ -31,9 +29,9 @@ interface NavigationProps {
 export const Navigation: FunctionComponent<NavigationProps> = ({
   navigation = [],
 }) => {
-  const [isOpen, toggleOpen] = useCycle(false, true)
+  const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef(null)
-  useClickOutside(menuRef, () => toggleOpen(0))
+  useClickOutside(menuRef, () => setIsOpen(false))
 
   return (
     <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white border-none shadow-lg px-8 lg:px-4">
@@ -44,13 +42,9 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
           </Link>
         </div>
 
-        <motion.div
-          initial={false}
-          animate={isOpen ? 'open' : 'closed'}
-          ref={menuRef}
-        >
+        <div ref={menuRef}>
           <div className="relative flex flex-row items-center block xl:hidden z-30">
-            <MenuToggle toggle={() => toggleOpen()} isOpen={isOpen} />
+            <MenuToggle toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} />
           </div>
 
           <ul
@@ -65,7 +59,10 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
                 key={link.title}
                 className="w-full xl:w-auto text-lg font-normal"
               >
-                <NavigationItem link={link} toggleOpen={toggleOpen} />
+                <NavigationItem
+                  link={link}
+                  toggleOpen={() => setIsOpen(false)}
+                />
               </li>
             ))}
             <li className="mt-4 xl:mt-0 font-normal">
@@ -88,7 +85,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
               </Link>
             </li>
           </ul>
-        </motion.div>
+        </div>
       </nav>
     </div>
   )
@@ -96,7 +93,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
 
 interface NavigationItemProps {
   link: NavigationLink
-  toggleOpen: Cycle
+  toggleOpen: () => void
 }
 
 const NavigationItem: FunctionComponent<NavigationItemProps> = ({
@@ -115,7 +112,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           ? 'bg-[#185F99] text-white'
           : 'hover:bg-[#185F99] hover:text-shadow-primary text-[#185F99] hover:text-white'
       } xl:rounded-full text-lg font-medium font-sans`}
-      onClick={() => toggleOpen(0)}
+      onClick={() => toggleOpen()}
       target={link.target}
     >
       {link.title}
@@ -135,7 +132,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
       <li key={child.link}>
         <Link
           href={child.link}
-          onClick={() => toggleOpen(0)}
+          onClick={() => toggleOpen()}
           target={child.target}
         >
           <MenuItem
@@ -158,7 +155,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
       <li key="show-all" className="block lg:hidden">
         <Link
           href={link.link}
-          onClick={() => toggleOpen(0)}
+          onClick={() => toggleOpen()}
           target={link.target}
         >
           <MenuItem

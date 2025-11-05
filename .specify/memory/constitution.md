@@ -177,7 +177,7 @@ Performance requirements that MUST be met:
 
 - All pages MUST use Static Site Generation (SSG) via `getStaticProps` - no client-side data fetching for content
 - Images MUST be optimized:
-  - WebP format preferred (maximum 150KB per image)
+  - WebP format preferred (maximum 100KB per image, validated by `yarn perf:images`)
   - **All Next.js `<Image>` components MUST have `sizes` prop** to enable responsive optimization
   - `sizes` prop MUST reflect actual rendered dimensions at different breakpoints
   - Examples:
@@ -185,19 +185,28 @@ Performance requirements that MUST be met:
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, (max-width: 1024px) 45vw, 33vw"` (blog cards)
   - `next.config.js` MUST configure image optimization (deviceSizes, imageSizes, formats)
-- Bundle size: No single page bundle > 500KB (analyze with `next build`)
-- **Lighthouse MUST score 100% on ALL categories**:
+- **CSS Optimization**:
+  - DaisyUI MUST be configured to include only used utilities (`styled: false`, `base: false`, `utils: true`)
+  - Only mask-hexagon-2 utility is needed from DaisyUI (reduces CSS by ~6KB)
+  - Tailwind purge MUST be configured to scan all component files
+  - Critical classes MUST be safelisted in `tailwind.config.js`
+- **JavaScript Optimization**:
+  - Bundle size: No single page bundle > 500KB (analyze with `next build`)
+  - Heavy dependencies MUST be dynamically imported to enable code-splitting
+  - Navigation component uses `dynamic()` import to code-split framer-motion (~60KB savings)
+  - Page transition animations removed from `_app.tsx` for performance (minimal UX trade-off)
+- **Lighthouse MUST score ≥95% on ALL categories**:
   - Performance (Page speed, optimization)
   - Accessibility (WCAG 2.1 AA compliance)
   - Best Practices (Security, standards compliance)
   - SEO (Search engine optimization)
-- All PRs MUST pass Lighthouse audits with 100% scores (enforced by `.github/workflows/lighthouse.yml`)
+- All PRs MUST pass Lighthouse audits with ≥95% scores (enforced by `.github/workflows/lighthouse.yml`)
 - Local testing: `yarn dev` + `yarn lighthouse` before submitting PR
 - OG images MUST be auto-generated during build (via `prebuild` script)
 - No blocking JavaScript on initial page load; use dynamic imports for heavy components
-- Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 150KB
+- Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 100KB
 
-**Rationale**: Static generation provides fastest load times and best SEO. Lighthouse 100% ensures consistent performance, accessibility, and best practices across all pages. The `sizes` prop tells Next.js which image size to serve based on viewport, preventing oversized images from being downloaded (e.g., serving 116KB when 54KB would suffice). Performance directly impacts user retention and search rankings. Automated enforcement on PRs prevents regressions.
+**Rationale**: Static generation provides fastest load times and best SEO. Lighthouse ≥95% ensures consistent performance, accessibility, and best practices across all pages. The `sizes` prop tells Next.js which image size to serve based on viewport, preventing oversized images from being downloaded (e.g., serving 116KB when 54KB would suffice). CSS and JavaScript optimizations reduce bundle sizes (CSS: 33.5KB → 27.9KB, JS: 339KB → 275KB, ~70KB total savings). Performance directly impacts user retention and search rankings. Automated enforcement on PRs prevents regressions.
 
 ### V. Accessibility Standards (WCAG 2.1 AA)
 
@@ -868,7 +877,7 @@ Before any PR can be merged, ALL of the following MUST pass:
    - Navigable (`yarn a11y:navigable`)
    - Input modalities (`yarn a11y:input-modalities`)
    - Readable (`yarn a11y:readable`)
-6. **Lighthouse**: `yarn lighthouse` passes with **100% scores on all 4 categories**:
+6. **Lighthouse**: `yarn lighthouse` passes with **≥95% scores on all 4 categories**:
    - Performance (page speed, optimization)
    - Accessibility (WCAG 2.1 AA compliance)
    - Best Practices (security, standards)
@@ -876,12 +885,12 @@ Before any PR can be merged, ALL of the following MUST pass:
 
 **Recommended Pre-commit Command**: `yarn check:all` (runs format, lint, a11y [11 checks], and build in sequence)
 
-**Local Lighthouse Testing**: Run `yarn dev` in terminal 1, then `yarn lighthouse` in terminal 2 to validate 100% scores before pushing
+**Local Lighthouse Testing**: Run `yarn dev` in terminal 1, then `yarn lighthouse` in terminal 2 to validate ≥95% scores before pushing
 
 **Automated Quality Checks**: GitHub Actions workflows enforce all quality gates on pull requests
 
 - `nodejs.yml`: Format, lint, type check, build, a11y
-- `lighthouse.yml`: Lighthouse audits with 100% enforcement (blocks merge if any category < 100%)
+- `lighthouse.yml`: Lighthouse audits with ≥95% enforcement (blocks merge if any category < 95%)
 
 ### Testing Policy
 

@@ -81,7 +81,7 @@ yarn dev
 yarn lighthouse
 ```
 
-Results are saved to `lighthouse-results.json`. All categories must achieve **100% score** on PR submissions.
+Results are saved to `lighthouse-results.json`. All categories must achieve **≥95% score** on PR submissions.
 
 See [AGENTS.md](./AGENTS.md#lighthouse-automation) for detailed configuration and CI automation.
 

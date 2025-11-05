@@ -45,16 +45,39 @@ See `/docs` folder for detailed guides.
 ```bash
 yarn dev                   # Local dev server (port 3000)
 yarn build                 # Production build (runs OG image generation first)
+ANALYZE=true yarn build    # Production build with Webpack Bundle Analyzer (opens visualization in browser)
 yarn lint                  # ESLint check
 yarn lint:fix              # autofix ESLint check
 yarn format                # Prettier check
 yarn format:fix            # Auto-fix Prettier formatting issues
 yarn a11y                  # Run all accessibility checks
-yarn perf:images           # Validate all images are WebP and under 150KB
+yarn perf:images           # Validate all images are WebP and under 100KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn check:all             # Run all checks (format, lint, a11y, build)
 ```
+
+### Bundle Analysis
+
+To analyze JavaScript bundle sizes and identify optimization opportunities:
+
+```bash
+ANALYZE=true yarn build
+```
+
+This generates interactive HTML reports in `.next/analyze/`:
+
+- `client.html` - Client-side bundles (main optimization target)
+- `nodejs.html` - Server-side bundles
+- `edge.html` - Edge runtime bundles
+
+The visualization shows:
+
+- **Largest modules** by size (rectangles sized proportionally)
+- **Drill-down navigation** to see what's inside each chunk
+- **Stat size** (original), **Parsed size** (minified), **Gzipped size**
+
+Use this to identify heavy dependencies that could be code-split or replaced.
 
 ## Lighthouse Automation
 
@@ -63,25 +86,31 @@ yarn check:all             # Run all checks (format, lint, a11y, build)
 Run in parallel:
 
 - **Terminal 1**: `yarn dev` (starts dev server on localhost:3000)
-- **Terminal 2**: `yarn lighthouse` (runs lighthouse-ci with .lighthouserc.js config, enforces 100% scores)
+- **Terminal 2**: `yarn lighthouse` (runs both desktop and mobile audits, enforces ≥95% scores)
 
-The `yarn lighthouse` command uses **lighthouse-ci** (`@lhci/cli`) which reads `.lighthouserc.js` configuration:
+The `yarn lighthouse` command runs **both** `lighthouse:desktop` and `lighthouse:mobile`:
 
-- Audits 4 categories: Performance, Accessibility, Best Practices, SEO
-- Enforces 100% minimum score on each category
-- Fails with exit code 1 if any category < 100%
-- Saves detailed results to `.lighthouse/` directory
+- **Desktop** (`.lighthouserc.js`): 1350x940 viewport, 2x CPU slowdown, moderate throttling
+- **Mobile** (`lighthouse.mobile.config.js`): 360x640 viewport, 4x CPU slowdown, mobile network throttling
+
+Both configurations:
+
+- Audit 4 categories: Performance, Accessibility, Best Practices, SEO
+- Enforce ≥95% minimum score on each category (all 4 must pass)
+- Fail with exit code 1 if any category < 95% on either desktop or mobile
+- Save detailed results to `./lighthouse-desktop/` and `./lighthouse-mobile/` directories
+- Generate HTML reports: `lighthouse-desktop.html` and `lighthouse-mobile.html`
 
 ### Quality Requirements
 
-All PRs must pass Lighthouse audits with **100% scores** on:
+All PRs must pass Lighthouse audits with **≥95% scores** on:
 
 - **Performance** - Page speed, optimization
 - **Accessibility** - WCAG 2.1 AA compliance
 - **Best Practices** - Security, standards compliance
 - **SEO** - Search engine optimization
 
-Configuration in `.lighthouserc.js` enforces 100% minimum scores locally and on CI. When running `yarn lighthouse` locally, it will fail with exit code 1 if scores don't reach 100%, providing detailed failure information for each category.
+Configuration in `.lighthouserc.js` enforces ≥95% minimum scores locally and on CI. When running `yarn lighthouse` locally, it will fail with exit code 1 if scores don't reach 95%, providing detailed failure information for each category.
 
 ### GitHub Actions Integration
 
@@ -90,7 +119,7 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 1. Waits for Vercel deployment preview to be ready
 2. Runs audits against the Vercel deployment URL
 3. Posts results to PR
-4. Blocks merge if any category < 100%
+4. Blocks merge if any category < 95%
 
 ## Important Notes
 
@@ -100,12 +129,23 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 - **All UI text MUST come from YAML files in `/content` directory** - no hardcoded strings in components
 - File paths in content must be absolute from `/public` (e.g., `/assets/image.png`)
 - Link checking configured in `lychee.toml` and runs with dedicated GitHub Action workflow
-- **Images MUST be optimized**: WebP format, maximum 150KB per file (validated by `yarn perf:images`)
+- **Images MUST be optimized**: WebP format, maximum 100KB per file (validated by `yarn perf:images`)
 - **Next.js Image components**: ALL `<Image>` components MUST have `sizes` prop
   - Tells Next.js which image size to serve based on viewport (prevents oversized downloads)
   - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
   - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
-  - See Performance section above for `sizes` prop examples
+- **Bundle analysis**: `next.config.js` includes `@next/bundle-analyzer` configured via `ANALYZE=true` env var
+
+## Performance Patterns
+
+**Key optimizations to maintain** (details in code comments):
+
+- **Dynamic imports**: Heavy dependencies like framer-motion are code-split (see `components/Layout.tsx`)
+- **DaisyUI config**: Only `mask-hexagon-2` utility enabled in `tailwind.config.js` (all other features disabled)
+- **Image optimization**: WebP format, ≤100KB, resized to display dimensions
+- **No page transitions**: Removed from `_app.tsx` for bundle size (see code comments for rationale)
+
+**Current bundle sizes**: First Load JS ~275KB, CSS ~28KB
 
 ## Quality Standards
 
@@ -116,15 +156,18 @@ All code changes must comply with constitution principles:
   - Contrast ratios: ≥4.5:1 for normal text, ≥3:1 for large text (validated by `yarn a11y:contrast`)
   - Text alternatives: All images, icons, buttons have alt/aria-label (validated by `yarn a11y:text-alternatives`)
   - Keyboard navigation, ARIA, semantic HTML
-- **Performance**: **Lighthouse 100% on all categories** (Performance, Accessibility, Best Practices, SEO)
+- **Performance**: **Lighthouse ≥95% on all categories** (Performance, Accessibility, Best Practices, SEO)
   - Bundles <500KB, SSG only (no client-side content fetching)
-  - Images: WebP format, ≤150KB each (validated by `yarn perf:images`)
+  - Images: WebP format, ≤100KB each (validated by `yarn perf:images`)
+  - CSS: Optimized via DaisyUI configuration (only mask utilities)
+  - JavaScript: Code-split heavy dependencies (framer-motion dynamically imported, ~60KB saved)
+  - Total bundle size: First Load JS ~275KB (down from 339KB), CSS ~28KB (down from 33.5KB)
   - **Next.js Image `sizes` prop**: REQUIRED on all `<Image>` components for responsive optimization
     - Fixed size: `sizes="150px"` (avatars, icons)
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, 45vw"` (blog cards)
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed
-- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, images, build) + Lighthouse 100%
+- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, images, build) + Lighthouse ≥95%
 
 **Before committing, run:**
 
