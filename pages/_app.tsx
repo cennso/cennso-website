@@ -26,15 +26,23 @@ const poppinsFont = Poppins({
  * 3. Global cost: Since _app.tsx wraps all pages, the animation library was loaded on every
  *    route, impacting initial page load for all users
  *
+ * Additional mobile optimization (November 2024):
+ * - Removed framer-motion entirely from the codebase (previously code-split in Navigation)
+ * - Replaced mobile menu animations with pure CSS transitions in Navigation and MenuToggle
+ * - Eliminates ~60-100KB JavaScript library that was loading only on mobile devices
+ * - Addresses mobile-only Lighthouse warnings about unused JavaScript
+ * - Desktop experience unchanged (mobile menu never loads on desktop breakpoints)
+ *
  * Current implementation:
  * - Simple, direct rendering without animation wrappers
  * - Layout component handles navigation, footer, and cookies banner
  * - Component receives the current page component and renders it directly
- * - Navigation component (in Layout) uses dynamic import to code-split framer-motion,
- *   keeping mobile menu animations while reducing main bundle size
+ * - Navigation component uses CSS transitions (transition-all, transform) for mobile menu
+ * - MenuToggle component uses CSS-animated spans instead of SVG motion paths
  *
- * Result: 58KB reduction in First Load JS (339KB → 281KB), improving Lighthouse
- * performance scores and page load times across all routes.
+ * Result: 58KB reduction in First Load JS (339KB → 281KB initially), plus elimination of
+ * mobile-only JavaScript bundle, improving Lighthouse performance scores (≥95% target) and
+ * page load times across all routes and devices.
  */
 export default function App({ Component, pageProps }: AppProps) {
   const { $$app, ...rest } = pageProps

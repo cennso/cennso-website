@@ -86,14 +86,20 @@ Use this to identify heavy dependencies that could be code-split or replaced.
 Run in parallel:
 
 - **Terminal 1**: `yarn dev` (starts dev server on localhost:3000)
-- **Terminal 2**: `yarn lighthouse` (runs lighthouse-ci with .lighthouserc.js config, enforces ≥95% scores)
+- **Terminal 2**: `yarn lighthouse` (runs both desktop and mobile audits, enforces ≥95% scores)
 
-The `yarn lighthouse` command uses **lighthouse-ci** (`@lhci/cli`) which reads `.lighthouserc.js` configuration:
+The `yarn lighthouse` command runs **both** `lighthouse:desktop` and `lighthouse:mobile`:
 
-- Audits 4 categories: Performance, Accessibility, Best Practices, SEO
-- Enforces ≥95% minimum score on each category
-- Fails with exit code 1 if any category < 95%
-- Saves detailed results to `.lighthouse/` directory
+- **Desktop** (`.lighthouserc.js`): 1350x940 viewport, 2x CPU slowdown, moderate throttling
+- **Mobile** (`lighthouse.mobile.config.js`): 360x640 viewport, 4x CPU slowdown, mobile network throttling
+
+Both configurations:
+
+- Audit 4 categories: Performance, Accessibility, Best Practices, SEO
+- Enforce ≥95% minimum score on each category (all 4 must pass)
+- Fail with exit code 1 if any category < 95% on either desktop or mobile
+- Save detailed results to `./lighthouse-desktop/` and `./lighthouse-mobile/` directories
+- Generate HTML reports: `lighthouse-desktop.html` and `lighthouse-mobile.html`
 
 ### Quality Requirements
 
