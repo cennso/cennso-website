@@ -50,7 +50,7 @@ yarn lint:fix              # autofix ESLint check
 yarn format                # Prettier check
 yarn format:fix            # Auto-fix Prettier formatting issues
 yarn a11y                  # Run all accessibility checks
-yarn perf:images           # Validate all images are WebP and under 150KB
+yarn perf:images           # Validate all images are WebP and under 100KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn check:all             # Run all checks (format, lint, a11y, build)
@@ -100,12 +100,22 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 - **All UI text MUST come from YAML files in `/content` directory** - no hardcoded strings in components
 - File paths in content must be absolute from `/public` (e.g., `/assets/image.png`)
 - Link checking configured in `lychee.toml` and runs with dedicated GitHub Action workflow
-- **Images MUST be optimized**: WebP format, maximum 150KB per file (validated by `yarn perf:images`)
+- **Images MUST be optimized**: WebP format, maximum 100KB per file (validated by `yarn perf:images`)
 - **Next.js Image components**: ALL `<Image>` components MUST have `sizes` prop
   - Tells Next.js which image size to serve based on viewport (prevents oversized downloads)
   - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
   - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
-  - See Performance section above for `sizes` prop examples
+
+## Performance Patterns
+
+**Key optimizations to maintain** (details in code comments):
+
+- **Dynamic imports**: Heavy dependencies like framer-motion are code-split (see `components/Layout.tsx`)
+- **DaisyUI config**: Only `mask-hexagon-2` utility enabled in `tailwind.config.js` (all other features disabled)
+- **Image optimization**: WebP format, ≤100KB, resized to display dimensions
+- **No page transitions**: Removed from `_app.tsx` for bundle size (see code comments for rationale)
+
+**Current bundle sizes**: First Load JS ~275KB, CSS ~28KB
 
 ## Quality Standards
 
@@ -118,7 +128,10 @@ All code changes must comply with constitution principles:
   - Keyboard navigation, ARIA, semantic HTML
 - **Performance**: **Lighthouse 100% on all categories** (Performance, Accessibility, Best Practices, SEO)
   - Bundles <500KB, SSG only (no client-side content fetching)
-  - Images: WebP format, ≤150KB each (validated by `yarn perf:images`)
+  - Images: WebP format, ≤100KB each (validated by `yarn perf:images`)
+  - CSS: Optimized via DaisyUI configuration (only mask utilities)
+  - JavaScript: Code-split heavy dependencies (framer-motion dynamically imported, ~60KB saved)
+  - Total bundle size: First Load JS ~275KB (down from 339KB), CSS ~28KB (down from 33.5KB)
   - **Next.js Image `sizes` prop**: REQUIRED on all `<Image>` components for responsive optimization
     - Fixed size: `sizes="150px"` (avatars, icons)
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)

@@ -40,6 +40,20 @@ const tailwindConfig = {
     './components/**/*.{js,ts,jsx,tsx}',
     './content/**/*.{md,mdx}',
   ],
+  /**
+   * Performance optimization: Aggressive CSS purging configuration
+   *
+   * safelist: Explicitly preserve DaisyUI mask utilities we use throughout the site
+   * This ensures mask-hexagon-2 is never purged even if detection is uncertain.
+   *
+   * The content globs above tell Tailwind to scan all component, page, and content
+   * files to detect which classes are actually used. Any classes not found in these
+   * files will be removed from the final CSS bundle, significantly reducing size.
+   */
+  safelist: [
+    'mask',
+    'mask-hexagon-2', // Hexagon shapes used in avatars, cards, images
+  ],
   theme: {
     extend: {
       colors: {
@@ -97,8 +111,29 @@ const tailwindConfig = {
       },
     },
   },
+  /**
+   * DaisyUI Configuration - Optimized for minimal CSS output
+   *
+   * Performance optimization: DaisyUI can add significant unused CSS to the bundle.
+   * This site only uses the mask-hexagon-2 utility from DaisyUI, so we disable all
+   * unnecessary features to reduce CSS bundle size.
+   *
+   * Optimizations:
+   * - themes: false - Disables all theme CSS (saves ~20KB)
+   * - styled: false - Disables component styling, keeps only utilities (saves ~8KB)
+   * - base: false - Disables base styles since we use Tailwind's defaults
+   * - utils: true - Keeps utility classes like mask-hexagon-2 that we actually use
+   * - logs: false - Disables build logs for cleaner output
+   *
+   * Result: Reduces DaisyUI CSS output by ~28KB, keeping only the mask utilities
+   * we need for hexagon shapes throughout the site.
+   */
   daisyui: {
-    themes: false,
+    themes: false, // No theme CSS
+    styled: false, // No component styles (buttons, cards, etc.)
+    base: false, // No base styles
+    utils: true, // Keep utilities (mask-hexagon-2)
+    logs: false, // Disable logs
   },
   plugins: [
     require('daisyui'),

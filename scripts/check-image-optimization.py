@@ -4,7 +4,7 @@ WCAG 2.1 - Performance Best Practices: Image Optimization Validation
 
 This script validates that all UI images follow optimization best practices:
 - Images should be in WebP format for optimal compression
-- Images should not exceed 150KB to ensure fast page loads
+- Images should not exceed 100KB to ensure fast page loads
 - Helps maintain Lighthouse performance scores ≥100
 
 Usage:
@@ -20,8 +20,8 @@ import sys
 from pathlib import Path
 from typing import List, Tuple
 
-# Maximum allowed file size in bytes (150KB)
-MAX_SIZE_BYTES = 150 * 1024  # 150KB
+# Maximum allowed file size in bytes (100KB)
+MAX_SIZE_BYTES = 100 * 1024  # 100KB
 
 # Allowed image format
 REQUIRED_FORMAT = '.webp'
@@ -102,7 +102,7 @@ def check_images() -> Tuple[List[dict], List[dict]]:
                     'size': file_size,
                 })
             
-            # Check size (must be under 150KB)
+            # Check size (must be under 100KB)
             if str(relative_path) not in SIZE_CHECK_EXCLUSIONS and file_size > MAX_SIZE_BYTES:
                 size_issues.append({
                     'path': str(relative_path),
@@ -132,7 +132,7 @@ def print_results(format_issues: List[dict], size_issues: List[dict]) -> None:
         print(f"Total format issues: {len(format_issues)}")
     
     if size_issues:
-        print("\n❌ SIZE ISSUES - Images should be under 150KB:")
+        print("\n❌ SIZE ISSUES - Images should be under 100KB:")
         print("-" * 85)
         print(f"{'File':<60} {'Size':<15} {'Overage':<15}")
         print("-" * 85)
@@ -149,7 +149,7 @@ def print_results(format_issues: List[dict], size_issues: List[dict]) -> None:
         print("\n✅ ALL IMAGES OPTIMIZED!")
         print("-" * 85)
         print("• All raster images are in WebP format")
-        print("• All images are under 150KB")
+        print("• All images are under 100KB")
         print("• SVG vector images excluded from checks")
     
     print("\n" + "=" * 85)

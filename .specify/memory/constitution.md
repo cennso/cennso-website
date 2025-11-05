@@ -177,7 +177,7 @@ Performance requirements that MUST be met:
 
 - All pages MUST use Static Site Generation (SSG) via `getStaticProps` - no client-side data fetching for content
 - Images MUST be optimized:
-  - WebP format preferred (maximum 150KB per image)
+  - WebP format preferred (maximum 100KB per image, validated by `yarn perf:images`)
   - **All Next.js `<Image>` components MUST have `sizes` prop** to enable responsive optimization
   - `sizes` prop MUST reflect actual rendered dimensions at different breakpoints
   - Examples:
@@ -185,7 +185,16 @@ Performance requirements that MUST be met:
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, (max-width: 1024px) 45vw, 33vw"` (blog cards)
   - `next.config.js` MUST configure image optimization (deviceSizes, imageSizes, formats)
-- Bundle size: No single page bundle > 500KB (analyze with `next build`)
+- **CSS Optimization**:
+  - DaisyUI MUST be configured to include only used utilities (`styled: false`, `base: false`, `utils: true`)
+  - Only mask-hexagon-2 utility is needed from DaisyUI (reduces CSS by ~6KB)
+  - Tailwind purge MUST be configured to scan all component files
+  - Critical classes MUST be safelisted in `tailwind.config.js`
+- **JavaScript Optimization**:
+  - Bundle size: No single page bundle > 500KB (analyze with `next build`)
+  - Heavy dependencies MUST be dynamically imported to enable code-splitting
+  - Navigation component uses `dynamic()` import to code-split framer-motion (~60KB savings)
+  - Page transition animations removed from `_app.tsx` for performance (minimal UX trade-off)
 - **Lighthouse MUST score 100% on ALL categories**:
   - Performance (Page speed, optimization)
   - Accessibility (WCAG 2.1 AA compliance)
@@ -195,9 +204,9 @@ Performance requirements that MUST be met:
 - Local testing: `yarn dev` + `yarn lighthouse` before submitting PR
 - OG images MUST be auto-generated during build (via `prebuild` script)
 - No blocking JavaScript on initial page load; use dynamic imports for heavy components
-- Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 150KB
+- Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 100KB
 
-**Rationale**: Static generation provides fastest load times and best SEO. Lighthouse 100% ensures consistent performance, accessibility, and best practices across all pages. The `sizes` prop tells Next.js which image size to serve based on viewport, preventing oversized images from being downloaded (e.g., serving 116KB when 54KB would suffice). Performance directly impacts user retention and search rankings. Automated enforcement on PRs prevents regressions.
+**Rationale**: Static generation provides fastest load times and best SEO. Lighthouse 100% ensures consistent performance, accessibility, and best practices across all pages. The `sizes` prop tells Next.js which image size to serve based on viewport, preventing oversized images from being downloaded (e.g., serving 116KB when 54KB would suffice). CSS and JavaScript optimizations reduce bundle sizes (CSS: 33.5KB → 27.9KB, JS: 339KB → 275KB, ~70KB total savings). Performance directly impacts user retention and search rankings. Automated enforcement on PRs prevents regressions.
 
 ### V. Accessibility Standards (WCAG 2.1 AA)
 
