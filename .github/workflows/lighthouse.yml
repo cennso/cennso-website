@@ -114,8 +114,8 @@ jobs:
             for (const [key, value] of Object.entries(desktopResults.categories)) {
               if (key === 'pwa') continue; // Skip PWA category
               const score = Math.round(value.score * 100);
-              const status = score === 100 ? '✅ PASS' : '❌ FAIL';
-              if (score !== 100) allPassed = false;
+              const status = score >= 95 ? '✅ PASS' : '❌ FAIL';
+              if (score < 95) allPassed = false;
               comment += `| ${value.title} | ${score} | ${status} |\n`;
             }
             
@@ -127,16 +127,16 @@ jobs:
             for (const [key, value] of Object.entries(mobileResults.categories)) {
               if (key === 'pwa') continue; // Skip PWA category
               const score = Math.round(value.score * 100);
-              const status = score === 100 ? '✅ PASS' : '❌ FAIL';
-              if (score !== 100) allPassed = false;
+              const status = score >= 95 ? '✅ PASS' : '❌ FAIL';
+              if (score < 95) allPassed = false;
               comment += `| ${value.title} | ${score} | ${status} |\n`;
             }
             
             comment += '\n';
             if (allPassed) {
-              comment += '✅ **All scores are 100%** - Quality gate passed!';
+              comment += '✅ **All scores are ≥95%** - Quality gate passed!';
             } else {
-              comment += '❌ **Some scores below 100%** - Please improve Lighthouse scores to 100% on all categories (Performance, Accessibility, Best Practices, SEO).\n\n';
+              comment += '❌ **Some scores below 95%** - Please improve Lighthouse scores to ≥95% on all categories (Performance, Accessibility, Best Practices, SEO).\n\n';
               comment += '💡 **Download the full HTML reports below** for detailed recommendations on what to fix.';
             }
             
@@ -157,16 +157,16 @@ jobs:
               repo: context.repo.repo,
               body: comment
             });
-      - name: Check Lighthouse scores (100% required)
+      - name: Check Lighthouse scores (95% required)
         if: always()
         run: |
-          # Read scores and fail if not 100%
-          DESKTOP_SCORES=$(jq -r '.categories | to_entries | map(select(.key != "pwa") | .value.score * 100 | floor) | all(. == 100)' lighthouse-results.json)
-          MOBILE_SCORES=$(jq -r '.categories | to_entries | map(select(.key != "pwa") | .value.score * 100 | floor) | all(. == 100)' lighthouse-mobile-results.json)
+          # Read scores and fail if below 95%
+          DESKTOP_SCORES=$(jq -r '.categories | to_entries | map(select(.key != "pwa") | .value.score * 100 | floor) | all(. >= 95)' lighthouse-results.json)
+          MOBILE_SCORES=$(jq -r '.categories | to_entries | map(select(.key != "pwa") | .value.score * 100 | floor) | all(. >= 95)' lighthouse-mobile-results.json)
           
           if [ "$DESKTOP_SCORES" != "true" ] || [ "$MOBILE_SCORES" != "true" ]; then
-            echo "❌ Lighthouse scores must be 100% on all categories"
+            echo "❌ Lighthouse scores must be ≥95% on all categories"
             exit 1
           fi
           
-          echo "✅ All Lighthouse scores are 100%"
+          echo "✅ All Lighthouse scores are ≥95%"

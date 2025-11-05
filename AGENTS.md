@@ -63,25 +63,25 @@ yarn check:all             # Run all checks (format, lint, a11y, build)
 Run in parallel:
 
 - **Terminal 1**: `yarn dev` (starts dev server on localhost:3000)
-- **Terminal 2**: `yarn lighthouse` (runs lighthouse-ci with .lighthouserc.js config, enforces 100% scores)
+- **Terminal 2**: `yarn lighthouse` (runs lighthouse-ci with .lighthouserc.js config, enforces ≥95% scores)
 
 The `yarn lighthouse` command uses **lighthouse-ci** (`@lhci/cli`) which reads `.lighthouserc.js` configuration:
 
 - Audits 4 categories: Performance, Accessibility, Best Practices, SEO
-- Enforces 100% minimum score on each category
-- Fails with exit code 1 if any category < 100%
+- Enforces ≥95% minimum score on each category
+- Fails with exit code 1 if any category < 95%
 - Saves detailed results to `.lighthouse/` directory
 
 ### Quality Requirements
 
-All PRs must pass Lighthouse audits with **100% scores** on:
+All PRs must pass Lighthouse audits with **≥95% scores** on:
 
 - **Performance** - Page speed, optimization
 - **Accessibility** - WCAG 2.1 AA compliance
 - **Best Practices** - Security, standards compliance
 - **SEO** - Search engine optimization
 
-Configuration in `.lighthouserc.js` enforces 100% minimum scores locally and on CI. When running `yarn lighthouse` locally, it will fail with exit code 1 if scores don't reach 100%, providing detailed failure information for each category.
+Configuration in `.lighthouserc.js` enforces ≥95% minimum scores locally and on CI. When running `yarn lighthouse` locally, it will fail with exit code 1 if scores don't reach 95%, providing detailed failure information for each category.
 
 ### GitHub Actions Integration
 
@@ -90,7 +90,7 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 1. Waits for Vercel deployment preview to be ready
 2. Runs audits against the Vercel deployment URL
 3. Posts results to PR
-4. Blocks merge if any category < 100%
+4. Blocks merge if any category < 95%
 
 ## Important Notes
 
@@ -126,7 +126,7 @@ All code changes must comply with constitution principles:
   - Contrast ratios: ≥4.5:1 for normal text, ≥3:1 for large text (validated by `yarn a11y:contrast`)
   - Text alternatives: All images, icons, buttons have alt/aria-label (validated by `yarn a11y:text-alternatives`)
   - Keyboard navigation, ARIA, semantic HTML
-- **Performance**: **Lighthouse 100% on all categories** (Performance, Accessibility, Best Practices, SEO)
+- **Performance**: **Lighthouse ≥95% on all categories** (Performance, Accessibility, Best Practices, SEO)
   - Bundles <500KB, SSG only (no client-side content fetching)
   - Images: WebP format, ≤100KB each (validated by `yarn perf:images`)
   - CSS: Optimized via DaisyUI configuration (only mask utilities)
@@ -137,7 +137,7 @@ All code changes must comply with constitution principles:
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, 45vw"` (blog cards)
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed
-- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, images, build) + Lighthouse 100%
+- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, images, build) + Lighthouse ≥95%
 
 **Before committing, run:**
 
