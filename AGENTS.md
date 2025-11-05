@@ -66,11 +66,13 @@ ANALYZE=true yarn build
 ```
 
 This generates interactive HTML reports in `.next/analyze/`:
+
 - `client.html` - Client-side bundles (main optimization target)
 - `nodejs.html` - Server-side bundles
 - `edge.html` - Edge runtime bundles
 
 The visualization shows:
+
 - **Largest modules** by size (rectangles sized proportionally)
 - **Drill-down navigation** to see what's inside each chunk
 - **Stat size** (original), **Parsed size** (minified), **Gzipped size**
