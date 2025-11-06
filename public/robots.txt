@@ -8,7 +8,9 @@ Allow: /
 # Disallow private/technical paths
 Disallow: /_next/
 Disallow: /api/
-Disallow: /*.json$
+Disallow: /*.json
+Disallow: /.next/
+Disallow: /.specify/
 
 # Host
 Host: https://cennso.com

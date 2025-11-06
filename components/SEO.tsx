@@ -75,8 +75,6 @@ export const SEO: FunctionComponent<SEOProps> = (props) => {
     <>
       <NextSeo
         {...props}
-        nofollow={true}
-        noindex={true}
         themeColor={siteMetadata.theme}
         title={title}
         description={description}

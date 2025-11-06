@@ -7,16 +7,13 @@
  * 3. Global defaults from seo-config.yaml
  */
 
-export interface SEOMetadata {
-  title?: string
-  description?: string
-  canonical?: string
-  ogImage?: string
-  ogType?: string
-  twitterCard?: string
-  noindex?: boolean
-  nofollow?: boolean
-}
+import type { SEOMetadata } from './types'
+
+/**
+ * Partial metadata overrides for generating complete SEO metadata
+ * Allows callers to provide partial metadata that gets merged with defaults
+ */
+export type MetadataOverrides = Partial<SEOMetadata>
 
 export interface SEOConfig {
   siteDefaults: {
@@ -173,14 +170,14 @@ export function validateDescription(description: string): {
 /**
  * Generate complete SEO metadata object with fallbacks
  *
- * @param metadata - Page-specific metadata
+ * @param metadata - Page-specific metadata overrides
  * @param pageType - Type of page
  * @param config - SEO configuration
  * @param canonical - Canonical URL
- * @returns Complete SEO metadata
+ * @returns Complete SEO metadata (all required fields populated)
  */
 export function generateSEOMetadata(
-  metadata: Partial<SEOMetadata>,
+  metadata: MetadataOverrides,
   pageType: string | undefined,
   config: SEOConfig,
   canonical: string

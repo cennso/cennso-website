@@ -56,7 +56,7 @@ yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
 yarn seo:validate          # Validate SEO metadata (titles 50-60 chars, descriptions 150-160 chars)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
-yarn check:all             # Run all checks (format, lint, a11y, perf, seo, build)
+yarn check:all             # Run all checks (build, format, lint, a11y, perf, seo)
 ```
 
 ### Bundle Analysis

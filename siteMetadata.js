@@ -43,8 +43,8 @@ siteMetadata.organization = {
   logo: {
     '@type': 'ImageObject',
     url: `${siteMetadata.siteUrl}${siteMetadata.siteLogo}`,
-    width: 512,
-    height: 512,
+    width: 372,
+    height: 73,
   },
   description: siteMetadata.description,
   email: siteMetadata.contact.email,

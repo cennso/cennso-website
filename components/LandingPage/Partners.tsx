@@ -125,7 +125,7 @@ export const Partners: FunctionComponent<PartnersProps> = ({
           </GradientHeader>
           <div className="partners-logos mb-8 mt-2">
             <div className="partners-logos-slide flex flex-row">
-              {mobilePartners.map((partner) => {
+              {mobilePartners.map((partner, idx) => {
                 const fallbackSize = { width: 320, height: 160 }
                 const logoWidth = partner.logoSize?.width ?? fallbackSize.width
                 const logoHeight =
@@ -139,7 +139,7 @@ export const Partners: FunctionComponent<PartnersProps> = ({
                 return (
                   <Image
                     src={partner.logo}
-                    key={partner.name}
+                    key={`${partner.name}-${idx}`}
                     alt={`${partner.name} logo`}
                     title={`${partner.name} logo`}
                     width={logoWidth}

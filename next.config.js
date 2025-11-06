@@ -21,12 +21,14 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Cache static assets for 1 year (client + CDN)
+        // Cache static assets with short client TTL but longer CDN TTL
+        // Allows asset updates to propagate quickly to clients while CDN still caches
+        // max-age=3600 (1 hour client cache), s-maxage=86400 (1 day CDN cache)
         source: '/assets/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, s-maxage=31536000, immutable',
+            value: 'public, max-age=3600, s-maxage=86400, must-revalidate',
           },
         ],
       },
@@ -56,7 +58,8 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',
+            value:
+              'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',
           },
         ],
       },

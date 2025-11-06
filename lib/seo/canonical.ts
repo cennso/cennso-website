@@ -20,7 +20,7 @@ export function getBaseSiteUrl(): string {
   }
 
   // Default production URL as fallback
-  return 'https://www.cennso.io'
+  return 'https://www.cennso.com'
 }
 
 /**
@@ -30,8 +30,8 @@ export function getBaseSiteUrl(): string {
  * @returns Fully qualified canonical URL
  *
  * @example
- * getCanonicalUrl('/blog/my-post') // 'https://www.cennso.io/blog/my-post'
- * getCanonicalUrl('/') // 'https://www.cennso.io'
+ * getCanonicalUrl('/blog/my-post') // 'https://www.cennso.com/blog/my-post'
+ * getCanonicalUrl('/') // 'https://www.cennso.com'
  */
 export function getCanonicalUrl(path: string): string {
   const baseUrl = getBaseSiteUrl()
@@ -57,7 +57,7 @@ export function getCanonicalUrl(path: string): string {
  * @returns Normalized path
  *
  * @example
- * extractPath('https://www.cennso.io/blog/post') // '/blog/post'
+ * extractPath('https://www.cennso.com/blog/post') // '/blog/post'
  * extractPath('/blog/post') // '/blog/post'
  */
 export function extractPath(url: string): string {

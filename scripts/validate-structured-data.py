@@ -28,7 +28,17 @@ def validate_json_syntax(json_ld: str) -> Dict[str, Any]:
 
 
 def validate_schema_type(schema_data: Dict[str, Any]) -> Dict[str, Any]:
-    """Validate @type is recognized schema.org type."""
+    """
+    Validate @type is recognized schema.org type.
+    
+    Handles @type as:
+    - String: single type
+    - List: multiple types (all must be valid)
+    - Missing: returns error
+    - Other: returns invalid type error
+    
+    Returns normalized @type as list in successful response.
+    """
     valid_types = [
         "Organization",
         "Article",
@@ -42,15 +52,34 @@ def validate_schema_type(schema_data: Dict[str, Any]) -> Dict[str, Any]:
         "WebPage"
     ]
     
-    schema_type = schema_data.get("@type", "")
+    schema_type_raw = schema_data.get("@type")
     
-    if not schema_type:
+    # Check if @type is missing
+    if schema_type_raw is None:
         return {"valid": False, "message": "@type is missing"}
     
-    if schema_type not in valid_types:
-        return {"valid": False, "message": f"Unknown @type: {schema_type}"}
+    # Normalize @type to list
+    if isinstance(schema_type_raw, str):
+        # Single string type
+        schema_types = [schema_type_raw]
+    elif isinstance(schema_type_raw, list):
+        # Already a list
+        schema_types = schema_type_raw
+    else:
+        # Invalid type (not string or list)
+        return {"valid": False, "message": f"@type must be string or array, got {type(schema_type_raw).__name__}"}
     
-    return {"valid": True, "type": schema_type, "message": "OK"}
+    # Validate each type in the list
+    unrecognized_types = [t for t in schema_types if t not in valid_types]
+    
+    if unrecognized_types:
+        return {
+            "valid": False,
+            "message": f"Unrecognized @type values: {', '.join(unrecognized_types)}. Valid types: {', '.join(valid_types)}"
+        }
+    
+    # All types are valid
+    return {"valid": True, "types": schema_types, "message": "OK"}
 
 
 def validate_url_format(url: str) -> bool:
@@ -129,12 +158,15 @@ def validate_structured_data(json_ld: str, context: str = "") -> Dict[str, Any]:
     
     schema_data = json_result["data"]
     
-    # Validate schema type
+    # Validate schema type (now handles array @types)
     type_result = validate_schema_type(schema_data)
     if not type_result["valid"]:
         result["valid"] = False
         result["errors"].append(type_result["message"])
         return result
+    
+    # Use the primary type from normalized list for property validation
+    primary_type = type_result["types"][0] if type_result.get("types") else None
     
     # Validate required properties
     property_errors = validate_required_properties(schema_data)
