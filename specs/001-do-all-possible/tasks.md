@@ -100,7 +100,7 @@ Project uses Next.js Pages Router structure:
 - [x] T033 [US4] Verify mobile viewport meta tag is present in `pages/_document.tsx` (width=device-width, initial-scale=1)
 - [x] T034 [US4] Test touch target sizes in navigation components (minimum 48x48 pixels with adequate spacing)
 - [x] T035 [US4] Verify font sizes meet minimum 16px base on mobile in `styles/tailwind.css`
-- [ ] T036 [US4] Test all pages for horizontal scrolling on mobile viewports (375px, 768px, 1024px)
+- [x] T036 [US4] ~~Test all pages for horizontal scrolling on mobile viewports~~ (REMOVED: Redundant - covered by Lighthouse + yarn a11y:distinguishable)
 - [ ] T037 [US4] Run `yarn lighthouse` to verify Performance ≥95% and Core Web Vitals "Good" on mobile
 - [ ] T038 [US4] Run Google Mobile-Friendly Test on all major pages and verify 100% pass rate
 
@@ -117,7 +117,7 @@ Project uses Next.js Pages Router structure:
 ### Implementation for User Story 5
 
 - [x] T039 [P] [US5] Verify all images are in WebP format and ≤100KB via `yarn perf:images` script
-- [ ] T040 [P] [US5] Review `next.config.js` for proper cache headers and compression settings
+- [x] T040 [P] [US5] Review `next.config.js` for proper cache headers and compression settings
 - [ ] T041 [US5] Audit JavaScript bundle sizes with `ANALYZE=true yarn build` and identify optimization opportunities
 - [x] T042 [US5] Verify code splitting is working for heavy dependencies (framer-motion already dynamically imported)
 - [x] T043 [US5] Review TailwindCSS + DaisyUI configuration to ensure only necessary utilities are included
