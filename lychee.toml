@@ -40,7 +40,9 @@ exclude = [
 ]
 
 # Exclude these filesystem paths from getting checked.
-exclude_path = []
+exclude_path = [
+    "specs/**"
+]
 
 # Exclude all private IPs from checking.
 # Equivalent to setting `exclude_private`, `exclude_link_local`, and

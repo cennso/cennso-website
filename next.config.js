@@ -21,42 +21,42 @@ const nextConfig = {
   async headers() {
     return [
       {
-        // Cache static assets for 1 year
+        // Cache static assets for 1 year (client + CDN)
         source: '/assets/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=31536000, s-maxage=31536000, immutable',
           },
         ],
       },
       {
-        // Cache Next.js static files for 1 year
+        // Cache Next.js static files for 1 year (client + CDN)
         source: '/_next/static/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=31536000, s-maxage=31536000, immutable',
           },
         ],
       },
       {
-        // Cache optimized images for 1 year
+        // Cache optimized images for 1 year (client + CDN)
         source: '/_next/image/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            value: 'public, max-age=31536000, s-maxage=31536000, immutable',
           },
         ],
       },
       {
-        // Cache HTML pages for 1 hour, allow stale-while-revalidate
+        // Cache HTML/SSR responses on CDN while avoiding stale clients
         source: '/:path*',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=3600, stale-while-revalidate=86400',
+            value: 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',
           },
         ],
       },
