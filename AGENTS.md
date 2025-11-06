@@ -53,8 +53,10 @@ yarn format:fix            # Auto-fix Prettier formatting issues
 yarn a11y                  # Run all accessibility checks
 yarn perf:images           # Validate all images are WebP and under 100KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
+yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
+yarn seo:validate          # Validate SEO metadata (titles 50-60 chars, descriptions 150-160 chars)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
-yarn check:all             # Run all checks (format, lint, a11y, build)
+yarn check:all             # Run all checks (format, lint, a11y, perf, seo, build)
 ```
 
 ### Bundle Analysis
@@ -135,6 +137,12 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
   - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
   - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
 - **Bundle analysis**: `next.config.js` includes `@next/bundle-analyzer` configured via `ANALYZE=true` env var
+- **SEO metadata**: All pages MUST have unique titles (50-60 chars) and descriptions (150-160 chars)
+  - Validated by `yarn seo:validate` which scans built HTML
+  - Titles come from YAML `page.title` or MDX frontmatter `title`
+  - Descriptions from YAML `page.description` or MDX frontmatter `excerpt`
+  - SEO component in `components/SEO.tsx` handles meta tag generation
+  - BeautifulSoup4 required for validation (in `scripts/requirements.txt`)
 
 ## Performance Patterns
 
@@ -166,8 +174,14 @@ All code changes must comply with constitution principles:
     - Fixed size: `sizes="150px"` (avatars, icons)
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, 45vw"` (blog cards)
+- **SEO**: All pages MUST have optimized metadata
+  - Titles: 50-60 characters, unique across pages
+  - Descriptions: 150-160 characters, unique across pages
+  - Canonical URLs: Present on all pages
+  - Validated by `yarn seo:validate` (scans `.next/server/pages/*.html`)
+  - No duplicate titles or descriptions allowed
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed
-- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, images, build) + Lighthouse ≥95%
+- **Quality Gates**: `yarn check:all` must pass (format, lint, a11y, perf, seo, images, build) + Lighthouse ≥95%
 
 **Before committing, run:**
 

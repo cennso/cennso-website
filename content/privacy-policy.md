@@ -1,7 +1,7 @@
 ---
 page:
-  title: Privacy policy
-  description: Privacy policy of using Cennso Website
+  title: Privacy Policy - Data Protection & GDPR Compliance
+  description: Learn how Cennso Technologies protects your personal data. Our comprehensive privacy policy covers data collection, processing, and your rights under GDPR.
 ---
 
 Data protection stands as a paramount concern for our organization. While using the Cennso Website doesn't require processing personal data, accessing certain enterprise services through this platform may require it. In cases where personal data processing is indispensable and lacks a statutory basis, we typically seek consent from the data subject.

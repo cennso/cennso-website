@@ -1,7 +1,7 @@
 ---
 page:
-  title: Imprint
-  description: Imprint and Privacy Policy
+  title: Imprint - Legal Information for Cennso Technologies GmbH
+  description: Legal information and company details for Cennso Technologies GmbH. Find our address, registration details, and contact information for official communications.
 ---
 
 ## Company Address

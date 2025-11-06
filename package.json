@@ -41,7 +41,7 @@
     "lighthouse:desktop": "rm -rf .lighthouse lighthouse-desktop && lhci collect --config=.lighthouserc.js && lhci upload --config=.lighthouserc.js --target=filesystem --outputDir=./lighthouse-desktop && node scripts/process-lhci-results.js --manifestDir=lighthouse-desktop --outputJson=lighthouse-results.json --outputHtml=lighthouse-desktop.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=.lighthouserc.js",
     "lighthouse:mobile": "rm -rf .lighthouse .lighthouse-mobile lighthouse-mobile && lhci collect --config=lighthouse.mobile.config.js && lhci upload --config=lighthouse.mobile.config.js --target=filesystem --outputDir=./lighthouse-mobile && node scripts/process-lhci-results.js --manifestDir=lighthouse-mobile --outputJson=lighthouse-mobile-results.json --outputHtml=lighthouse-mobile.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=lighthouse.mobile.config.js",
     "lighthouse": "yarn lighthouse:desktop && yarn lighthouse:mobile",
-    "check:all": "yarn format && yarn lint && yarn a11y && yarn perf && yarn seo && yarn build"
+    "check:all": "yarn build && yarn format && yarn lint && yarn a11y && yarn perf && yarn seo"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.10",

@@ -79,7 +79,7 @@ Project uses Next.js Pages Router structure:
 - [x] T025 [US1] Update `pages/jobs/[job].tsx` to include canonical URL via SEO component
 - [x] T026 [US1] Update `pages/solutions/index.tsx` to include canonical URL via SEO component
 - [x] T027 [US1] Update `pages/solutions/[solution].tsx` to include canonical URL via SEO component
-- [ ] T028 [US1] Implement SEO metadata validation script in `scripts/validate-seo.py` (check title 50-60 chars, description 150-160 chars, canonical URL present)
+- [x] T028 [US1] Implement SEO metadata validation script in `scripts/validate-seo.py` (check title 50-60 chars, description 150-160 chars, canonical URL present)
 - [x] T029 [US1] Run `yarn build` and verify sitemap.xml is generated with all pages
 - [ ] T030 [US1] Test robots.txt accessibility and validate directives with Google Search Console
 

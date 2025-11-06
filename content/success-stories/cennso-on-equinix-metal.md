@@ -1,12 +1,12 @@
 ---
-title: Cennso on Equinix Metal
+title: Cennso on Equinix Metal - Connected Vehicle Infrastructure
 company:
   name: Equinix
   website: https://www.equinix.com/
   logo: /assets/success-stories/cennso-on-equinix-metal/equinix-logo.webp
   industry: Cloud infrastructure
 cover: /assets/blog-posts/ssg-ssr/cover.webp
-excerpt: The combined solution from Cennso and Equinix Metal brought immediate improvements to the German automaker's connected-car services, including faster in-car Wi-Fi, real-time data exchange, and smoother over-the-air updates.
+excerpt: German automaker deploys Cennso on Equinix Metal for faster in-car connectivity, real-time data, over-the-air updates, and full data sovereignty compliance.
 layout: new
 ---
 

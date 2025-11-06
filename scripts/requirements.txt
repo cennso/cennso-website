@@ -3,3 +3,6 @@
 
 # Image processing library for optimization
 Pillow>=10.0.0
+
+# HTML parsing library for SEO validation
+beautifulsoup4>=4.12.0

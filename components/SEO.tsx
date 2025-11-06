@@ -24,7 +24,9 @@ export const SEO: FunctionComponent<SEOProps> = (props) => {
   const canonicalUrl = props.canonical || getCanonicalUrl(router.asPath)
   const pageUrl = canonicalUrl
 
-  const title = props.title ? `${props.title} | ${defaultTitle}` : defaultTitle
+  // Use custom title if provided, otherwise use default site title
+  // Don't concatenate to avoid overly long titles (SEO recommends 50-60 chars)
+  const title = props.title || defaultTitle
   const description = props.description || defaultDescription
 
   const imageUrl =
