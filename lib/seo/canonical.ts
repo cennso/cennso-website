@@ -27,27 +27,37 @@ export function getBaseSiteUrl(): string {
  * Generate canonical URL for a given path
  *
  * @param path - The page path (e.g., '/blog/my-post', '/about')
- * @returns Fully qualified canonical URL
+ * @returns Fully qualified canonical URL without query strings or fragments
  *
  * @example
  * getCanonicalUrl('/blog/my-post') // 'https://www.cennso.com/blog/my-post'
+ * getCanonicalUrl('/blog/my-post?id=123') // 'https://www.cennso.com/blog/my-post'
+ * getCanonicalUrl('/blog/my-post#section') // 'https://www.cennso.com/blog/my-post'
  * getCanonicalUrl('/') // 'https://www.cennso.com'
  */
 export function getCanonicalUrl(path: string): string {
   const baseUrl = getBaseSiteUrl()
 
+  // Strip query string (everything after ?)
+  const pathWithoutQuery = path.split('?')[0]
+
+  // Strip fragment (everything after #)
+  const cleanedPath = pathWithoutQuery.split('#')[0]
+
   // Handle root path
-  if (path === '/' || path === '') {
+  if (cleanedPath === '/' || cleanedPath === '') {
     return baseUrl
   }
 
   // Ensure path starts with /
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const normalizedPath = cleanedPath.startsWith('/')
+    ? cleanedPath
+    : `/${cleanedPath}`
 
   // Remove trailing slash (except for root)
-  const cleanPath = normalizedPath.replace(/\/$/, '')
+  const finalPath = normalizedPath.replace(/\/$/, '')
 
-  return `${baseUrl}${cleanPath}`
+  return `${baseUrl}${finalPath}`
 }
 
 /**
