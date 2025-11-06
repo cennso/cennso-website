@@ -11,6 +11,7 @@
 **Purpose**: Represents complete SEO metadata for a single page
 
 **Properties**:
+
 - `title` (string, required): Page title tag content (50-60 characters recommended)
 - `description` (string, required): Meta description content (150-160 characters recommended)
 - `canonical` (string, required): Canonical URL (absolute, HTTPS)
@@ -28,6 +29,7 @@
 - `articleAuthor` (string[], optional): Article author names
 
 **Validation Rules**:
+
 - `title` length MUST be 1-60 characters
 - `description` length MUST be 1-160 characters
 - `canonical` MUST be absolute URL starting with https://
@@ -38,6 +40,7 @@
 - `articleModifiedTime` MUST be valid ISO 8601 date if present
 
 **TypeScript Interface**:
+
 ```typescript
 export interface SEOMetadata {
   title: string
@@ -52,8 +55,8 @@ export interface SEOMetadata {
   twitterCreator?: string
   noindex?: boolean
   nofollow?: boolean
-  articlePublishedTime?: string  // ISO 8601
-  articleModifiedTime?: string   // ISO 8601
+  articlePublishedTime?: string // ISO 8601
+  articleModifiedTime?: string // ISO 8601
   articleAuthor?: string[]
 }
 ```
@@ -65,6 +68,7 @@ export interface SEOMetadata {
 **Purpose**: Represents schema.org Organization structured data (homepage, global)
 
 **Properties**:
+
 - `@context` (string, required): Always "https://schema.org"
 - `@type` (string, required): Always "Organization"
 - `name` (string, required): Company name
@@ -76,6 +80,7 @@ export interface SEOMetadata {
 - `address` (PostalAddress, optional): Physical address
 
 **Nested: ContactPoint**:
+
 - `@type` (string, required): Always "ContactPoint"
 - `telephone` (string, required): Phone number (E.164 format recommended)
 - `contactType` (string, required): Type of contact (e.g., "customer service")
@@ -84,6 +89,7 @@ export interface SEOMetadata {
 - `availableLanguage` (string[], optional): Languages spoken
 
 **Nested: PostalAddress**:
+
 - `@type` (string, required): Always "PostalAddress"
 - `streetAddress` (string, required): Street address
 - `addressLocality` (string, required): City
@@ -92,6 +98,7 @@ export interface SEOMetadata {
 - `addressCountry` (string, required): Country code (ISO 3166-1 alpha-2, e.g., "US")
 
 **Validation Rules**:
+
 - `name` MUST NOT be empty
 - `url` MUST be absolute HTTPS URL
 - `logo` MUST be absolute HTTPS URL to image
@@ -100,6 +107,7 @@ export interface SEOMetadata {
 - `addressCountry` MUST be valid ISO 3166-1 alpha-2 code
 
 **TypeScript Interface**:
+
 ```typescript
 export interface OrganizationSchema {
   '@context': 'https://schema.org'
@@ -139,6 +147,7 @@ export interface PostalAddressSchema {
 **Purpose**: Represents schema.org Article structured data (blog posts, success stories)
 
 **Properties**:
+
 - `@context` (string, required): Always "https://schema.org"
 - `@type` (string, required): "Article", "BlogPosting", or "NewsArticle"
 - `headline` (string, required): Article title (≤110 characters for AMP)
@@ -153,6 +162,7 @@ export interface PostalAddressSchema {
 - `keywords` (string[], optional): Article keywords/tags
 
 **Nested: Person (Author)**:
+
 - `@type` (string, required): Always "Person"
 - `name` (string, required): Author full name
 - `url` (string, optional): Author profile URL
@@ -161,6 +171,7 @@ export interface PostalAddressSchema {
 - `sameAs` (string[], optional): Author social media URLs
 
 **Validation Rules**:
+
 - `headline` length SHOULD be ≤110 characters (Google truncates longer headlines)
 - `image` MUST be absolute HTTPS URL(s), minimum 1200x675px recommended
 - `datePublished` MUST be valid ISO 8601 date
@@ -169,6 +180,7 @@ export interface PostalAddressSchema {
 - `publisher` MUST reference Organization schema (can reuse global organization)
 
 **TypeScript Interface**:
+
 ```typescript
 export interface ArticleSchema {
   '@context': 'https://schema.org'
@@ -176,8 +188,8 @@ export interface ArticleSchema {
   headline: string
   description?: string
   image: string | string[]
-  datePublished: string  // ISO 8601
-  dateModified?: string  // ISO 8601
+  datePublished: string // ISO 8601
+  dateModified?: string // ISO 8601
   author: PersonSchema | PersonSchema[]
   publisher: OrganizationSchema
   mainEntityOfPage?: string
@@ -202,6 +214,7 @@ export interface PersonSchema {
 **Purpose**: Represents schema.org JobPosting structured data (job listings)
 
 **Properties**:
+
 - `@context` (string, required): Always "https://schema.org"
 - `@type` (string, required): Always "JobPosting"
 - `title` (string, required): Job title
@@ -215,16 +228,19 @@ export interface PersonSchema {
 - `directApply` (boolean, optional): Can apply directly via website
 
 **Nested: Place (JobLocation)**:
+
 - `@type` (string, required): Always "Place"
 - `address` (PostalAddress | string, required): Physical address or "TELECOMMUTE"
 
 **Nested: MonetaryAmount (BaseSalary)**:
+
 - `@type` (string, required): Always "MonetaryAmount"
 - `currency` (string, required): Currency code (ISO 4217, e.g., "USD")
 - `value` (number | object, required): Salary amount or range
   - If range: `{ minValue: number, maxValue: number, unitText: 'YEAR' | 'MONTH' | 'HOUR' }`
 
 **Validation Rules**:
+
 - `title` MUST NOT be empty
 - `description` MUST be at least 300 characters (Google requirement)
 - `datePosted` MUST be valid ISO 8601 date
@@ -233,15 +249,25 @@ export interface PersonSchema {
 - `baseSalary.currency` MUST be valid ISO 4217 code
 
 **TypeScript Interface**:
+
 ```typescript
 export interface JobPostingSchema {
   '@context': 'https://schema.org'
   '@type': 'JobPosting'
   title: string
   description: string
-  datePosted: string  // ISO 8601
-  validThrough?: string  // ISO 8601
-  employmentType?: Array<'FULL_TIME' | 'PART_TIME' | 'CONTRACTOR' | 'TEMPORARY' | 'INTERN' | 'VOLUNTEER' | 'PER_DIEM' | 'OTHER'>
+  datePosted: string // ISO 8601
+  validThrough?: string // ISO 8601
+  employmentType?: Array<
+    | 'FULL_TIME'
+    | 'PART_TIME'
+    | 'CONTRACTOR'
+    | 'TEMPORARY'
+    | 'INTERN'
+    | 'VOLUNTEER'
+    | 'PER_DIEM'
+    | 'OTHER'
+  >
   hiringOrganization: OrganizationSchema
   jobLocation: PlaceSchema
   baseSalary?: MonetaryAmountSchema
@@ -255,12 +281,14 @@ export interface PlaceSchema {
 
 export interface MonetaryAmountSchema {
   '@type': 'MonetaryAmount'
-  currency: string  // ISO 4217
-  value: number | {
-    minValue: number
-    maxValue: number
-    unitText: 'YEAR' | 'MONTH' | 'HOUR'
-  }
+  currency: string // ISO 4217
+  value:
+    | number
+    | {
+        minValue: number
+        maxValue: number
+        unitText: 'YEAR' | 'MONTH' | 'HOUR'
+      }
 }
 ```
 
@@ -271,6 +299,7 @@ export interface MonetaryAmountSchema {
 **Purpose**: Represents schema.org LocalBusiness structured data (contact page)
 
 **Properties**:
+
 - `@context` (string, required): Always "https://schema.org"
 - `@type` (string, required): "LocalBusiness" or more specific type (e.g., "ProfessionalService")
 - `name` (string, required): Business name
@@ -284,17 +313,20 @@ export interface MonetaryAmountSchema {
 - `priceRange` (string, optional): Price range indicator (e.g., "$$")
 
 **Nested: GeoCoordinates**:
+
 - `@type` (string, required): Always "GeoCoordinates"
 - `latitude` (number, required): Latitude (-90 to 90)
 - `longitude` (number, required): Longitude (-180 to 180)
 
 **Nested: OpeningHoursSpecification**:
+
 - `@type` (string, required): Always "OpeningHoursSpecification"
 - `dayOfWeek` (string[], required): Days of week (e.g., ["Monday", "Tuesday"])
 - `opens` (string, required): Opening time (HH:MM format, 24-hour)
 - `closes` (string, required): Closing time (HH:MM format, 24-hour)
 
 **Validation Rules**:
+
 - `name` MUST NOT be empty
 - `telephone` SHOULD follow E.164 format
 - `address` MUST be complete PostalAddress
@@ -304,6 +336,7 @@ export interface MonetaryAmountSchema {
 - `dayOfWeek` values MUST be: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
 
 **TypeScript Interface**:
+
 ```typescript
 export interface LocalBusinessSchema {
   '@context': 'https://schema.org'
@@ -327,9 +360,17 @@ export interface GeoCoordinatesSchema {
 
 export interface OpeningHoursSpecificationSchema {
   '@type': 'OpeningHoursSpecification'
-  dayOfWeek: Array<'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday'>
-  opens: string  // HH:MM
-  closes: string  // HH:MM
+  dayOfWeek: Array<
+    | 'Monday'
+    | 'Tuesday'
+    | 'Wednesday'
+    | 'Thursday'
+    | 'Friday'
+    | 'Saturday'
+    | 'Sunday'
+  >
+  opens: string // HH:MM
+  closes: string // HH:MM
 }
 ```
 
@@ -340,23 +381,27 @@ export interface OpeningHoursSpecificationSchema {
 **Purpose**: Represents schema.org BreadcrumbList structured data (all pages with navigation hierarchy)
 
 **Properties**:
+
 - `@context` (string, required): Always "https://schema.org"
 - `@type` (string, required): Always "BreadcrumbList"
 - `itemListElement` (ListItem[], required): Breadcrumb items in order
 
 **Nested: ListItem**:
+
 - `@type` (string, required): Always "ListItem"
 - `position` (number, required): Position in list (1-indexed)
 - `name` (string, required): Breadcrumb label
 - `item` (string, required): Breadcrumb URL (absolute)
 
 **Validation Rules**:
+
 - `itemListElement` MUST have at least 2 items (home + current page)
 - `position` MUST be sequential starting from 1
 - `item` MUST be absolute HTTPS URL
 - `name` MUST NOT be empty
 
 **TypeScript Interface**:
+
 ```typescript
 export interface BreadcrumbListSchema {
   '@context': 'https://schema.org'
@@ -379,6 +424,7 @@ export interface BreadcrumbItemSchema {
 **Purpose**: Represents schema.org Service structured data (solution pages)
 
 **Properties**:
+
 - `@context` (string, required): Always "https://schema.org"
 - `@type` (string, required): Always "Service"
 - `name` (string, required): Service name
@@ -389,6 +435,7 @@ export interface BreadcrumbItemSchema {
 - `offers` (Offer, optional): Pricing/availability information
 
 **Nested: Offer**:
+
 - `@type` (string, required): Always "Offer"
 - `url` (string, optional): URL to purchase/learn more
 - `priceCurrency` (string, optional): Currency code (ISO 4217)
@@ -396,6 +443,7 @@ export interface BreadcrumbItemSchema {
 - `availability` (string, optional): "InStock", "OutOfStock", etc.
 
 **Validation Rules**:
+
 - `name` MUST NOT be empty
 - `description` MUST be at least 100 characters
 - `provider` MUST reference Organization schema
@@ -403,6 +451,7 @@ export interface BreadcrumbItemSchema {
 - `offers.availability` MUST be schema.org ItemAvailability value if present
 
 **TypeScript Interface**:
+
 ```typescript
 export interface ServiceSchema {
   '@context': 'https://schema.org'
@@ -418,7 +467,7 @@ export interface ServiceSchema {
 export interface OfferSchema {
   '@type': 'Offer'
   url?: string
-  priceCurrency?: string  // ISO 4217
+  priceCurrency?: string // ISO 4217
   price?: number
   availability?: 'InStock' | 'OutOfStock' | 'PreOrder' | 'Discontinued'
 }
@@ -431,24 +480,34 @@ export interface OfferSchema {
 **Purpose**: Represents a single entry in sitemap.xml
 
 **Properties**:
+
 - `loc` (string, required): Page URL (absolute, HTTPS)
 - `lastmod` (ISO8601 string, optional): Last modification date
 - `changefreq` (string, optional): Change frequency hint
 - `priority` (number, optional): Priority hint (0.0 to 1.0)
 
 **Validation Rules**:
+
 - `loc` MUST be absolute HTTPS URL
 - `lastmod` MUST be valid ISO 8601 date if present
 - `changefreq` MUST be one of: always, hourly, daily, weekly, monthly, yearly, never
 - `priority` MUST be between 0.0 and 1.0 if present
 
 **TypeScript Interface**:
+
 ```typescript
 export interface SitemapEntry {
   loc: string
-  lastmod?: string  // ISO 8601
-  changefreq?: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never'
-  priority?: number  // 0.0 - 1.0
+  lastmod?: string // ISO 8601
+  changefreq?:
+    | 'always'
+    | 'hourly'
+    | 'daily'
+    | 'weekly'
+    | 'monthly'
+    | 'yearly'
+    | 'never'
+  priority?: number // 0.0 - 1.0
 }
 ```
 
@@ -459,6 +518,7 @@ export interface SitemapEntry {
 **Purpose**: Represents validation result for SEO checks
 
 **Properties**:
+
 - `page` (string, required): Page path being validated
 - `checks` (ValidationCheck[], required): Individual validation checks
 - `passed` (boolean, required): Overall pass/fail status
@@ -466,12 +526,14 @@ export interface SitemapEntry {
 - `warnings` (string[], required): Warning messages
 
 **Nested: ValidationCheck**:
+
 - `name` (string, required): Check name (e.g., "title-length", "meta-description-present")
 - `passed` (boolean, required): Whether check passed
 - `message` (string, optional): Descriptive message
 - `severity` (string, required): "error" or "warning"
 
 **TypeScript Interface**:
+
 ```typescript
 export interface SEOValidationResult {
   page: string
@@ -538,6 +600,7 @@ SEOValidationResult (1) ←→ (1) Page
 5. **Updated**: Content modified, articleModifiedTime updated
 
 **Validation Points**:
+
 - Pre-commit: Local validation via `yarn seo:validate`
 - PR: CI/CD validation ensures all checks pass
 - Post-deployment: Google Search Console monitors indexing
@@ -551,6 +614,7 @@ SEOValidationResult (1) ←→ (1) Page
 5. **Rendered**: Rich results appear in search (if eligible)
 
 **Validation Points**:
+
 - Build time: JSON validation in structured data builders
 - PR validation: Google Rich Results Test API
 - Post-deployment: Google Search Console Rich Results report
@@ -560,18 +624,22 @@ SEOValidationResult (1) ←→ (1) Page
 ## Indexes and Access Patterns
 
 ### Meta Tag Access
+
 - Primary access: By page path (e.g., `/blog/my-post`)
 - Lookup pattern: `getStaticProps` → load content → generate SEOMetadata → pass to <SEO> component
 
 ### Structured Data Access
+
 - Primary access: By page type (e.g., "blog-post", "job", "solution")
 - Lookup pattern: `getStaticProps` → detect page type → call appropriate schema builder → embed JSON-LD
 
 ### Sitemap Access
+
 - Build-time generation: `next-sitemap` scans `/pages` directory
 - Runtime access: Served statically at `/sitemap.xml`
 
 ### Validation Results
+
 - Access pattern: By page path for individual results
 - Aggregation: All results combined for CI/CD pass/fail decision
 
@@ -580,12 +648,14 @@ SEOValidationResult (1) ←→ (1) Page
 ## Data Integrity Constraints
 
 ### Cross-Entity Constraints
+
 - `SEOMetadata.canonical` MUST match actual page URL
 - `ArticleSchema.datePublished` MUST match `SEOMetadata.articlePublishedTime`
 - `BreadcrumbList.itemListElement[last].item` MUST match page canonical URL
 - `ArticleSchema.publisher` MUST reference the same Organization across all articles
 
 ### Format Constraints
+
 - All ISO 8601 dates MUST include timezone (prefer UTC with 'Z' suffix)
 - All URLs MUST be absolute and use HTTPS protocol
 - All schema.org @type values MUST be valid schema.org types
@@ -593,6 +663,7 @@ SEOValidationResult (1) ←→ (1) Page
 - All country codes MUST be valid ISO 3166-1 alpha-2 codes
 
 ### Business Rules
+
 - Blog posts MUST have at least one author
 - Job postings MUST have description ≥300 characters
 - Solutions MUST have description ≥100 characters
@@ -605,16 +676,19 @@ SEOValidationResult (1) ←→ (1) Page
 ## Performance Considerations
 
 ### JSON-LD Size Limits
+
 - Target: <5KB per schema instance
 - Maximum: 10KB total structured data per page
 - Monitoring: Add to Lighthouse custom audits if exceeds limits
 
 ### Build-Time Generation
+
 - All structured data generated during `getStaticProps` (no runtime overhead)
 - Schema builders should be pure functions (no I/O, deterministic)
 - Cache schema templates in memory where appropriate
 
 ### Validation Performance
+
 - Validation scripts should complete in <30 seconds for full site
 - Parallelize page validation where possible
 - Cache validation results during CI/CD to avoid re-validation
@@ -624,22 +698,26 @@ SEOValidationResult (1) ←→ (1) Page
 ## Migration Strategy
 
 ### Phase 1: Core SEO (Weeks 1-2)
+
 - Enhance `<SEO>` component with all meta tag properties
 - Add `OrganizationSchema` to `_document.tsx`
 - Implement `BreadcrumbListSchema` for all pages with breadcrumbs
 
 ### Phase 2: Content Schemas (Weeks 3-4)
+
 - Add `ArticleSchema` to blog posts and success stories
 - Implement `JobPostingSchema` for job listings
 - Add `ServiceSchema` to solution pages
 
 ### Phase 3: Local + Advanced (Weeks 5-6)
+
 - Add `LocalBusinessSchema` to contact page
 - Implement automated validation scripts
 - Set up Google Search Console integration
 - Create SEO monitoring dashboard
 
 ### Rollback Strategy
+
 - Schema.org: Remove `<SchemaOrg>` component wrapper, page still functions
 - Meta tags: Existing `<SEO>` component already provides basic tags
 - Validation: Can be disabled in CI/CD if blocking deployments

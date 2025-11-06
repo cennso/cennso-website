@@ -81,7 +81,13 @@
     },
     "PostalAddressSchema": {
       "type": "object",
-      "required": ["@type", "streetAddress", "addressLocality", "postalCode", "addressCountry"],
+      "required": [
+        "@type",
+        "streetAddress",
+        "addressLocality",
+        "postalCode",
+        "addressCountry"
+      ],
       "properties": {
         "@type": {
           "type": "string",
@@ -111,7 +117,15 @@
     },
     "ArticleSchema": {
       "type": "object",
-      "required": ["@context", "@type", "headline", "image", "datePublished", "author", "publisher"],
+      "required": [
+        "@context",
+        "@type",
+        "headline",
+        "image",
+        "datePublished",
+        "author",
+        "publisher"
+      ],
       "properties": {
         "@context": {
           "type": "string",
@@ -216,7 +230,15 @@
     },
     "JobPostingSchema": {
       "type": "object",
-      "required": ["@context", "@type", "title", "description", "datePosted", "hiringOrganization", "jobLocation"],
+      "required": [
+        "@context",
+        "@type",
+        "title",
+        "description",
+        "datePosted",
+        "hiringOrganization",
+        "jobLocation"
+      ],
       "properties": {
         "@context": {
           "type": "string",
@@ -246,7 +268,16 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["FULL_TIME", "PART_TIME", "CONTRACTOR", "TEMPORARY", "INTERN", "VOLUNTEER", "PER_DIEM", "OTHER"]
+            "enum": [
+              "FULL_TIME",
+              "PART_TIME",
+              "CONTRACTOR",
+              "TEMPORARY",
+              "INTERN",
+              "VOLUNTEER",
+              "PER_DIEM",
+              "OTHER"
+            ]
           }
         },
         "hiringOrganization": {
@@ -404,7 +435,15 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+            "enum": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday",
+              "Sunday"
+            ]
           }
         },
         "opens": {

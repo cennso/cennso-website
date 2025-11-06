@@ -52,7 +52,7 @@ Before starting, ensure you have:
 ### Step 1: Import the SEO Component
 
 ```tsx
-import { SEO } from '@/components/SEO';
+import { SEO } from '@/components/SEO'
 ```
 
 ### Step 2: Add SEO Component to Your Page
@@ -86,7 +86,7 @@ export default function MyPage({ pageData }) {
       />
       {/* Your page content */}
     </>
-  );
+  )
 }
 ```
 
@@ -95,40 +95,46 @@ export default function MyPage({ pageData }) {
 Refer to `contracts/meta-tag-templates.json` for standardized patterns:
 
 **Title Templates:**
+
 - Default: `"{pageTitle} | Cennso"` (max 60 chars)
 - Blog: `"{postTitle} | Cennso Blog"` (max 60 chars)
 - Solution: `"{solutionName} - {category} | Cennso"` (max 60 chars)
 
 **Description Templates:**
+
 - Min: 150 characters
 - Max: 160 characters
 - Must include primary keyword + CTA
 
 **Example:**
+
 ```tsx
 // ✅ Good - Uses template pattern
-title: "Cloud Migration - IT Services | Cennso"
+title: 'Cloud Migration - IT Services | Cennso'
 description: "Learn how Cennso's cloud migration services help businesses reduce costs and improve scalability. Schedule a consultation today."
 
 // ❌ Bad - Too short, no CTA
-title: "Cloud Migration"
-description: "Cloud services."
+title: 'Cloud Migration'
+description: 'Cloud services.'
 ```
 
 ### Step 4: Generate Canonical URLs
 
 **Production:**
+
 ```tsx
-const canonicalUrl = `https://www.cennso.com${router.asPath}`;
+const canonicalUrl = `https://www.cennso.com${router.asPath}`
 ```
 
 **With Environment Detection:**
+
 ```tsx
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.cennso.com';
-const canonicalUrl = `${baseUrl}${router.asPath}`;
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.cennso.com'
+const canonicalUrl = `${baseUrl}${router.asPath}`
 ```
 
 **Rules:**
+
 - ✅ HTTPS only
 - ✅ Absolute URLs
 - ✅ No trailing slashes (unless homepage)
@@ -143,14 +149,14 @@ const canonicalUrl = `${baseUrl}${router.asPath}`;
 
 Refer to `contracts/structured-data-schemas.json` for available types:
 
-| Content Type | Schema.org Type | Use Case |
-|--------------|----------------|----------|
-| Blog Post | `Article` or `BlogPosting` | Individual blog posts |
-| Solution Page | `Service` | Service/product pages |
-| Job Posting | `JobPosting` | Career opportunities |
-| About Page | `Organization` | Company information |
-| Success Story | `Article` | Case studies |
-| Contact Page | `LocalBusiness` | Location/contact info |
+| Content Type  | Schema.org Type            | Use Case              |
+| ------------- | -------------------------- | --------------------- |
+| Blog Post     | `Article` or `BlogPosting` | Individual blog posts |
+| Solution Page | `Service`                  | Service/product pages |
+| Job Posting   | `JobPosting`               | Career opportunities  |
+| About Page    | `Organization`             | Company information   |
+| Success Story | `Article`                  | Case studies          |
+| Contact Page  | `LocalBusiness`            | Location/contact info |
 
 ### Step 2: Create JSON-LD Structured Data
 
@@ -179,7 +185,7 @@ const articleSchema = {
     },
   },
   mainEntityOfPage: 'https://www.cennso.com/blog/getting-started-nextjs',
-};
+}
 ```
 
 **Example: Job Posting Schema**
@@ -209,7 +215,7 @@ const jobPostingSchema = {
       addressCountry: 'DE',
     },
   },
-};
+}
 ```
 
 ### Step 3: Embed JSON-LD in Page
@@ -260,7 +266,7 @@ const breadcrumbSchema = {
       item: 'https://www.cennso.com/blog/getting-started-nextjs',
     },
   ],
-};
+}
 ```
 
 ---
@@ -270,6 +276,7 @@ const breadcrumbSchema = {
 ### Title Tags
 
 **Rules:**
+
 - ✅ 50-60 characters (optimal: 55)
 - ✅ Include primary keyword near the beginning
 - ✅ Use template pattern from `contracts/meta-tag-templates.json`
@@ -278,20 +285,22 @@ const breadcrumbSchema = {
 - ❌ Don't use all caps
 
 **Examples:**
+
 ```tsx
 // ✅ Good
-"Cloud Migration Services - IT Consulting | Cennso"
+'Cloud Migration Services - IT Consulting | Cennso'
 
 // ❌ Bad - Too long (68 chars)
-"Cloud Migration Services and Solutions for Enterprise Businesses | Cennso"
+'Cloud Migration Services and Solutions for Enterprise Businesses | Cennso'
 
 // ❌ Bad - Keyword stuffing
-"Cloud Migration Cloud Services Cloud Hosting | Cennso"
+'Cloud Migration Cloud Services Cloud Hosting | Cennso'
 ```
 
 ### Meta Descriptions
 
 **Rules:**
+
 - ✅ 150-160 characters (optimal: 155)
 - ✅ Include primary keyword naturally
 - ✅ Add clear call-to-action
@@ -300,20 +309,22 @@ const breadcrumbSchema = {
 - ❌ Don't keyword stuff
 
 **Examples:**
+
 ```tsx
 // ✅ Good (156 chars)
 "Learn how Cennso's cloud migration services help businesses reduce costs and improve scalability. Schedule a consultation today."
 
 // ❌ Bad - Too short (45 chars)
-"Cennso offers cloud migration services."
+'Cennso offers cloud migration services.'
 
 // ❌ Bad - No CTA, generic
-"We provide cloud migration services to businesses of all sizes around the world."
+'We provide cloud migration services to businesses of all sizes around the world.'
 ```
 
 ### Open Graph Images
 
 **Requirements:**
+
 - ✅ Dimensions: 1200×630 pixels (1.91:1 aspect ratio)
 - ✅ Format: WebP, PNG, or JPG
 - ✅ Max file size: 100KB
@@ -321,11 +332,13 @@ const breadcrumbSchema = {
 - ❌ Don't use text-heavy images
 
 **Location:**
+
 ```
 /public/assets/og-images/{page-slug}-og.png
 ```
 
 **Auto-generation:**
+
 ```bash
 # Generate OG images during build
 yarn build
@@ -370,6 +383,7 @@ yarn check:all
 ```
 
 This runs:
+
 - ✅ Prettier formatting
 - ✅ ESLint
 - ✅ Accessibility checks (11 WCAG 2.1 AA scripts)
@@ -379,6 +393,7 @@ This runs:
 ### CI/CD Validation (GitHub Actions)
 
 **Automated on every PR:**
+
 - ✅ Lighthouse audit (≥95% enforced)
 - ✅ Link checking (via lychee)
 - ✅ Structured data validation
@@ -386,18 +401,21 @@ This runs:
 - ✅ Core Web Vitals monitoring
 
 **Manual validation:**
+
 - Google Rich Results Test: https://search.google.com/test/rich-results
 - Schema.org Validator: https://validator.schema.org/
 
 ### Post-Deployment Monitoring
 
 **Google Search Console:**
+
 1. Monitor Core Web Vitals (LCP, FID, CLS)
 2. Check Coverage report for indexing errors
 3. Validate structured data in Enhancements section
 4. Review mobile usability issues
 
 **Vercel Analytics:**
+
 - Real User Monitoring (RUM) for Core Web Vitals
 - Performance metrics tracking
 
@@ -408,6 +426,7 @@ This runs:
 ### Issue: Lighthouse SEO Score < 95%
 
 **Common causes:**
+
 1. Missing meta description
 2. Title too long/short
 3. Missing canonical URL
@@ -415,6 +434,7 @@ This runs:
 5. Links not crawlable
 
 **Solution:**
+
 ```bash
 # Run lighthouse with full report
 yarn lighthouse
@@ -426,23 +446,26 @@ open lighthouse-desktop.html
 ### Issue: Structured Data Validation Errors
 
 **Common causes:**
+
 1. Missing required fields (`@context`, `@type`, etc.)
 2. Invalid URL format (must be absolute HTTPS)
 3. Invalid date format (must be ISO 8601)
 4. Missing nested required properties
 
 **Solution:**
+
 1. Check against contract schema: `contracts/structured-data-schemas.json`
 2. Validate with Google Rich Results Test: https://search.google.com/test/rich-results
 3. Use Schema.org Validator: https://validator.schema.org/
 
 **Example fix:**
+
 ```tsx
 // ❌ Bad - Missing required fields
 const articleSchema = {
   '@type': 'Article',
   headline: 'My Post',
-};
+}
 
 // ✅ Good - All required fields
 const articleSchema = {
@@ -453,18 +476,20 @@ const articleSchema = {
   datePublished: '2024-01-15T10:00:00Z',
   author: { '@type': 'Person', name: 'John Doe' },
   publisher: { '@type': 'Organization', name: 'Cennso', logo: '...' },
-};
+}
 ```
 
 ### Issue: Canonical URL Conflicts
 
 **Common causes:**
+
 1. Duplicate content on multiple URLs
 2. HTTP vs HTTPS mismatch
 3. Trailing slash inconsistency
 4. Query parameter variations
 
 **Solution:**
+
 1. Always use absolute HTTPS URLs
 2. Remove trailing slashes (except homepage)
 3. Strip non-essential query parameters
@@ -472,22 +497,24 @@ const articleSchema = {
 
 ```tsx
 // ✅ Good - Consistent canonical URLs
-const canonicalUrl = 'https://www.cennso.com/blog/post-slug';
+const canonicalUrl = 'https://www.cennso.com/blog/post-slug'
 
 // ❌ Bad - Multiple variations
-'http://www.cennso.com/blog/post-slug'   // HTTP (should be HTTPS)
-'https://www.cennso.com/blog/post-slug/' // Trailing slash
-'https://www.cennso.com/blog/post-slug?ref=twitter' // Query param
+;('http://www.cennso.com/blog/post-slug') // HTTP (should be HTTPS)
+;('https://www.cennso.com/blog/post-slug/') // Trailing slash
+;('https://www.cennso.com/blog/post-slug?ref=twitter') // Query param
 ```
 
 ### Issue: Meta Tags Not Updating
 
 **Common causes:**
+
 1. Hot reload doesn't work for content changes
 2. OG image cache (Facebook/Twitter)
 3. Next.js build cache
 
 **Solution:**
+
 ```bash
 # 1. Manual browser refresh after content changes
 # (hot reload doesn't work for YAML/MDX content)
@@ -506,12 +533,14 @@ yarn build
 ### Issue: Images Not Optimized
 
 **Common causes:**
+
 1. Non-WebP format
 2. File size > 100KB
 3. Missing `sizes` prop on `<Image>` component
 4. Oversized source images
 
 **Solution:**
+
 ```bash
 # Check image optimization
 yarn perf:images
@@ -521,6 +550,7 @@ yarn perf:images:optimize
 ```
 
 **Fix `<Image>` components:**
+
 ```tsx
 // ❌ Bad - Missing sizes prop
 <Image src="/assets/hero.png" width={800} height={600} alt="Hero" />

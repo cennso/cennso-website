@@ -19,41 +19,31 @@
         "pattern": "Cennso - {tagline}",
         "description": "Homepage title format",
         "maxLength": 60,
-        "examples": [
-          "Cennso - Expert IT Consulting Services"
-        ]
+        "examples": ["Cennso - Expert IT Consulting Services"]
       },
       "blogPost": {
         "pattern": "{postTitle} | Cennso Blog",
         "description": "Blog post title format",
         "maxLength": 60,
-        "examples": [
-          "Getting Started with Next.js | Cennso Blog"
-        ]
+        "examples": ["Getting Started with Next.js | Cennso Blog"]
       },
       "solution": {
         "pattern": "{solutionName} - {category} | Cennso",
         "description": "Solution page title format",
         "maxLength": 60,
-        "examples": [
-          "Cloud Migration - IT Services | Cennso"
-        ]
+        "examples": ["Cloud Migration - IT Services | Cennso"]
       },
       "jobPosting": {
         "pattern": "{jobTitle} - {location} | Cennso Careers",
         "description": "Job posting title format",
         "maxLength": 60,
-        "examples": [
-          "Senior Developer - Remote | Cennso Careers"
-        ]
+        "examples": ["Senior Developer - Remote | Cennso Careers"]
       },
       "successStory": {
         "pattern": "{companyName} Success Story | Cennso",
         "description": "Success story title format",
         "maxLength": 60,
-        "examples": [
-          "Acme Corp Success Story | Cennso"
-        ]
+        "examples": ["Acme Corp Success Story | Cennso"]
       }
     },
     "descriptionTemplates": {
@@ -105,7 +95,13 @@
     },
     "openGraphTemplates": {
       "article": {
-        "required": ["og:type", "og:title", "og:description", "og:image", "og:url"],
+        "required": [
+          "og:type",
+          "og:title",
+          "og:description",
+          "og:image",
+          "og:url"
+        ],
         "properties": {
           "og:type": "article",
           "og:title": "{postTitle}",
@@ -124,7 +120,13 @@
         }
       },
       "website": {
-        "required": ["og:type", "og:title", "og:description", "og:image", "og:url"],
+        "required": [
+          "og:type",
+          "og:title",
+          "og:description",
+          "og:image",
+          "og:url"
+        ],
         "properties": {
           "og:type": "website",
           "og:title": "{pageTitle}",
@@ -154,7 +156,12 @@
     },
     "twitterCardTemplates": {
       "summaryLargeImage": {
-        "required": ["twitter:card", "twitter:title", "twitter:description", "twitter:image"],
+        "required": [
+          "twitter:card",
+          "twitter:title",
+          "twitter:description",
+          "twitter:image"
+        ],
         "properties": {
           "twitter:card": "summary_large_image",
           "twitter:site": "@cennso",

@@ -47,15 +47,16 @@ module.exports = {
   generateRobotsTxt: false,
   generateIndexSitemap: false,
   transform(_, pagePath) {
-    // landing page
+    // landing page - highest priority, check daily
     if (pagePath === '/') {
       return {
         loc: pagePath,
-        changefreq: 'monthly',
-        priority: 1,
+        changefreq: 'daily',
+        priority: 1.0,
       }
     }
 
+    // about and contact pages - important, stable content
     if (pagePath === '/about') {
       return {
         loc: pagePath,
@@ -72,43 +73,56 @@ module.exports = {
       }
     }
 
+    if (pagePath === '/partners') {
+      return {
+        loc: pagePath,
+        changefreq: 'monthly',
+        priority: 0.7,
+      }
+    }
+
+    // blog posts - updated monthly, good SEO value
     if (pagePath.startsWith('/blog')) {
       return {
         loc: pagePath,
         changefreq: 'monthly',
-        priority: 0.7,
+        priority: 0.8,
         lastmod: getLastModificationDate(pagePath, 'blog') || undefined,
       }
     }
 
+    // success stories - high value content, updated monthly
     if (pagePath.startsWith('/success-stories')) {
       return {
         loc: pagePath,
         changefreq: 'monthly',
-        priority: 0.7,
+        priority: 0.8,
         lastmod:
           getLastModificationDate(pagePath, 'success-stories') || undefined,
       }
     }
 
+    // solutions - core service pages, check weekly
     if (pagePath.startsWith('/solutions')) {
       return {
         loc: pagePath,
-        changefreq: 'monthly',
-        priority: 0.7,
+        changefreq: 'weekly',
+        priority: 0.9,
         lastmod: getLastModificationDate(pagePath, 'solutions') || undefined,
       }
     }
 
+    // jobs - updated frequently, moderate priority
     if (pagePath.startsWith('/jobs')) {
       return {
         loc: pagePath,
-        changefreq: 'monthly',
-        priority: 0.5,
+        changefreq: 'weekly',
+        priority: 0.6,
         lastmod: getLastModificationDate(pagePath, 'jobs') || undefined,
       }
     }
 
+    // other pages - lower priority
     return {
       loc: pagePath,
       changefreq: 'yearly',

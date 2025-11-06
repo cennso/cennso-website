@@ -14,36 +14,42 @@ Implement comprehensive SEO improvements across technical SEO foundation, struct
 ## Technical Context
 
 **Language/Version**: TypeScript 5.3+ / Next.js 14.2.33 (Pages Router, not App Router)
-**Primary Dependencies**: 
+**Primary Dependencies**:
+
 - React 18, next-seo (SEO meta tags), next-sitemap (sitemap generation)
 - TailwindCSS 3.4+ + DaisyUI (optimized config)
 - MDX (blog/content parsing), gray-matter (frontmatter), remark/rehype plugins
 
-**Storage**: 
+**Storage**:
+
 - Static content: YAML files (`content/*.yaml`) for structured data
 - MDX files (`content/blog-posts/`, `content/success-stories/`) for articles
 - File system as source of truth (no database)
 
-**Testing**: 
+**Testing**:
+
 - Playwright (E2E - not yet implemented)
-- Vitest + React Testing Library (unit/component - not yet implemented)  
+- Vitest + React Testing Library (unit/component - not yet implemented)
 - Lighthouse CI (performance/a11y/SEO - active)
 - Python validation scripts (accessibility, image optimization - active)
 
-**Target Platform**: 
+**Target Platform**:
+
 - Static Site Generation (SSG) deployed on Vercel
 - Browser support: Modern evergreen browsers (Chrome, Firefox, Safari, Edge latest)
 - Mobile-first responsive design (375px → 768px → 1024px+ breakpoints)
 
 **Project Type**: Web application (Next.js SSG, no backend API)
 
-**Performance Goals**: 
+**Performance Goals**:
+
 - Lighthouse Performance ≥95% (desktop and mobile)
 - Core Web Vitals "Good": LCP < 2.5s, FID < 100ms, CLS < 0.1
 - First Load JS ≤ 275KB (current baseline)
 - Page load time: < 2s desktop, < 3s mobile (3G)
 
-**Constraints**: 
+**Constraints**:
+
 - Static generation only (no SSR, no client-side data fetching for content)
 - Image optimization: WebP format, ≤100KB per file
 - Next.js Image `sizes` prop required on all `<Image>` components
@@ -52,7 +58,8 @@ Implement comprehensive SEO improvements across technical SEO foundation, struct
 - CSS: ~28KB total (optimized from 33.5KB)
 - Accessibility: WCAG 2.1 AA compliance (11 automated checks must pass)
 
-**Scale/Scope**: 
+**Scale/Scope**:
+
 - ~18 static pages (blog, success stories, solutions, jobs, marketing pages)
 - 50+ functional requirements across 8 SEO categories
 - 26 success criteria with 2-week to 6-month timelines
@@ -93,6 +100,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 ### IV. Performance & Build Optimization ⚠️ ATTENTION REQUIRED
 
 **Current State**:
+
 - ✅ Lighthouse ≥95% requirement already enforced
 - ✅ Images already optimized (WebP, ≤100KB)
 - ✅ Next.js Image `sizes` prop requirement documented
@@ -100,17 +108,20 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - ✅ DaisyUI optimized configuration active
 
 **SEO Impact Assessment**:
+
 - Adding structured data (JSON-LD): ~2-5KB per page (minimal impact)
 - Enhanced meta tags: <1KB per page (negligible)
 - Sitemap.xml already generated (no change)
 - Internal linking: No bundle size impact (SSG content)
 
 **Lighthouse Score Protection**:
+
 - Must maintain ≥95% Performance after adding structured data
 - Schema.org JSON-LD is render-blocking but small (<5KB)
 - Open Graph images already generated (no additional generation needed)
 
 **Action Required**:
+
 1. Measure Lighthouse scores before and after structured data implementation
 2. If Performance drops below 95%, inline critical JSON-LD in `<head>`
 3. Defer non-critical schema types to end of `<body>`
@@ -124,6 +135,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - Semantic HTML5 structure aids both search engines and screen readers
 
 **Synergies**:
+
 - Schema.org structured data + semantic HTML = better screen reader experience
 - Descriptive page titles benefit both SEO and WCAG 2.4.2 (Page Titled)
 - Image alt text serves WCAG 1.1.1 (Text Alternatives) and Google Image Search
@@ -142,6 +154,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 ### Quality Gates - Enhanced for SEO ✅ PASS
 
 **Existing gates remain**:
+
 - ✅ `yarn build` (no errors)
 - ✅ `yarn lint` (ESLint)
 - ✅ `yarn format` (Prettier)
@@ -150,6 +163,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - ✅ `yarn lighthouse` (≥95% on all categories)
 
 **New SEO-specific validations to add**:
+
 1. **Structured Data Validation**: Google Rich Results Test API integration
 2. **Meta Tag Completeness**: Verify all pages have title, description, OG tags
 3. **Sitemap Validation**: Ensure sitemap.xml contains all public pages
@@ -162,7 +176,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 **No violations detected**. SEO improvements align with all constitution principles:
 
 - Type safety maintained through TypeScript interfaces for schema.org types
-- Component reusability enhanced via centralized SEO component patterns  
+- Component reusability enhanced via centralized SEO component patterns
 - User experience consistency through uniform meta tag implementation
 - Performance preserved via careful JSON-LD optimization (<5KB impact)
 - Accessibility improved through semantic structure and descriptive content
@@ -250,7 +264,7 @@ specs/001-do-all-possible/
 └── package.json                   # [ENHANCE] Add SEO validation scripts
 ```
 
-**Structure Decision**: 
+**Structure Decision**:
 
 Existing Next.js Pages Router structure is ideal for SEO implementation. Key decisions:
 
@@ -298,6 +312,7 @@ All SEO improvements align with existing architectural patterns and quality stan
 **Status**: 9 entities defined with TypeScript interfaces, validation rules, relationships, and state transitions.
 
 **Entities**:
+
 1. SEOMetadata (meta tags, OG, Twitter Card)
 2. OrganizationSchema (company-level structured data)
 3. ArticleSchema (blog posts, success stories)
@@ -315,6 +330,7 @@ All SEO improvements align with existing architectural patterns and quality stan
 **Status**: JSON contracts created for structured data schemas and meta tag templates.
 
 **Files Created**:
+
 1. `contracts/structured-data-schemas.json`:
    - JSON Schema definitions for all 7 schema.org types
    - Nested type definitions (Person, PostalAddress, ContactPoint, etc.)
@@ -338,6 +354,7 @@ All SEO improvements align with existing architectural patterns and quality stan
 **Status**: Developer onboarding documentation created with comprehensive examples and troubleshooting.
 
 **Sections**:
+
 1. Overview (architecture pattern, requirements)
 2. Prerequisites (development setup, contract files)
 3. Adding SEO to New Pages (step-by-step with code examples)
@@ -354,6 +371,7 @@ All SEO improvements align with existing architectural patterns and quality stan
 **Status**: GitHub Copilot instructions updated with SEO patterns and technologies.
 
 **Changes**:
+
 - Added TypeScript 5.3+ / Next.js 14.2.33 to active technologies
 - Created agent-specific context file from template
 - Documented SEO implementation patterns for AI assistance
@@ -379,6 +397,7 @@ This will create `tasks.md` with prioritized development tasks based on the comp
 ## Plan Summary ✅ PHASE 1 COMPLETE
 
 **✅ Deliverables Completed**:
+
 1. Technical Context defined (Next.js, TypeScript, constraints)
 2. Constitution Check passed (no violations)
 3. Project Structure documented (Next.js file tree with enhancement markers)
@@ -389,6 +408,7 @@ This will create `tasks.md` with prioritized development tasks based on the comp
 8. Agent Context updated (GitHub Copilot instructions)
 
 **📊 Metrics**:
+
 - 50 functional requirements across 8 SEO categories
 - 26 success criteria with 2-week to 6-month timelines
 - 10 research decisions documented with rationale
@@ -399,6 +419,7 @@ This will create `tasks.md` with prioritized development tasks based on the comp
 - 0 constitution violations
 
 **🎯 Next Steps**:
+
 1. Run `/speckit.tasks` to generate implementation tasks
 2. Break down tasks into development sprints
 3. Implement Phase 1 (Technical SEO Foundation)
@@ -406,6 +427,7 @@ This will create `tasks.md` with prioritized development tasks based on the comp
 5. Deploy and monitor Core Web Vitals
 
 **⚠️ Critical Reminders**:
+
 - Must maintain Lighthouse ≥95% on all categories (Performance, Accessibility, Best Practices, SEO)
 - Run both desktop AND mobile Lighthouse audits (both must pass ≥95%)
 - All images must be WebP format, ≤100KB
@@ -415,6 +437,7 @@ This will create `tasks.md` with prioritized development tasks based on the comp
 - Monitor Core Web Vitals in Google Search Console + Vercel Analytics
 
 **📚 Documentation**:
+
 - Full specification: `specs/001-do-all-possible/spec.md`
 - Research decisions: `specs/001-do-all-possible/research.md`
 - Data models: `specs/001-do-all-possible/data-model.md`
@@ -424,4 +447,7 @@ This will create `tasks.md` with prioritized development tasks based on the comp
 ---
 
 **Plan Status**: ✅ READY FOR TASK GENERATION (`/speckit.tasks`)
-````
+
+```
+
+```

@@ -1,6 +1,14 @@
-# *
+# robots.txt - SEO Optimized
+# Allow search engines to crawl all public pages
+
+# All search engines
 User-agent: *
-Disallow: /
+Allow: /
+
+# Disallow private/technical paths
+Disallow: /_next/
+Disallow: /api/
+Disallow: /*.json$
 
 # Host
 Host: https://cennso.com

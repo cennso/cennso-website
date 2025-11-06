@@ -35,4 +35,36 @@ const siteMetadata = {
   },
 }
 
+// Generate Organization schema from existing metadata to avoid duplication
+siteMetadata.organization = {
+  '@type': 'Organization',
+  name: siteMetadata.companyName,
+  url: siteMetadata.siteUrl,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${siteMetadata.siteUrl}${siteMetadata.siteLogo}`,
+    width: 512,
+    height: 512,
+  },
+  description: siteMetadata.description,
+  email: siteMetadata.contact.email,
+  telephone: siteMetadata.contact.phone,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Südstr. 6',
+    addressLocality: 'Barleben',
+    postalCode: '39179',
+    addressCountry: 'DE',
+  },
+  sameAs: [siteMetadata.social.platforms.linkedIn],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: siteMetadata.contact.phone,
+    contactType: 'customer service',
+    email: siteMetadata.contact.email,
+    areaServed: 'DE',
+    availableLanguage: ['en', 'de'],
+  },
+}
+
 export default siteMetadata
