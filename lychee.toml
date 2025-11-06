@@ -39,10 +39,10 @@ exclude = [
     "file:///*"
 ]
 
-# Exclude these filesystem paths from getting checked. Values are regex patterns.
+# Exclude these filesystem paths from getting checked. Values are glob patterns.
 exclude_path = [
-    "(^|/)specs(/|$)",
-    "(^|/)\\.specify(/|$)"
+    "specs",
+    ".specify"
 ]
 
 # Exclude all private IPs from checking.
