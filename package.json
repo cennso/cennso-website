@@ -31,6 +31,8 @@
     "a11y": "yarn a11y:contrast && yarn a11y:text-alternatives && yarn a11y:media && yarn a11y:semantic && yarn a11y:distinguishable && yarn a11y:keyboard && yarn a11y:enough-time && yarn a11y:seizures && yarn a11y:navigable && yarn a11y:input-modalities && yarn a11y:readable && yarn a11y:predictable && yarn a11y:input-assistance && yarn a11y:compatible",
     "perf:images": "python3 scripts/check-image-optimization.py",
     "perf:images:optimize": "./scripts/run-python.sh optimize-images.py",
+    "perf:mobile": "python3 scripts/check-mobile-performance.py",
+    "perf": "yarn perf:images && yarn perf:mobile",
     "seo:validate": "python3 scripts/validate-seo.py",
     "seo:meta": "python3 scripts/validate-seo.py",
     "seo:schema": "python3 scripts/validate-structured-data.py",
@@ -39,7 +41,7 @@
     "lighthouse:desktop": "rm -rf .lighthouse lighthouse-desktop && lhci collect --config=.lighthouserc.js && lhci upload --config=.lighthouserc.js --target=filesystem --outputDir=./lighthouse-desktop && node scripts/process-lhci-results.js --manifestDir=lighthouse-desktop --outputJson=lighthouse-results.json --outputHtml=lighthouse-desktop.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=.lighthouserc.js",
     "lighthouse:mobile": "rm -rf .lighthouse .lighthouse-mobile lighthouse-mobile && lhci collect --config=lighthouse.mobile.config.js && lhci upload --config=lighthouse.mobile.config.js --target=filesystem --outputDir=./lighthouse-mobile && node scripts/process-lhci-results.js --manifestDir=lighthouse-mobile --outputJson=lighthouse-mobile-results.json --outputHtml=lighthouse-mobile.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=lighthouse.mobile.config.js",
     "lighthouse": "yarn lighthouse:desktop && yarn lighthouse:mobile",
-    "check:all": "yarn format && yarn lint && yarn a11y && yarn perf:images && yarn seo && yarn build"
+    "check:all": "yarn format && yarn lint && yarn a11y && yarn perf && yarn seo && yarn build"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.10",

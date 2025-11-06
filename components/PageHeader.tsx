@@ -57,7 +57,11 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
         </header>
         {background ? (
           <div className="hidden md:block mt-8 -mb-24 md:mt-0 md:mb-0 md:-mr-16">
-            <Image {...background} alt={background.alt} />
+            <Image
+              {...background}
+              alt={background.alt}
+              sizes="(max-width: 768px) 0px, 500px"
+            />
           </div>
         ) : null}
       </Container>

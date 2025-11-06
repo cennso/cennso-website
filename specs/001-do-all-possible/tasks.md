@@ -95,11 +95,11 @@ Project uses Next.js Pages Router structure:
 
 ### Implementation for User Story 4
 
-- [ ] T031 [P] [US4] Audit all `<Image>` components to ensure `sizes` prop is present (pages/index.tsx, pages/about.tsx, pages/blog/[blog-post].tsx, etc.)
-- [ ] T032 [P] [US4] Review image loading strategy and ensure lazy loading for below-the-fold images in all page components
-- [ ] T033 [US4] Verify mobile viewport meta tag is present in `pages/_document.tsx` (width=device-width, initial-scale=1)
-- [ ] T034 [US4] Test touch target sizes in navigation components (minimum 48x48 pixels with adequate spacing)
-- [ ] T035 [US4] Verify font sizes meet minimum 16px base on mobile in `styles/tailwind.css`
+- [x] T031 [P] [US4] Audit all `<Image>` components to ensure `sizes` prop is present (pages/index.tsx, pages/about.tsx, pages/blog/[blog-post].tsx, etc.)
+- [x] T032 [P] [US4] Review image loading strategy and ensure lazy loading for below-the-fold images in all page components
+- [x] T033 [US4] Verify mobile viewport meta tag is present in `pages/_document.tsx` (width=device-width, initial-scale=1)
+- [x] T034 [US4] Test touch target sizes in navigation components (minimum 48x48 pixels with adequate spacing)
+- [x] T035 [US4] Verify font sizes meet minimum 16px base on mobile in `styles/tailwind.css`
 - [ ] T036 [US4] Test all pages for horizontal scrolling on mobile viewports (375px, 768px, 1024px)
 - [ ] T037 [US4] Run `yarn lighthouse` to verify Performance ≥95% and Core Web Vitals "Good" on mobile
 - [ ] T038 [US4] Run Google Mobile-Friendly Test on all major pages and verify 100% pass rate
@@ -116,11 +116,11 @@ Project uses Next.js Pages Router structure:
 
 ### Implementation for User Story 5
 
-- [ ] T039 [P] [US5] Verify all images are in WebP format and ≤100KB via `yarn perf:images` script
+- [x] T039 [P] [US5] Verify all images are in WebP format and ≤100KB via `yarn perf:images` script
 - [ ] T040 [P] [US5] Review `next.config.js` for proper cache headers and compression settings
 - [ ] T041 [US5] Audit JavaScript bundle sizes with `ANALYZE=true yarn build` and identify optimization opportunities
-- [ ] T042 [US5] Verify code splitting is working for heavy dependencies (framer-motion already dynamically imported)
-- [ ] T043 [US5] Review TailwindCSS + DaisyUI configuration to ensure only necessary utilities are included
+- [x] T042 [US5] Verify code splitting is working for heavy dependencies (framer-motion already dynamically imported)
+- [x] T043 [US5] Review TailwindCSS + DaisyUI configuration to ensure only necessary utilities are included
 - [ ] T044 [US5] Test browser caching headers for static assets (verify 1 year cache via DevTools Network tab)
 - [ ] T045 [US5] Verify gzip/brotli compression is enabled for text content (check response headers)
 - [ ] T046 [US5] Run `yarn lighthouse` on desktop and mobile, verify both achieve Performance ≥95%
