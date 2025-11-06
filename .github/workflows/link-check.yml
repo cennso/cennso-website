@@ -30,7 +30,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GOVERNANCE_GITHUB_TOKEN }}
           INPUT_GITHUB_TOKEN: ${{ secrets.GOVERNANCE_GITHUB_TOKEN }}
-          INPUT_ARGS: --verbose --no-progress "**/*.md"
+          INPUT_ARGS: --verbose --no-progress --config lychee.toml "**/*.md"
           INPUT_DEBUG: false
           INPUT_FORMAT: markdown
           INPUT_OUTPUT: lychee/out.md
