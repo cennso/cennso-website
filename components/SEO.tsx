@@ -2,7 +2,7 @@ import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
 
 import siteMetadata from '../siteMetadata'
-import SchemaOrg from './common/SchemaOrg'
+import { SchemaOrg } from './common/SchemaOrg'
 import { StructuredData } from '@/lib/seo/types'
 import { getCanonicalUrl } from '@/lib/seo/canonical'
 

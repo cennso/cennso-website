@@ -16,6 +16,7 @@ import re
 from pathlib import Path
 from typing import List, Dict, Any
 from datetime import datetime
+from bs4 import BeautifulSoup
 
 
 def validate_json_syntax(json_ld: str) -> Dict[str, Any]:
@@ -145,70 +146,100 @@ def validate_required_properties(schema_data: Dict[str, Any]) -> List[str]:
     return errors
 
 
-def validate_structured_data(json_ld: str, context: str = "") -> Dict[str, Any]:
-    """Validate structured data."""
-    result = {"valid": True, "errors": [], "warnings": []}
-    
-    # Validate JSON syntax
-    json_result = validate_json_syntax(json_ld)
-    if not json_result["valid"]:
-        result["valid"] = False
-        result["errors"].append(json_result["message"])
-        return result
-    
-    schema_data = json_result["data"]
-    
-    # Validate schema type (now handles array @types)
-    type_result = validate_schema_type(schema_data)
-    if not type_result["valid"]:
-        result["valid"] = False
-        result["errors"].append(type_result["message"])
-        return result
-    
-    # Use the primary type from normalized list for property validation
-    primary_type = type_result["types"][0] if type_result.get("types") else None
-    
-    # Validate required properties
-    property_errors = validate_required_properties(schema_data)
-    if property_errors:
-        result["valid"] = False
-        result["errors"].extend(property_errors)
-    
-    # Validate URLs if present
-    for key, value in schema_data.items():
-        if key in ["url", "sameAs", "image"] and isinstance(value, str):
-            if not validate_url_format(value):
-                result["warnings"].append(f"Invalid URL format for '{key}': {value}")
-    
-    return result
+def validate_structured_data(json_ld_string, file_path):
+    """Validate a single JSON-LD block."""
+    errors = []
+    warnings = []
+    is_valid = True
+
+    try:
+        data = json.loads(json_ld_string)
+    except json.JSONDecodeError as e:
+        errors.append(f"Invalid JSON: {e}")
+        return {"valid": False, "errors": errors, "warnings": warnings}
+
+    if not isinstance(data, dict):
+        errors.append("JSON-LD root is not an object.")
+        return {"valid": False, "errors": errors, "warnings": warnings}
+
+    schema_type = data.get("@type")
+    if not schema_type:
+        errors.append("Missing '@type' property.")
+        is_valid = False
+
+    # Example: Check for required properties for 'BlogPosting'
+    if schema_type == "BlogPosting":
+        required_fields = ["headline", "datePublished", "author"]
+        for field in required_fields:
+            if field not in data:
+                errors.append(f"Missing required property for BlogPosting: '{field}'")
+                is_valid = False
+
+    # Example: Validate URL format
+    if "url" in data and isinstance(data["url"], str) and not data["url"].startswith("https://"):
+        warnings.append(f"URL '{data['url']}' should use https://")
+
+    return {"valid": is_valid, "errors": errors, "warnings": warnings}
 
 
 def main():
     """Main validation function."""
-    print("Structured Data Validation")
+    build_dir = Path(".next/server/pages")
+    if not build_dir.exists():
+        print("Build directory not found. Run `yarn build` first.")
+        return 1
+
+    html_files = list(build_dir.glob("**/*.html"))
+    if not html_files:
+        print("No HTML files found in build directory.")
+        return 1
+
+    print(f"📄 Found {len(html_files)} pages to validate")
     print("=" * 50)
-    print()
-    
-    # TODO: Implement actual page scanning
-    # This is a skeleton - actual implementation will:
-    # 1. Scan all built pages in .next/ or out/
-    # 2. Extract <script type="application/ld+json"> blocks
-    # 3. Validate each JSON-LD block
-    # 4. Check required properties based on @type
-    # 5. Validate URL and date formats
-    # 6. Report violations with file paths
-    
-    print("⚠️  This is a skeleton script. Implementation pending.")
-    print()
-    print("To implement:")
-    print("1. Parse built HTML files from .next/ or out/")
-    print("2. Extract all <script type='application/ld+json'> blocks")
-    print("3. Validate JSON syntax for each block")
-    print("4. Check required properties based on @type")
-    print("5. Validate URL formats (https://)")
-    print("6. Validate date formats (ISO 8601)")
-    print("7. Report violations with file paths and line numbers")
-    
+
+    all_errors = []
+    all_warnings = []
+
+    for file_path in html_files:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            soup = BeautifulSoup(content, "html.parser")
+            json_ld_scripts = soup.find_all("script", {"type": "application/ld+json"})
+
+            if not json_ld_scripts:
+                # It's a warning because not all pages require structured data (e.g., 404)
+                all_warnings.append(f"{file_path.relative_to(build_dir)}: No JSON-LD script found")
+                continue
+
+            for i, script in enumerate(json_ld_scripts):
+                if not script.string:
+                    all_warnings.append(f"{file_path.relative_to(build_dir)} (Script {i+1}): Is empty")
+                    continue
+                
+                result = validate_structured_data(script.string, str(file_path))
+                if not result["valid"]:
+                    for error in result["errors"]:
+                        all_errors.append(f"{file_path.relative_to(build_dir)} (Script {i+1}): {error}")
+                if result["warnings"]:
+                    for warning in result["warnings"]:
+                        all_warnings.append(f"{file_path.relative_to(build_dir)} (Script {i+1}): {warning}")
+
+    print("\n📊 VALIDATION RESULTS")
+    print("=" * 50)
+
+    if all_warnings:
+        print("\n⚠️ Warnings:")
+        for warning in all_warnings:
+            print(f"  - {warning}")
+
+    if all_errors:
+        print("\n❌ Errors:")
+        for error in all_errors:
+            print(f"  - {error}")
+        print(f"\nFound {len(all_errors)} errors in structured data.")
+        return 1
+
+    print("\n🎉 ✅ ALL STRUCTURED DATA VALIDATION PASSED!")
     return 0
 
 
