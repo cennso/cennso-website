@@ -3,7 +3,6 @@ import path from 'path'
 import { default as readingTimeFn } from 'reading-time'
 import markdownToTxt from 'markdown-to-txt'
 import { parse as YamlParse } from 'yaml'
-import { ArticleJsonLd } from 'next-seo'
 
 import { PageHeader } from '../../components/PageHeader'
 import { BlogPostAuthors } from '../../components/Blog/BlogPostAuthors'
@@ -13,12 +12,11 @@ import { TableOfContents } from '../../components/Markdown/TableOfContents'
 import { SEO } from '../../components/SEO'
 import { Button, Container } from '../../components/common'
 import { BlogPostContext } from '../../contexts'
+import { generateArticleSchema } from '../../lib/seo/schema'
 
 import { mdRegex, generateToc } from '../../lib/markdown'
 import { parseMDX } from '../../lib/mdx'
 import { createNavigation } from '../../lib/navigation'
-
-import siteMetadata from '../../siteMetadata'
 
 import type { NextPage, GetStaticPathsResult, GetStaticProps } from 'next'
 import type { MDXRemoteProps } from 'next-mdx-remote'
@@ -43,6 +41,27 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({
   const { title, date, authors, excerpt, cover, tags, canonical } = frontmatter
   const datePublished = new Date(date).toISOString()
 
+  // Generate Article schema using our new generator
+  const articleSchema = generateArticleSchema(
+    {
+      title,
+      date,
+      excerpt,
+      cover,
+      category: tags?.[0], // Use first tag as category
+      tags,
+    },
+    authors.map((author) => ({
+      id: author.name.toLowerCase().replace(/\s+/g, '-'),
+      name: author.name,
+      position: author.position,
+      company: author.company,
+      socialLink: author.socialLink,
+      email: author.email,
+      avatar: author.avatar,
+    }))
+  )
+
   return (
     <>
       <SEO
@@ -57,26 +76,7 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({
           },
         }}
         canonical={canonical}
-      />
-
-      <ArticleJsonLd
-        useAppDir={false}
-        keyOverride="blogPost"
-        type="BlogPosting"
-        url="https://example.com/blog"
-        title={title}
-        description={excerpt}
-        images={[`${siteMetadata.siteUrl}${cover}`]}
-        authorName={authors.map((author) => ({
-          name: author.name,
-          type: 'Person',
-          url: author.email || author.socialLink,
-        }))}
-        publisherName={siteMetadata.title}
-        publisherLogo={`${siteMetadata.siteUrl}${siteMetadata.siteLogo}`}
-        datePublished={datePublished}
-        dateModified={datePublished}
-        isAccessibleForFree={true}
+        structuredData={articleSchema}
       />
 
       <PageHeader

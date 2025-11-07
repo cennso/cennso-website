@@ -17,6 +17,10 @@ import {
 } from '../components/common'
 import { PageHeader } from '../components/PageHeader'
 import { SEO } from '../components/SEO'
+import {
+  generateLocalBusinessSchema,
+  type LocalBusinessData,
+} from '../lib/seo/schema'
 
 import { createNavigation } from '../lib/navigation'
 
@@ -28,11 +32,20 @@ type ContactPageProps = {
 }
 
 const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
-  const { page, sections } = content
+  const { page, sections, localBusiness } = content
+
+  // Generate LocalBusiness schema if data is available
+  const localBusinessSchema = localBusiness
+    ? generateLocalBusinessSchema(localBusiness as LocalBusinessData)
+    : undefined
 
   return (
     <>
-      <SEO title={page.title} description={page.description} />
+      <SEO
+        title={page.title}
+        description={page.description}
+        structuredData={localBusinessSchema}
+      />
 
       <PageHeader
         title={page.title}
