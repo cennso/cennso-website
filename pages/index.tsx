@@ -30,7 +30,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
     <>
       <SEO
         title="Mobile Core Network Solutions - Deploy in 24 Hours"
-        description="Cloud-native mobile core deployed in 24 hours. Build your global network platform across 170+ cloud locations with Cennso Technologies for reliable service."
+        description="Our Mobile Core accelerates time-to-market with agility, delivering optimized performance, seamless reliability, and scalable power for modern networks."
       />
 
       <Container className="bg-[#36AADD]">
