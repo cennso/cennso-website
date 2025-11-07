@@ -31,10 +31,19 @@
     "a11y": "yarn a11y:contrast && yarn a11y:text-alternatives && yarn a11y:media && yarn a11y:semantic && yarn a11y:distinguishable && yarn a11y:keyboard && yarn a11y:enough-time && yarn a11y:seizures && yarn a11y:navigable && yarn a11y:input-modalities && yarn a11y:readable && yarn a11y:predictable && yarn a11y:input-assistance && yarn a11y:compatible",
     "perf:images": "python3 scripts/check-image-optimization.py",
     "perf:images:optimize": "./scripts/run-python.sh optimize-images.py",
+    "perf:mobile": "python3 scripts/check-mobile-performance.py",
+    "perf": "yarn perf:images && yarn perf:mobile",
+    "seo:validate": "scripts/.venv/bin/python scripts/validate-seo.py",
+    "seo:meta": "scripts/.venv/bin/python scripts/validate-seo.py",
+    "seo:schema": "scripts/.venv/bin/python scripts/validate-structured-data.py",
+    "seo:links": "scripts/.venv/bin/python scripts/check-internal-links.py",
+    "seo": "yarn seo:validate && yarn seo:schema && yarn seo:links",
+    "lighthouse:desktop:ci": "lhci collect --config=.lighthouserc.ci.js && lhci upload --config=.lighthouserc.ci.js --target=filesystem --outputDir=./lighthouse-desktop && node scripts/process-lhci-results.js --manifestDir=lighthouse-desktop --outputJson=lighthouse-results.json --outputHtml=lighthouse-desktop.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=.lighthouserc.ci.js",
+    "lighthouse:mobile:ci": "lhci collect --config=lighthouse.mobile.config.ci.js && lhci upload --config=lighthouse.mobile.config.ci.js --target=filesystem --outputDir=./lighthouse-mobile && node scripts/process-lhci-results.js --manifestDir=lighthouse-mobile --outputJson=lighthouse-mobile-results.json --outputHtml=lighthouse-mobile.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=lighthouse.mobile.config.ci.js",
     "lighthouse:desktop": "rm -rf .lighthouse lighthouse-desktop && lhci collect --config=.lighthouserc.js && lhci upload --config=.lighthouserc.js --target=filesystem --outputDir=./lighthouse-desktop && node scripts/process-lhci-results.js --manifestDir=lighthouse-desktop --outputJson=lighthouse-results.json --outputHtml=lighthouse-desktop.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=.lighthouserc.js",
     "lighthouse:mobile": "rm -rf .lighthouse .lighthouse-mobile lighthouse-mobile && lhci collect --config=lighthouse.mobile.config.js && lhci upload --config=lighthouse.mobile.config.js --target=filesystem --outputDir=./lighthouse-mobile && node scripts/process-lhci-results.js --manifestDir=lighthouse-mobile --outputJson=lighthouse-mobile-results.json --outputHtml=lighthouse-mobile.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=lighthouse.mobile.config.js",
     "lighthouse": "yarn lighthouse:desktop && yarn lighthouse:mobile",
-    "check:all": "yarn format && yarn lint && yarn a11y && yarn perf:images && yarn build"
+    "check:all": "yarn build && yarn format && yarn lint && yarn a11y && yarn perf && yarn seo"
   },
   "dependencies": {
     "@headlessui/react": "^2.1.10",

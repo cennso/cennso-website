@@ -99,6 +99,7 @@ const AboutPage: NextPage<AboutPageProps> = ({ content, members }) => {
                     src={section.cover}
                     width={150}
                     height={150}
+                    sizes="150px"
                   />
                 </HexagonDouble>
                 <header className="flex flex-row justify-center mt-8 text-center">
@@ -144,6 +145,7 @@ const AboutPage: NextPage<AboutPageProps> = ({ content, members }) => {
                       className="overflow-hidden mask mask-hexagon-2"
                       title={`${member.name}, ${member.position}`}
                       alt={`${member.name}, ${member.position}`}
+                      sizes="270px"
                     />
                   </div>
                 </div>

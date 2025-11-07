@@ -125,18 +125,34 @@ export const Partners: FunctionComponent<PartnersProps> = ({
           </GradientHeader>
           <div className="partners-logos mb-8 mt-2">
             <div className="partners-logos-slide flex flex-row">
-              {mobilePartners.map((partner) => (
-                <Image
-                  src={partner.logo}
-                  key={partner.name}
-                  alt={`${partner.name} logo`}
-                  title={`${partner.name} logo`}
-                  width={160}
-                  height={80}
-                  className="inline-block"
-                  sizes="160px"
-                />
-              ))}
+              {mobilePartners.map((partner, idx) => {
+                const fallbackSize = { width: 320, height: 160 }
+                const logoWidth = partner.logoSize?.width ?? fallbackSize.width
+                const logoHeight =
+                  partner.logoSize?.height ?? fallbackSize.height
+                const targetWidth = 160
+                const computedHeight = Math.max(
+                  Math.round((logoHeight / logoWidth) * targetWidth),
+                  1
+                )
+
+                return (
+                  <Image
+                    src={partner.logo}
+                    key={`${partner.name}-${idx}`}
+                    alt={`${partner.name} logo`}
+                    title={`${partner.name} logo`}
+                    width={logoWidth}
+                    height={logoHeight}
+                    style={{
+                      width: `${targetWidth}px`,
+                      height: `${computedHeight}px`,
+                    }}
+                    className="inline-block object-contain"
+                    sizes="160px"
+                  />
+                )
+              })}
             </div>
           </div>
           <div>

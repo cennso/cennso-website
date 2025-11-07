@@ -80,6 +80,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
                       src={company.logo}
                       width={150}
                       height={150}
+                      sizes="150px"
                     />
                   </div>
                 </div>

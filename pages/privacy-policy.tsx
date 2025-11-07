@@ -24,8 +24,6 @@ const PrivacyPolicyPage: NextPage<PrivacyPolicyPageProps> = ({ mdxSource }) => {
       <SEO
         title={frontmatter.page.title}
         description={frontmatter.page.description}
-        nofollow={true}
-        noindex={true}
       />
 
       <PageHeader

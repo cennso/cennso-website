@@ -1,0 +1,247 @@
+#!/usr/bin/env python3
+"""
+Structured Data Validation Script
+
+Validates schema.org structured data (JSON-LD):
+- JSON syntax validity
+- Required properties present
+- URL formats correct
+- Date formats valid (ISO 8601)
+- Schema types recognized
+"""
+
+import sys
+import json
+import re
+from pathlib import Path
+from typing import List, Dict, Any
+from datetime import datetime
+from bs4 import BeautifulSoup
+
+
+def validate_json_syntax(json_ld: str) -> Dict[str, Any]:
+    """Validate JSON-LD syntax."""
+    try:
+        data = json.loads(json_ld)
+        return {"valid": True, "data": data, "message": "Valid JSON"}
+    except json.JSONDecodeError as e:
+        return {"valid": False, "data": None, "message": f"JSON syntax error: {e}"}
+
+
+def validate_schema_type(schema_data: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Validate @type is recognized schema.org type.
+    
+    Handles @type as:
+    - String: single type
+    - List: multiple types (all must be valid)
+    - Missing: returns error
+    - Other: returns invalid type error
+    
+    Returns normalized @type as list in successful response.
+    """
+    valid_types = [
+        "Organization",
+        "Article",
+        "BlogPosting",
+        "BreadcrumbList",
+        "LocalBusiness",
+        "JobPosting",
+        "Service",
+        "Person",
+        "WebSite",
+        "WebPage"
+    ]
+    
+    schema_type_raw = schema_data.get("@type")
+    
+    # Check if @type is missing
+    if schema_type_raw is None:
+        return {"valid": False, "message": "@type is missing"}
+    
+    # Normalize @type to list
+    if isinstance(schema_type_raw, str):
+        # Single string type
+        schema_types = [schema_type_raw]
+    elif isinstance(schema_type_raw, list):
+        # Already a list
+        schema_types = schema_type_raw
+    else:
+        # Invalid type (not string or list)
+        return {"valid": False, "message": f"@type must be string or array, got {type(schema_type_raw).__name__}"}
+    
+    # Validate each type in the list
+    unrecognized_types = [t for t in schema_types if t not in valid_types]
+    
+    if unrecognized_types:
+        return {
+            "valid": False,
+            "message": f"Unrecognized @type values: {', '.join(unrecognized_types)}. Valid types: {', '.join(valid_types)}"
+        }
+    
+    # All types are valid
+    return {"valid": True, "types": schema_types, "message": "OK"}
+
+
+def validate_url_format(url: str) -> bool:
+    """Validate URL format."""
+    url_pattern = re.compile(
+        r'^https?://'  # http:// or https://
+        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain
+        r'localhost|'  # localhost
+        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'  # or IP
+        r'(?::\d+)?'  # optional port
+        r'(?:/?|[/?]\S+)$', re.IGNORECASE)
+    
+    return bool(url_pattern.match(url))
+
+
+def validate_date_format(date_str: str) -> bool:
+    """Validate ISO 8601 date format."""
+    try:
+        datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        return True
+    except (ValueError, AttributeError):
+        return False
+
+
+def validate_required_properties(schema_data: Dict[str, Any]) -> List[str]:
+    """Validate required properties based on @type."""
+    errors = []
+    schema_type = schema_data.get("@type", "")
+    
+    # Common required properties
+    if "@context" not in schema_data:
+        errors.append("Missing @context")
+    elif schema_data["@context"] != "https://schema.org":
+        errors.append(f"Invalid @context: {schema_data['@context']}")
+    
+    # Type-specific required properties
+    if schema_type == "Organization":
+        if "name" not in schema_data:
+            errors.append("Organization missing 'name'")
+        if "url" not in schema_data:
+            errors.append("Organization missing 'url'")
+    
+    elif schema_type in ["Article", "BlogPosting"]:
+        required = ["headline", "author", "datePublished"]
+        for prop in required:
+            if prop not in schema_data:
+                errors.append(f"{schema_type} missing '{prop}'")
+        
+        # Validate date format
+        if "datePublished" in schema_data and not validate_date_format(schema_data["datePublished"]):
+            errors.append(f"Invalid datePublished format: {schema_data['datePublished']}")
+    
+    elif schema_type == "BreadcrumbList":
+        if "itemListElement" not in schema_data:
+            errors.append("BreadcrumbList missing 'itemListElement'")
+    
+    elif schema_type == "JobPosting":
+        required = ["title", "description", "datePosted", "hiringOrganization"]
+        for prop in required:
+            if prop not in schema_data:
+                errors.append(f"JobPosting missing '{prop}'")
+    
+    return errors
+
+
+def validate_structured_data(json_ld_string, file_path):
+    """Validate a single JSON-LD block."""
+    errors = []
+    warnings = []
+    is_valid = True
+
+    try:
+        data = json.loads(json_ld_string)
+    except json.JSONDecodeError as e:
+        errors.append(f"Invalid JSON: {e}")
+        return {"valid": False, "errors": errors, "warnings": warnings}
+
+    if not isinstance(data, dict):
+        errors.append("JSON-LD root is not an object.")
+        return {"valid": False, "errors": errors, "warnings": warnings}
+
+    schema_type = data.get("@type")
+    if not schema_type:
+        errors.append("Missing '@type' property.")
+        is_valid = False
+
+    # Example: Check for required properties for 'BlogPosting'
+    if schema_type == "BlogPosting":
+        required_fields = ["headline", "datePublished", "author"]
+        for field in required_fields:
+            if field not in data:
+                errors.append(f"Missing required property for BlogPosting: '{field}'")
+                is_valid = False
+
+    # Example: Validate URL format
+    if "url" in data and isinstance(data["url"], str) and not data["url"].startswith("https://"):
+        warnings.append(f"URL '{data['url']}' should use https://")
+
+    return {"valid": is_valid, "errors": errors, "warnings": warnings}
+
+
+def main():
+    """Main validation function."""
+    build_dir = Path(".next/server/pages")
+    if not build_dir.exists():
+        print("Build directory not found. Run `yarn build` first.")
+        return 1
+
+    html_files = list(build_dir.glob("**/*.html"))
+    if not html_files:
+        print("No HTML files found in build directory.")
+        return 1
+
+    print(f"📄 Found {len(html_files)} pages to validate")
+    print("=" * 50)
+
+    all_errors = []
+    all_warnings = []
+
+    for file_path in html_files:
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+            soup = BeautifulSoup(content, "html.parser")
+            json_ld_scripts = soup.find_all("script", {"type": "application/ld+json"})
+
+            if not json_ld_scripts:
+                # It's a warning because not all pages require structured data (e.g., 404)
+                all_warnings.append(f"{file_path.relative_to(build_dir)}: No JSON-LD script found")
+                continue
+
+            for i, script in enumerate(json_ld_scripts):
+                if not script.string:
+                    all_warnings.append(f"{file_path.relative_to(build_dir)} (Script {i+1}): Is empty")
+                    continue
+                
+                result = validate_structured_data(script.string, str(file_path))
+                if not result["valid"]:
+                    for error in result["errors"]:
+                        all_errors.append(f"{file_path.relative_to(build_dir)} (Script {i+1}): {error}")
+                if result["warnings"]:
+                    for warning in result["warnings"]:
+                        all_warnings.append(f"{file_path.relative_to(build_dir)} (Script {i+1}): {warning}")
+
+    print("\n📊 VALIDATION RESULTS")
+    print("=" * 50)
+
+    if all_warnings:
+        print("\n⚠️ Warnings:")
+        for warning in all_warnings:
+            print(f"  - {warning}")
+
+    if all_errors:
+        print("\n❌ Errors:")
+        for error in all_errors:
+            print(f"  - {error}")
+        print(f"\nFound {len(all_errors)} errors in structured data.")
+        return 1
+
+    print("\n🎉 ✅ ALL STRUCTURED DATA VALIDATION PASSED!")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

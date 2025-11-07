@@ -64,6 +64,7 @@ const PartnersPage: NextPage<PartnersPageProps> = ({ content, partners }) => {
                       title={`${partner.name} logo`}
                       alt={`${partner.name} logo`}
                       src={partner.logo}
+                      sizes="200px"
                     />
                   </div>
                   <div className="flex flex-col gap-4 lg:w-1/2 px-0 md:px-12 lg:px-0">
@@ -102,6 +103,7 @@ const PartnersPage: NextPage<PartnersPageProps> = ({ content, partners }) => {
                       title={`${partner.name} logo`}
                       alt={`${partner.name} logo`}
                       src={partner.logo}
+                      sizes="200px"
                     />
                   </div>
                   <div className="flex flex-col gap-4 lg:w-1/2 px-0 md:px-12 lg:px-0 pb-16 lg:pb-0">

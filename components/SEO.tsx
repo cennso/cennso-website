@@ -2,11 +2,16 @@ import { NextSeo } from 'next-seo'
 import { useRouter } from 'next/router'
 
 import siteMetadata from '../siteMetadata'
+import { SchemaOrg } from './common/SchemaOrg'
+import { StructuredData } from '@/lib/seo/types'
+import { getCanonicalUrl } from '@/lib/seo/canonical'
 
 import type { FunctionComponent } from 'react'
 import type { NextSeoProps } from 'next-seo'
 
-export interface SEOProps extends NextSeoProps {}
+export interface SEOProps extends NextSeoProps {
+  structuredData?: StructuredData | StructuredData[]
+}
 
 export const SEO: FunctionComponent<SEOProps> = (props) => {
   const router = useRouter()
@@ -14,9 +19,14 @@ export const SEO: FunctionComponent<SEOProps> = (props) => {
   const defaultTitle = siteMetadata.title
   const defaultDescription = siteMetadata.description
   const siteUrl = siteMetadata.siteUrl
-  const pageUrl = `${siteUrl}${router.asPath}`
 
-  const title = props.title ? `${props.title} | ${defaultTitle}` : defaultTitle
+  // Use canonical URL resolver for proper URL generation
+  const canonicalUrl = props.canonical || getCanonicalUrl(router.asPath)
+  const pageUrl = canonicalUrl
+
+  // Use custom title if provided, otherwise use default site title
+  // Don't concatenate to avoid overly long titles (SEO recommends 50-60 chars)
+  const title = props.title || defaultTitle
   const description = props.description || defaultDescription
 
   const imageUrl =
@@ -62,16 +72,17 @@ export const SEO: FunctionComponent<SEOProps> = (props) => {
   // }
 
   return (
-    <NextSeo
-      {...props}
-      nofollow={true}
-      noindex={true}
-      themeColor={siteMetadata.theme}
-      title={title}
-      description={description}
-      openGraph={openGraph}
-      // twitter={twitter}
-      canonical={props.canonical ? props.canonical : pageUrl}
-    />
+    <>
+      <NextSeo
+        {...props}
+        themeColor={siteMetadata.theme}
+        title={title}
+        description={description}
+        openGraph={openGraph}
+        // twitter={twitter}
+        canonical={canonicalUrl}
+      />
+      {props.structuredData && <SchemaOrg data={props.structuredData} />}
+    </>
   )
 }

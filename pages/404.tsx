@@ -23,12 +23,7 @@ const Custom404Page: NextPage<Custom404PageProps> = ({ content }) => {
 
   return (
     <>
-      <SEO
-        title={page.title}
-        description={page.description}
-        nofollow={true}
-        noindex={true}
-      />
+      <SEO title={page.title} description={page.description} />
 
       <div className="flex-1 w-full flex flex-col items-center justify-center text-secondary-200">
         <h1 className="text-[2rem] sm:text-[3rem] lg:text-[4rem] text-center">

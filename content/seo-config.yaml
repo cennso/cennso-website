@@ -1,0 +1,52 @@
+# SEO Configuration
+# Default SEO metadata and fallback values for all pages
+
+# Site-wide defaults
+siteDefaults:
+  titleSuffix: " | Cennso"
+  titleSeparator: " | "
+  defaultTitle: "Cennso - Mobile Core Network Solutions"
+  defaultDescription: "Cloud-native mobile core network solutions deployed in 24 hours. Build your global network platform across 170+ cloud locations with Cennso Technologies."
+  
+# Social media defaults
+social:
+  # No Twitter account - LinkedIn only: https://www.linkedin.com/company/cennso-technologies/
+  twitterCardType: "summary_large_image"
+  ogType: "website"
+  ogImageDefault: "/assets/thumbnails/cennso-thumbnail.webp"
+  ogImageWidth: 1200
+  ogImageHeight: 630
+
+# Fallback descriptions by page type
+fallbackDescriptions:
+  blog: "Expert insights on mobile core networks, cloud-native telecommunications, and network automation from Cennso Technologies."
+  solutions: "Explore Cennso's cloud-native network solutions. From mobile core deployment to network function virtualization and automation."
+  successStories: "Discover how organizations successfully deployed mobile core networks with Cennso's cloud-native solutions and expert support."
+  jobs: "Join Cennso Technologies and work with telecommunications and cloud-native networking experts. Build the future of mobile networks."
+  about: "Learn about Cennso Technologies - your trusted partner for cloud-native mobile core solutions and network transformation."
+  contact: "Get in touch with Cennso Technologies. Let's discuss your mobile core and network infrastructure needs."
+
+# Meta tag guidelines
+metaGuidelines:
+  titleMinLength: 50
+  titleMaxLength: 60
+  descriptionMinLength: 150
+  descriptionMaxLength: 160
+
+# Schema.org defaults
+schemaDefaults:
+  organizationName: "Cennso Technologies GmbH"
+  organizationType: "Organization"
+  url: "https://cennso.com"
+  logo: "/logo.svg"
+  contactEmail: "info@cennso.com"
+  
+# Local business (if applicable)
+localBusiness:
+  enabled: false
+  # Add NAP (Name, Address, Phone) when local SEO is implemented
+  # name: "Cennso"
+  # address: ""
+  # phone: ""
+  # latitude: 0
+  # longitude: 0

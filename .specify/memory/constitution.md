@@ -120,6 +120,18 @@ Changes in v2.3.0 (MINOR):
       - Added: Complete WCAG 2.1 Guideline 4.1 (Compatible) validation (SC 4.1.2 Name, Role, Value; SC 4.1.3 Status Messages)
       - Quality Gates expanded to include compatible validation
       - Requirement: `yarn a11y:compatible` MUST pass (no Level A issues) before merging to main
+- Changes in v2.6.0 (MINOR):
+  - **MILESTONE: SEO Standards Added**
+  - Added: New Principle VI - SEO Standards
+  - Added: Title requirements (50-60 characters, unique, no duplicates)
+  - Added: Description requirements (150-160 characters, unique, no duplicates)
+  - Added: Canonical URL requirements
+  - Added: Automated SEO validation (yarn seo:validate)
+  - Added: BeautifulSoup4 dependency for HTML parsing
+  - Quality Gates expanded to include SEO validation (new gate #6)
+  - Updated check:all command to include seo validation
+  - CI/CD enforcement: yarn seo:validate blocks merge on errors
+  - Principles Modified: New Principle VI added (MINOR version bump)
 - Templates Status:
   ✅ plan-template.md - accessibility requirements now enforceable in specs
   ✅ spec-template.md - acceptance criteria can reference specific a11y checks
@@ -211,6 +223,66 @@ Performance requirements that MUST be met:
 ### V. Accessibility Standards (WCAG 2.1 AA)
 
 Accessibility MUST be implemented from the start, not retrofitted:
+
+### VI. SEO Standards
+
+All pages MUST have optimized metadata for search engine discoverability:
+
+**Title Requirements:**
+
+- All pages MUST have unique, descriptive titles
+- Title length MUST be 50-60 characters (optimal for search results)
+- Titles MUST NOT be duplicated across pages
+- Titles come from:
+  - YAML files: `page.title` property (e.g., `content/contact-page.yaml`)
+  - MDX frontmatter: `title` property (e.g., blog posts, success stories)
+  - Page components: `title` prop passed to `<SEO>` component
+- Format: Use descriptive title directly (no concatenation with site name)
+- Examples:
+  - ✅ "Contact Cennso - Mobile Core Network Solutions & Support" (51 chars)
+  - ❌ "Contact us" (10 chars - too short)
+  - ❌ "Contact us | Cennso Mobile Core Network Solutions" (87 chars - too long)
+
+**Description Requirements:**
+
+- All pages MUST have unique, descriptive meta descriptions
+- Description length MUST be 150-160 characters (optimal for search snippets)
+- Descriptions MUST NOT be duplicated across pages
+- Descriptions come from:
+  - YAML files: `page.description` property
+  - MDX frontmatter: `excerpt` property
+  - Page components: `description` prop passed to `<SEO>` component
+- Content: Summarize page purpose, include relevant keywords naturally
+- Examples:
+  - ✅ "Get in touch with Cennso's Solution and Channel Partners. Learn how we can help you build custom mobile core network solutions for your business needs." (151 chars)
+  - ❌ "Contact us to learn more." (26 chars - too short)
+  - ❌ "Contact us to learn more about our mobile core network solutions, consulting services, partnership opportunities, and how we can help your business." (182 chars - too long)
+
+**Canonical URL Requirements:**
+
+- All pages MUST have canonical URL meta tag
+- Format: `<link rel="canonical" href="https://www.cennso.com/page-path" />`
+- Handled automatically by `<SEO>` component
+- Prevents duplicate content issues
+
+**Implementation:**
+
+- Use `<SEO title="..." description="..." />` component on all pages
+- SEO component location: `components/SEO.tsx`
+- Component handles: title tag, meta description, canonical URL, Open Graph tags
+- Built HTML location: `.next/server/pages/*.html` (minified)
+
+**Validation:**
+
+- Automated validation: `yarn seo:validate` MUST pass
+- Validates: Title length (50-60 chars), description length (150-160 chars), canonical URLs
+- Detects: Duplicate titles, duplicate descriptions, missing metadata
+- Scans: All built HTML files in `.next/server/pages/` (excludes auto-generated 500.html)
+- Dependencies: BeautifulSoup4 (defined in `scripts/requirements.txt`)
+- Script location: `scripts/validate-seo.py`
+- CI/CD enforcement: Exit code 1 on errors (blocks merge)
+
+**Rationale**: SEO metadata is critical for search engine rankings and click-through rates. Titles and descriptions are the first impression users see in search results. Optimal character lengths maximize visibility in search snippets without truncation. Unique content prevents duplicate content penalties. Canonical URLs prevent indexing issues.
 
 **Keyboard Accessible (WCAG 2.1 Guideline 2.1 - EN 301 549 Section 9.2.1):**
 
@@ -877,20 +949,26 @@ Before any PR can be merged, ALL of the following MUST pass:
    - Navigable (`yarn a11y:navigable`)
    - Input modalities (`yarn a11y:input-modalities`)
    - Readable (`yarn a11y:readable`)
-6. **Lighthouse**: `yarn lighthouse` passes with **≥95% scores on all 4 categories**:
+6. **SEO**: `yarn seo:validate` passes all metadata requirements:
+   - All titles 50-60 characters
+   - All descriptions 150-160 characters
+   - No duplicate titles or descriptions
+   - All pages have canonical URLs
+7. **Lighthouse**: `yarn lighthouse` passes with **≥95% scores on all 4 categories**:
    - Performance (page speed, optimization)
    - Accessibility (WCAG 2.1 AA compliance)
    - Best Practices (security, standards)
    - SEO (search engine optimization)
 
-**Recommended Pre-commit Command**: `yarn check:all` (runs format, lint, a11y [11 checks], and build in sequence)
+**Recommended Pre-commit Command**: `yarn check:all` (runs format, lint, a11y [11 checks], seo, and build in sequence)
 
 **Local Lighthouse Testing**: Run `yarn dev` in terminal 1, then `yarn lighthouse` in terminal 2 to validate ≥95% scores before pushing
 
 **Automated Quality Checks**: GitHub Actions workflows enforce all quality gates on pull requests
 
-- `nodejs.yml`: Format, lint, type check, build, a11y
+- `nodejs.yml`: Format, lint, type check, build, a11y (11 checks), seo (metadata, structured data, internal links), and image optimization
 - `lighthouse.yml`: Lighthouse audits with ≥95% enforcement (blocks merge if any category < 95%)
+  - Uses CI-specific configs (`.lighthouserc.ci.js`, `lighthouse.mobile.config.ci.js`) that skip `is-crawlable` audit since Vercel preview deployments are blocked from indexing by default
 
 ### Testing Policy
 
@@ -929,4 +1007,4 @@ This constitution defines the non-negotiable standards for the Cennso Website pr
 - AGENTS.md serves as runtime guidance for AI assistants and human developers
 - Template files in `.specify/templates/` enforce constitution through structured workflows
 
-**Version**: 2.6.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-10-20
+**Version**: 2.6.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-01-20
