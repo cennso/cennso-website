@@ -1,11 +1,11 @@
 module.exports = {
-  extends: './lighthouse.mobile.config.js',
   ci: {
     collect: {
       settings: {
-        // Skip is-crawlable audit in CI since Vercel preview deployments are blocked from indexing
+        configPath: './lighthouse.mobile.config.js',
+        // skip seo crawlable in CI as crawlability is blocked on Vercel preview deployments
         skipAudits: ['is-crawlable'],
       },
     },
   },
-}
+};
