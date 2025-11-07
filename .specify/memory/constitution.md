@@ -261,7 +261,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 **Canonical URL Requirements:**
 
 - All pages MUST have canonical URL meta tag
-- Format: `<link rel="canonical" href="https://cennso.io/page-path" />`
+- Format: `<link rel="canonical" href="https://www.cennso.com/page-path" />`
 - Handled automatically by `<SEO>` component
 - Prevents duplicate content issues
 
