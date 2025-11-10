@@ -51,22 +51,19 @@
 /docs           - Content creation guides
 ```
 
-## Key Patterns
+## Prerequisites
 
-### Pages
+Before running validation scripts, ensure Python dependencies are installed:
 
-- All pages use `getStaticProps` for SSG
-- Navigation created via `createNavigation()` from `lib/navigation.ts`
-- SEO handled with `next-seo` and custom `<SEO>` component
+```bash
+pip install -r scripts/requirements.txt
+```
 
-### Adding Content
+**Required for:**
+- SEO validation scripts (`yarn seo:*`)
+- Image optimization scripts (`yarn perf:images:optimize`)
 
-- **Author**: Add to `content/authors.yaml` with unique ID
-- **Blog post**: Create `content/blog-posts/filename.mdx`, reference author IDs in frontmatter
-- **UI Text**: All user interface text (form labels, status messages, select options) MUST be defined in appropriate YAML files in `/content` directory, never hardcoded in components
-- **Assets**: Place in `/public/assets/` folder, reference as `/assets/filename.ext`
-
-See `/docs` folder for detailed guides.
+**Note**: CI automatically installs these dependencies. Locally, you only need to run this once (or when `scripts/requirements.txt` changes).
 
 ## Commands
 
@@ -86,6 +83,21 @@ yarn seo:validate          # Validate SEO metadata (titles 50-60 chars, descript
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn check:all             # Run all checks (build, format, lint, a11y, perf, seo)
 ```
+
+### Pages
+
+- All pages use `getStaticProps` for SSG
+- Navigation created via `createNavigation()` from `lib/navigation.ts`
+- SEO handled with `next-seo` and custom `<SEO>` component
+
+### Adding Content
+
+- **Author**: Add to `content/authors.yaml` with unique ID
+- **Blog post**: Create `content/blog-posts/filename.mdx`, reference author IDs in frontmatter
+- **UI Text**: All user interface text (form labels, status messages, select options) MUST be defined in appropriate YAML files in `/content` directory, never hardcoded in components
+- **Assets**: Place in `/public/assets/` folder, reference as `/assets/filename.ext`
+
+See `/docs` folder for detailed guides.
 
 ### Bundle Analysis
 
