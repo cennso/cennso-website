@@ -43,9 +43,8 @@ jobs:
           DEPLOY_URL="${{ steps.vercel-deployment.outputs.url }}"
           echo "Testing against deployment: $DEPLOY_URL"
           
-          # Replace localhost URLs in Lighthouse configs (base configs that CI configs extend)
-          sed -i "s|http://localhost:3000|$DEPLOY_URL|g" .lighthouserc.js
-          sed -i "s|http://localhost:3000|$DEPLOY_URL|g" lighthouse.mobile.config.js
+          # Replace localhost URLs in shared Lighthouse URLs file
+          sed -i "s|http://localhost:3000|$DEPLOY_URL|g" lighthouse.urls.js
       - name: Run Lighthouse audit (Desktop)
         env:
           LIGHTHOUSE_URL: ${{ steps.vercel-deployment.outputs.url }}
