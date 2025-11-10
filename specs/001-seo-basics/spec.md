@@ -1,6 +1,6 @@
 # Feature Specification: Comprehensive SEO Optimization
 
-**Feature Branch**: `001-do-all-possible`  
+**Feature Branch**: `001-seo-basics`  
 **Created**: 2025-11-06  
 **Status**: Draft  
 **Input**: User description: "do all possible SEO improvements"

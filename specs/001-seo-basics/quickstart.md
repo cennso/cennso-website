@@ -38,8 +38,8 @@ Before starting, ensure you have:
 1. **Development environment set up** (see `/docs/setup-environment.md`)
 2. **Familiarity with Next.js Pages Router** (we use `getStaticProps` SSG)
 3. **Access to contract files:**
-   - `specs/001-do-all-possible/contracts/structured-data-schemas.json`
-   - `specs/001-do-all-possible/contracts/meta-tag-templates.json`
+   - `specs/001-seo-basics/contracts/structured-data-schemas.json`
+   - `specs/001-seo-basics/contracts/meta-tag-templates.json`
 4. **Quality tools installed:**
    ```bash
    yarn install
@@ -598,10 +598,10 @@ yarn build                  # Production build (includes OG generation)
 
 ### Useful Resources
 
-- **Contract Schemas:** `specs/001-do-all-possible/contracts/structured-data-schemas.json`
-- **Meta Tag Templates:** `specs/001-do-all-possible/contracts/meta-tag-templates.json`
-- **Data Models:** `specs/001-do-all-possible/data-model.md`
-- **Research Decisions:** `specs/001-do-all-possible/research.md`
+- **Contract Schemas:** `specs/001-seo-basics/contracts/structured-data-schemas.json`
+- **Meta Tag Templates:** `specs/001-seo-basics/contracts/meta-tag-templates.json`
+- **Data Models:** `specs/001-seo-basics/data-model.md`
+- **Research Decisions:** `specs/001-seo-basics/research.md`
 - **Google Rich Results Test:** https://search.google.com/test/rich-results
 - **Schema.org Validator:** https://validator.schema.org/
 - **Facebook OG Debugger:** https://developers.facebook.com/tools/debug/
@@ -609,4 +609,4 @@ yarn build                  # Production build (includes OG generation)
 
 ---
 
-**Questions?** Check the full specification in `specs/001-do-all-possible/spec.md` or research decisions in `specs/001-do-all-possible/research.md`.
+**Questions?** Check the full specification in `specs/001-seo-basics/spec.md` or research decisions in `specs/001-seo-basics/research.md`.

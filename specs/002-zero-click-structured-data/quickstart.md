@@ -8,7 +8,7 @@
 
 - Node.js 20+ and Yarn installed
 - Existing Cennso website repository cloned
-- Branch `002-optimize-website-to` checked out
+- Branch `002-zero-click-structured-data` checked out
 - Understanding of Schema.org basics (see [schema.org](https://schema.org))
 
 ## Phase 1: Global Structured Data (P1 - Highest Priority)

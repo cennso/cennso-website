@@ -6,7 +6,7 @@ on:
   pull_request:
     paths:
       - "**"
-      - .github/workflows/nodejs.yml
+      - tests-and-other-validation.yml
     types:
       - opened
       - reopened
