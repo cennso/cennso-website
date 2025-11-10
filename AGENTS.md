@@ -77,6 +77,7 @@ yarn lint:fix              # autofix ESLint check
 yarn format                # Prettier check
 yarn format:fix            # Auto-fix Prettier formatting issues
 yarn a11y                  # Run all accessibility checks
+yarn a11y:autocomplete     # Validate autocomplete attributes (tel not phone, given-name not firstname)
 yarn perf:images           # Validate all images are WebP and under 100KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
@@ -204,6 +205,10 @@ All code changes must comply with constitution principles:
 - **Accessibility**: WCAG 2.1 AA compliance
   - Contrast ratios: ≥4.5:1 for normal text, ≥3:1 for large text (validated by `yarn a11y:contrast`)
   - Text alternatives: All images, icons, buttons have alt/aria-label (validated by `yarn a11y:text-alternatives`)
+  - Autocomplete attributes: MUST use HTML spec values (tel not phone, given-name not firstname)
+    - Validated by `yarn a11y:autocomplete`
+    - Ensures WCAG 2.1 SC 1.3.5 (Identify Input Purpose) compliance
+    - Common corrections: phone→tel, telephone→tel, firstname→given-name, lastname→family-name, zip→postal-code
   - Keyboard navigation, ARIA, semantic HTML
 - **Performance**: **Lighthouse ≥95% on all categories** (Performance, Accessibility, Best Practices, SEO)
   - Bundles <500KB, SSG only (no client-side content fetching)
@@ -265,7 +270,7 @@ This runs:
 - `yarn build` - TypeScript compilation, build validation
 - `yarn format` - Prettier formatting check
 - `yarn lint` - ESLint code quality
-- `yarn a11y` - 11 accessibility validation scripts
+- `yarn a11y` - All accessibility validation scripts
 - `yarn perf:images` - Image optimization validation
 - `yarn perf:mobile` - Mobile performance validation
 - `yarn seo:validate` - SEO metadata validation
