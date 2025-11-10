@@ -172,6 +172,78 @@ def detect_missing_name_role_value(file_path: Path, lines: List[str]) -> List[Co
     return issues
 
 
+def detect_aria_hidden_focusable(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
+    """
+    Detect elements with aria-hidden="true" that are focusable.
+    This violates axe rule: aria-hidden-focus
+    Elements with aria-hidden="true" must not be focusable or contain focusable elements.
+    
+    Note: Decorative children (like icons) inside focusable elements can have aria-hidden="true"
+    We only flag if the element WITH aria-hidden is itself a focusable element type.
+    """
+    issues = []
+    content = ''.join(lines)
+    
+    # Pattern to find elements with aria-hidden="true"
+    aria_hidden_pattern = re.compile(r'aria-hidden=["\']true["\']', re.IGNORECASE)
+    
+    for m in aria_hidden_pattern.finditer(content):
+        start = m.start()
+        line_no = content[:start].count('\n') + 1
+        
+        # Get context - look back to find the opening tag
+        context_start = max(0, start - 300)
+        context = content[context_start:start + 100]
+        
+        # Find the opening tag of the element that has aria-hidden
+        # Look backwards for the nearest < before aria-hidden
+        tag_start_pos = context.rfind('<', 0, len(context) - (start - context_start))
+        if tag_start_pos == -1:
+            continue
+            
+        tag_context = context[tag_start_pos:]
+        
+        # Extract the element type from the tag
+        element_match = re.match(r'<(\w+)(?:\s|>|/)', tag_context, re.IGNORECASE)
+        if not element_match:
+            continue
+            
+        elem_type = element_match.group(1).lower()
+        
+        # Only check if the element with aria-hidden is itself a focusable element type
+        focusable_elements = ['button', 'a', 'input', 'select', 'textarea', 'summary', 'details']
+        
+        if elem_type not in focusable_elements:
+            # Not a naturally focusable element, check for explicit tabindex
+            tabindex_match = re.search(r'tabIndex\s*=\s*\{?\s*["\']?([0-9]+)["\']?\s*\}?', tag_context, re.IGNORECASE)
+            if not tabindex_match:
+                # Not focusable, this is fine (e.g., decorative icon)
+                continue
+            tabindex_value = int(tabindex_match.group(1))
+            if tabindex_value < 0:
+                # Explicitly removed from tab order
+                continue
+        
+        # This is a focusable element with aria-hidden="true"
+        # Check if it has tabIndex={-1} which would fix it
+        if re.search(r'tabIndex\s*=\s*\{?\s*-1\s*\}?', tag_context, re.IGNORECASE):
+            # Fixed - has tabIndex={-1}
+            continue
+        
+        # Found a violation
+        snippet = tag_context[:200].strip()
+        issues.append(CompatibleIssue(
+            file_path=file_path,
+            line_number=line_no,
+            criterion='SC 4.1.2',
+            level='A',
+            message=f'<{elem_type}> element with aria-hidden="true" is focusable. Add tabIndex={{-1}} to remove from tab order. (axe rule: aria-hidden-focus)',
+            code_snippet=snippet
+        ))
+    
+    return issues
+
+
 def detect_missing_status_messages(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
     issues = []
     content = ''.join(lines)
@@ -303,6 +375,101 @@ def detect_aria_role_hierarchy_issues(file_path: Path, lines: List[str]) -> List
     return issues
 
 
+def detect_nested_interactive(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
+    """Detect nested interactive controls (axe rule: nested-interactive).
+    
+    Interactive controls should not be nested as they create confusion for screen readers
+    and keyboard users. Examples:
+    - <button><a>...</a></button>
+    - <a><button>...</button></a>
+    - <button role="button">...</button>
+    """
+    issues = []
+    content = ''.join(lines)
+    
+    # Interactive element types
+    interactive_elements = ['button', 'a']  # Focus on most common violations
+    interactive_roles = ['button', 'link', 'tab', 'menuitem']
+    
+    # Build pattern for interactive tags (only match actual HTML tags, not TypeScript generics)
+    # Require the tag name be followed by a space, '>' or '/'
+    tag_pattern = r'<(' + '|'.join(interactive_elements) + r')(\s|>|/)'
+    
+    # Find all interactive elements
+    for outer_match in re.finditer(tag_pattern, content, re.IGNORECASE):
+        outer_tag = outer_match.group(1).lower()
+        outer_start = outer_match.start()
+        outer_line = content[:outer_start].count('\n') + 1
+        
+        # Find the matching closing tag for this element
+        close_tag_pattern = rf'</{outer_tag}>'
+        
+        # Look ahead up to 2000 chars for closing tag (handle complex nested content)
+        search_end = min(len(content), outer_start + 2000)
+        search_content = content[outer_start:search_end]
+        
+        # Count opening and closing tags to find the matching one
+        open_count = 1
+        pos = len(outer_match.group(0))
+        
+        while pos < len(search_content) and open_count > 0:
+            # Look for next opening or closing tag of same type
+            next_open = re.search(rf'<{outer_tag}(\s|>|/)', search_content[pos:], re.IGNORECASE)
+            next_close = re.search(close_tag_pattern, search_content[pos:], re.IGNORECASE)
+            
+            if next_close and (not next_open or next_close.start() < next_open.start()):
+                open_count -= 1
+                if open_count == 0:
+                    # Found matching closing tag
+                    inner_content = search_content[len(outer_match.group(0)):pos + next_close.start()]
+                    
+                    # Check if there's another interactive element inside
+                    inner_interactive = re.search(tag_pattern, inner_content, re.IGNORECASE)
+                    if inner_interactive:
+                        inner_tag = inner_interactive.group(1).lower()
+                        
+                        # Get snippet around the issue
+                        snippet_start = max(0, outer_start)
+                        snippet = content[snippet_start:snippet_start + 150].replace('\n', ' ')
+                        
+                        issues.append(CompatibleIssue(
+                            file_path=file_path,
+                            line_number=outer_line,
+                            criterion='SC 4.1.2',
+                            level='A',
+                            message=f'Nested interactive controls: <{outer_tag}> contains <{inner_tag}>. Interactive controls must not be nested. (axe rule: nested-interactive)',
+                            code_snippet=snippet
+                        ))
+                    
+                    # Check for role-based interactive elements inside
+                    role_pattern = r'role\s*=\s*["\'](' + '|'.join(interactive_roles) + r')["\']'
+                    role_match = re.search(role_pattern, inner_content, re.IGNORECASE)
+                    if role_match:
+                        role_value = role_match.group(1)
+                        
+                        snippet_start = max(0, outer_start)
+                        snippet = content[snippet_start:snippet_start + 150].replace('\n', ' ')
+                        
+                        issues.append(CompatibleIssue(
+                            file_path=file_path,
+                            line_number=outer_line,
+                            criterion='SC 4.1.2',
+                            level='A',
+                            message=f'Nested interactive controls: <{outer_tag}> contains role="{role_value}". Interactive controls must not be nested. (axe rule: nested-interactive)',
+                            code_snippet=snippet
+                        ))
+                    
+                    break
+                pos = pos + next_close.end()
+            elif next_open:
+                open_count += 1
+                pos = pos + next_open.end()
+            else:
+                break
+    
+    return issues
+
+
 def validate_file(file_path: Path) -> List[CompatibleIssue]:
     lines = read_file_lines(file_path)
     if not lines:
@@ -318,6 +485,8 @@ def validate_file(file_path: Path) -> List[CompatibleIssue]:
     issues.extend(detect_missing_status_messages(file_path, lines))
     issues.extend(detect_aria_attribute_role_mismatch(file_path, lines))
     issues.extend(detect_aria_role_hierarchy_issues(file_path, lines))
+    issues.extend(detect_aria_hidden_focusable(file_path, lines))
+    issues.extend(detect_nested_interactive(file_path, lines))
     return issues
 
 

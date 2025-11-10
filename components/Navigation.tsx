@@ -2,14 +2,7 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import {
-  Typography,
-  ListItem,
-  Menu,
-  MenuHandler,
-  MenuList,
-  MenuItem,
-} from '@material-tailwind/react'
+import { Menu, MenuHandler, MenuList, MenuItem } from '@material-tailwind/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 import { Button } from './common'
@@ -181,29 +174,13 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
             placement="bottom"
           >
             <MenuHandler>
-              <Typography
-                as="button"
-                variant="small"
-                className="p-0"
-                placeholder={undefined}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
+              <div
+                role="button"
+                tabIndex={0}
+                className="p-0 bg-transparent hover:bg-transparent active:bg-transparent cursor-pointer"
               >
-                <ListItem
-                  className="p-0 bg-transparent hover:bg-transparent active:bg-transparent"
-                  selected={isMenuOpen}
-                  onClick={() => {
-                    setIsMobileMenuOpen((cur) => !cur)
-                    setIsMenuOpen(false)
-                  }}
-                  placeholder={undefined}
-                  onPointerEnterCapture={undefined}
-                  onPointerLeaveCapture={undefined}
-                  role="button"
-                >
-                  {content}
-                </ListItem>
-              </Typography>
+                {content}
+              </div>
             </MenuHandler>
             <MenuList
               className="hidden max-w-screen-xl rounded-[32px] lg:block bg-[#185F99] shadow-none border-[#185F99] filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"

@@ -29,7 +29,11 @@ export const CookiesBanner: FunctionComponent = () => {
   }
 
   return (
-    <div className="fixed z-50 flex flex-col lg:flex-row justify-center gap-2 md:gap-4 bg-secondary-600 text-white py-3 bottom-4 right-4 left-4 sm:left-auto rounded-[32px] px-6 py-4 filter drop-shadow-[0px_15px_20px_rgba(68,141,200,0.35)]">
+    <aside
+      role="complementary"
+      aria-label="Cookie consent banner"
+      className="fixed z-50 flex flex-col lg:flex-row justify-center gap-2 md:gap-4 bg-secondary-600 text-white py-3 bottom-4 right-4 left-4 sm:left-auto rounded-[32px] px-6 py-4 filter drop-shadow-[0px_15px_20px_rgba(68,141,200,0.35)]"
+    >
       <div className="flex flex-row gap-4 items-center justify-between">
         <div>
           <svg
@@ -73,6 +77,6 @@ export const CookiesBanner: FunctionComponent = () => {
           </div>
         </div>
       </div>
-    </div>
+    </aside>
   )
 }

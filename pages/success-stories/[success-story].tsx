@@ -9,7 +9,7 @@ import { Markdown } from '../../components/Markdown/Markdown'
 import { Share } from '../../components/Markdown/Share'
 import { TableOfContents } from '../../components/Markdown/TableOfContents'
 import { SEO } from '../../components/SEO'
-import { Button, Container, FeatureCard } from '../../components/common'
+import { Container, FeatureCard } from '../../components/common'
 import { SuccessStoryContext } from '../../contexts'
 
 import { mdRegex, generateToc } from '../../lib/markdown'
@@ -130,10 +130,9 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
                           rel="noreferrer noopener"
                           target="_blank"
                           href={canonical}
+                          className="inline-flex flex-row items-center [text-shadow:_1.5px_1.5px_rgb(0_0_0_/_0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-gradient-to-r from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-[length:200%_200%] hover:bg-right rounded-full text-white text-lg"
                         >
-                          <Button variant="secondary" useArrow={true}>
-                            Read rest of the blog post
-                          </Button>
+                          Read rest of the blog post {'>'}
                         </a>
                       </div>
                     ) : null}
@@ -172,10 +171,9 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
                           rel="noreferrer noopener"
                           target="_blank"
                           href={canonical}
+                          className="inline-flex flex-row items-center [text-shadow:_1.5px_1.5px_rgb(0_0_0_/_0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-gradient-to-r from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-[length:200%_200%] hover:bg-right rounded-full text-white text-lg"
                         >
-                          <Button variant="secondary" useArrow={true}>
-                            Read rest of the blog post
-                          </Button>
+                          Read rest of the blog post {'>'}
                         </a>
                       </div>
                     ) : null}

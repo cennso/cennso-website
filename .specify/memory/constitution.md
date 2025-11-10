@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report:
-- Version: Initial → 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 → 1.5.0 → 1.6.0 → 1.7.0 → 1.8.0 → 1.9.0 → 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0
+- Version: Initial → 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 → 1.5.0 → 1.6.0 → 1.7.0 → 1.8.0 → 1.9.0 → 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0 → 2.4.0 → 2.5.0 → 2.6.0 → 2.6.1
 - Changes in v1.1.0:
   - Testing Policy expanded with specific technology stack (Playwright, Vitest, React Testing Library)
   - Test organization requirements added
@@ -34,7 +34,7 @@ Sync Impact Report:
   - Added: Landmark elements requirements (<main>, <nav>, <footer>)
   - Added: Form label association and table header requirements
   - Quality Gates expanded to include semantic structure validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 4 checks)
+  - All a11y scripts consolidated under `yarn a11y` command
 - Changes in v1.6.0:
   - Principle V (Accessibility Standards) expanded with comprehensive Distinguishable requirements
   - Added: Automated distinguishable content validation (yarn a11y:distinguishable)
@@ -42,7 +42,7 @@ Sync Impact Report:
   - Added: Use of Color, Resize Text, Images of Text, Reflow, Text Spacing requirements
   - Added: Non-text Contrast and Audio Control validation
   - Quality Gates expanded to include distinguishable content validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 5 checks)
+  - All a11y scripts consolidated under `yarn a11y` command
 - Changes in v1.7.0:
   - Principle V (Accessibility Standards) expanded with comprehensive Keyboard Accessible requirements
   - Added: Automated keyboard accessibility validation (yarn a11y:keyboard)
@@ -51,7 +51,7 @@ Sync Impact Report:
   - Enhanced existing "Keyboard & Navigation" section with detailed WCAG 2.1 requirements
   - Added: Skip links, focus management, tab order, and escape mechanisms
   - Quality Gates expanded to include keyboard accessibility validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 6 checks)
+  - All a11y scripts consolidated under `yarn a11y` command
 - Changes in v1.8.0:
   - Principle V (Accessibility Standards) expanded with comprehensive Enough Time requirements
   - Added: Automated enough time validation (yarn a11y:enough-time)
@@ -59,7 +59,7 @@ Sync Impact Report:
   - Added: Timing Adjustable (SC 2.2.1), Pause, Stop, Hide (SC 2.2.2)
   - Added: Guidelines for session timeouts, auto-playing content, and moving elements
   - Quality Gates expanded to include enough time validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 7 checks)
+  - All a11y scripts consolidated under `yarn a11y` command
 - Changes in v1.9.0:
   - Principle V (Accessibility Standards) expanded with comprehensive Seizures requirements
   - Added: Automated seizures and physical reactions validation (yarn a11y:seizures)
@@ -68,7 +68,7 @@ Sync Impact Report:
   - Added: Animation from Interactions/Reduced Motion support (SC 2.3.3 - Level AAA best practice)
   - Enhanced: Added prefers-reduced-motion media query to tailwind.css for all animations
   - Quality Gates expanded to include seizures validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 8 checks)
+  - All a11y scripts consolidated under `yarn a11y` command
 - Changes in v2.0.0 (MAJOR):
   - **MILESTONE: Complete WCAG 2.1 Principle 2 (Operable) automated validation**
   - Principle V (Accessibility Standards) expanded with comprehensive Navigable requirements
@@ -77,7 +77,7 @@ Sync Impact Report:
   - Added: Bypass Blocks, Page Titled, Focus Order, Link Purpose, Multiple Ways, Headings and Labels, Focus Visible
   - Fixed: Breadcrumbs home icon link now has aria-label="Home"
   - Quality Gates expanded to include navigable validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 9 checks, ~1.3s execution)
+  - All a11y scripts consolidated under `yarn a11y` command
   - WCAG 2.1 Coverage: ~75-80% of Level AA automated (Perceivable + Operable complete)
   - EN 301 549 Compliance: Sections 9.1 (Perceivable) and 9.2 (Operable) fully validated
 - Changes in v2.1.0 (MINOR):
@@ -87,7 +87,7 @@ Sync Impact Report:
   - Added: Pointer Gestures, Pointer Cancellation, Label in Name, Motion Actuation validation
   - Added: Level AAA best practices - Target Size (≥44×44px), Concurrent Input Mechanisms
   - Quality Gates expanded to include input modalities validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 10 checks, ~1.4s execution)
+  - All a11y scripts consolidated under `yarn a11y` command
   - WCAG 2.1 Principle 2 (Operable): Complete with all 5 guidelines automated
   - EN 301 549 Section 9.2.5 (Input Modalities): COMPLIANT
 - Changes in v2.2.0 (MINOR):
@@ -99,7 +99,7 @@ Sync Impact Report:
   - Added: Language of Parts validation (foreign language passages)
   - Added: Level AAA informational best practices - Unusual Words, Abbreviations, Reading Level, Pronunciation
   - Quality Gates expanded to include readable validation
-  - All a11y scripts consolidated under `yarn a11y` command (runs all 11 checks, ~1.4s execution)
+  - All a11y scripts consolidated under `yarn a11y` command
   - WCAG 2.1 Principle 3 (Understandable): 1 of 3 guidelines automated
   - EN 301 549 Section 9.3.1 (Readable): COMPLIANT
   EN 301 549 Section 9.3.1 (Readable): COMPLIANT
@@ -132,6 +132,15 @@ Changes in v2.3.0 (MINOR):
   - Updated check:all command to include seo validation
   - CI/CD enforcement: yarn seo:validate blocks merge on errors
   - Principles Modified: New Principle VI added (MINOR version bump)
+- Changes in v2.6.1 (PATCH):
+  - Enhanced: Input Assistance (WCAG 2.1 Guideline 3.3) with autocomplete validation
+  - Added: Automated autocomplete validation (yarn a11y:autocomplete)
+  - Added: WCAG 2.1 SC 1.3.5 (Identify Input Purpose) requirements and common corrections
+  - Fixed: Phone input autocomplete changed from "phone" to "tel" (HTML spec compliance)
+  - Fixed: axe rule autocomplete-valid violations in ContactForm and JobForm
+  - Quality Gates expanded to include autocomplete validation (12th a11y check)
+  - All a11y scripts consolidated under `yarn a11y` command
+  - Principles Modified: V. Accessibility Standards (PATCH - clarification/enhancement)
 - Templates Status:
   ✅ plan-template.md - accessibility requirements now enforceable in specs
   ✅ spec-template.md - acceptance criteria can reference specific a11y checks
@@ -682,6 +691,19 @@ All pages MUST have optimized metadata for search engine discoverability:
 - All form controls MUST have an associated label (`<label for="id">`) or an accessible name (`aria-label`/`aria-labelledby`)
 - Placeholders MUST NOT be used as the only label
 - Use semantic input types (`type="email"`, `type="tel"`) for improved input assistance
+- **Autocomplete attributes** (WCAG 2.1 SC 1.3.5 - Level AA):
+  - Form inputs that collect user information MUST use correct autocomplete values from HTML spec
+  - Common required corrections:
+    - `phone` → `tel` (telephone numbers)
+    - `telephone` → `tel`
+    - `firstname` → `given-name` (first names)
+    - `lastname` → `family-name` (last names)
+    - `zip` → `postal-code` (postal codes)
+    - `e-mail` → `email` (email addresses)
+  - Purpose: Enables browsers to autofill forms, helps users with cognitive disabilities
+  - Reference: https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#autofill
+  - Automated: `yarn a11y:autocomplete` validates all autocomplete attribute values
+  - axe rule: autocomplete-valid
 
 **Error Suggestion (WCAG 2.1 SC 3.3.3 - Level AA):**
 
@@ -696,6 +718,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 **Testing & Validation (Input Assistance):**
 
 - Automated: `yarn a11y:input-assistance` MUST pass (flags missing labels, missing error regions, auto-submit patterns)
+- Automated: `yarn a11y:autocomplete` MUST pass (validates autocomplete attribute values against HTML spec)
 - Manual: Verify error messages are announced by screen readers and input elements are focused when errors occur
 
 **Distinguishable (WCAG 2.1 Guideline 1.4 - EN 301 549 Section 9.1.4):**
@@ -874,7 +897,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 
 **Testing & Validation:**
 
-- Automated accessibility testing with `yarn a11y` MUST pass (runs all eleven checks below, ~1.4s execution time)
+- Automated accessibility testing with `yarn a11y` MUST pass (runs all checks below)
 - Automated contrast testing with `yarn a11y:contrast` MUST pass (validates 16+ color combinations)
 - Automated text alternatives testing with `yarn a11y:text-alternatives` MUST pass
 - Automated time-based media testing with `yarn a11y:media` MUST pass
@@ -886,6 +909,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 - Automated navigable testing with `yarn a11y:navigable` MUST pass (validates bypass blocks, page titles, focus order, link purpose, headings, focus visible)
 - Automated input modalities testing with `yarn a11y:input-modalities` MUST pass (validates pointer gestures, pointer cancellation, label in name, motion actuation)
 - Automated readable testing with `yarn a11y:readable` MUST pass (validates language of page, language of parts)
+- Automated autocomplete testing with `yarn a11y:autocomplete` MUST pass (validates autocomplete attribute values against HTML spec)
 - Automated testing with axe-core or Lighthouse MUST be run before merging
 - Manual keyboard navigation testing MUST be performed for interactive features
 - Screen reader testing SHOULD be performed (NVDA on Windows, VoiceOver on macOS/iOS)
@@ -949,6 +973,7 @@ Before any PR can be merged, ALL of the following MUST pass:
    - Navigable (`yarn a11y:navigable`)
    - Input modalities (`yarn a11y:input-modalities`)
    - Readable (`yarn a11y:readable`)
+   - Autocomplete attributes (`yarn a11y:autocomplete`)
 6. **SEO**: `yarn seo:validate` passes all metadata requirements:
    - All titles 50-60 characters
    - All descriptions 150-160 characters
@@ -960,13 +985,13 @@ Before any PR can be merged, ALL of the following MUST pass:
    - Best Practices (security, standards)
    - SEO (search engine optimization)
 
-**Recommended Pre-commit Command**: `yarn check:all` (runs format, lint, a11y [11 checks], seo, and build in sequence)
+**Recommended Pre-commit Command**: `yarn check:all` (runs format, lint, a11y, seo, and build in sequence)
 
 **Local Lighthouse Testing**: Run `yarn dev` in terminal 1, then `yarn lighthouse` in terminal 2 to validate ≥95% scores before pushing
 
 **Automated Quality Checks**: GitHub Actions workflows enforce all quality gates on pull requests
 
-- `tests-and-other-validation.yml`: Format, lint, type check, build, a11y (11 checks), seo (metadata, structured data, internal links), and image optimization
+- `tests-and-other-validation.yml`: Format, lint, type check, build, a11y, seo (metadata, structured data, internal links), and image optimization
 - `lighthouse.yml`: Lighthouse audits with ≥95% enforcement (blocks merge if any category < 95%)
   - Uses CI-specific configs (`.lighthouserc.ci.js`, `lighthouse.mobile.config.ci.js`) that skip `is-crawlable` audit since Vercel preview deployments are blocked from indexing by default
 
@@ -1007,4 +1032,4 @@ This constitution defines the non-negotiable standards for the Cennso Website pr
 - AGENTS.md serves as runtime guidance for AI assistants and human developers
 - Template files in `.specify/templates/` enforce constitution through structured workflows
 
-**Version**: 2.6.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-01-20
+**Version**: 2.6.1 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-01-10

@@ -46,7 +46,7 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
 
       <div className="flex flex-col h-full">
         <header className="flex flex-row justify-center mt-8 text-center">
-          <h4 className="font-bold text-2xl text-secondary-200">{title}</h4>
+          <h3 className="font-bold text-2xl text-secondary-200">{title}</h3>
         </header>
 
         <div className="flex-1 flex flex-col items-center">

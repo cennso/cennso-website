@@ -172,7 +172,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
               name="phone"
               id="phone"
               placeholder="Enter the phone number to which we will call you back"
-              autoComplete="phone"
+              autoComplete="tel"
             />
           </div>
           <div className="sm:col-span-2">
