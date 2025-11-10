@@ -195,7 +195,7 @@ export const getStaticProps: GetStaticProps<BlogPostPageProps> =
         toc,
         mdxSource,
         blogPostQuery: blogPost,
-        currentPath: `https://cennso.com/blog/${blogPost}`,
+        currentPath: `https://www.cennso.com/blog/${blogPost}`,
         $$app: {
           navigation: await createNavigation(),
         },

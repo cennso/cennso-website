@@ -174,7 +174,7 @@ export function generateArticleSchema(
     author: authors.map((author) => ({
       '@type': 'Person',
       name: author.name,
-      url: `https://cennso.com/authors/${author.id}`,
+      url: `https://www.cennso.com/authors/${author.id}`,
       image: author.avatar,
     })),
     datePublished: post.date,

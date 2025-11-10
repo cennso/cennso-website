@@ -229,7 +229,7 @@ export const getStaticProps: GetStaticProps<SuccessStoryPageProps> =
         toc,
         mdxSource,
         successStoryQuery: successStory,
-        currentPath: `https://cennso.com/success-stories/${successStory}`,
+        currentPath: `https://www.cennso.com/success-stories/${successStory}`,
         $$app: {
           navigation: await createNavigation(),
         },

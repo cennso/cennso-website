@@ -296,12 +296,12 @@ Schemas can reference other schemas:
   "author": {
     "@type": "Person",
     "name": "John Doe",
-    "url": "https://cennso.com/authors/john-doe"
+    "url": "https://www.cennso.com/authors/john-doe"
   },
   "publisher": {
     "@type": "Organization",
     "name": "Cennso",
-    "logo": "https://cennso.com/assets/logo.png"
+    "logo": "https://www.cennso.com/assets/logo.png"
   }
 }
 ```
@@ -316,7 +316,7 @@ Schemas can reference each other by ID to avoid duplication:
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "@id": "https://cennso.com/#organization",
+  "@id": "https://www.cennso.com/#organization",
   "name": "Cennso",
   ...
 }
@@ -324,7 +324,7 @@ Schemas can reference each other by ID to avoid duplication:
 // Later in another schema:
 {
   "@type": "BlogPosting",
-  "publisher": { "@id": "https://cennso.com/#organization" }
+  "publisher": { "@id": "https://www.cennso.com/#organization" }
 }
 ```
 

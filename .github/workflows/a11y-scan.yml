@@ -17,12 +17,12 @@ jobs:
         uses: github/accessibility-scanner@dab8a8a3e066babb83677cd31fdc393c3580163e
         with:
           urls: |
-            https://cennso.com
-            https://cennso.com/success-stories
-            https://cennso.com/contact
-            https://cennso.com/about
-            https://cennso.com/blog
-            https://cennso.com/solutions
+            https://www.cennso.com
+            https://www.cennso.com/success-stories
+            https://www.cennso.com/contact
+            https://www.cennso.com/about
+            https://www.cennso.com/blog
+            https://www.cennso.com/solutions
           repository: cennso/cennso-website
           token: ${{ secrets.GITHUB_TOKEN }}
           cache_key: cached_results-cennso-main.json

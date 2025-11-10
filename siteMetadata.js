@@ -6,7 +6,7 @@ const siteMetadata = {
   language: 'en-us',
   locale: 'en-US',
   theme: 'light',
-  siteUrl: 'https://cennso.com',
+  siteUrl: 'https://www.cennso.com',
   siteLogo: '/logo.svg',
   socialBanner: '/assets/thumbnails/cennso-thumbnail.webp',
   companyName: 'Cennso Technologies GmbH',

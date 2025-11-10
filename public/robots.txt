@@ -13,7 +13,7 @@ Disallow: /.next/
 Disallow: /.specify/
 
 # Host
-Host: https://cennso.com
+Host: https://www.cennso.com
 
 # Sitemaps
-Sitemap: https://cennso.com/sitemap.xml
+Sitemap: https://www.cennso.com/sitemap.xml
