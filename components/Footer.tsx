@@ -45,9 +45,9 @@ export const Footer: FunctionComponent<FooterProps> = () => {
 
         <ul className="grid grid-cols-2 lg:grid-cols-3 xl:flex gap-16 gap-y-0 lg:gap-32 xl:gap-16 2xl:gap-32 mb-8 md:mb-0">
           <li className="col-span-2 lg:col-auto flex flex-col gap-4 lg:mb-0 mb-8">
-            <h4 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
+            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
               Company
-            </h4>
+            </h2>
             <ul className="grid grid-rows-2 grid-flow-col gap-x-12 gap-y-1">
               {companyLinks.map((link) => (
                 <li key={link.title}>
@@ -63,9 +63,9 @@ export const Footer: FunctionComponent<FooterProps> = () => {
             </ul>
           </li>
           <li className="flex flex-col gap-4 mb-2 md:mb-0">
-            <h4 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
+            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
               Explore
-            </h4>
+            </h2>
             <ul className="flex flex-col gap-1">
               {exloreLinks.map((link) => (
                 <li key={link.title}>
@@ -82,9 +82,9 @@ export const Footer: FunctionComponent<FooterProps> = () => {
             </ul>
           </li>
           {/* <li className="flex flex-col gap-4 mb-2 md:mb-0 w-[205px]">
-            <h4 className="font-bold text-lg text-white border-b-[1px] pb-1 border-transparent">
+            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-transparent">
               Social
-            </h4>
+            </h2>
             <ul className="flex flex-col gap-1">
               {socialLinks.map((link) => (
                 <li key={link.title}>

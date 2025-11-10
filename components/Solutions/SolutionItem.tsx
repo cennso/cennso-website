@@ -52,7 +52,7 @@ export const SolutionItem: FunctionComponent<SolutionItemProps> = ({
 
       <div className="flex flex-col items-center">
         <header className="flex flex-row justify-center mt-8 text-center">
-          <h4 className="font-bold text-2xl text-secondary-200">{title}</h4>
+          <h3 className="font-bold text-2xl text-secondary-200">{title}</h3>
         </header>
 
         <p className="my-4 mb-6 text-center text-white px-8 lg:px-16 text-sm">

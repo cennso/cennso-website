@@ -68,6 +68,49 @@ def check_heading_hierarchy(file_path: str, content: str) -> List[SemanticViolat
     violations = []
     file_name = os.path.basename(file_path)
     
+    # Check Footer component specifically (axe rule: heading-order)
+    # Footer is a landmark and should start with h2 (not h3/h4)
+    is_footer = 'Footer.tsx' in file_path
+    if is_footer:
+        # Footer headings should be h2 (after page h1)
+        heading_pattern = r'<(h[3-6])[^>]*>'
+        for match in re.finditer(heading_pattern, content, re.IGNORECASE):
+            line_num = content[:match.start()].count('\n') + 1
+            level = int(match.group(1)[1])
+            violations.append(SemanticViolation(
+                name=f"Footer uses h{level} instead of h2",
+                file=file_name,
+                severity="error",
+                description=f"Footer headings should be h2 (after page h1), found h{level} - axe rule: heading-order",
+                wcag="WCAG 2.1 SC 1.3.1",
+                line_num=line_num
+            ))
+        return violations
+    
+    # Check card components that display on listing pages (axe rule: heading-order)
+    # These pages have h1 from PageHeader, so card headings should be h2 or h3
+    is_success_story_item = 'SuccessStoryItem.tsx' in file_path
+    is_blog_post_item = 'BlogPostItem.tsx' in file_path
+    is_solution_item = 'SolutionItem.tsx' in file_path
+    
+    if is_success_story_item or is_blog_post_item or is_solution_item:
+        # Card headings should be h2 or h3 (after page h1)
+        # Using h4+ would skip levels
+        heading_pattern = r'<(h[4-6])[^>]*>'
+        for match in re.finditer(heading_pattern, content, re.IGNORECASE):
+            line_num = content[:match.start()].count('\n') + 1
+            level = int(match.group(1)[1])
+            component_type = "Success story" if is_success_story_item else ("Blog post" if is_blog_post_item else "Solution")
+            violations.append(SemanticViolation(
+                name=f"{component_type} card uses h{level}",
+                file=file_name,
+                severity="error",
+                description=f"{component_type} card headings should be h2 or h3 (after page h1), found h{level} - axe rule: heading-order",
+                wcag="WCAG 2.1 SC 1.3.1",
+                line_num=line_num
+            ))
+        return violations
+    
     # Only check page files for heading hierarchy, not components
     # Components are reusable and may have headings that are contextually correct
     is_page = file_path.startswith('pages/') and not file_path.startswith('pages/api/') and not file_path.endswith('_app.tsx') and not file_path.endswith('_document.tsx')
