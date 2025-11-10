@@ -54,7 +54,7 @@ export const Footer: FunctionComponent<FooterProps> = () => {
                   <Link
                     title={link.title}
                     href={link.link}
-                    className="flex flex-row items-center text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out lg:min-w-[125px]"
+                    className="flex flex-row items-center text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out lg:min-w-[125px] py-3"
                   >
                     <span>{link.title}</span>
                   </Link>
@@ -62,8 +62,8 @@ export const Footer: FunctionComponent<FooterProps> = () => {
               ))}
             </ul>
           </li>
-          <li className="flex flex-col gap-4 mb-2 md:mb-0 w-[205px]">
-            <h4 className="font-bold text-lg text-white border-b-[1px] pb-1 border-transparent">
+          <li className="flex flex-col gap-4 mb-2 md:mb-0">
+            <h4 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
               Explore
             </h4>
             <ul className="flex flex-col gap-1">
@@ -72,7 +72,7 @@ export const Footer: FunctionComponent<FooterProps> = () => {
                   <Link
                     title={link.title}
                     href={link.link}
-                    className="flex flex-row items-center gap-2 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out"
+                    className="flex flex-row items-center gap-2 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out py-3"
                     target={link.target}
                   >
                     <span>{link.title}</span>
