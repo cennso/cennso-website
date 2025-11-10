@@ -34,14 +34,10 @@ export function generateOrganizationSchema(): OrganizationSchema {
     '@type': 'Organization',
     '@id': 'https://cennso.com/#organization',
     name: 'Cennso',
-    url: 'https://cennso.com',
-    logo: 'https://cennso.com/assets/logo.png',
-    description: 'AsyncAPI consulting and event-driven architecture expertise',
-    sameAs: [
-      'https://www.linkedin.com/company/cennso',
-      'https://github.com/cennso',
-      'https://twitter.com/cennso',
-    ],
+    url: siteMetadata.siteUrl,
+    logo: `${siteMetadata.siteUrl}/assets/logo.png`,
+    description: 'Your mobile core deployed within 24 hours. Expert telco solutions and modernization.',
+    address: {
   }
 }
 ```
@@ -84,7 +80,7 @@ export function SchemaOrg({ schema }: SchemaOrgProps) {
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html__ schemaString }}
+      dangerouslySetInnerHTML={{ __html__: schemaString }}
     />
   );
 }
@@ -252,10 +248,10 @@ export function generateFAQSchema(faqs: FAQItem[]): FAQPageSchema {
 
 ```yaml
 faqs:
-  - question: 'What is AsyncAPI consulting?'
-    answer: 'AsyncAPI consulting helps teams design, implement, and optimize event-driven architectures using the AsyncAPI specification...'
-  - question: 'How long does implementation take?'
-    answer: 'Implementation timelines vary based on complexity, typically ranging from 4-12 weeks for most projects...'
+  - question: 'How quickly can you deploy a mobile core?'
+    answer: 'We can deploy your complete mobile core solution within 24 hours, including all necessary integrations and configurations for immediate operation.'
+  - question: 'What technologies do you support?'
+    answer: 'We support all major mobile core technologies including 4G/5G SA/NSA architectures, IMS, and cloud-native deployments on any infrastructure.'
 ```
 
 ### Step 4: Integrate in Pages (20 min)

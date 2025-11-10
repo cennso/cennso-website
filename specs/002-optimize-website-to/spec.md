@@ -34,9 +34,9 @@ Website content is structured to directly answer common user questions in format
 
 **Acceptance Scenarios**:
 
-1. **Given** a user searches "what is async api", **When** Google displays results, **Then** Cennso blog content appears as the featured snippet with a concise answer
-2. **Given** a user asks "how to implement event-driven architecture", **When** search engines show "People Also Ask" boxes, **Then** Cennso solutions content appears as an answer option
-3. **Given** a voice assistant query about AsyncAPI consulting, **When** the assistant responds, **Then** information is sourced from Cennso's structured content
+1. **Given** a user searches "what is mobile core", **When** Google displays results, **Then** Cennso blog content appears as the featured snippet with a concise answer
+2. **Given** a user asks "how to modernize telco infrastructure", **When** search engines show "People Also Ask" boxes, **Then** Cennso solutions content appears as an answer option
+3. **Given** a voice assistant query about mobile core deployment, **When** the assistant responds, **Then** information is sourced from Cennso's structured content
 4. **Given** FAQ-style content on service pages, **When** Google processes the page, **Then** individual Q&A pairs appear as expandable results in search
 
 ---
@@ -47,7 +47,14 @@ Cennso appears in search engine knowledge graphs with consistent brand informati
 
 **Why this priority**: Knowledge graph presence establishes brand authority and increases trust, but depends on proper structured data foundation from P1 stories.
 
-**Independent Test**: Can be tested by searching "Cennso" or "Cennso AsyncAPI" and verifying that a knowledge panel appears with correct brand information.
+**Example**: When a user searches for "Cennso" or "Cennso mobile core", a knowledge panel should appear on the right side of the search results showing:
+
+- Company name and logo
+- Brief description
+- Website link
+- Contact information
+
+**Independent Test**: Can be tested by searching "Cennso" or "Cennso mobile core" and verifying that a knowledge panel appears with correct brand information.
 
 **Acceptance Scenarios**:
 
@@ -63,11 +70,11 @@ Cennso business information appears accurately in local search results, Google M
 
 **Why this priority**: Important for local discovery but secondary to content-based zero-click features. Requires P1 structured data foundation.
 
-**Independent Test**: Can be tested by performing local searches like "AsyncAPI consulting near me" or checking Google My Business integration.
+**Example**: When a user in Berlin searches for "mobile core solutions near me", Cennso should appear in local pack results with:
 
 **Acceptance Scenarios**:
 
-1. **Given** a user searches for "AsyncAPI consulting in [city]", **When** local results display, **Then** Cennso appears with complete business information
+1. **Given** a user searches for "mobile core solutions in [city]", **When** local results display, **Then** Cennso appears with complete business information
 2. **Given** business hours structured data, **When** users view local results, **Then** current open/closed status displays correctly
 3. **Given** office location data, **When** Google Maps loads, **Then** Cennso location pin shows accurate address and contact details
 

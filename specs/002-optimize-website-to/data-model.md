@@ -292,7 +292,7 @@ Schemas can reference other schemas:
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "Getting Started with AsyncAPI",
+  "headline": "Mobile Core Modernization: A Complete Guide",
   "author": {
     "@type": "Person",
     "name": "John Doe",

@@ -29,8 +29,6 @@ export interface OrganizationSchema extends BaseSchema {
   sameAs?: string[]
   foundingDate?: string
   founder?: PersonSchema | PersonSchema[]
-  email?: string
-  telephone?: string
 }
 
 /**

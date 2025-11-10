@@ -120,7 +120,15 @@ Project uses Next.js Pages Router at repository root with:
 
 **Goal**: Add LocalBusiness schema to contact page so business information appears in local search results and Google Maps
 
-**Independent Test**: Search "AsyncAPI consulting [city]" and verify Cennso appears in local results with complete NAP (Name, Address, Phone) data
+**Verification**:
+
+```bash
+yarn build
+# Check .next/server/pages/contact.html for LocalBusiness JSON-LD
+# Test locally at http://localhost:3000/contact
+```
+
+**Independent Test**: Search "mobile core solutions [city]" and verify Cennso appears in local results with complete NAP (Name, Address, Phone) data
 
 ### Implementation for User Story 4
 

@@ -50,7 +50,14 @@ def validate_schema_type(schema_data: Dict[str, Any]) -> Dict[str, Any]:
         "Service",
         "Person",
         "WebSite",
-        "WebPage"
+        "WebPage",
+        "FAQPage",
+        "Question",
+        "Answer",
+        "PostalAddress",
+        "GeoCoordinates",
+        "ImageObject",
+        "ContactPoint"
     ]
     
     schema_type_raw = schema_data.get("@type")
@@ -137,6 +144,50 @@ def validate_required_properties(schema_data: Dict[str, Any]) -> List[str]:
         if "itemListElement" not in schema_data:
             errors.append("BreadcrumbList missing 'itemListElement'")
     
+    elif schema_type == "FAQPage":
+        if "mainEntity" not in schema_data:
+            errors.append("FAQPage missing 'mainEntity'")
+        elif isinstance(schema_data["mainEntity"], list):
+            if len(schema_data["mainEntity"]) < 2:
+                errors.append("FAQPage must have at least 2 questions")
+            # Validate each Question
+            for i, question in enumerate(schema_data["mainEntity"]):
+                if not isinstance(question, dict):
+                    errors.append(f"FAQPage mainEntity[{i}] is not an object")
+                    continue
+                if question.get("@type") != "Question":
+                    errors.append(f"FAQPage mainEntity[{i}] must have @type: Question")
+                if "name" not in question:
+                    errors.append(f"FAQPage Question[{i}] missing 'name'")
+                if "acceptedAnswer" not in question:
+                    errors.append(f"FAQPage Question[{i}] missing 'acceptedAnswer'")
+                elif isinstance(question["acceptedAnswer"], dict):
+                    answer = question["acceptedAnswer"]
+                    if answer.get("@type") != "Answer":
+                        errors.append(f"FAQPage Question[{i}] acceptedAnswer must have @type: Answer")
+                    if "text" not in answer:
+                        errors.append(f"FAQPage Question[{i}] Answer missing 'text'")
+    
+    elif schema_type == "LocalBusiness":
+        required = ["name", "address", "telephone"]
+        for prop in required:
+            if prop not in schema_data:
+                errors.append(f"LocalBusiness missing '{prop}'")
+        # Validate address structure
+        if "address" in schema_data:
+            address = schema_data["address"]
+            if isinstance(address, dict):
+                if address.get("@type") != "PostalAddress":
+                    errors.append("LocalBusiness address must have @type: PostalAddress")
+                addr_required = ["streetAddress", "addressLocality", "postalCode", "addressCountry"]
+                for prop in addr_required:
+                    if prop not in address:
+                        errors.append(f"LocalBusiness PostalAddress missing '{prop}'")
+    
+    elif schema_type == "Person":
+        if "name" not in schema_data:
+            errors.append("Person missing 'name'")
+    
     elif schema_type == "JobPosting":
         required = ["title", "description", "datePosted", "hiringOrganization"]
         for prop in required:
@@ -201,6 +252,10 @@ def main():
     all_warnings = []
 
     for file_path in html_files:
+        # Skip 500.html - auto-generated error page not under our control
+        if file_path.name == "500.html":
+            continue
+            
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
             soup = BeautifulSoup(content, "html.parser")
