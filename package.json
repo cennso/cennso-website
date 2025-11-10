@@ -34,7 +34,6 @@
     "perf:mobile": "python3 scripts/check-mobile-performance.py",
     "perf": "yarn perf:images && yarn perf:mobile",
     "seo:validate": "scripts/.venv/bin/python scripts/validate-seo.py",
-    "seo:meta": "scripts/.venv/bin/python scripts/validate-seo.py",
     "seo:schema": "scripts/.venv/bin/python scripts/validate-structured-data.py",
     "seo:links": "scripts/.venv/bin/python scripts/check-internal-links.py",
     "seo": "yarn seo:validate && yarn seo:schema && yarn seo:links",

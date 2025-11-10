@@ -10,20 +10,27 @@ Use the following tools to set up the project:
 
 - [Node.js](https://nodejs.org/en/) >= v16
 - [Yarn](https://yarnpkg.com/getting-started/install)
+- [Python](https://www.python.org/) >= 3.8 (for validation scripts)
 
 ## Usage
+
+### Install dependencies
+
+To install all dependencies, run these commands:
+
+```bash
+# Install Node.js dependencies
+yarn
+
+# Install Python dependencies (for validation scripts)
+pip install -r scripts/requirements.txt
+```
+
+> **Note**: Python dependencies are required for SEO validation and image optimization scripts. If you skip this step, `yarn check:all` will fail.
 
 ### Add new content
 
 To learn how to add new content to the website, check the [documentation](./docs) folder.
-
-### Install dependencies
-
-To install all dependencies, run this command:
-
-```bash
-yarn
-```
 
 ### Launch the website locally
 
