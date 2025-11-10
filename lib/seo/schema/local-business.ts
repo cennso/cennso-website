@@ -9,6 +9,7 @@ import type {
   LocalBusinessSchema,
   PostalAddress,
   GeoCoordinates,
+  ContactPoint,
 } from './types'
 import { toAbsoluteUrl } from './utils'
 
@@ -56,6 +57,7 @@ export function generateLocalBusinessSchema(
     '@type': 'LocalBusiness',
     name: data.name,
     url: toAbsoluteUrl('/'),
+    logo: toAbsoluteUrl('/assets/logo.png'),
     telephone: data.telephone,
     address: postalAddress,
   }
@@ -76,6 +78,17 @@ export function generateLocalBusinessSchema(
 
   if (data.image) {
     schema.image = toAbsoluteUrl(data.image)
+  }
+
+  // Add contact point with email if provided
+  if (data.email) {
+    const contactPoint: ContactPoint = {
+      '@type': 'ContactPoint',
+      contactType: 'customer service',
+      telephone: data.telephone,
+      email: data.email,
+    }
+    schema.contactPoint = contactPoint
   }
 
   schema.description =

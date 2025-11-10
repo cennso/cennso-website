@@ -29,26 +29,21 @@ export interface OrganizationSchema extends BaseSchema {
   sameAs?: string[]
   foundingDate?: string
   founder?: PersonSchema | PersonSchema[]
-  email?: string
-  telephone?: string
 }
 
 /**
  * LocalBusiness schema for location-based search
  * Extends Organization with location-specific properties
+ * LocalBusiness is a subtype of Organization in Schema.org hierarchy
  */
-export interface LocalBusinessSchema extends BaseSchema {
+export interface LocalBusinessSchema extends Omit<OrganizationSchema, '@type' | 'address'> {
   '@type': 'LocalBusiness' | 'ProfessionalService'
-  name: string
-  url: string
-  address: PostalAddress
-  telephone: string
+  address: PostalAddress // Required (override optional from Organization)
+  telephone: string // Required for local business
   geo?: GeoCoordinates
   openingHours?: string | string[]
   priceRange?: string
-  image?: string | ImageObject
-  description?: string
-  sameAs?: string[]
+  image?: string | ImageObject // Business location photo
 }
 
 /**
