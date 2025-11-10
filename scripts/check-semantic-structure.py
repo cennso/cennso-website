@@ -180,6 +180,7 @@ def check_landmarks(file_path: str, content: str) -> List[SemanticViolation]:
     is_layout = 'Layout.tsx' in file_path
     is_navigation = 'Navigation.tsx' in file_path
     is_footer = 'Footer.tsx' in file_path
+    is_cookies_banner = 'CookiesBanner.tsx' in file_path
     
     # Check for main landmark (only in Layout component)
     if is_layout:
@@ -215,6 +216,29 @@ def check_landmarks(file_path: str, content: str) -> List[SemanticViolation]:
                 description="Footer should use <footer> element (WCAG 1.3.1)",
                 wcag="WCAG 2.1 SC 1.3.1",
                 line_num=0
+            ))
+    
+    # Check for cookies banner landmark (axe rule: region)
+    # All page content must be contained by landmarks
+    if is_cookies_banner:
+        # Cookies banner must use a landmark element
+        # Valid options: <aside>, <section>, or role="complementary"
+        has_aside = bool(re.search(r'<aside[\s>]', content, re.IGNORECASE))
+        has_section = bool(re.search(r'<section[\s>]', content, re.IGNORECASE))
+        has_complementary_role = bool(re.search(r'role=["\']complementary["\']', content, re.IGNORECASE))
+        
+        if not (has_aside or has_section or has_complementary_role):
+            # Find the main return statement to report line number
+            return_match = re.search(r'return\s*\(', content, re.IGNORECASE)
+            line_num = content[:return_match.start()].count('\n') + 1 if return_match else 0
+            
+            violations.append(SemanticViolation(
+                name="Banner content not in landmark",
+                file=file_name,
+                severity="error",
+                description="Cookies banner must use landmark element (<aside>, <section>, or role='complementary') - axe rule: region",
+                wcag="WCAG 2.1 SC 1.3.1",
+                line_num=line_num
             ))
     
     return violations
@@ -442,7 +466,8 @@ def main():
     print("   ✅ EN 301 549 Section 9.1.3.1")
     print(f"\n{CYAN}📝 Validated:{RESET}")
     print("   • Heading hierarchy (h1 → h2 → h3)")
-    print("   • Landmark regions (<main>, <nav>, <footer>)")
+    print("   • Landmark regions (<main>, <nav>, <footer>, <aside>)")
+    print("   • Banner/overlay content in landmarks (axe rule: region)")
     print("   • Form label associations")
     print("   • Table header structure")
     print("   • List semantics")
