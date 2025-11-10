@@ -375,6 +375,101 @@ def detect_aria_role_hierarchy_issues(file_path: Path, lines: List[str]) -> List
     return issues
 
 
+def detect_nested_interactive(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
+    """Detect nested interactive controls (axe rule: nested-interactive).
+    
+    Interactive controls should not be nested as they create confusion for screen readers
+    and keyboard users. Examples:
+    - <button><a>...</a></button>
+    - <a><button>...</button></a>
+    - <button role="button">...</button>
+    """
+    issues = []
+    content = ''.join(lines)
+    
+    # Interactive element types
+    interactive_elements = ['button', 'a']  # Focus on most common violations
+    interactive_roles = ['button', 'link', 'tab', 'menuitem']
+    
+    # Build pattern for interactive tags (only match actual HTML tags, not TypeScript generics)
+    # Require the tag name be followed by a space, '>' or '/'
+    tag_pattern = r'<(' + '|'.join(interactive_elements) + r')(\s|>|/)'
+    
+    # Find all interactive elements
+    for outer_match in re.finditer(tag_pattern, content, re.IGNORECASE):
+        outer_tag = outer_match.group(1).lower()
+        outer_start = outer_match.start()
+        outer_line = content[:outer_start].count('\n') + 1
+        
+        # Find the matching closing tag for this element
+        close_tag_pattern = rf'</{outer_tag}>'
+        
+        # Look ahead up to 2000 chars for closing tag (handle complex nested content)
+        search_end = min(len(content), outer_start + 2000)
+        search_content = content[outer_start:search_end]
+        
+        # Count opening and closing tags to find the matching one
+        open_count = 1
+        pos = len(outer_match.group(0))
+        
+        while pos < len(search_content) and open_count > 0:
+            # Look for next opening or closing tag of same type
+            next_open = re.search(rf'<{outer_tag}(\s|>|/)', search_content[pos:], re.IGNORECASE)
+            next_close = re.search(close_tag_pattern, search_content[pos:], re.IGNORECASE)
+            
+            if next_close and (not next_open or next_close.start() < next_open.start()):
+                open_count -= 1
+                if open_count == 0:
+                    # Found matching closing tag
+                    inner_content = search_content[len(outer_match.group(0)):pos + next_close.start()]
+                    
+                    # Check if there's another interactive element inside
+                    inner_interactive = re.search(tag_pattern, inner_content, re.IGNORECASE)
+                    if inner_interactive:
+                        inner_tag = inner_interactive.group(1).lower()
+                        
+                        # Get snippet around the issue
+                        snippet_start = max(0, outer_start)
+                        snippet = content[snippet_start:snippet_start + 150].replace('\n', ' ')
+                        
+                        issues.append(CompatibleIssue(
+                            file_path=file_path,
+                            line_number=outer_line,
+                            criterion='SC 4.1.2',
+                            level='A',
+                            message=f'Nested interactive controls: <{outer_tag}> contains <{inner_tag}>. Interactive controls must not be nested. (axe rule: nested-interactive)',
+                            code_snippet=snippet
+                        ))
+                    
+                    # Check for role-based interactive elements inside
+                    role_pattern = r'role\s*=\s*["\'](' + '|'.join(interactive_roles) + r')["\']'
+                    role_match = re.search(role_pattern, inner_content, re.IGNORECASE)
+                    if role_match:
+                        role_value = role_match.group(1)
+                        
+                        snippet_start = max(0, outer_start)
+                        snippet = content[snippet_start:snippet_start + 150].replace('\n', ' ')
+                        
+                        issues.append(CompatibleIssue(
+                            file_path=file_path,
+                            line_number=outer_line,
+                            criterion='SC 4.1.2',
+                            level='A',
+                            message=f'Nested interactive controls: <{outer_tag}> contains role="{role_value}". Interactive controls must not be nested. (axe rule: nested-interactive)',
+                            code_snippet=snippet
+                        ))
+                    
+                    break
+                pos = pos + next_close.end()
+            elif next_open:
+                open_count += 1
+                pos = pos + next_open.end()
+            else:
+                break
+    
+    return issues
+
+
 def validate_file(file_path: Path) -> List[CompatibleIssue]:
     lines = read_file_lines(file_path)
     if not lines:
@@ -391,6 +486,7 @@ def validate_file(file_path: Path) -> List[CompatibleIssue]:
     issues.extend(detect_aria_attribute_role_mismatch(file_path, lines))
     issues.extend(detect_aria_role_hierarchy_issues(file_path, lines))
     issues.extend(detect_aria_hidden_focusable(file_path, lines))
+    issues.extend(detect_nested_interactive(file_path, lines))
     return issues
 
 
