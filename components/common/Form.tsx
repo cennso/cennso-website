@@ -97,8 +97,9 @@ export const FormSwitch: FunctionComponent<FormSwitchProps> = ({
       }}
       className={`${className} ${checked ? 'bg-[#FF5D18]' : 'bg-white'} flex w-8 flex-none cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600`}
       role="switch"
-      aria-checked="false"
+      aria-checked={checked}
       aria-labelledby="privacy-policy"
+      tabIndex={-1}
     >
       <input
         {...props}

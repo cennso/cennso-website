@@ -45,6 +45,9 @@ VALID_AUTOCOMPLETE_TOKENS = {
     'tel-local-prefix', 'tel-local-suffix', 'tel-extension',
     'email', 'impp',
     
+    # Contact hint tokens (can be combined with tel, email, impp)
+    'home', 'work', 'mobile', 'fax', 'pager',
+    
     # Special tokens
     'on', 'off',
     
@@ -60,7 +63,6 @@ COMMON_MISTAKES = {
     'phone': 'tel',
     'telephone': 'tel',
     'phone-number': 'tel',
-    'mobile': 'tel',
     'e-mail': 'email',
     'mail': 'email',
     'zip': 'postal-code',
