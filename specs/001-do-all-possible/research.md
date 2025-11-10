@@ -101,7 +101,7 @@ export function generateArticleSchema(post: BlogPost): string {
 ```javascript
 // next-sitemap.config.js
 module.exports = {
-  siteUrl: 'https://cennso.com',
+  siteUrl: 'https://www.cennso.com',
   generateRobotsTxt: true,
   changefreq: 'weekly', // Default for all pages
   priority: 0.7, // Default priority
@@ -137,7 +137,7 @@ module.exports = {
 **Rationale**:
 
 - **Duplicate Content Prevention**: Canonical tags tell search engines which version of a page is authoritative
-- **HTTPS Preference**: Ensure all canonical URLs use https://cennso.com
+- **HTTPS Preference**: Ensure all canonical URLs use https://www.cennso.com
 - **Vercel Preview URLs**: Canonical tags prevent preview deployments from being indexed
 
 **Implementation Pattern**:
@@ -145,7 +145,7 @@ module.exports = {
 ```typescript
 // lib/seo/canonical.ts
 export function getCanonicalUrl(path: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cennso.com'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.cennso.com'
   return `${baseUrl}${path}`
 }
 
@@ -249,8 +249,8 @@ Disallow: /api/
 Disallow: /*.json$
 
 # Sitemap location
-Sitemap: https://cennso.com/sitemap.xml
-Sitemap: https://cennso.com/sitemap-0.xml
+Sitemap: https://www.cennso.com/sitemap.xml
+Sitemap: https://www.cennso.com/sitemap-0.xml
 ```
 
 **Note**: `next-sitemap` can auto-generate robots.txt via `generateRobotsTxt: true` option

@@ -42,7 +42,7 @@ function getLastModificationDate(pagePath, type) {
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: process.env.SITE_URL || 'https://cennso.com',
+  siteUrl: process.env.SITE_URL || 'https://www.cennso.com',
   changefreq: 'monthly',
   generateRobotsTxt: false,
   generateIndexSitemap: false,

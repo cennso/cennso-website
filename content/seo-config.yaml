@@ -37,7 +37,7 @@ metaGuidelines:
 schemaDefaults:
   organizationName: "Cennso Technologies GmbH"
   organizationType: "Organization"
-  url: "https://cennso.com"
+  url: "https://www.cennso.com"
   logo: "/logo.svg"
   contactEmail: "info@cennso.com"
   

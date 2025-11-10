@@ -279,7 +279,7 @@ async function generateRssFeed(posts: BlogPostItemType[]) {
   // TODO: remove when we will have at least one blog post
   return
 
-  const siteUrl = process.env.SITE_URL || 'https://cennso.com'
+  const siteUrl = process.env.SITE_URL || 'https://www.cennso.com'
   // for google analitycs tracing
   const tracking = '?utm_source=rss'
 

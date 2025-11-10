@@ -71,7 +71,7 @@ As the controller, we have implemented numerous technical and organizational mea
 
    Phone: +49 (391) 660 98560<br/>
    Email: info@cennso.com<br/>
-   Website: https://cennso.com
+   Website: https://www.cennso.com
 
 3. Name and address of the Data Protection Officer
 
