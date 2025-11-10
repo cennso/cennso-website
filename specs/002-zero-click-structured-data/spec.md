@@ -1,6 +1,6 @@
 # Feature Specification: Zero-Click SEO Optimization
 
-**Feature Branch**: `002-optimize-website-to`  
+**Feature Branch**: `002-zero-click-structured-data`  
 **Created**: 2025-11-07  
 **Status**: Draft  
 **Input**: User description: "optimize website to be ready for search engines zero-click policies to make sure our content is easy to access by crowlers and positioned for zero-click strategy"

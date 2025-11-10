@@ -1,6 +1,6 @@
 # Research: Comprehensive SEO Optimization
 
-**Feature**: 001-do-all-possible  
+**Feature**: 001-seo-basics  
 **Date**: 2025-11-06  
 **Purpose**: Resolve technical unknowns and establish best practices for SEO implementation
 

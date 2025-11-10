@@ -966,7 +966,7 @@ Before any PR can be merged, ALL of the following MUST pass:
 
 **Automated Quality Checks**: GitHub Actions workflows enforce all quality gates on pull requests
 
-- `nodejs.yml`: Format, lint, type check, build, a11y (11 checks), seo (metadata, structured data, internal links), and image optimization
+- `tests-and-other-validation.yml`: Format, lint, type check, build, a11y (11 checks), seo (metadata, structured data, internal links), and image optimization
 - `lighthouse.yml`: Lighthouse audits with ≥95% enforcement (blocks merge if any category < 95%)
   - Uses CI-specific configs (`.lighthouserc.ci.js`, `lighthouse.mobile.config.ci.js`) that skip `is-crawlable` audit since Vercel preview deployments are blocked from indexing by default
 

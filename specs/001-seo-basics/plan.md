@@ -1,7 +1,7 @@
 # Implementation Plan: Comprehensive SEO Optimization
 
-**Branch**: `001-do-all-possible` | **Date**: 2025-11-06 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `/specs/001-do-all-possible/spec.md`
+**Branch**: `001-seo-basics` | **Date**: 2025-11-06 | **Spec**: [spec.md](./spec.md)
+**Input**: Feature specification from `/specs/001-seo-basics/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
@@ -190,7 +190,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 ### Documentation (this feature)
 
 ```
-specs/001-do-all-possible/
+specs/001-seo-basics/
 ├── spec.md              # Feature specification (completed)
 ├── checklists/
 │   └── requirements.md  # Spec quality checklist (completed)
@@ -438,11 +438,11 @@ This will create `tasks.md` with prioritized development tasks based on the comp
 
 **📚 Documentation**:
 
-- Full specification: `specs/001-do-all-possible/spec.md`
-- Research decisions: `specs/001-do-all-possible/research.md`
-- Data models: `specs/001-do-all-possible/data-model.md`
-- Developer guide: `specs/001-do-all-possible/quickstart.md`
-- Contracts: `specs/001-do-all-possible/contracts/*.json`
+- Full specification: `specs/001-seo-basics/spec.md`
+- Research decisions: `specs/001-seo-basics/research.md`
+- Data models: `specs/001-seo-basics/data-model.md`
+- Developer guide: `specs/001-seo-basics/quickstart.md`
+- Contracts: `specs/001-seo-basics/contracts/*.json`
 
 ---
 

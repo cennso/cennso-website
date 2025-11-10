@@ -4,7 +4,7 @@
 **Last Updated**: 2025-11-06
 **Completion**: 43/48 MVP tasks (89.5%)
 
-**Input**: Design documents from `/specs/001-do-all-possible/`
+**Input**: Design documents from `/specs/001-seo-basics/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
 **Tests**: No explicit test tasks included - validation through Lighthouse CI, Python validation scripts, and manual testing with Google tools.
@@ -303,7 +303,7 @@ Project uses Next.js Pages Router structure:
 **Purpose**: Final improvements that affect multiple user stories and ensure production readiness
 
 - [ ] T107 [P] Update `AGENTS.md` with SEO implementation patterns and validation commands
-- [ ] T108 [P] Create SEO troubleshooting guide in `specs/001-do-all-possible/quickstart.md` (already exists, review and enhance)
+- [ ] T108 [P] Create SEO troubleshooting guide in `specs/001-seo-basics/quickstart.md` (already exists, review and enhance)
 - [ ] T109 Add comprehensive SEO validation to CI/CD pipeline in `.github/workflows/` (run seo:validate, seo:schema, seo:links on PR)
 - [ ] T110 [P] Document Google Search Console integration steps in `docs/` or `README.md`
 - [ ] T111 [P] Document Vercel Analytics Core Web Vitals monitoring in `docs/` or `README.md`

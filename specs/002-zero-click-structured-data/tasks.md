@@ -4,7 +4,7 @@ description: 'Implementation tasks for Zero-Click SEO Optimization'
 
 # Tasks: Zero-Click SEO Optimization
 
-**Input**: Design documents from `/specs/002-optimize-website-to/`
+**Input**: Design documents from `/specs/002-zero-click-structured-data/`
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/ ✅
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
@@ -31,9 +31,9 @@ Project uses Next.js Pages Router at repository root with:
 
 **Purpose**: Project initialization and basic structure
 
-- [x] T001 Create branch `002-optimize-website-to` from main
+- [x] T001 Create branch `002-zero-click-structured-data` from main
 - [x] T002 Create schema generator directory structure `lib/seo/schema/`
-- [x] T003 [P] Copy TypeScript contracts from `specs/002-optimize-website-to/contracts/schema-types.ts` to `lib/seo/schema/types.ts`
+- [x] T003 [P] Copy TypeScript contracts from `specs/002-zero-click-structured-data/contracts/schema-types.ts` to `lib/seo/schema/types.ts`
 
 ---
 
@@ -157,8 +157,8 @@ yarn build
 - [ ] T046 Test Lighthouse scores on 5 representative pages (homepage, blog post, solution, success story, contact) - verify ≥95% maintained
 - [ ] T047 Measure JSON-LD size impact - verify <5KB per page (compressed)
 - [x] T048 Verify bundle size unchanged - First Load JS should remain ~275KB
-- [ ] T049 Create validation checklist in `specs/002-optimize-website-to/validation.md` documenting all manual testing steps
-- [ ] T050 Run quickstart validation steps from `specs/002-optimize-website-to/quickstart.md`
+- [ ] T049 Create validation checklist in `specs/002-zero-click-structured-data/validation.md` documenting all manual testing steps
+- [ ] T050 Run quickstart validation steps from `specs/002-zero-click-structured-data/quickstart.md`
 
 ---
 

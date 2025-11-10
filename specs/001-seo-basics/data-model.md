@@ -1,6 +1,6 @@
 # Data Model: SEO Optimization
 
-**Feature**: 001-do-all-possible  
+**Feature**: 001-seo-basics  
 **Date**: 2025-11-06  
 **Purpose**: Define data structures for SEO metadata, structured data, and validation entities
 

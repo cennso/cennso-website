@@ -205,32 +205,33 @@ def validate_structured_data(json_ld_string, file_path):
     warnings = []
     is_valid = True
 
-    try:
-        data = json.loads(json_ld_string)
-    except json.JSONDecodeError as e:
-        errors.append(f"Invalid JSON: {e}")
+    # JSON syntax validation
+    syntax_check = validate_json_syntax(json_ld_string)
+    if not syntax_check["valid"]:
+        errors.append(syntax_check["message"])
         return {"valid": False, "errors": errors, "warnings": warnings}
+    
+    data = syntax_check["data"]
 
-    if not isinstance(data, dict):
-        errors.append("JSON-LD root is not an object.")
-        return {"valid": False, "errors": errors, "warnings": warnings}
-
-    schema_type = data.get("@type")
-    if not schema_type:
-        errors.append("Missing '@type' property.")
+    # Schema type validation
+    type_check = validate_schema_type(data)
+    if not type_check["valid"]:
+        errors.append(type_check["message"])
+        is_valid = False
+    
+    # Required properties validation
+    prop_errors = validate_required_properties(data)
+    if prop_errors:
+        errors.extend(prop_errors)
         is_valid = False
 
-    # Example: Check for required properties for 'BlogPosting'
-    if schema_type == "BlogPosting":
-        required_fields = ["headline", "datePublished", "author"]
-        for field in required_fields:
-            if field not in data:
-                errors.append(f"Missing required property for BlogPosting: '{field}'")
-                is_valid = False
-
-    # Example: Validate URL format
-    if "url" in data and isinstance(data["url"], str) and not data["url"].startswith("https://"):
-        warnings.append(f"URL '{data['url']}' should use https://")
+    # URL format validation
+    if "url" in data and isinstance(data["url"], str):
+        if not validate_url_format(data["url"]):
+            errors.append(f"Invalid URL format: {data['url']}")
+            is_valid = False
+        elif not data["url"].startswith("https://"):
+            warnings.append(f"URL should use https:// (got {data['url']})")
 
     return {"valid": is_valid, "errors": errors, "warnings": warnings}
 
@@ -239,12 +240,12 @@ def main():
     """Main validation function."""
     build_dir = Path(".next/server/pages")
     if not build_dir.exists():
-        print("Build directory not found. Run `yarn build` first.")
+        print("❌ Build directory not found. Run `yarn build` first.")
         return 1
 
     html_files = list(build_dir.glob("**/*.html"))
     if not html_files:
-        print("No HTML files found in build directory.")
+        print("❌ No HTML files found in build directory.")
         return 1
 
     print(f"📄 Found {len(html_files)} pages to validate")
@@ -252,6 +253,8 @@ def main():
 
     all_errors = []
     all_warnings = []
+    pages_with_schemas = 0
+    total_schemas = 0
 
     for file_path in html_files:
         # Skip 500.html - auto-generated error page not under our control
@@ -268,7 +271,9 @@ def main():
                 all_warnings.append(f"{file_path.relative_to(build_dir)}: No JSON-LD script found")
                 continue
 
+            pages_with_schemas += 1
             for i, script in enumerate(json_ld_scripts):
+                total_schemas += 1
                 if not script.string:
                     all_warnings.append(f"{file_path.relative_to(build_dir)} (Script {i+1}): Is empty")
                     continue
@@ -283,20 +288,27 @@ def main():
 
     print("\n📊 VALIDATION RESULTS")
     print("=" * 50)
+    print(f"Pages with schemas: {pages_with_schemas}/{len(html_files) - 1}")  # -1 for 500.html
+    print(f"Total schemas validated: {total_schemas}")
 
     if all_warnings:
-        print("\n⚠️ Warnings:")
+        print(f"\n⚠️  Warnings ({len(all_warnings)}):")
         for warning in all_warnings:
             print(f"  - {warning}")
 
     if all_errors:
-        print("\n❌ Errors:")
+        print(f"\n❌ Errors ({len(all_errors)}):")
         for error in all_errors:
             print(f"  - {error}")
         print(f"\nFound {len(all_errors)} errors in structured data.")
+        print("\n💡 Tip: Test manually at https://search.google.com/test/rich-results")
         return 1
 
     print("\n🎉 ✅ ALL STRUCTURED DATA VALIDATION PASSED!")
+    print("\n💡 Next steps:")
+    print("  1. Test manually: https://search.google.com/test/rich-results")
+    print("  2. Submit sitemap to Google Search Console")
+    print("  3. Monitor 'Enhancements' tab for rich result status")
     return 0
 
 

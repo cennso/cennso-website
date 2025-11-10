@@ -4,9 +4,6 @@ concurrency:
 name: Verify Cennso Website
 on:
   pull_request:
-    paths:
-      - "**"
-      - .github/workflows/nodejs.yml
     types:
       - opened
       - reopened
