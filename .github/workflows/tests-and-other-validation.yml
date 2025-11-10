@@ -4,9 +4,6 @@ concurrency:
 name: Verify Cennso Website
 on:
   pull_request:
-    paths:
-      - "**"
-      - tests-and-other-validation.yml
     types:
       - opened
       - reopened
