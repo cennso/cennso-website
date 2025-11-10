@@ -1,8 +1,9 @@
 import React from 'react'
 import { StructuredData } from '@/lib/seo/types'
+import type { SchemaType, SchemaCollection } from '@/lib/seo/schema/types'
 
 export interface SchemaOrgProps {
-  data: StructuredData | StructuredData[]
+  data: StructuredData | StructuredData[] | SchemaType | SchemaCollection
 }
 
 /**

@@ -4,13 +4,22 @@ import { useRouter } from 'next/router'
 import siteMetadata from '../siteMetadata'
 import { SchemaOrg } from './common/SchemaOrg'
 import { StructuredData } from '@/lib/seo/types'
+import type { SchemaType, SchemaCollection } from '@/lib/seo/schema/types'
 import { getCanonicalUrl } from '@/lib/seo/canonical'
+import {
+  generateOrganizationSchema,
+  generateBreadcrumbSchema,
+} from '@/lib/seo/schema'
 
 import type { FunctionComponent } from 'react'
 import type { NextSeoProps } from 'next-seo'
 
 export interface SEOProps extends NextSeoProps {
-  structuredData?: StructuredData | StructuredData[]
+  structuredData?:
+    | StructuredData
+    | StructuredData[]
+    | SchemaType
+    | SchemaCollection
 }
 
 export const SEO: FunctionComponent<SEOProps> = (props) => {
@@ -71,6 +80,21 @@ export const SEO: FunctionComponent<SEOProps> = (props) => {
   //   cardType: 'summary_large_image',
   // }
 
+  // Generate global schemas that appear on all pages
+  const organizationSchema = generateOrganizationSchema()
+  const breadcrumbSchema = generateBreadcrumbSchema(router.asPath)
+
+  // Combine global schemas with page-specific schemas
+  const allSchemas = [
+    organizationSchema,
+    breadcrumbSchema,
+    ...(props.structuredData
+      ? Array.isArray(props.structuredData)
+        ? props.structuredData
+        : [props.structuredData]
+      : []),
+  ]
+
   return (
     <>
       <NextSeo
@@ -82,7 +106,7 @@ export const SEO: FunctionComponent<SEOProps> = (props) => {
         // twitter={twitter}
         canonical={canonicalUrl}
       />
-      {props.structuredData && <SchemaOrg data={props.structuredData} />}
+      <SchemaOrg data={allSchemas} />
     </>
   )
 }

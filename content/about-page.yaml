@@ -2,6 +2,12 @@ page:
   title: About Us
   description: Our mission at Cennso is to enable a new era of infrastructure management that is automated, reliable, efficient and empowers application teams to accelerate innovations.
 
+company:
+  foundingDate: '2020-01-15'
+  founders:
+    - holger-winkelmann
+    - anja-winkelmann
+
 introduction:
   title: What is Cennso
   description: >

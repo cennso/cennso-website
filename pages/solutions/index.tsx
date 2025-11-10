@@ -6,6 +6,7 @@ import { PageHeader } from '../../components/PageHeader'
 import { SolutionItem } from '../../components/Solutions/SolutionItem'
 import { SEO } from '../../components/SEO'
 import { Container } from '../../components/common'
+import { generateFAQSchema, type FAQItem } from '../../lib/seo/schema'
 
 import { mdRegex } from '../../lib/markdown'
 import { parseMDX } from '../../lib/mdx'
@@ -23,11 +24,19 @@ const SolutionsPage: NextPage<SolutionsPageProps> = ({
   content,
   solutions,
 }) => {
-  const { page } = content
+  const { page, faqs } = content
+
+  // Generate FAQ schema if FAQs are available
+  const faqSchema =
+    faqs && faqs.length >= 2 ? generateFAQSchema(faqs as FAQItem[]) : undefined
 
   return (
     <>
-      <SEO title={page.title} description={page.description} />
+      <SEO
+        title={page.title}
+        description={page.description}
+        structuredData={faqSchema}
+      />
 
       <PageHeader
         title={page.title}

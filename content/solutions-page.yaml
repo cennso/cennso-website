@@ -1,3 +1,15 @@
 page:
   title: Solutions
   description: Solutions offered by Cennso
+
+faqs:
+  - question: What network solutions does Cennso provide?
+    answer: Cennso provides cloud-native network solutions including mobile core deployment, network functions, and infrastructure management. Our solutions are designed to deploy within 24 hours across over 170 cloud locations globally, enabling rapid network service creation and management.
+  - question: How quickly can Cennso deploy a mobile core?
+    answer: Cennso can deploy your mobile core within 24 hours. Our cloud-based service leverages pre-configured network functions and automation to dramatically reduce deployment time compared to traditional approaches that can take weeks or months.
+  - question: What cloud providers does Cennso support?
+    answer: Cennso Network Solutions work with leading cloud infrastructure providers including AWS, IBM Cloud, Equinix Metal, and Google Cloud Platform (GCE). Our cloud-native architecture based on Kubernetes allows deployment across multiple cloud providers and edge locations.
+  - question: What are Cennso Network Functions (CNFs)?
+    answer: Cennso Network Functions (CNFs) are containerized network services that implement core network functionality using cloud-native technologies. They run on Kubernetes clusters and are managed through Custom Resource Definitions (CRDs) and Operators, providing automated, scalable network service deployment.
+  - question: How does Cennso ensure network reliability and performance?
+    answer: Cennso solutions handle over 24 billion user sessions annually with 3,000 Gbit/s peak bandwidth capacity. Our distributed Kubernetes architecture ensures high availability, fault tolerance, and optimal resource utilization. Real-time analytics and automation help proactively maintain network reliability and optimization.

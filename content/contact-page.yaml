@@ -2,6 +2,36 @@ page:
   title: Contact Cennso - Mobile Core Network Solutions & Support
   description: Get in touch with Cennso's Solution and Channel Partners. Learn how we can help you build custom mobile core network solutions for your business needs.
 
+# Contact information for Schema.org ContactPoint
+# Telephone format: E.164 standard (no spaces/parentheses) for Schema.org structured data
+# E.164 ensures machine-readability for search engines, voice assistants, and click-to-call functionality
+contactPoint:
+  telephone: '+493916609856'
+  email: 'info@cennso.com'
+  contactType: 'customer service'
+  availableLanguage: 
+    - 'English'
+    - 'German'
+
+# Local business information for Schema.org LocalBusiness
+# Telephone format: E.164 standard required by Schema.org LocalBusiness schema
+localBusiness:
+  name: 'Cennso'
+  telephone: '+493916609856'
+  email: 'info@cennso.com'
+  address:
+    streetAddress: 'Berliner Chaussee 88'
+    addressLocality: 'Magdeburg'
+    addressRegion: 'Saxony-Anhalt'
+    postalCode: '39114'
+    addressCountry: 'DE'
+  geo:
+    latitude: 52.1205
+    longitude: 11.6276
+  openingHours:
+    - 'Mo-Fr 09:00-17:00'
+  image: '/assets/logo.png'
+
 form:
   statusMessages:
     sending: Sending...
