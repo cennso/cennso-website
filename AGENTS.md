@@ -1,6 +1,34 @@
 # AI Agent Context
 
-**Constitution**: See `.specify/memory/constitution.md` for non-negotiable standards (code quality, accessibility, performance, testing requirements)
+## Mandatory Reading for All AI Agents
+
+**BEFORE starting any work, AI agents MUST understand:**
+
+1. **Constitution** (`.specify/memory/constitution.md`): Non-negotiable quality standards
+   - Code quality principles (type safety, immutability, error handling)
+   - Accessibility requirements (WCAG 2.1 AA compliance)
+   - Performance standards (Lighthouse ≥95%, bundle size limits)
+   - SEO requirements (metadata, structured data, Schema.org)
+   - Testing and validation requirements
+
+2. **Feature Specifications** (`/specs/` directory): Implementation requirements and context
+   - Each spec defines functional requirements, data models, acceptance criteria
+   - Contains examples, validation rules, and integration patterns
+   - Schema.org structured data specifications in `/specs/002-optimize-website-to/`
+   - MUST read relevant specs before implementing features or fixing issues
+
+3. **This File** (AGENTS.md): Runtime guidance and workflow
+   - Stack and project structure
+   - Commands and validation procedures
+   - Key patterns and best practices
+   - Quality gates and enforcement
+
+**Constitutional Hierarchy**:
+
+- Constitution > Specs > AGENTS.md
+- Constitution defines "what quality means"
+- Specs define "what to build"
+- AGENTS.md defines "how to build it"
 
 ## Stack
 
@@ -196,6 +224,61 @@ yarn dev          # Terminal 1
 yarn lighthouse   # Terminal 2
 ```
 
-## AI Agent Instructions
+## AI Agent Workflow
 
-**CRITICAL**: AI agents working on this codebase MUST always run `yarn check:all` at the end of any changes to ensure all quality gates pass. This includes format, lint, accessibility, and build validation. Never complete a task without running this final validation step.
+### 1. Before Starting Work
+
+- **Read constitution** (`.specify/memory/constitution.md`) - understand quality standards
+- **Read relevant specs** (`/specs/` directory) - understand requirements and context
+- **Check existing patterns** - search codebase for similar implementations
+
+### 2. During Implementation
+
+- **Follow constitution principles** - type safety, accessibility, performance
+- **Reference specs** - data models, validation rules, Schema.org requirements
+- **Update validation scripts** - if adding new features, update corresponding validation
+- **Document changes** - update specs/docs if behavior changes
+
+### 3. After Completing Changes (MANDATORY)
+
+**CRITICAL - NEVER skip this step**:
+
+```bash
+yarn check:all
+```
+
+This runs:
+
+- `yarn build` - TypeScript compilation, build validation
+- `yarn format` - Prettier formatting check
+- `yarn lint` - ESLint code quality
+- `yarn a11y` - 11 accessibility validation scripts
+- `yarn perf:images` - Image optimization validation
+- `yarn perf:mobile` - Mobile performance validation
+- `yarn seo:validate` - SEO metadata validation
+- `yarn seo:schema` - Schema.org structured data validation
+- `yarn seo:links` - Internal links validation
+
+**If any check fails:**
+
+1. Fix the issue
+2. Re-run `yarn check:all`
+3. Repeat until all checks pass
+
+**For Lighthouse validation:**
+
+```bash
+yarn dev          # Terminal 1
+yarn lighthouse   # Terminal 2 (requires dev server running)
+```
+
+### 4. Validation Agreement
+
+**When user says "validate work against agents.md":**
+
+1. Run `yarn check:all` immediately
+2. Report any failures with details
+3. Fix failures and re-validate
+4. Confirm all checks pass before considering work complete
+
+**Never declare work "done" or "complete" without running validation first.**

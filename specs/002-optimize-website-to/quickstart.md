@@ -26,18 +26,23 @@ mkdir -p lib/seo/schema
 2. Create `lib/seo/schema/organization.ts`:
 
 ```typescript
-import type { OrganizationSchema } from '../../../specs/002-optimize-website-to/contracts/schema-types'
+import type { OrganizationSchema } from './types'
+import { toAbsoluteUrl, createSchemaId } from './utils'
 
 export function generateOrganizationSchema(): OrganizationSchema {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    '@id': 'https://cennso.com/#organization',
+    '@id': createSchemaId('organization'),
     name: 'Cennso',
-    url: siteMetadata.siteUrl,
-    logo: `${siteMetadata.siteUrl}/assets/logo.png`,
-    description: 'Your mobile core deployed within 24 hours. Expert telco solutions and modernization.',
-    address: {
+    url: toAbsoluteUrl('/'),
+    logo: toAbsoluteUrl('/assets/logo.png'),
+    description:
+      'Your mobile core deployed within 24 hours. Use Cennso Network Solutions to create your global mobile core platform, ready to deploy in over 170 cloud locations.',
+    sameAs: [
+      'https://www.linkedin.com/company/cennso',
+      'https://github.com/cennso',
+    ],
   }
 }
 ```
@@ -45,7 +50,7 @@ export function generateOrganizationSchema(): OrganizationSchema {
 3. Create `lib/seo/schema/breadcrumb.ts`:
 
 ```typescript
-import type { BreadcrumbListSchema } from '../../../specs/002-optimize-website-to/contracts/schema-types'
+import type { BreadcrumbListSchema } from './types'
 
 export function generateBreadcrumbSchema(
   path: string,
@@ -68,21 +73,40 @@ export { generateBreadcrumbSchema } from './breadcrumb'
 1. Modify `components/common/SchemaOrg.tsx`:
 
 ```typescript
-import type { SchemaType, SchemaCollection } from '../../specs/002-optimize-website-to/contracts/schema-types';
+import React from 'react'
+import { StructuredData } from '../../lib/seo/types'
 
-interface SchemaOrgProps {
-  schema: SchemaType | SchemaCollection;
+export interface SchemaOrgProps {
+  data: StructuredData | StructuredData[]
 }
 
-export function SchemaOrg({ schema }: SchemaOrgProps) {
-  const schemaString = JSON.stringify(schema, null, 0);
+export function SchemaOrg({ data }: SchemaOrgProps): JSX.Element {
+  // Handle array of structured data
+  if (Array.isArray(data)) {
+    return (
+      <>
+        {data.map((schema, index) => (
+          <script
+            key={`schema-${index}`}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(schema, null, 0),
+            }}
+          />
+        ))}
+      </>
+    )
+  }
 
+  // Handle single structured data object
   return (
     <script
       type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html__: schemaString }}
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify(data, null, 0),
+      }}
     />
-  );
+  )
 }
 
 export default SchemaOrg;
@@ -139,7 +163,7 @@ yarn seo:schema
 import type {
   ArticleSchema,
   PersonSchema,
-} from '../../../specs/002-optimize-website-to/contracts/schema-types'
+} from 'lib/seo/schema/types'
 import { generateOrganizationSchema } from './organization'
 
 export function generateArticleSchema(
@@ -219,7 +243,7 @@ Review existing pages for FAQ-style content:
 1. Create `lib/seo/schema/faq.ts`:
 
 ```typescript
-import type { FAQPageSchema } from '../../../specs/002-optimize-website-to/contracts/schema-types'
+import type { FAQPageSchema } from './types'
 
 interface FAQItem {
   question: string

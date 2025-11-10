@@ -36,7 +36,8 @@ export interface OrganizationSchema extends BaseSchema {
  * Extends Organization with location-specific properties
  * LocalBusiness is a subtype of Organization in Schema.org hierarchy
  */
-export interface LocalBusinessSchema extends Omit<OrganizationSchema, '@type' | 'address'> {
+export interface LocalBusinessSchema
+  extends Omit<OrganizationSchema, '@type' | 'address'> {
   '@type': 'LocalBusiness' | 'ProfessionalService'
   address: PostalAddress // Required (override optional from Organization)
   telephone: string // Required for local business
