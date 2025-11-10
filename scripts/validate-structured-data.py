@@ -187,6 +187,8 @@ def validate_required_properties(schema_data: Dict[str, Any]) -> List[str]:
     elif schema_type == "Person":
         if "name" not in schema_data:
             errors.append("Person missing 'name'")
+        if "url" not in schema_data:
+            errors.append("Person missing 'url'")
     
     elif schema_type == "JobPosting":
         required = ["title", "description", "datePosted", "hiringOrganization"]

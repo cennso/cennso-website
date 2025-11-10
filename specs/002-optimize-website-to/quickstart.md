@@ -160,10 +160,7 @@ yarn seo:schema
 1. Create `lib/seo/schema/article.ts`:
 
 ```typescript
-import type {
-  ArticleSchema,
-  PersonSchema,
-} from 'lib/seo/schema/types'
+import type { ArticleSchema, PersonSchema } from 'lib/seo/schema/types'
 import { generateOrganizationSchema } from './organization'
 
 export function generateArticleSchema(
