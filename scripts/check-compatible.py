@@ -172,6 +172,78 @@ def detect_missing_name_role_value(file_path: Path, lines: List[str]) -> List[Co
     return issues
 
 
+def detect_aria_hidden_focusable(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
+    """
+    Detect elements with aria-hidden="true" that are focusable.
+    This violates axe rule: aria-hidden-focus
+    Elements with aria-hidden="true" must not be focusable or contain focusable elements.
+    
+    Note: Decorative children (like icons) inside focusable elements can have aria-hidden="true"
+    We only flag if the element WITH aria-hidden is itself a focusable element type.
+    """
+    issues = []
+    content = ''.join(lines)
+    
+    # Pattern to find elements with aria-hidden="true"
+    aria_hidden_pattern = re.compile(r'aria-hidden=["\']true["\']', re.IGNORECASE)
+    
+    for m in aria_hidden_pattern.finditer(content):
+        start = m.start()
+        line_no = content[:start].count('\n') + 1
+        
+        # Get context - look back to find the opening tag
+        context_start = max(0, start - 300)
+        context = content[context_start:start + 100]
+        
+        # Find the opening tag of the element that has aria-hidden
+        # Look backwards for the nearest < before aria-hidden
+        tag_start_pos = context.rfind('<', 0, len(context) - (start - context_start))
+        if tag_start_pos == -1:
+            continue
+            
+        tag_context = context[tag_start_pos:]
+        
+        # Extract the element type from the tag
+        element_match = re.match(r'<(\w+)(?:\s|>|/)', tag_context, re.IGNORECASE)
+        if not element_match:
+            continue
+            
+        elem_type = element_match.group(1).lower()
+        
+        # Only check if the element with aria-hidden is itself a focusable element type
+        focusable_elements = ['button', 'a', 'input', 'select', 'textarea', 'summary', 'details']
+        
+        if elem_type not in focusable_elements:
+            # Not a naturally focusable element, check for explicit tabindex
+            tabindex_match = re.search(r'tabIndex\s*=\s*\{?\s*["\']?([0-9]+)["\']?\s*\}?', tag_context, re.IGNORECASE)
+            if not tabindex_match:
+                # Not focusable, this is fine (e.g., decorative icon)
+                continue
+            tabindex_value = int(tabindex_match.group(1))
+            if tabindex_value < 0:
+                # Explicitly removed from tab order
+                continue
+        
+        # This is a focusable element with aria-hidden="true"
+        # Check if it has tabIndex={-1} which would fix it
+        if re.search(r'tabIndex\s*=\s*\{?\s*-1\s*\}?', tag_context, re.IGNORECASE):
+            # Fixed - has tabIndex={-1}
+            continue
+        
+        # Found a violation
+        snippet = tag_context[:200].strip()
+        issues.append(CompatibleIssue(
+            file_path=file_path,
+            line_number=line_no,
+            criterion='SC 4.1.2',
+            level='A',
+            message=f'<{elem_type}> element with aria-hidden="true" is focusable. Add tabIndex={{-1}} to remove from tab order. (axe rule: aria-hidden-focus)',
+            code_snippet=snippet
+        ))
+    
+    return issues
+
+
 def detect_missing_status_messages(file_path: Path, lines: List[str]) -> List[CompatibleIssue]:
     issues = []
     content = ''.join(lines)
@@ -318,6 +390,7 @@ def validate_file(file_path: Path) -> List[CompatibleIssue]:
     issues.extend(detect_missing_status_messages(file_path, lines))
     issues.extend(detect_aria_attribute_role_mismatch(file_path, lines))
     issues.extend(detect_aria_role_hierarchy_issues(file_path, lines))
+    issues.extend(detect_aria_hidden_focusable(file_path, lines))
     return issues
 
 

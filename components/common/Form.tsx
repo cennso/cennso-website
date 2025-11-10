@@ -109,6 +109,7 @@ export const FormSwitch: FunctionComponent<FormSwitchProps> = ({
           // intentional
         }}
         aria-hidden="true"
+        tabIndex={-1}
       />
       {children}
       <span
