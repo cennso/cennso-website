@@ -1,8 +1,4 @@
-const urls = [
-  'http://localhost:3000/',
-  'http://localhost:3000/success-stories',
-  'http://localhost:3000/contact',
-]
+const urls = require('./lighthouse.urls.js')
 
 module.exports = {
   ci: {
