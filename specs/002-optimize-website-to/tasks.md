@@ -142,13 +142,13 @@ Project uses Next.js Pages Router at repository root with:
 
 - [ ] T040 [P] Create unit tests in `tests/seo/schema-validation.test.ts` for all schema generator functions
 - [ ] T041 [P] Add integration tests in `tests/seo/rich-results.test.ts` using Google Rich Results Test API
-- [X] T042 Run full validation suite: `yarn check:all` to ensure all quality gates pass
+- [x] T042 Run full validation suite: `yarn check:all` to ensure all quality gates pass
 - [ ] T043 Run structured data validation: `yarn seo:schema` on all built pages
 - [ ] T044 [P] Update `docs/create-blog-post.md` to document Article schema generation
 - [ ] T045 [P] Update `AGENTS.md` to document new schema generation patterns
 - [ ] T046 Test Lighthouse scores on 5 representative pages (homepage, blog post, solution, success story, contact) - verify ≥95% maintained
 - [ ] T047 Measure JSON-LD size impact - verify <5KB per page (compressed)
-- [X] T048 Verify bundle size unchanged - First Load JS should remain ~275KB
+- [x] T048 Verify bundle size unchanged - First Load JS should remain ~275KB
 - [ ] T049 Create validation checklist in `specs/002-optimize-website-to/validation.md` documenting all manual testing steps
 - [ ] T050 Run quickstart validation steps from `specs/002-optimize-website-to/quickstart.md`
 
