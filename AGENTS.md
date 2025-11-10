@@ -60,6 +60,7 @@ pip install -r scripts/requirements.txt
 ```
 
 **Required for:**
+
 - SEO validation scripts (`yarn seo:*`)
 - Image optimization scripts (`yarn perf:images:optimize`)
 
