@@ -174,7 +174,11 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
             placement="bottom"
           >
             <MenuHandler>
-              <div className="p-0 bg-transparent hover:bg-transparent active:bg-transparent cursor-pointer">
+              <div
+                role="button"
+                tabIndex={0}
+                className="p-0 bg-transparent hover:bg-transparent active:bg-transparent cursor-pointer"
+              >
                 {content}
               </div>
             </MenuHandler>
