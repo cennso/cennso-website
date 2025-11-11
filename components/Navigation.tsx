@@ -177,6 +177,12 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
               <div
                 role="button"
                 tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setIsMenuOpen(!isMenuOpen)
+                  }
+                }}
                 className="p-0 bg-transparent hover:bg-transparent active:bg-transparent cursor-pointer"
               >
                 {content}

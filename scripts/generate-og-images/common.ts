@@ -41,13 +41,13 @@ async function loadFont(ctx: {
 export async function removeDirectory() {
   const directoryPath = path.join(
     __dirname,
-    '../../../',
+    '../../',
     'public',
     'assets',
     'og-images'
   )
 
   if (fs.existsSync(directoryPath)) {
-    await fs.promises.rmdir(directoryPath, { recursive: true })
+    await fs.promises.rm(directoryPath, { recursive: true })
   }
 }
