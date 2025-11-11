@@ -66,11 +66,30 @@ Then, go to the `http://localhost:3000` page.
 
 #### Run all quality checks
 
-To run all quality checks (formatting, linting, accessibility, image optimization, build):
+To run all quality checks (formatting, linting, accessibility, performance, SEO, OG images, build):
 
 ```bash
 yarn check:all
 ```
+
+#### OG Image Generation
+
+Open Graph images are automatically generated during build for social media previews:
+
+```bash
+# Generate OG images manually
+yarn generate:ogimages
+
+# Validate generated OG images
+yarn validate:ogimages
+```
+
+**OG Image Standards**:
+- Dimensions: 1200×630px (optimal for Facebook, Twitter, LinkedIn)
+- Format: PNG with optimization via sharp (~70% size reduction)
+- File size: <300KB per image (target <200KB)
+- Adaptive font sizing based on content length
+- Auto-generated from page metadata (title, description)
 
 #### Lighthouse Performance & Quality Audits
 

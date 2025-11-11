@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report:
-- Version: Initial → 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 → 1.5.0 → 1.6.0 → 1.7.0 → 1.8.0 → 1.9.0 → 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0 → 2.4.0 → 2.5.0 → 2.6.0 → 2.6.1
+- Version: Initial → 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 → 1.5.0 → 1.6.0 → 1.7.0 → 1.8.0 → 1.9.0 → 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0 → 2.4.0 → 2.5.0 → 2.6.0 → 2.6.1 → 2.7.0
 - Changes in v1.1.0:
   - Testing Policy expanded with specific technology stack (Playwright, Vitest, React Testing Library)
   - Test organization requirements added
@@ -115,9 +115,35 @@ Changes in v2.3.0 (MINOR):
     - Added: Complete WCAG 2.1 Guideline 3.3 (Input Assistance) validation (SC 3.3.1-3.3.4)
     - Quality Gates expanded to include input assistance validation
     - WCAG 2.1 Principle 3 (Understandable): 3 of 3 guidelines automated (Principle 3 complete)
-    - Changes in v2.5.0 (MINOR):
-      - Added: Automated compatible validation (yarn a11y:compatible)
-      - Added: Complete WCAG 2.1 Guideline 4.1 (Compatible) validation (SC 4.1.2 Name, Role, Value; SC 4.1.3 Status Messages)
+  - Changes in v2.5.0 (MINOR):
+    - Added: Automated compatible validation (yarn a11y:compatible)
+    - Added: Complete WCAG 2.1 Guideline 4.1 (Compatible) validation (SC 4.1.2 Name, Role, Value; SC 4.1.3 Status Messages)
+    - Quality Gates expanded to include compatible validation
+    - WCAG 2.1 Principle 4 (Robust): Automated validation complete
+  - Changes in v2.6.0 (MINOR):
+    - SEO Standards: Comprehensive SEO metadata requirements added
+    - Added: Title requirements (50-60 chars, unique across pages)
+    - Added: Description requirements (150-160 chars, unique across pages)
+    - Added: Canonical URL requirements
+    - Added: Automated SEO metadata validation (yarn seo:validate)
+    - Added: Schema.org structured data validation (yarn seo:schema)
+    - Added: Internal links validation (yarn seo:links)
+    - Quality Gates: Updated check:all command to include seo validation
+  - Changes in v2.6.1 (PATCH):
+    - Accessibility: Added autocomplete attribute validation (yarn a11y:autocomplete)
+    - Added: WCAG 2.1 SC 1.3.5 (Identify Input Purpose) compliance enforcement
+    - Added: HTML spec validation for autocomplete tokens (tel, email, given-name, etc.)
+    - Added: Common mistakes detection (phone→tel, firstname→given-name, etc.)
+    - Quality Gates: All accessibility checks now include autocomplete validation
+  - Changes in v2.7.0 (MINOR):
+    - Performance: OG image generation improvements and validation
+    - Added: PNG optimization with sharp (~70% file size reduction)
+    - Added: Adaptive font sizing for OG images (prevents text overflow)
+    - Added: Automated OG image validation (yarn validate:ogimages)
+    - Fixed: OG image path resolution bug (images now save to correct directory)
+    - Fixed: Deprecated fs.rmdir → fs.rm
+    - Quality Gates: check:all now includes OG image validation
+    - Documentation: Created docs/validate-og-images.md validation guide
       - Quality Gates expanded to include compatible validation
       - Requirement: `yarn a11y:compatible` MUST pass (no Level A issues) before merging to main
 - Changes in v2.6.0 (MINOR):
@@ -224,6 +250,11 @@ Performance requirements that MUST be met:
 - All PRs MUST pass Lighthouse audits with ≥95% scores (enforced by `.github/workflows/lighthouse.yml`)
 - Local testing: `yarn dev` + `yarn lighthouse` before submitting PR
 - OG images MUST be auto-generated during build (via `prebuild` script)
+  - Dimensions: 1200×630px (optimal for Facebook, Twitter, LinkedIn)
+  - Format: PNG with sharp optimization (~70% size reduction)
+  - File size: <300KB per image (validated by `yarn validate:ogimages`)
+  - Adaptive font sizing based on content length to prevent overflow
+  - Generated from page metadata (title, description) in `scripts/generate-og-images/`
 - No blocking JavaScript on initial page load; use dynamic imports for heavy components
 - Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 100KB
 
@@ -985,7 +1016,7 @@ Before any PR can be merged, ALL of the following MUST pass:
    - Best Practices (security, standards)
    - SEO (search engine optimization)
 
-**Recommended Pre-commit Command**: `yarn check:all` (runs format, lint, a11y, seo, and build in sequence)
+**Recommended Pre-commit Command**: `yarn check:all` (runs format, lint, a11y, perf, seo, OG image validation, and build in sequence)
 
 **Local Lighthouse Testing**: Run `yarn dev` in terminal 1, then `yarn lighthouse` in terminal 2 to validate ≥95% scores before pushing
 

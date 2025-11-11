@@ -5,6 +5,7 @@ import path from 'path'
 
 import satori from 'satori'
 import { Resvg } from '@resvg/resvg-js'
+import sharp from 'sharp'
 
 import { background } from './background'
 import { __dirname } from './common'
@@ -28,11 +29,28 @@ export const Image: FunctionComponent<ImageProps> = ({
   subTitle,
   description,
 }) => {
-  let descriptionFontSize = '36px'
+  // Adaptive title font size based on length
+  let titleFontSize = '68px' // Reduced from 80px
+  if (title.length > 60) {
+    titleFontSize = '48px'
+  } else if (title.length > 40) {
+    titleFontSize = '56px'
+  }
+
+  // Adaptive subtitle font size
+  let subTitleFontSize = '44px' // Reduced from 52px
+  if (subTitle && subTitle.length > 60) {
+    subTitleFontSize = '32px'
+  } else if (subTitle && subTitle.length > 40) {
+    subTitleFontSize = '36px'
+  }
+
+  // Adaptive description font size
+  let descriptionFontSize = '32px' // Reduced from 36px
   if (description.length > 128) {
-    descriptionFontSize = '22px'
+    descriptionFontSize = '20px'
   } else if (description.length > 64) {
-    descriptionFontSize = '26px'
+    descriptionFontSize = '24px'
   }
 
   return (
@@ -59,7 +77,7 @@ export const Image: FunctionComponent<ImageProps> = ({
             style={{
               display: 'flex',
               color: subTitle ? 'white' : 'transparent',
-              fontSize: '80px',
+              fontSize: titleFontSize,
               backgroundClip: 'text',
               background:
                 'linear-gradient(90deg, rgba(46,129,212,1) 0%, rgba(4,211,214,1) 100%)',
@@ -76,7 +94,7 @@ export const Image: FunctionComponent<ImageProps> = ({
               style={{
                 display: 'flex',
                 color: 'transparent',
-                fontSize: '52px',
+                fontSize: subTitleFontSize,
                 backgroundClip: 'text',
                 background:
                   'linear-gradient(90deg, rgba(46,129,212,1) 0%, rgba(4,211,214,1) 100%)',
@@ -112,6 +130,12 @@ export async function prepareImage(ctx: {
 }): Promise<Buffer> {
   const { title, subTitle, description, fonts } = ctx
 
+  // Log font loading status for debugging
+  console.log(`Generating OG image: ${title}`)
+  console.log(
+    `Fonts loaded: ${fonts.length} (${fonts.map((f) => `${f.name} ${f.weight}`).join(', ')})`
+  )
+
   const svg = await satori(
     <Image title={title} subTitle={subTitle} description={description} />,
     {
@@ -132,13 +156,33 @@ export async function prepareImage(ctx: {
     },
     imageRendering: 1,
     shapeRendering: 2,
-    logLevel: 'debug', // Default Value: error
+    logLevel: 'error', // Changed from 'debug' to reduce noise
   })
 
   const pngData = resvg.render()
   const pngBuffer = pngData.asPng()
 
-  return pngBuffer
+  // Optimize PNG with sharp to reduce file size
+  const optimizedBuffer = await sharp(pngBuffer)
+    .png({
+      quality: 90,
+      compressionLevel: 9,
+      adaptiveFiltering: true,
+    })
+    .toBuffer()
+
+  const originalSize = (pngBuffer.length / 1024).toFixed(1)
+  const optimizedSize = (optimizedBuffer.length / 1024).toFixed(1)
+  const savings = (
+    ((pngBuffer.length - optimizedBuffer.length) / pngBuffer.length) *
+    100
+  ).toFixed(1)
+
+  console.log(
+    `  Size: ${originalSize}KB → ${optimizedSize}KB (${savings}% reduction)`
+  )
+
+  return optimizedBuffer
 }
 
 export async function saveImage(ctx: { image: Buffer; destination: string[] }) {
@@ -146,14 +190,17 @@ export async function saveImage(ctx: { image: Buffer; destination: string[] }) {
 
   const directoryPath = path.join(
     __dirname,
-    '../../../',
+    '../../',
     'public',
     'assets',
     'og-images',
     ...destination
   )
+
   await fs.promises.mkdir(directoryPath, { recursive: true })
 
   const imagePath = path.join(directoryPath, 'image.png')
   await fs.promises.writeFile(imagePath, Uint8Array.from(image))
+
+  console.log(`  ✓ Saved: ${destination.join('/')}/image.png`)
 }
