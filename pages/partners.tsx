@@ -141,7 +141,7 @@ export const getStaticProps: GetStaticProps<PartnersPageProps> =
     return {
       notFound: true,
     }
-    
+
     const contentPath = path.join(process.cwd(), 'content', 'partners.yaml')
     const content = (await fsPromises.readFile(contentPath)).toString()
     const { partners: partnersContent, ...rest } = YamlParse(content)
