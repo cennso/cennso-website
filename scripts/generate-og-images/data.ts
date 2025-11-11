@@ -76,8 +76,8 @@ async function prepareMainPages(): Promise<DataItem[]> {
       title: aboutPage.page.title,
       description: aboutPage.page.description,
       path: ['about'],
-      // TODO: Enable OG image generation when partners page content is finalized
-      // Currently disabled because page is not fully populated with real partner data
+      // TODO: Enable OG image generation when about page content is finalized
+      // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
@@ -94,24 +94,24 @@ async function prepareMainPages(): Promise<DataItem[]> {
       title: solutionsPage.page.title,
       description: solutionsPage.page.description,
       path: ['solutions'],
-      // TODO: Enable OG image generation when partners page content is finalized
-      // Currently disabled because page is not fully populated with real partner data
+      // TODO: Enable OG image generation when solutions page content is finalized
+      // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
       title: blogPage.page.title,
       description: blogPage.page.description,
       path: ['blog'],
-      // TODO: Enable OG image generation when partners page content is finalized
-      // Currently disabled because page is not fully populated with real partner data
+      // TODO: Enable OG image generation when blog page content is finalized
+      // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
       title: jobsPage.page.title,
       description: jobsPage.page.description,
       path: ['jobs'],
-      // TODO: Enable OG image generation when partners page content is finalized
-      // Currently disabled because page is not fully populated with real partner data
+      // TODO: Enable OG image generation when jobs page content is finalized
+      // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
@@ -119,7 +119,7 @@ async function prepareMainPages(): Promise<DataItem[]> {
       description: partnersPage.page.description,
       path: ['partners'],
       // TODO: Enable OG image generation when partners page content is finalized
-      // Currently disabled because page is not fully populated with real partner data
+      // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
