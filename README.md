@@ -85,6 +85,7 @@ yarn validate:ogimages
 ```
 
 **OG Image Standards**:
+
 - Dimensions: 1200×630px (optimal for Facebook, Twitter, LinkedIn)
 - Format: PNG with optimization via sharp (~70% size reduction)
 - File size: <300KB per image (target <200KB)
