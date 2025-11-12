@@ -3,8 +3,6 @@
  * Per spec: All sections including complete blog posts, solutions, success stories,
  * team members, jobs, testimonials, partners
  */
-
-import type { Section, ContentItem } from '../types'
 import {
   loadBlogPosts,
   loadSolutions,
