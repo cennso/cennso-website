@@ -34,20 +34,9 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false  # Continue mobile audit even if desktop fails
+      fail-fast: false
       matrix:
         device: [desktop, mobile]
-        include:
-          - device: desktop
-            config: .lighthouserc.ci.js
-            output-dir: lighthouse-desktop
-            output-json: lighthouse-results.json
-            output-html: lighthouse-desktop.html
-          - device: mobile
-            config: lighthouse.mobile.config.ci.js
-            output-dir: lighthouse-mobile
-            output-json: lighthouse-mobile-results.json
-            output-html: lighthouse-mobile.html
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -74,17 +63,11 @@ jobs:
           LIGHTHOUSE_URL: ${{ needs.wait-for-deployment.outputs.url }}
         run: |
           set -euo pipefail
-          
-          # Uses matrix config (desktop or mobile)
-          lhci collect --config=${{ matrix.config }}
-          lhci upload --config=${{ matrix.config }} --target=filesystem --outputDir=./${{ matrix.output-dir }}
-          node scripts/process-lhci-results.js \
-            --manifestDir=${{ matrix.output-dir }} \
-            --outputJson=${{ matrix.output-json }} \
-            --outputHtml=${{ matrix.output-html }} \
-            --targetUrl=${LIGHTHOUSE_URL}
-          lhci assert --config=${{ matrix.config }}
-          
+          if [ "${{ matrix.device }}" = "desktop" ]; then
+            yarn lighthouse:desktop:ci
+          else
+            yarn lighthouse:mobile:ci
+          fi
           # Verify artifacts exist
           if [ ! -f ./${{ matrix.output-json }} ] || [ ! -f ./${{ matrix.output-html }} ]; then
             echo "Error: ${{ matrix.device }} Lighthouse artifacts missing."
@@ -96,8 +79,8 @@ jobs:
         with:
           name: lighthouse-results-${{ matrix.device }}
           path: |
-            ${{ matrix.output-json }}
-            ${{ matrix.output-html }}
+            ${{ matrix.device == 'desktop' && 'lighthouse-results.json' || 'lighthouse-mobile-results.json' }}
+            ${{ matrix.device == 'desktop' && 'lighthouse-desktop.html' || 'lighthouse-mobile.html' }}
 
   # Post comment after both audits complete
   post-comment:
