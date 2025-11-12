@@ -10,6 +10,9 @@ const ciConfig = JSON.parse(JSON.stringify(baseConfig))
 // Add CI-specific settings:
 // - skip is-crawlable audit (Vercel preview deployments block crawlers)
 // - skip largest-contentful-paint audit (unreliable in CI environment)
-ciConfig.ci.collect.settings.skipAudits = ['is-crawlable', 'largest-contentful-paint']
+ciConfig.ci.collect.settings.skipAudits = [
+  'is-crawlable',
+  'largest-contentful-paint',
+]
 
 module.exports = ciConfig

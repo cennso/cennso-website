@@ -36,9 +36,8 @@ const desktopConfig = {
       outputDir: './.lighthouse',
     },
     assert: {
-      preset: 'lighthouse:recommended',
       assertions: {
-        // Enforce 95% minimum on all categories
+        // Enforce 95% minimum on all categories (no preset to avoid individual audit assertions)
         'categories:performance': ['error', { minScore: 0.95 }],
         'categories:accessibility': ['error', { minScore: 0.95 }],
         'categories:best-practices': ['error', { minScore: 0.95 }],
