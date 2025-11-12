@@ -36,11 +36,12 @@ def validate_og_images():
         sys.exit(1)
 
     # Check build output only (what gets deployed)
-    og_images_path = Path(".next/standalone/public/assets/og-images")
+    build_public_path = Path(".next/standalone/public")
+    og_images_path = build_public_path / "assets/og-images"
     pages_dir = Path(".next/server/pages")
     
     if not og_images_path.exists():
-        print("❌ OG images directory not found: .next/standalone/public/assets/og-images")
+        print(f"❌ OG images directory not found: {og_images_path}")
         print("Run: yarn build")
         sys.exit(1)
     
@@ -180,13 +181,15 @@ def validate_og_images():
             if not og_desc_tag:
                 warnings.append(f"{page_path}: Missing og:description meta tag")
             
-            # Validate image file exists
+            # Validate image file exists (check against the actual build output path)
             if og_image_url.startswith(EXPECTED_DOMAIN):
-                image_path = og_image_url.replace(EXPECTED_DOMAIN, 'public')
-                image_file = Path(image_path)
+                # Extract the path after domain (e.g., /assets/og-images/blog/post/image.png)
+                url_path = og_image_url.replace(EXPECTED_DOMAIN, '')
+                # Convert to filesystem path using build_public_path variable
+                image_file = build_public_path / url_path.lstrip('/')
                 if not image_file.exists():
                     issues.append(
-                        f"{page_path}: OG image file not found: {image_path}"
+                        f"{page_path}: OG image file not found: {image_file}"
                     )
         
         except Exception as e:
