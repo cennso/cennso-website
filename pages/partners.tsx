@@ -11,6 +11,7 @@ import { Button, Container, FeatureCard } from '../components/common'
 import { SEO } from '../components/SEO'
 
 import { createNavigation } from '../lib/navigation'
+import { loadFooterData } from '../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 import type { Partner } from '../contexts'
@@ -156,6 +157,7 @@ export const getStaticProps: GetStaticProps<PartnersPageProps> =
         partners,
         $$app: {
           navigation: await createNavigation(),
+          footerData: await loadFooterData(),
         },
       },
     }

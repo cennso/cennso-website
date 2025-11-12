@@ -10,6 +10,7 @@ import { SolutionContext } from '../../contexts'
 import { parseMDX } from '../../lib/mdx'
 import { mdRegex } from '../../lib/markdown'
 import { createNavigation } from '../../lib/navigation'
+import { loadFooterData } from '../../lib/footer'
 
 import type { NextPage, GetStaticProps, GetStaticPathsResult } from 'next'
 import type { MDXRemoteProps } from 'next-mdx-remote'
@@ -94,6 +95,7 @@ export const getStaticProps: GetStaticProps<SolutionPageProps> =
         solutionQuery: solution,
         $$app: {
           navigation: await createNavigation(),
+          footerData: await loadFooterData(),
         },
       },
     }

@@ -46,7 +46,7 @@ const poppinsFont = Poppins({
  */
 export default function App({ Component, pageProps }: AppProps) {
   const { $$app, ...rest } = pageProps
-  const { navigation } = $$app || {}
+  const { navigation, footerData } = $$app || {}
 
   return (
     <>
@@ -56,7 +56,7 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
 
-      <Layout navigation={navigation}>
+      <Layout navigation={navigation} footerData={footerData}>
         <Component {...rest} />
       </Layout>
     </>

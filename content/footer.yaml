@@ -1,0 +1,33 @@
+footer:
+  company_links:
+    - title: Success Stories
+      link: /success-stories
+    - title: Contact Us
+      link: /contact
+    - title: Privacy Policy
+      link: /privacy-policy
+    - title: Imprint
+      link: /imprint
+  
+  explore_links:
+    - title: Cloud Portal
+      link: https://cloud.cennso.com
+      target: _blank
+    - title: Documentation
+      link: https://docs.cennso.com
+      target: _blank
+  
+  llm_links:
+    - title: llm.txt
+      link: /llm.txt
+      aria_label: Download basic LLM-friendly data about Cennso (llm.txt)
+      description: Basic website information for AI systems
+    - title: llm-full.txt
+      link: /llm-full.txt
+      aria_label: Download comprehensive LLM-friendly data about Cennso (llm-full.txt)
+      description: Comprehensive website content for AI systems
+  
+  copyright:
+    year_prefix: "Copyright ©"
+    company_suffix: CENNSO
+    rights: All rights reserved

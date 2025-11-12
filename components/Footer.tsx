@@ -1,36 +1,31 @@
-import { useMemo } from 'react'
 import Link from 'next/link'
 
 import { Logo } from './Logo'
-import { createFooterLinks } from '../lib/footer'
-// import { createSocialLinks } from '../lib/social-links'
-
-import metadata from '../siteMetadata'
 
 import type { FunctionComponent } from 'react'
-import type { FooterLink } from '../contexts/app.context'
+import type { FooterData } from '../lib/footer'
 
-interface FooterProps {}
+interface FooterProps {
+  footerData?: FooterData
+}
 
-export const Footer: FunctionComponent<FooterProps> = () => {
+export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
   const year = new Date().getFullYear()
-  const companyLinks = createFooterLinks()
-  // const socialLinks = createSocialLinks()
 
-  const exloreLinks: FooterLink[] = useMemo(() => {
-    return [
-      {
-        title: 'Cloud Portal',
-        link: metadata.explore.cloudPortal,
-        target: '_blank',
-      },
-      {
-        title: 'Documentation',
-        link: metadata.explore.documentationPortal,
-        target: '_blank',
-      },
-    ]
-  }, [])
+  // Provide fallback empty data if footerData is not provided
+  const defaultFooterData = {
+    footerLinks: [],
+    exploreLinks: [],
+    llmLinks: [],
+    copyright: {
+      yearPrefix: 'Copyright ©',
+      companySuffix: 'CENNSO',
+      rights: 'All rights reserved',
+    },
+  }
+
+  const { footerLinks, exploreLinks, llmLinks, copyright } =
+    footerData || defaultFooterData
 
   return (
     <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-secondary-600 px-8 lg:px-4 font-light">
@@ -38,8 +33,8 @@ export const Footer: FunctionComponent<FooterProps> = () => {
         <div className="flex flex-col order-last xl:order-none mt-0 2xl:mt-2">
           <Logo className="w-44 fill-white" />
           <div className="flex flex-col mt-4 text-white text-sm">
-            <span>Copyright © {year} CENNSO</span>
-            <span>All rights reserved</span>
+            <span>{`${copyright.yearPrefix} ${year} ${copyright.companySuffix}`}</span>
+            <span>{copyright.rights}</span>
           </div>
         </div>
 
@@ -49,7 +44,7 @@ export const Footer: FunctionComponent<FooterProps> = () => {
               Company
             </h2>
             <ul className="grid grid-rows-2 grid-flow-col gap-x-12 gap-y-1">
-              {companyLinks.map((link) => (
+              {footerLinks.map((link) => (
                 <li key={link.title}>
                   <Link
                     title={link.title}
@@ -67,13 +62,32 @@ export const Footer: FunctionComponent<FooterProps> = () => {
               Explore
             </h2>
             <ul className="flex flex-col gap-1">
-              {exloreLinks.map((link) => (
+              {exploreLinks.map((link) => (
                 <li key={link.title}>
                   <Link
                     title={link.title}
                     href={link.link}
                     className="flex flex-row items-center gap-2 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out py-3"
                     target={link.target}
+                  >
+                    <span>{link.title}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </li>
+          <li className="flex flex-col gap-4 mb-2 md:mb-0">
+            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
+              AI / LLM
+            </h2>
+            <ul className="flex flex-col gap-1">
+              {llmLinks.map((link) => (
+                <li key={link.title}>
+                  <Link
+                    title={link.title}
+                    href={link.link}
+                    aria-label={link.ariaLabel}
+                    className="flex flex-row items-center gap-2 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out py-3"
                   >
                     <span>{link.title}</span>
                   </Link>

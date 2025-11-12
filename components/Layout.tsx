@@ -5,6 +5,7 @@ import { Analytics } from '@vercel/analytics/next'
 
 import type { FunctionComponent, PropsWithChildren } from 'react'
 import type { NavigationLink } from '../contexts'
+import type { FooterData } from '../lib/footer'
 
 /**
  * Navigation is dynamically imported to optimize JavaScript bundle size.
@@ -32,11 +33,13 @@ const Navigation = dynamic(
 
 interface LayoutProps extends PropsWithChildren {
   navigation: NavigationLink[]
+  footerData?: FooterData
 }
 
 export const Layout: FunctionComponent<LayoutProps> = ({
   children,
   navigation,
+  footerData,
 }) => {
   return (
     <div className="w-screen min-h-screen flex flex-col justify-between overflow-x-clip">
@@ -50,7 +53,7 @@ export const Layout: FunctionComponent<LayoutProps> = ({
       </main>
 
       <div className="flex-none">
-        <Footer />
+        <Footer footerData={footerData} />
       </div>
 
       <CookiesBanner />

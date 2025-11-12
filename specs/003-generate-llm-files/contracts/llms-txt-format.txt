@@ -1,0 +1,364 @@
+# llms.txt File Format Specification
+
+**Version**: 1.0  
+**Date**: 2025-11-12  
+**Based On**: llms.txt specification (https://llmstxt.org/)
+
+## Overview
+
+This document defines the file format contract for `llm.txt` and `llm-full.txt` files served by the Cennso website. These files provide LLM-friendly structured data about the website's content.
+
+## File Format
+
+**Encoding**: UTF-8  
+**Line Endings**: LF (`\n`)  
+**Whitespace**: 2 newlines between major sections, 1 newline within sections
+
+## Metadata Headers
+
+**Location**: Top of file  
+**Prefix**: `>` (greater-than symbol) followed by space  
+**Format**: `> key: value`
+
+### Required Metadata
+
+```
+> url: https://www.cennso.com
+> last_updated: 2025-11-12T10:30:00Z
+> version: 1.0
+> content_summary: Mobile core network solutions, consulting services, success stories
+```
+
+**Field Specifications**:
+
+| Field | Type | Format | Required | Example |
+|-------|------|--------|----------|---------|
+| `url` | string | Absolute HTTPS URL | Yes | `https://www.cennso.com` |
+| `last_updated` | string | ISO 8601 timestamp | Yes | `2025-11-12T10:30:00Z` |
+| `version` | string | Semver | Yes | `1.0` |
+| `content_summary` | string | Plain text, 50-200 chars | Yes | `Mobile core network solutions...` |
+
+**Validation Rules**:
+- `url` MUST start with `https://`
+- `last_updated` MUST be valid ISO 8601 format
+- `version` MUST follow semver pattern (major.minor.patch)
+- `content_summary` MUST be 50-200 characters
+
+## Section Structure
+
+### Heading Levels
+
+**Level 1 (Major Sections)**: Single `#` prefix  
+**Level 2 (Sub-items)**: Double `##` prefix
+
+```
+# Major Section Title
+Content or list of items
+
+## Individual Item
+Item-specific content
+```
+
+### Required Sections
+
+All LLM files MUST include these sections:
+
+| Section | Heading | Content Type | Required In |
+|---------|---------|--------------|-------------|
+| About | `# About` | Text paragraph | Basic, Full |
+| Services | `# Services` | Bullet list | Basic, Full |
+| Contact | `# Contact` | Structured text | Basic, Full |
+| Blog Posts | `# Recent Blog Posts` or `# All Blog Posts` | Structured items | Basic, Full |
+| Pages | `# Pages` | Link list | Basic, Full |
+
+### Optional Sections
+
+| Section | Heading | Content Type | Included In |
+|---------|---------|--------------|-------------|
+| Solutions | `# Solutions` | List or items | Basic (list), Full (items) |
+| Success Stories | `# Success Stories` | List or items | Basic (list), Full (items) |
+| Team | `# Team` | Structured items | Full only |
+| Jobs | `# Job Postings` | Structured items | Full only |
+| Testimonials | `# Testimonials` | Quoted blocks | Full only |
+| Partners | `# Partners` | List or items | Full only |
+
+## Content Formatting
+
+### Text Paragraphs
+
+Plain text with line breaks for paragraphs:
+
+```
+# About
+Cennso is a leading provider of mobile core network solutions.
+
+We specialize in 4G and 5G network consulting, implementation, and support services.
+```
+
+### Bullet Lists
+
+Use `-` (hyphen) or `*` (asterisk) for list items:
+
+```
+# Services
+- Mobile Core Network Consulting: Expert guidance for 4G and 5G deployments
+- Network Implementation: End-to-end setup and configuration
+- 24/7 Support: Round-the-clock technical support and monitoring
+```
+
+### Structured Content Items
+
+Format for blog posts, solutions, case studies:
+
+```
+## [Item Title]
+URL: [absolute URL]
+[Optional metadata fields]
+
+[Summary or full content]
+```
+
+**Example (Blog Post)**:
+
+```
+## Understanding 5G Core Network Architecture
+URL: https://www.cennso.com/blog/5g-core-network-architecture
+Author: John Doe, Jane Smith
+Published: 2025-01-15
+Category: Technical Insights
+
+This article explores the fundamental components of 5G core networks...
+```
+
+**Example (Job Posting)**:
+
+```
+## Senior Network Engineer
+URL: https://www.cennso.com/jobs/senior-network-engineer
+Posted: 2025-11-01
+Location: Remote
+
+We are seeking an experienced network engineer to join our team...
+```
+
+### Links
+
+All URLs MUST be absolute (include full domain):
+
+```
+# Pages
+- Home: https://www.cennso.com/
+- About: https://www.cennso.com/about
+- Blog: https://www.cennso.com/blog
+```
+
+### Quotes (Testimonials)
+
+Use blockquote syntax with attribution:
+
+```
+> "Cennso transformed our network infrastructure with expert guidance and support."
+> — Michael Chen, CTO at TechCorp
+
+> "Outstanding service and deep technical knowledge."
+> — Sarah Johnson, Network Architect at NetworkSolutions
+```
+
+## Content Cleaning Rules
+
+### Remove
+
+- HTML tags: `<div>`, `<p>`, `<span>`, etc.
+- JSX components: `<Component prop="value" />`
+- Code blocks: ` ```language\ncode\n``` `
+- Inline code: `` `code` ``
+- Image syntax: `![alt](url)`
+
+### Preserve
+
+- Plain text content
+- Line breaks (paragraph structure)
+- Bullet lists (with `-` or `*`)
+- Links (convert to absolute URLs)
+- Quoted text (with `>` prefix)
+
+### Transform
+
+- Relative URLs → Absolute URLs: `/blog/post` → `https://www.cennso.com/blog/post`
+- Markdown bold/italic → Plain text: `**bold**` → `bold`
+- Headings → Plain text in context: `### Heading` → appropriate section structure
+
+## File Size Limits
+
+| File | Minimum | Maximum | Typical |
+|------|---------|---------|---------|
+| `llm.txt` | 1 KB | 5 MB | 50-200 KB |
+| `llm-full.txt` | 10 KB | 20 MB | 1-5 MB |
+
+**Enforcement**: Validation script MUST fail if files exceed maximum size.
+
+## Character Encoding
+
+- **Encoding**: UTF-8 without BOM
+- **Special Characters**: Properly encoded (é, ñ, 中, etc.)
+- **Quotes**: Use straight quotes (`"` not `"` or `"`)
+- **Dashes**: Use hyphen (`-`) not em dash (`—`) for lists
+- **Ellipsis**: Use three periods (`...`) not ellipsis character (`…`)
+
+## Validation Checklist
+
+### Format Validation
+
+- [ ] File is valid UTF-8
+- [ ] File size within limits
+- [ ] Line endings are LF (`\n`)
+- [ ] No trailing whitespace on lines
+- [ ] Max 2 consecutive newlines
+
+### Metadata Validation
+
+- [ ] All required metadata fields present
+- [ ] `url` is absolute HTTPS URL
+- [ ] `last_updated` is valid ISO 8601
+- [ ] `version` follows semver
+- [ ] `content_summary` is 50-200 characters
+
+### Section Validation
+
+- [ ] All required sections present
+- [ ] Section headings use correct level (# or ##)
+- [ ] No empty sections
+- [ ] No duplicate section titles
+- [ ] Sections in logical order
+
+### Content Validation
+
+- [ ] All URLs are absolute
+- [ ] No HTML/JSX tags remain (`<tag>`)
+- [ ] No broken internal links
+- [ ] Timestamps in ISO 8601 format
+- [ ] No unresolved author IDs
+- [ ] Special characters properly encoded
+
+### Quality Validation
+
+- [ ] No duplicate content
+- [ ] Summaries are 50-500 characters
+- [ ] Full content is readable (no formatting artifacts)
+- [ ] Links point to existing pages
+- [ ] Author names resolved correctly
+
+## Example: Complete llm.txt
+
+```
+# llms.txt - LLM-friendly website data
+# Generated: 2025-11-12
+
+> url: https://www.cennso.com
+> last_updated: 2025-11-12T10:30:00Z
+> version: 1.0
+> content_summary: Mobile core network solutions, consulting services, success stories
+
+# About
+Cennso is a leading provider of mobile core network solutions, specializing in 4G and 5G technologies. We help telecommunications companies and enterprises design, implement, and optimize their core network infrastructure.
+
+Our team of experts brings decades of combined experience in mobile networks, providing consulting, implementation, and support services worldwide.
+
+# Services
+- Mobile Core Network Consulting: Expert guidance for 4G and 5G deployments
+- Network Implementation: End-to-end setup and configuration
+- 24/7 Support: Round-the-clock technical support and monitoring
+- Training Programs: Comprehensive training for network teams
+
+# Contact
+Email: info@cennso.com
+Phone: +1 (555) 123-4567
+Website: https://www.cennso.com/contact
+LinkedIn: https://linkedin.com/company/cennso
+
+# Recent Blog Posts
+## Understanding 5G Core Network Architecture
+URL: https://www.cennso.com/blog/5g-core-network-architecture
+Author: John Doe, Jane Smith
+Published: 2025-01-15
+Category: Technical Insights
+Summary: This article explores the fundamental components of 5G core networks, including AMF, SMF, UPF, and how they work together to enable next-generation mobile services.
+
+## Best Practices for 4G to 5G Migration
+URL: https://www.cennso.com/blog/4g-to-5g-migration
+Author: Jane Smith
+Published: 2025-01-08
+Category: Migration Guides
+Summary: Learn the key considerations and step-by-step approach for successfully migrating from 4G LTE to 5G standalone networks while maintaining service continuity.
+
+[... 3 more recent posts ...]
+
+# Solutions
+- 5G Core Network Design: Custom architecture design for 5G standalone deployments
+- Network Optimization: Performance tuning and optimization services
+- Security Audits: Comprehensive security assessments for mobile core networks
+
+# Success Stories
+- TelecomCo 5G Deployment: Successful nationwide 5G core network rollout
+- Enterprise Private Network: Custom private 5G network for manufacturing facility
+
+# Pages
+- Home: https://www.cennso.com/
+- About: https://www.cennso.com/about
+- Services: https://www.cennso.com/services
+- Solutions: https://www.cennso.com/solutions
+- Success Stories: https://www.cennso.com/success-stories
+- Blog: https://www.cennso.com/blog
+- Contact: https://www.cennso.com/contact
+- Careers: https://www.cennso.com/jobs
+```
+
+## Differences: Basic vs. Full
+
+| Aspect | llm.txt (Basic) | llm-full.txt (Full) |
+|--------|-----------------|---------------------|
+| Blog Posts | 5-10 most recent with summaries | All posts with full content |
+| Solutions | Names and brief descriptions | Full solution details |
+| Success Stories | Titles and brief summaries | Full case studies |
+| Team | Not included | All team member bios |
+| Jobs | Not included | All job postings with full descriptions |
+| Testimonials | Not included | All testimonials with full quotes |
+| Partners | Not included | Partner information |
+| Content | Summaries only | Full text content |
+| File Size | 50-200 KB | 1-5 MB |
+
+## Schema.org References
+
+Sections MAY include Schema.org type references in comments for clarity:
+
+```
+# Blog Posts (Schema.org: BlogPosting, Article)
+[blog post items...]
+
+# Team (Schema.org: Person)
+[team member items...]
+
+# Job Postings (Schema.org: JobPosting)
+[job items...]
+```
+
+These are **informational only** and are not parsed or validated.
+
+## Version History
+
+- **1.0** (2025-11-12): Initial specification
+
+## Compliance
+
+Files generated MUST comply with:
+1. This specification
+2. llms.txt standard (https://llmstxt.org/)
+3. UTF-8 encoding requirements
+4. HTTP static file serving standards
+
+## References
+
+- llms.txt specification: https://llmstxt.org/
+- Schema.org: https://schema.org/
+- ISO 8601 (timestamps): https://www.iso.org/iso-8601-date-and-time-format.html
+- Semantic Versioning: https://semver.org/

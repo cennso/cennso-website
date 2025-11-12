@@ -10,6 +10,7 @@ import { Button } from '../components/common'
 import { SEO } from '../components/SEO'
 
 import { createNavigation } from '../lib/navigation'
+import { loadFooterData } from '../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 
@@ -61,6 +62,7 @@ export const getStaticProps: GetStaticProps = async function () {
       content: parsedContent,
       $$app: {
         navigation: await createNavigation(),
+        footerData: await loadFooterData(),
       },
     },
   }

@@ -18,6 +18,10 @@ from urllib.parse import urlparse
 def main():
     """Main validation function."""
     build_dir = Path(".next/server/pages")
+    # Prefer .next/standalone/public if it exists, else fallback to public
+    standalone_public_dir = Path(".next/standalone/public")
+    public_dir = standalone_public_dir if standalone_public_dir.exists() else Path("public")
+    
     if not build_dir.exists():
         print("Build directory not found. Run `yarn build` first.")
         return 1
@@ -37,9 +41,18 @@ def main():
         if url_path.endswith("/index"):
             url_path = url_path[:-5] or "/"
         all_pages.add(url_path)
+    
+    # Add static files from public directory (or .next/standalone/public) (e.g., /llm.txt, /robots.txt)
+    if public_dir.exists():
+        for static_file in public_dir.rglob("*"):
+            if static_file.is_file():
+                # Convert to URL path (e.g., public/llm.txt or .next/standalone/public/llm.txt -> /llm.txt)
+                relative_path = static_file.relative_to(public_dir)
+                url_path = "/" + str(relative_path)
+                all_pages.add(url_path)
 
     print(f"📄 Found {len(html_files)} pages to validate")
-    print(f"🔗 Tracking {len(all_pages)} unique internal routes")
+    print(f"🔗 Tracking {len(all_pages)} unique internal routes (HTML + static files)")
     print("=" * 50)
 
     all_broken_links = []
