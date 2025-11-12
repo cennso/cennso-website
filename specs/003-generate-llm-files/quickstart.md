@@ -1,7 +1,7 @@
 # Quickstart: LLM-Friendly Data Exposure
 
 **Feature**: LLM-Friendly Data Exposure  
-**Branch**: `003-i-want-this`  
+**Branch**: `003-generate-llm-files`  
 **Last Updated**: 2025-11-12
 
 ## What This Feature Does
@@ -372,9 +372,9 @@ Before publishing, verify:
 
 ## Resources
 
-- **File Format Spec**: `specs/003-i-want-this/contracts/llms-txt-format.txt`
-- **Data Model**: `specs/003-i-want-this/data-model.md`
-- **Research**: `specs/003-i-want-this/research.md`
+- **File Format Spec**: `specs/003-generate-llm-files/contracts/llms-txt-format.txt`
+- **Data Model**: `specs/003-generate-llm-files/data-model.md`
+- **Research**: `specs/003-generate-llm-files/research.md`
 - **llms.txt Standard**: https://llmstxt.org/
 
 ## Getting Help

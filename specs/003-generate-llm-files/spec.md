@@ -1,6 +1,6 @@
 # Feature Specification: LLM-Friendly Data Exposure
 
-**Feature Branch**: `003-i-want-this`  
+**Feature Branch**: `003-generate-llm-files`  
 **Created**: 2025-11-12  
 **Status**: Draft  
 **Input**: User description: "I want this project to expose to outside world data needed for consumer to easy use it for LLM so scripts that will generate llm.txt and llm-full.txt and expose as links in footer. Of course proper validation is needed. If other standards are known, implement them too"

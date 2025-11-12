@@ -1,7 +1,7 @@
 # Tasks: LLM-Friendly Data Exposure
 
-**Feature Branch**: `003-i-want-this`  
-**Input**: Design documents from `/specs/003-i-want-this/`  
+**Feature Branch**: `003-generate-llm-files`  
+**Input**: Design documents from `/specs/003-generate-llm-files/`  
 **Prerequisites**: plan.md ✅, spec.md ✅, research.md ✅, data-model.md ✅, contracts/ ✅
 
 **Organization**: Tasks grouped by user story to enable independent implementation and testing.
@@ -120,7 +120,7 @@
 - [ ] T043 Test build performance: Measure LLM generation time with `yarn build`, verify <30 seconds per success criteria SC-003
 - [ ] T044 Test file sizes: Verify llm.txt <5MB and llm-full.txt <20MB per success criteria SC-005
 - [ ] T045 Test response times: Measure HTTP response time for both files, verify <1 second per success criteria SC-001
-- [ ] T046 Run quickstart.md validation: Follow `specs/003-i-want-this/quickstart.md` user/developer/content creator guides and verify all instructions work correctly
+- [ ] T046 Run quickstart.md validation: Follow `specs/003-generate-llm-files/quickstart.md` user/developer/content creator guides and verify all instructions work correctly
 - [ ] T047 Final code review: Review all TypeScript and Python code for constitution compliance (type safety, no `any`, proper error handling, ESLint/Prettier)
 - [ ] T048 Update AGENTS.md: Add LLM data generation and validation to commands section, document new `yarn validate:llm` command
 
