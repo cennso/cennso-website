@@ -2,12 +2,12 @@
  * URL building utility for converting relative paths to absolute URLs
  */
 
-import siteMetadata from '../../../siteMetadata';
+import siteMetadata from '../../../siteMetadata'
 
 /**
  * Base site URL from site metadata
  */
-const SITE_URL = siteMetadata.siteUrl;
+const SITE_URL = siteMetadata.siteUrl
 
 /**
  * Build an absolute URL from a relative path
@@ -16,12 +16,14 @@ const SITE_URL = siteMetadata.siteUrl;
  */
 export function buildAbsoluteUrl(relativePath: string): string {
   // Remove leading slash if present
-  const cleanPath = relativePath.startsWith('/') ? relativePath.slice(1) : relativePath;
-  
+  const cleanPath = relativePath.startsWith('/')
+    ? relativePath.slice(1)
+    : relativePath
+
   // Ensure SITE_URL doesn't end with slash
-  const cleanBaseUrl = SITE_URL.endsWith('/') ? SITE_URL.slice(0, -1) : SITE_URL;
-  
-  return `${cleanBaseUrl}/${cleanPath}`;
+  const cleanBaseUrl = SITE_URL.endsWith('/') ? SITE_URL.slice(0, -1) : SITE_URL
+
+  return `${cleanBaseUrl}/${cleanPath}`
 }
 
 /**
@@ -29,7 +31,7 @@ export function buildAbsoluteUrl(relativePath: string): string {
  * @param slug - Blog post slug
  */
 export function buildBlogPostUrl(slug: string): string {
-  return buildAbsoluteUrl(`blog/${slug}`);
+  return buildAbsoluteUrl(`blog/${slug}`)
 }
 
 /**
@@ -37,7 +39,7 @@ export function buildBlogPostUrl(slug: string): string {
  * @param slug - Solution slug
  */
 export function buildSolutionUrl(slug: string): string {
-  return buildAbsoluteUrl(`solutions/${slug}`);
+  return buildAbsoluteUrl(`solutions/${slug}`)
 }
 
 /**
@@ -45,7 +47,7 @@ export function buildSolutionUrl(slug: string): string {
  * @param slug - Success story slug
  */
 export function buildSuccessStoryUrl(slug: string): string {
-  return buildAbsoluteUrl(`success-stories/${slug}`);
+  return buildAbsoluteUrl(`success-stories/${slug}`)
 }
 
 /**
@@ -53,12 +55,12 @@ export function buildSuccessStoryUrl(slug: string): string {
  * @param slug - Job slug
  */
 export function buildJobUrl(slug: string): string {
-  return buildAbsoluteUrl(`jobs/${slug}`);
+  return buildAbsoluteUrl(`jobs/${slug}`)
 }
 
 /**
  * Get the base site URL
  */
 export function getSiteUrl(): string {
-  return SITE_URL;
+  return SITE_URL
 }

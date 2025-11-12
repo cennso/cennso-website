@@ -72,7 +72,7 @@ export const getStaticProps: GetStaticProps<ImprintPageProps> =
         mdxSource,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       },
     }

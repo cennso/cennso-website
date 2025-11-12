@@ -7,6 +7,7 @@
 ## What This Feature Does
 
 Exposes website content in LLM-friendly formats through two text files:
+
 - `/llm.txt` - Basic summary (~50-200KB)
 - `/llm-full.txt` - Comprehensive data (~1-5MB)
 
@@ -17,22 +18,26 @@ These files make it easy for AI systems (ChatGPT, Claude, Gemini) to discover an
 ### Accessing LLM Data
 
 **Via Footer Links**:
+
 1. Scroll to website footer on any page
 2. Look for "LLM Data (Basic)" and "LLM Data (Full)" links
 3. Click to view or download the text files
 
 **Via Direct URLs**:
+
 - Basic: `https://www.cennso.com/llm.txt`
 - Full: `https://www.cennso.com/llm-full.txt`
 
 ### Using with AI Systems
 
 **ChatGPT/Claude/Gemini**:
+
 1. Share the llm.txt URL with the AI system
 2. Ask questions about Cennso services, blog posts, solutions, etc.
 3. AI will use the structured data to provide accurate answers
 
 **Example Prompts**:
+
 - "Read https://www.cennso.com/llm.txt and tell me about Cennso's services"
 - "What blog posts has Cennso published about 5G?"
 - "Summarize Cennso's success stories"
@@ -48,32 +53,36 @@ These files make it easy for AI systems (ChatGPT, Claude, Gemini) to discover an
 ### Quick Setup
 
 1. **Install Dependencies** (if needed):
+
    ```bash
    yarn install
    pip install -r scripts/requirements.txt
    ```
 
 2. **Generate LLM Files**:
+
    ```bash
    yarn generate:llm
    ```
-   
+
    Output:
    - `public/llm.txt`
    - `public/llm-full.txt`
 
 3. **Validate Generated Files**:
+
    ```bash
    yarn validate:llm
    ```
-   
+
    Expected: All checks pass ✅
 
 4. **Test Locally**:
+
    ```bash
    yarn dev
    ```
-   
+
    Visit:
    - http://localhost:3000/llm.txt
    - http://localhost:3000/llm-full.txt
@@ -87,6 +96,7 @@ yarn build
 ```
 
 **Steps**:
+
 1. Runs `generate:llm` (via prebuild hook)
 2. Generates llm.txt and llm-full.txt
 3. Validates generated files
@@ -98,6 +108,7 @@ yarn build
 #### Adding New Content
 
 LLM files are regenerated automatically when you add:
+
 - New blog posts → Appears in both files
 - New solutions → Appears in both files
 - New success stories → Appears in both files
@@ -184,13 +195,13 @@ Edit `content/llm-links.yaml`:
 ```yaml
 llm_links:
   basic:
-    label: "LLM Data (Basic)"
-    description: "Lightweight website summary for AI systems"
-    url: "/llm.txt"
+    label: 'LLM Data (Basic)'
+    description: 'Lightweight website summary for AI systems'
+    url: '/llm.txt'
   full:
-    label: "LLM Data (Full)"
-    description: "Comprehensive website content for AI systems"
-    url: "/llm-full.txt"
+    label: 'LLM Data (Full)'
+    description: 'Comprehensive website content for AI systems'
+    url: '/llm-full.txt'
 ```
 
 #### Site URL
@@ -211,6 +222,7 @@ module.exports = {
 **Problem**: Generation script can't find content directories
 
 **Solution**:
+
 ```bash
 # Ensure you're in project root
 cd /path/to/cennso-website
@@ -227,6 +239,7 @@ yarn generate:llm
 **Problem**: Generated file missing required metadata headers
 
 **Solution**:
+
 1. Check `siteMetadata.js` has `siteUrl` defined
 2. Verify generation script completed successfully
 3. Re-generate: `yarn generate:llm`
@@ -236,6 +249,7 @@ yarn generate:llm
 **Problem**: llm-full.txt > 20MB
 
 **Solution**:
+
 1. Check for very large blog posts
 2. Review content duplication
 3. Consider excluding certain content types
@@ -246,6 +260,7 @@ yarn generate:llm
 **Problem**: Text cleaning didn't remove all HTML/JSX
 
 **Solution**:
+
 1. Check which content has HTML
 2. Improve text cleaning in `generators/shared.ts`
 3. Add test cases for problematic patterns
@@ -255,6 +270,7 @@ yarn generate:llm
 **Problem**: Links don't appear in footer
 
 **Solution**:
+
 1. Verify `content/llm-links.yaml` exists
 2. Check Footer.tsx updated correctly
 3. Restart dev server: `yarn dev`
@@ -267,6 +283,7 @@ The feature runs automatically in GitHub Actions:
 **Workflow**: `.github/workflows/tests-and-other-validation.yml`
 
 **Steps**:
+
 1. Checkout code
 2. Install dependencies
 3. Run `yarn build` (includes LLM generation)
@@ -274,6 +291,7 @@ The feature runs automatically in GitHub Actions:
 5. Fail PR if validation errors
 
 **Local Testing Before Push**:
+
 ```bash
 # Simulate CI workflow
 yarn check:all
@@ -286,6 +304,7 @@ yarn check:all
 ### What Gets Included
 
 **llm.txt (Basic)**:
+
 - Company description
 - Services overview
 - Contact information
@@ -295,6 +314,7 @@ yarn check:all
 - Key page links
 
 **llm-full.txt (Comprehensive)**:
+
 - Everything from llm.txt
 - ALL blog posts with full content
 - ALL solutions with full descriptions
@@ -327,6 +347,7 @@ yarn check:all
 #### Content Quality Checks
 
 Before publishing, verify:
+
 - [ ] Title is descriptive (50-80 characters)
 - [ ] Excerpt summarizes content (150-250 characters)
 - [ ] Author information complete
@@ -337,15 +358,15 @@ Before publishing, verify:
 
 ### Impact of Content Changes
 
-| Change | Impact on LLM Files | Regeneration Needed |
-|--------|---------------------|---------------------|
-| New blog post | Appears in both files | Automatic on build |
-| Edit blog post | Updated in both files | Automatic on build |
-| Delete blog post | Removed from both files | Automatic on build |
-| New solution | Appears in both files | Automatic on build |
-| New job posting | Appears in llm-full.txt | Automatic on build |
-| Update author info | Updated in all posts | Automatic on build |
-| Add testimonial | Appears in llm-full.txt | Automatic on build |
+| Change             | Impact on LLM Files     | Regeneration Needed |
+| ------------------ | ----------------------- | ------------------- |
+| New blog post      | Appears in both files   | Automatic on build  |
+| Edit blog post     | Updated in both files   | Automatic on build  |
+| Delete blog post   | Removed from both files | Automatic on build  |
+| New solution       | Appears in both files   | Automatic on build  |
+| New job posting    | Appears in llm-full.txt | Automatic on build  |
+| Update author info | Updated in all posts    | Automatic on build  |
+| Add testimonial    | Appears in llm-full.txt | Automatic on build  |
 
 **No manual steps required** - just publish content normally!
 
@@ -359,12 +380,14 @@ Before publishing, verify:
 ## Getting Help
 
 **Common Questions**:
+
 - How do I test my content in ChatGPT? → Share llm.txt URL with ChatGPT
 - Can I customize what's included? → Edit generation scripts in `scripts/generate-llm-data/`
 - How often are files updated? → On every deployment (every `yarn build`)
 - Can I download historical versions? → No, files are regenerated each build
 
 **Support**:
+
 - Issues: GitHub repository issues
 - Documentation: `/docs/llm-data-format.md` (created in P3)
 - Code: `scripts/generate-llm-data/` directory
@@ -382,6 +405,7 @@ Before publishing, verify:
 ---
 
 **Quick Reference**:
+
 - Generate: `yarn generate:llm`
 - Validate: `yarn validate:llm`
 - Check: All `yarn check:all`

@@ -12,24 +12,28 @@ Expose website content in LLM-friendly formats (llms.txt standard) through two e
 ## Technical Context
 
 **Language/Version**: TypeScript 5.x (generation scripts), Python 3.11 (validation scripts), Next.js 14 (serving)  
-**Primary Dependencies**: 
+**Primary Dependencies**:
+
 - Existing: `lib/mdx.ts` (blog post parsing), `lib/markdown.ts` (content utilities), `js-yaml` (YAML parsing)
 - New: None required (use existing utilities)
 
 **Storage**: Static files in `/public` directory (llm.txt, llm-full.txt) - served by Next.js static file handler  
-**Testing**: 
+**Testing**:
+
 - Generation: TypeScript compilation, manual verification of output format
 - Validation: Python script with pytest framework (follows `scripts/validate-*.py` pattern)
 - Integration: `yarn build` must complete successfully with LLM files generated
 
 **Target Platform**: Next.js static site (Node.js build environment, browser serving)  
 **Project Type**: Web application (existing Next.js site, adding build-time generation + static serving)  
-**Performance Goals**: 
+**Performance Goals**:
+
 - Generation: Complete in <30 seconds during build
 - Serving: Response time <1 second for both files
 - File sizes: <5MB (llm.txt), <20MB (llm-full.txt)
 
-**Constraints**: 
+**Constraints**:
+
 - Must integrate seamlessly with existing `yarn build` pipeline
 - Must use existing content parsing utilities (no duplicate parsing logic)
 - Must follow established validation script patterns (Python in `/scripts` directory)
@@ -37,7 +41,8 @@ Expose website content in LLM-friendly formats (llms.txt standard) through two e
 - UTF-8 encoding for international character support
 - Plain text format (not JSON/XML) for broad LLM compatibility
 
-**Scale/Scope**: 
+**Scale/Scope**:
+
 - Content sources: ~20-30 blog posts, ~5-10 solutions, ~5-10 success stories, ~5-10 job postings, ~10 pages, ~5-10 team members
 - Total content volume: Estimated 500KB-2MB uncompressed text
 - Regeneration frequency: Every deployment (on `yarn build`)
@@ -48,23 +53,27 @@ Expose website content in LLM-friendly formats (llms.txt standard) through two e
 _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### I. Code Quality & Type Safety
+
 - ✅ **TypeScript Strict Mode**: Generation scripts will use TypeScript with strict mode
 - ✅ **Type Annotations**: All exported functions will have explicit return types
 - ✅ **ESLint/Prettier**: Will follow existing code style and linting rules
 - ✅ **No `any` Types**: Will use proper typing for content parsing results
 
 ### II. Component Architecture & Reusability
+
 - ✅ **Footer Integration**: Footer component will be updated following existing patterns
 - ✅ **Utility Organization**: Generation logic in `/scripts` directory (not `/lib` - build-time only)
 - ✅ **No Business Logic in Components**: Footer only renders links, no generation logic
 
 ### III. User Experience Consistency
+
 - ✅ **Design System**: Footer links will use TailwindCSS + DaisyUI button/link styles
 - ✅ **Responsive Design**: Footer links visible and accessible on all breakpoints
 - ✅ **SEO Metadata**: N/A (static text files don't need SEO components)
 - ✅ **Navigation**: Consistent with existing footer link patterns
 
 ### IV. Performance & Build Optimization
+
 - ✅ **Static Generation**: LLM files generated at build time (SSG pattern)
 - ✅ **No Client-Side Fetching**: Files served as static assets from `/public`
 - ✅ **Build Time**: Target <30s for generation (acceptable overhead)
@@ -73,6 +82,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - ✅ **Image Optimization**: N/A (text-only feature)
 
 ### V. Accessibility Standards (WCAG 2.1 AA)
+
 - ✅ **Footer Links**: Will have descriptive text ("LLM Data - Basic", "LLM Data - Full")
 - ✅ **Keyboard Accessible**: Links follow standard `<a>` element patterns
 - ✅ **Screen Reader**: Descriptive link text provides context
@@ -80,18 +90,21 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - ✅ **Color Contrast**: Will use existing footer link colors (already validated)
 
 ### VI. SEO Standards
+
 - ⚠️ **Special Case**: LLM text files are NOT HTML pages, don't need title/description meta tags
 - ✅ **Discoverability**: Footer links provide human-discoverable access
 - ✅ **Robots.txt**: LLM files should be crawlable (no disallow needed)
 - ✅ **Sitemap**: Consider adding llm.txt and llm-full.txt to sitemap.xml for crawler discovery
 
 ### Content Management Standards
+
 - ✅ **Content Sources**: Will use existing `/content` directory YAML/MDX files
 - ✅ **No Hardcoded Text**: Footer link labels will come from YAML configuration
 - ✅ **Asset Paths**: Will use absolute URLs in generated files
 - ✅ **Link Validity**: Generated internal references will be validated
 
 ### Quality Gates
+
 - ✅ **Build**: Generation integrated into `yarn build` (must complete without errors)
 - ✅ **Lint**: TypeScript generation scripts will pass `yarn lint`
 - ✅ **Format**: Scripts will follow Prettier formatting

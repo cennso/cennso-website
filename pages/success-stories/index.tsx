@@ -226,7 +226,7 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
         industries,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       },
     }

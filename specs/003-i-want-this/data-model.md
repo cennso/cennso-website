@@ -15,17 +15,20 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Description**: Root structure representing a complete LLM text file (llm.txt or llm-full.txt)
 
 **Fields**:
+
 - `metadata`: DocumentMetadata - File metadata headers
 - `sections`: Section[] - Ordered list of content sections
 - `generatedAt`: Date - Timestamp of generation
 - `fileType`: 'basic' | 'full' - Which file type this represents
 
 **Validation Rules**:
+
 - Must have at least one section
 - Metadata fields must be present and valid
 - File size must be within limits (5MB basic, 20MB full)
 
 **Relationships**:
+
 - Contains multiple Section entities
 - Has one DocumentMetadata entity
 
@@ -36,18 +39,21 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Description**: Metadata headers that appear at the top of LLM text files
 
 **Fields**:
+
 - `url`: string - Canonical website URL (e.g., "https://www.cennso.com")
 - `lastUpdated`: string - ISO 8601 timestamp of generation
 - `version`: string - File format version (e.g., "1.0")
 - `contentSummary`: string - Brief description of website content
 
 **Validation Rules**:
+
 - `url` must be absolute HTTPS URL
 - `lastUpdated` must be valid ISO 8601 format
 - `version` must follow semver pattern
 - `contentSummary` must be 1-200 characters
 
 **Format Example**:
+
 ```
 > url: https://www.cennso.com
 > last_updated: 2025-11-12T10:30:00Z
@@ -62,18 +68,21 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Description**: Major content section within an LLM document (e.g., About, Services, Blog Posts)
 
 **Fields**:
+
 - `title`: string - Section heading (e.g., "About", "Services", "Blog Posts")
 - `level`: 1 | 2 - Heading level (# or ##)
 - `content`: string | ContentItem[] - Section content (text or structured items)
 - `schemaType`?: string - Optional Schema.org type reference (e.g., "BlogPosting", "Organization")
 
 **Validation Rules**:
+
 - `title` must be non-empty
 - `level` must be 1 or 2
 - If `content` is array, all items must be valid ContentItem
 - `schemaType` must be valid Schema.org type if present
 
 **Section Types**:
+
 - **About**: Company description (text)
 - **Services**: List of services (ContentItem[])
 - **Contact**: Contact information (text)
@@ -85,6 +94,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 - **Testimonials**: List of testimonials (ContentItem[], full only)
 
 **Relationships**:
+
 - Belongs to one LLMDocument
 - Contains multiple ContentItem entities (if structured)
 
@@ -95,6 +105,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Description**: Individual piece of structured content within a section (blog post, solution, job, etc.)
 
 **Fields**:
+
 - `title`: string - Item title
 - `url`: string - Absolute URL to item page
 - `author`?: string - Author name(s) (for blog posts)
@@ -104,12 +115,14 @@ This data model describes how content from various sources (YAML, MDX) is transf
 - `metadata`?: Record<string, string> - Additional type-specific fields
 
 **Validation Rules**:
+
 - `title` must be non-empty
 - `url` must be absolute URL starting with site domain
 - `summary` must be 50-500 characters
 - `fullContent` only present in llm-full.txt
 
 **Content Types**:
+
 - **BlogPost**: title, url, author, published, summary, fullContent
 - **Solution**: title, url, summary, fullContent
 - **SuccessStory**: title, url, summary, fullContent
@@ -118,6 +131,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 - **Testimonial**: author (title), company (metadata), quote (summary)
 
 **Relationships**:
+
 - Belongs to one Section
 - May reference Author entity (blog posts)
 
@@ -128,6 +142,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Description**: Author information resolved from authors.yaml
 
 **Fields**:
+
 - `id`: string - Unique author identifier (from YAML)
 - `name`: string - Full name
 - `position`?: string - Job title
@@ -138,11 +153,13 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Source**: `content/authors.yaml`
 
 **Validation Rules**:
+
 - `id` must match reference in content files
 - `name` must be non-empty
 - All referenced authors must exist in authors.yaml
 
 **Relationships**:
+
 - Referenced by ContentItem (blog posts)
 
 ---
@@ -156,6 +173,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Source**: `content/blog-posts/*.mdx`
 
 **Transformation**:
+
 ```typescript
 // Input: MDX file with frontmatter
 {
@@ -179,6 +197,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 ```
 
 **Text Cleaning**:
+
 - Strip JSX components: `<Component />` → removed
 - Convert Markdown: `**bold**` → plain text
 - Remove code blocks: ` ```code``` ` → removed
@@ -190,6 +209,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Source**: `content/solutions/*.mdx`
 
 **Transformation**:
+
 ```typescript
 // Input: MDX file
 {
@@ -203,7 +223,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
   title: frontmatter.title
   url: `${siteUrl}/solutions/${slug}`
   summary: frontmatter.description
-  fullContent: stripMDX(content)  // llm-full.txt only
+  fullContent: stripMDX(content) // llm-full.txt only
 }
 ```
 
@@ -224,6 +244,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 **Source**: `content/testimonials.yaml`
 
 **Transformation**:
+
 ```typescript
 // Input: YAML entry
 {
@@ -238,9 +259,11 @@ This data model describes how content from various sources (YAML, MDX) is transf
 // Output: ContentItem
 {
   title: author
-  url: null  // testimonials don't have dedicated pages
+  url: null // testimonials don't have dedicated pages
   summary: quote
-  metadata: { position, company }
+  metadata: {
+    ;(position, company)
+  }
 }
 ```
 
@@ -454,6 +477,7 @@ Location: [location]
 LLM files are **stateless** - they are regenerated completely on each build. No incremental updates or state management required.
 
 **Lifecycle**:
+
 1. **Generation**: On `yarn build` (via prebuild hook)
 2. **Validation**: Immediately after generation
 3. **Serving**: Static files served by Next.js
@@ -466,6 +490,7 @@ LLM files are **stateless** - they are regenerated completely on each build. No 
 ## Summary
 
 This data model provides:
+
 - Clear entity definitions for LLM document structure
 - Transformation rules from source content to LLM format
 - Validation requirements at document, section, and content levels

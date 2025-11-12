@@ -124,7 +124,7 @@ export const getStaticProps: GetStaticProps<SolutionsPageProps> =
         solutions,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       },
     }

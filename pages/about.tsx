@@ -220,7 +220,7 @@ export const getStaticProps: GetStaticProps<AboutPageProps> =
         members,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       },
     }

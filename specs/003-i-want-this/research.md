@@ -11,6 +11,7 @@
 **Rationale**: The llms.txt specification is an emerging standard for exposing website data to LLMs, similar to how robots.txt works for web crawlers. It provides a simple, text-based format that's easy for LLMs to parse.
 
 **Format Specification**:
+
 ```
 # llms.txt - LLM-friendly website data
 # Based on the llms.txt specification (https://llmstxt.org/)
@@ -41,6 +42,7 @@ Email: [email]
 ```
 
 **Key Characteristics**:
+
 - Plain text format with Markdown-style headings
 - Metadata headers prefixed with `>`
 - Sections organized by content type
@@ -49,6 +51,7 @@ Email: [email]
 - URLs are absolute (full domain)
 
 **Alternatives Considered**:
+
 - JSON-LD: More structured but harder for humans to read, requires parsing
 - Markdown: Too flexible, lacks standard metadata format
 - Plain text with custom format: Reinventing the wheel, no ecosystem support
@@ -63,6 +66,7 @@ Email: [email]
 **Rationale**: Not all LLM systems need comprehensive data. Providing a lightweight summary file reduces bandwidth and parsing time for basic queries.
 
 **llm.txt (Basic Summary)** - ~50-200KB:
+
 - Metadata headers
 - Company overview
 - Primary services (1-2 sentences each)
@@ -72,6 +76,7 @@ Email: [email]
 - No full blog post content
 
 **llm-full.txt (Comprehensive Data)** - ~1-5MB:
+
 - Everything from llm.txt
 - All blog posts with full content (stripped of HTML)
 - All solutions with detailed descriptions
@@ -82,12 +87,14 @@ Email: [email]
 - Partner information
 
 **Benefits**:
+
 - Faster initial discovery for LLM crawlers (llm.txt)
 - Reduced bandwidth for simple queries
 - Comprehensive data available when needed (llm-full.txt)
 - Follows progressive enhancement pattern
 
 **Alternatives Considered**:
+
 - Single file: Too large for quick lookups, wastes bandwidth
 - Three-tier system (basic/medium/full): Overengineering, increases maintenance
 - On-demand generation: Adds latency, requires server processing
@@ -101,6 +108,7 @@ Email: [email]
 **Rationale**: Follows existing pattern (`generate-og-images/`), uses TypeScript for type safety, modular design allows independent testing.
 
 **Architecture**:
+
 ```typescript
 // scripts/generate-llm-data/index.ts
 // Main orchestrator - reads content, calls generators, writes files
@@ -116,17 +124,20 @@ Email: [email]
 ```
 
 **Content Processing Pipeline**:
+
 1. **Read Sources**: Use existing `lib/mdx.ts` to parse blog posts, `js-yaml` for YAML files
 2. **Transform**: Strip HTML/JSX, format as plain text, convert relative URLs to absolute
 3. **Format**: Apply llms.txt structure with headers and sections
 4. **Write**: Output to `public/llm.txt` and `public/llm-full.txt`
 
 **Build Integration**:
+
 - Add `prebuild` script to package.json: `"prebuild": "yarn generate:llm"`
 - Generation runs automatically before every `yarn build`
 - Ensures LLM files are always up-to-date with content
 
 **Alternatives Considered**:
+
 - Python scripts: Requires parsing TypeScript content types, adds language complexity
 - Single monolithic script: Harder to test, violates single responsibility
 - Runtime generation (Next.js API route): Adds latency, not cacheable, overcomplicates
@@ -138,6 +149,7 @@ Email: [email]
 ### Decision: Use existing content parsing utilities
 
 **Content Sources** (all existing):
+
 - **Blog Posts**: `content/blog-posts/*.mdx` → `lib/mdx.ts` (getMDXContent)
 - **Solutions**: `content/solutions/*.mdx` → `lib/mdx.ts`
 - **Success Stories**: `content/success-stories/*.mdx` → `lib/mdx.ts`
@@ -148,6 +160,7 @@ Email: [email]
 - **Static Pages**: `content/*-page.yaml` → `js-yaml`
 
 **Text Cleaning Strategy**:
+
 - Strip JSX/HTML tags using regex or markdown parser
 - Convert Markdown to plain text (preserve structure with indentation/bullets)
 - Remove code blocks (not useful for LLM summaries)
@@ -155,12 +168,14 @@ Email: [email]
 - Normalize whitespace (multiple newlines → 2 newlines max)
 
 **Metadata Extraction**:
+
 - Timestamps: Use file modification time or frontmatter `date` field
 - Authors: Resolve author IDs from `authors.yaml`
 - Categories: Extract from frontmatter `category` field
 - URLs: Construct from slug using `siteMetadata.siteUrl`
 
 **Alternatives Considered**:
+
 - Parse HTML from built pages: Fragile, requires parsing complex HTML
 - Maintain separate content database: Duplicates data, adds maintenance burden
 - Use Next.js API to query content: Over-complicates, not available at build time
@@ -174,9 +189,10 @@ Email: [email]
 **Validation Script**: `scripts/validate-llm-data.py`
 
 **Checks to Implement**:
+
 1. **File Existence**: Both llm.txt and llm-full.txt must exist
 2. **UTF-8 Encoding**: Files must be valid UTF-8
-3. **File Size**: 
+3. **File Size**:
    - llm.txt: 1KB-5MB (sanity check)
    - llm-full.txt: 10KB-20MB (sanity check)
 4. **Required Metadata**: Headers must include url, last_updated, version, content_summary
@@ -188,15 +204,18 @@ Email: [email]
 10. **Timestamp Validity**: last_updated must be valid ISO 8601 format
 
 **Error Levels**:
+
 - **ERROR**: Critical issues that break spec compliance (exit code 1)
 - **WARNING**: Best practice violations that don't break functionality (exit code 0)
 
 **Integration**:
+
 - Add `validate:llm` script to package.json
 - Run as part of `yarn check:all` command
 - Run in CI/CD GitHub Actions workflow
 
 **Alternatives Considered**:
+
 - TypeScript validation: Python scripts are standard for validation in this project
 - No validation: Risks serving malformed data to LLMs
 - Manual validation: Not scalable, error-prone
@@ -208,6 +227,7 @@ Email: [email]
 ### Decision: Add links to Footer component using YAML configuration
 
 **Footer Link Pattern** (existing):
+
 ```tsx
 // components/Footer.tsx already has sections
 <div className="footer-section">
@@ -223,20 +243,22 @@ Email: [email]
 ```
 
 **Configuration** (new file):
+
 ```yaml
 # content/llm-links.yaml
 llm_links:
   basic:
-    label: "LLM Data (Basic)"
-    description: "Lightweight website summary for AI systems"
-    url: "/llm.txt"
+    label: 'LLM Data (Basic)'
+    description: 'Lightweight website summary for AI systems'
+    url: '/llm.txt'
   full:
-    label: "LLM Data (Full)"
-    description: "Comprehensive website content for AI systems"
-    url: "/llm-full.txt"
+    label: 'LLM Data (Full)'
+    description: 'Comprehensive website content for AI systems'
+    url: '/llm-full.txt'
 ```
 
 **Implementation**:
+
 1. Create `content/llm-links.yaml` with link configuration
 2. Load in Footer component via getStaticProps or direct import
 3. Render links in appropriate footer section (Resources or Company)
@@ -246,6 +268,7 @@ llm_links:
 **Accessibility**: Links are semantic `<a>` elements with descriptive text, keyboard accessible, meet contrast requirements.
 
 **Alternatives Considered**:
+
 - Hardcoded links: Violates "no hardcoded UI text" principle
 - Hide from footer: Reduces discoverability for human users
 - Special /ai or /robots page: Non-standard, requires extra navigation
@@ -259,6 +282,7 @@ llm_links:
 **Rationale**: The llm.txt files are plain text, not HTML. Schema.org structured data (JSON-LD) is already present in HTML pages. The LLM files should reference these existing schemas in comments for clarity.
 
 **Implementation**:
+
 ```
 # Blog Posts (Schema.org: BlogPosting, Article)
 ## [Blog Post Title]
@@ -269,6 +293,7 @@ Summary: [excerpt]
 ```
 
 **Schema.org Types to Reference**:
+
 - **Organization**: Company information (already in HTML)
 - **BlogPosting/Article**: Blog posts (already in HTML)
 - **JobPosting**: Job listings (already in HTML)
@@ -277,6 +302,7 @@ Summary: [excerpt]
 - **Review/Testimonial**: Customer testimonials
 
 **Alternatives Considered**:
+
 - Embed JSON-LD in llm.txt: Mixing formats, harder for humans to read
 - Separate schema.json file: Duplicates data, maintenance burden
 - No Schema.org reference: Misses opportunity to clarify content types
@@ -288,22 +314,26 @@ Summary: [excerpt]
 ### Decision: Static file serving with standard HTTP caching headers
 
 **Next.js Static Serving**: Files in `/public` are served with:
+
 - `Cache-Control: public, max-age=31536000, immutable` (default for static assets)
 - `ETag` header for change detection
 
 **Cache Strategy**:
+
 - LLM files regenerated on every build (deployment)
 - Old file contents are replaced
 - Next.js handles cache headers automatically
 - No custom caching logic needed
 
 **Performance Optimizations**:
+
 1. **Compression**: Enable gzip/brotli in deployment (Vercel does this automatically)
 2. **CDN**: Static files automatically served from CDN edge (Vercel Edge Network)
 3. **File Size**: Enforce size limits during validation
 4. **Minimal Processing**: Generation is one-time at build, no runtime overhead
 
 **Alternatives Considered**:
+
 - Dynamic generation with aggressive caching: Adds complexity, runtime overhead
 - Short cache TTL: Unnecessary, content only changes on deployment
 - No caching: Wasteful bandwidth, slower responses
@@ -315,28 +345,33 @@ Summary: [excerpt]
 ### Decision: Multi-layer validation approach
 
 **Layer 1: Build-Time Validation** (Python script):
+
 - Run `yarn validate:llm` after generation
 - Checks: file existence, format, metadata, URLs, file sizes
 - Blocks build if critical errors found
 
 **Layer 2: CI/CD Validation** (GitHub Actions):
+
 - Run validation in `tests-and-other-validation.yml` workflow
 - Integrate with existing quality checks matrix
 - Fails PR if validation errors
 
 **Layer 3: Manual Review**:
+
 - Test LLM file content in ChatGPT/Claude
 - Verify: completeness, readability, accuracy
 - Check: footer links are visible and functional
 - Validate: response times are acceptable (<1s)
 
 **Layer 4: Integration Testing**:
+
 - Verify `yarn build` completes successfully
 - Check generated files exist and are non-empty
 - Confirm footer links render correctly
 - Test static file serving (request /llm.txt returns 200)
 
 **Test Cases**:
+
 - Empty blog posts directory → generates valid file with no blog section
 - Special characters in content → proper UTF-8 encoding
 - Very long blog posts → file size limits enforced
@@ -344,6 +379,7 @@ Summary: [excerpt]
 - Broken internal links → validation detects and reports
 
 **Alternatives Considered**:
+
 - Unit tests for generators: Overkill for simple text transformation
 - Snapshot testing: Brittle, breaks with any content change
 - Only manual testing: Not scalable, misses edge cases
@@ -355,47 +391,55 @@ Summary: [excerpt]
 ### Decision: Phased rollout with validation gates
 
 **Phase 1: Generation** (P1 MVP):
+
 1. Implement generation scripts
 2. Add prebuild hook
 3. Run `yarn build` and verify files generated
 4. Manual review of llm.txt and llm-full.txt content
 
 **Phase 2: Validation** (P2):
+
 1. Implement Python validation script
 2. Add `validate:llm` to package.json
 3. Run validation and fix any errors
 4. Integrate with `yarn check:all`
 
 **Phase 3: Footer Links** (P1 MVP):
+
 1. Create `content/llm-links.yaml`
 2. Update Footer component
 3. Test footer links on all pages
 4. Verify accessibility (keyboard, screen reader)
 
 **Phase 4: CI/CD Integration** (P2):
+
 1. Add validation to GitHub Actions workflow
 2. Test PR workflow end-to-end
 3. Verify build fails on validation errors
 
 **Phase 5: Documentation** (P3):
+
 1. Create `/docs/llm-data-format.md` explaining format
 2. Document generation process
 3. Document validation requirements
 4. Add examples of good llm.txt content
 
 **Rollback Plan**:
+
 - Remove prebuild hook from package.json
 - Remove generated files from /public
 - Revert Footer component changes
 - Feature is cleanly removable without side effects
 
 **Success Metrics**:
+
 - Build completes in <60s (including LLM generation)
 - Validation passes on first run
 - Footer links accessible and functional
 - LLM files loadable in ChatGPT/Claude
 
 **Alternatives Considered**:
+
 - Big bang release: Higher risk, harder to debug
 - Feature flag: Unnecessary complexity for build-time feature
 - Beta testing with select users: LLM files are passive, no user impact
@@ -405,6 +449,7 @@ Summary: [excerpt]
 ## Summary
 
 **Key Decisions**:
+
 1. **Format**: llms.txt specification (plain text with metadata headers)
 2. **Architecture**: Two files (basic + full), TypeScript generation, Python validation
 3. **Integration**: Prebuild hook, Footer links, static file serving

@@ -95,7 +95,7 @@ export const getStaticProps: GetStaticProps<SolutionPageProps> =
         solutionQuery: solution,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       },
     }

@@ -70,7 +70,7 @@
 
 ### Implementation for User Story 2
 
-- [ ] T018 [P] [US2] Create Python validation script structure: `scripts/validate-llm-data.py` with main() function, argparse setup following existing scripts/validate-*.py pattern
+- [ ] T018 [P] [US2] Create Python validation script structure: `scripts/validate-llm-data.py` with main() function, argparse setup following existing scripts/validate-\*.py pattern
 - [ ] T019 [P] [US2] Implement metadata validation in `scripts/validate-llm-data.py`: check_metadata() function that verifies url, last_updated (ISO 8601), version (semver), content_summary (50-200 chars) per contracts/llms-txt-format.txt
 - [ ] T020 [P] [US2] Implement section validation in `scripts/validate-llm-data.py`: check_sections() function that verifies required sections present (About, Services, Contact, Blog Posts, Pages), no empty sections, no duplicate sections
 - [ ] T021 [P] [US2] Implement URL validation in `scripts/validate-llm-data.py`: check_urls() function that verifies all URLs are absolute (start with https://www.cennso.com), no broken internal links, no relative URLs
@@ -146,6 +146,7 @@
 ### Within Each User Story
 
 **User Story 1**:
+
 - T010 (basic generator) and T011 (full generator) can run in parallel (different files)
 - T012 (orchestrator) depends on T010 and T011
 - T013 (prebuild hook) depends on T012
@@ -155,18 +156,21 @@
 - T017 (manual verification) depends on all others
 
 **User Story 2**:
+
 - T018-T023 (validation functions) can all run in parallel (same file but independent functions)
 - T024 (CLI command) depends on T018-T023
 - T025 (build integration) depends on T024
 - T026 (CI workflow) and T027 (check:all) can run in parallel after T025
 
 **User Story 3**:
+
 - T028-T031 (all documentation files) can all run in parallel (different files, independent)
 - T032 (README update) depends on T028
 - T033 (docs README) depends on T028-T031
 - T034 (code comments) can run in parallel with docs
 
 **Phase 6 Polish**:
+
 - T035-T041 (various improvements) can mostly run in parallel (different files/concerns)
 - T042-T045 (testing) should run after T035-T041
 - T046 (quickstart validation) depends on all user stories complete
@@ -178,6 +182,7 @@
 **Setup Phase**: T001, T002, T003 all independent but small enough to do sequentially
 
 **Foundational Phase**:
+
 ```bash
 # Launch utilities in parallel (different files):
 Task T006: Create yaml-loader.ts
@@ -186,6 +191,7 @@ Task T008: Create url-builder.ts
 ```
 
 **User Story 1**:
+
 ```bash
 # Launch generators in parallel:
 Task T010: Implement basic.ts generator
@@ -194,6 +200,7 @@ Task T015: Add footer links (can start independently)
 ```
 
 **User Story 2**:
+
 ```bash
 # Launch validation functions in parallel (same file, different functions):
 Task T019: Implement check_metadata()
@@ -204,6 +211,7 @@ Task T023: Implement check_size()
 ```
 
 **User Story 3**:
+
 ```bash
 # Launch all documentation in parallel:
 Task T028: Create llm-data-format.md
@@ -214,6 +222,7 @@ Task T034: Add code comments
 ```
 
 **Phase 6 Polish**:
+
 ```bash
 # Launch improvements in parallel:
 Task T035: Add TypeScript compilation check
@@ -233,7 +242,7 @@ Task T041: Add content completeness check
 1. Complete Phase 1: Setup (T001-T003)
 2. Complete Phase 2: Foundational (T004-T009) - **CRITICAL CHECKPOINT**
 3. Complete Phase 3: User Story 1 (T010-T017)
-4. **STOP and VALIDATE**: 
+4. **STOP and VALIDATE**:
    - Request `/llm.txt` and `/llm-full.txt`, verify formatted correctly
    - Check footer links visible on all pages
    - Test on desktop and mobile

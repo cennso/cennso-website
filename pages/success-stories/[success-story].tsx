@@ -231,7 +231,7 @@ export const getStaticProps: GetStaticProps<SuccessStoryPageProps> =
         currentPath: `https://www.cennso.com/success-stories/${successStory}`,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       },
     }

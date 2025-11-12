@@ -198,7 +198,7 @@ export const getStaticProps: GetStaticProps<BlogPostPageProps> =
         currentPath: `https://www.cennso.com/blog/${blogPost}`,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       } as unknown as BlogPostPageProps,
     }

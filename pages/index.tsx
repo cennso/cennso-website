@@ -299,7 +299,7 @@ export const getStaticProps: GetStaticProps<LandingPageProps> =
         partners,
         $$app: {
           navigation: await createNavigation(),
-        footerData: await loadFooterData(),
+          footerData: await loadFooterData(),
         },
       },
     }

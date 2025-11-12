@@ -6,12 +6,12 @@ import type { FunctionComponent } from 'react'
 import type { FooterData } from '../lib/footer'
 
 interface FooterProps {
-  footerData?: FooterData;
+  footerData?: FooterData
 }
 
 export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
   const year = new Date().getFullYear()
-  
+
   // Provide fallback empty data if footerData is not provided
   const defaultFooterData = {
     footerLinks: [],
@@ -22,9 +22,10 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
       companySuffix: 'CENNSO',
       rights: 'All rights reserved',
     },
-  };
-  
-  const { footerLinks, exploreLinks, llmLinks, copyright } = footerData || defaultFooterData;
+  }
+
+  const { footerLinks, exploreLinks, llmLinks, copyright } =
+    footerData || defaultFooterData
 
   return (
     <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-secondary-600 px-8 lg:px-4 font-light">
