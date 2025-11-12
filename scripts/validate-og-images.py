@@ -35,12 +35,21 @@ def validate_og_images():
         print("Install with: pip install beautifulsoup4")
         sys.exit(1)
 
-    og_dir = Path("public/assets/og-images")
+    # Check both locations: standalone build output and public source
+    og_dir = Path(".next/standalone/public/assets/og-images")
+    og_dir_fallback = Path("public/assets/og-images")
     pages_dir = Path(".next/server/pages")
     
-    if not og_dir.exists():
-        print("❌ OG images directory not found")
-        print("Run: yarn generate:ogimages")
+    # Use .next/standalone if it exists (after build), otherwise public (after generate only)
+    if og_dir.exists():
+        og_images_path = og_dir
+    elif og_dir_fallback.exists():
+        og_images_path = og_dir_fallback
+    else:
+        print("❌ OG images directory not found in either location:")
+        print("   - .next/standalone/public/assets/og-images (after build)")
+        print("   - public/assets/og-images (after generate)")
+        print("Run: yarn build")
         sys.exit(1)
     
     if not pages_dir.exists():
@@ -65,12 +74,13 @@ def validate_og_images():
     RECOMMENDED_SIZE_KB = 300  # Best practice
     EXPECTED_DOMAIN = "https://www.cennso.com"
 
-    for root, dirs, files in os.walk(og_dir):
+    for root, dirs, files in os.walk(og_images_path):
         for file in files:
             if file == "image.png":
                 images_found += 1
                 path = Path(root) / file
-                relative_path = path.relative_to("public/assets/og-images")
+                # Calculate relative path from the OG images directory
+                relative_path = path.relative_to(og_images_path)
                 
                 # Check dimensions
                 with Image.open(path) as img:
