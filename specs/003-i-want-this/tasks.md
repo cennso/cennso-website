@@ -18,9 +18,9 @@
 
 **Purpose**: Project initialization and basic structure for LLM data generation
 
-- [ ] T001 Create directory structure: `scripts/generate-llm-data/` with subdirectories `generators/`, `utils/`, `types/`
-- [ ] T002 Add TypeScript configuration for generation scripts: `scripts/generate-llm-data/tsconfig.json` extending root config
-- [ ] T003 [P] Add LLM files to .gitignore: `public/llm.txt` and `public/llm-full.txt` (build artifacts, not committed)
+- [x] T001 Create directory structure: `scripts/generate-llm-data/` with subdirectories `generators/`, `utils/`, `types/`
+- [x] T002 Add TypeScript configuration for generation scripts: `scripts/generate-llm-data/tsconfig.json` extending root config
+- [x] T003 [P] Add LLM files to .gitignore: `public/llm.txt` and `public/llm-full.txt` (build artifacts, not committed)
 
 ---
 
@@ -30,12 +30,12 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 Define TypeScript types in `scripts/generate-llm-data/types/index.ts`: LLMDocument, DocumentMetadata, Section, ContentItem, Author interfaces per data-model.md
-- [ ] T005 Create shared utilities in `scripts/generate-llm-data/utils/content-loader.ts`: functions to load and parse MDX files (blog, solutions, stories, jobs) using existing lib/mdx.ts
-- [ ] T006 [P] Create shared utilities in `scripts/generate-llm-data/utils/yaml-loader.ts`: functions to load YAML files (authors, testimonials, partners, pages) using js-yaml
-- [ ] T007 [P] Create text cleaning utility in `scripts/generate-llm-data/utils/text-cleaner.ts`: stripMDX(), stripHTML(), convertToPlainText() functions
-- [ ] T008 [P] Create URL utility in `scripts/generate-llm-data/utils/url-builder.ts`: buildAbsoluteUrl() to convert relative paths to absolute URLs
-- [ ] T009 Create metadata builder in `scripts/generate-llm-data/utils/metadata-builder.ts`: generateDocumentMetadata() function per data-model.md DocumentMetadata spec
+- [x] T004 Define TypeScript types in `scripts/generate-llm-data/types/index.ts`: LLMDocument, DocumentMetadata, Section, ContentItem, Author interfaces per data-model.md
+- [x] T005 Create shared utilities in `scripts/generate-llm-data/utils/content-loader.ts`: functions to load and parse MDX files (blog, solutions, stories, jobs) using existing lib/mdx.ts
+- [x] T006 [P] Create shared utilities in `scripts/generate-llm-data/utils/yaml-loader.ts`: functions to load YAML files (authors, testimonials, partners, pages) using js-yaml
+- [x] T007 [P] Create text cleaning utility in `scripts/generate-llm-data/utils/text-cleaner.ts`: stripMDX(), stripHTML(), convertToPlainText() functions
+- [x] T008 [P] Create URL utility in `scripts/generate-llm-data/utils/url-builder.ts`: buildAbsoluteUrl() to convert relative paths to absolute URLs
+- [x] T009 Create metadata builder in `scripts/generate-llm-data/utils/metadata-builder.ts`: generateDocumentMetadata() function per data-model.md DocumentMetadata spec
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -49,13 +49,13 @@
 
 ### Implementation for User Story 1
 
-- [ ] T010 [P] [US1] Implement basic generator in `scripts/generate-llm-data/generators/basic.ts`: generateBasicLLM() function that creates llm.txt with About, Services, Contact, Recent Blog Posts (5 most recent), Solutions (summaries only), Success Stories (summaries only), Pages sections
-- [ ] T011 [P] [US1] Implement full generator in `scripts/generate-llm-data/generators/full.ts`: generateFullLLM() function that creates llm-full.txt with all sections including complete blog posts, solutions, success stories, team members, jobs, testimonials, partners
-- [ ] T012 [US1] Create orchestrator script in `scripts/generate-llm-data/index.ts`: main() function that calls both generators, handles errors, logs progress (depends on T010, T011)
-- [ ] T013 [US1] Add prebuild hook to `package.json`: `"prebuild": "ts-node scripts/generate-llm-data/index.ts"` to generate LLM files before Next.js build
-- [ ] T014 [US1] Verify files served correctly: Test that `http://localhost:3000/llm.txt` and `http://localhost:3000/llm-full.txt` return 200 status with correct Content-Type: text/plain
-- [ ] T015 [US1] Add footer links in `components/Footer.tsx`: Add new section with links to `/llm.txt` (label: "LLM Data - Basic") and `/llm-full.txt` (label: "LLM Data - Full") with descriptive aria-labels
-- [ ] T016 [US1] Add footer link labels to YAML: Create or update `content/footer.yaml` with llm_links section containing labels, descriptions, and accessibility text (no hardcoded strings)
+- [x] T010 [P] [US1] Implement basic generator in `scripts/generate-llm-data/generators/basic.ts`: generateBasicLLM() function that creates llm.txt with About, Services, Contact, Recent Blog Posts (5 most recent), Solutions (summaries only), Success Stories (summaries only), Pages sections
+- [x] T011 [P] [US1] Implement full generator in `scripts/generate-llm-data/generators/full.ts`: generateFullLLM() function that creates llm-full.txt with all sections including complete blog posts, solutions, success stories, team members, jobs, testimonials, partners
+- [x] T012 [US1] Create orchestrator script in `scripts/generate-llm-data/index.ts`: main() function that calls both generators, handles errors, logs progress (depends on T010, T011)
+- [x] T013 [US1] Add prebuild hook to `package.json`: `"prebuild": "ts-node scripts/generate-llm-data/index.ts"` to generate LLM files before Next.js build
+- [x] T014 [US1] Verify files served correctly: Test that `http://localhost:3000/llm.txt` and `http://localhost:3000/llm-full.txt` return 200 status with correct Content-Type: text/plain
+- [x] T015 [US1] Add footer links in `components/Footer.tsx`: Add new section with links to `/llm.txt` (label: "LLM Data - Basic") and `/llm-full.txt` (label: "LLM Data - Full") with descriptive aria-labels
+- [x] T016 [US1] Add footer link labels to YAML: Create or update `content/footer.yaml` with llm_links section containing labels, descriptions, and accessibility text (no hardcoded strings)
 - [ ] T017 [US1] Manual verification: Open website, check footer links visible on desktop and mobile, click links to verify files download/display correctly
 
 **Checkpoint**: At this point, User Story 1 should be fully functional - LLM files generated, served, and discoverable via footer
