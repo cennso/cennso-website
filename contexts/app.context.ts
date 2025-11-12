@@ -12,4 +12,5 @@ export type FooterLink = {
   link: string
   icon?: ReactNode
   target?: string
+  ariaLabel?: string
 }
