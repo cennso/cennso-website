@@ -35,20 +35,12 @@ def validate_og_images():
         print("Install with: pip install beautifulsoup4")
         sys.exit(1)
 
-    # Check both locations: standalone build output and public source
-    og_dir = Path(".next/standalone/public/assets/og-images")
-    og_dir_fallback = Path("public/assets/og-images")
+    # Check build output only (what gets deployed)
+    og_images_path = Path(".next/standalone/public/assets/og-images")
     pages_dir = Path(".next/server/pages")
     
-    # Use .next/standalone if it exists (after build), otherwise public (after generate only)
-    if og_dir.exists():
-        og_images_path = og_dir
-    elif og_dir_fallback.exists():
-        og_images_path = og_dir_fallback
-    else:
-        print("❌ OG images directory not found in either location:")
-        print("   - .next/standalone/public/assets/og-images (after build)")
-        print("   - public/assets/og-images (after generate)")
+    if not og_images_path.exists():
+        print("❌ OG images directory not found: .next/standalone/public/assets/og-images")
         print("Run: yarn build")
         sys.exit(1)
     
