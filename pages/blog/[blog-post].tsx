@@ -17,6 +17,7 @@ import { generateArticleSchema } from '../../lib/seo/schema'
 import { mdRegex, generateToc } from '../../lib/markdown'
 import { parseMDX } from '../../lib/mdx'
 import { createNavigation } from '../../lib/navigation'
+import { loadFooterData } from '../../lib/footer'
 
 import type { NextPage, GetStaticPathsResult, GetStaticProps } from 'next'
 import type { MDXRemoteProps } from 'next-mdx-remote'
@@ -197,6 +198,7 @@ export const getStaticProps: GetStaticProps<BlogPostPageProps> =
         currentPath: `https://www.cennso.com/blog/${blogPost}`,
         $$app: {
           navigation: await createNavigation(),
+        footerData: await loadFooterData(),
         },
       } as unknown as BlogPostPageProps,
     }

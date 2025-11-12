@@ -11,6 +11,7 @@ import { Partners } from '../components/LandingPage/Partners'
 import { SEO } from '../components/SEO'
 
 import { createNavigation } from '../lib/navigation'
+import { loadFooterData } from '../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 import type { Author, Testimonial, Partner } from '../contexts'
@@ -298,6 +299,7 @@ export const getStaticProps: GetStaticProps<LandingPageProps> =
         partners,
         $$app: {
           navigation: await createNavigation(),
+        footerData: await loadFooterData(),
         },
       },
     }

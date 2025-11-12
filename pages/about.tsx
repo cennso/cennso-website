@@ -16,6 +16,7 @@ import {
 import { SEO } from '../components/SEO'
 
 import { createNavigation } from '../lib/navigation'
+import { loadFooterData } from '../lib/footer'
 import { useDeviceKind } from '../lib/useDeviceKind'
 
 import type { NextPage, GetStaticProps } from 'next'
@@ -219,6 +220,7 @@ export const getStaticProps: GetStaticProps<AboutPageProps> =
         members,
         $$app: {
           navigation: await createNavigation(),
+        footerData: await loadFooterData(),
         },
       },
     }

@@ -11,6 +11,7 @@ import { generateFAQSchema, type FAQItem } from '../../lib/seo/schema'
 import { mdRegex } from '../../lib/markdown'
 import { parseMDX } from '../../lib/mdx'
 import { createNavigation } from '../../lib/navigation'
+import { loadFooterData } from '../../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 import type { SolutionItem as SolutionItemType } from '../../contexts'
@@ -123,6 +124,7 @@ export const getStaticProps: GetStaticProps<SolutionsPageProps> =
         solutions,
         $$app: {
           navigation: await createNavigation(),
+        footerData: await loadFooterData(),
         },
       },
     }

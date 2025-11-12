@@ -23,6 +23,7 @@ import {
 } from '../lib/seo/schema'
 
 import { createNavigation } from '../lib/navigation'
+import { loadFooterData } from '../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 import type { Author } from '../contexts'
@@ -201,6 +202,7 @@ export const getStaticProps: GetStaticProps = async function () {
       content: parsedContent,
       $$app: {
         navigation: await createNavigation(),
+        footerData: await loadFooterData(),
       },
     },
   }

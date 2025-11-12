@@ -8,6 +8,7 @@ import { SEO } from '../components/SEO'
 
 import { parseMDX } from '../lib/mdx'
 import { createNavigation } from '../lib/navigation'
+import { loadFooterData } from '../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 import type { MDXRemoteProps } from 'next-mdx-remote'
@@ -71,6 +72,7 @@ export const getStaticProps: GetStaticProps<ImprintPageProps> =
         mdxSource,
         $$app: {
           navigation: await createNavigation(),
+        footerData: await loadFooterData(),
         },
       },
     }

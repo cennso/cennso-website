@@ -21,6 +21,7 @@ import { kebabCase } from '../../lib/casing'
 import { getQueryParam } from '../../lib/getQueryParam'
 import { parseMDX } from '../../lib/mdx'
 import { createNavigation } from '../../lib/navigation'
+import { loadFooterData } from '../../lib/footer'
 
 import siteMetadata from '../../siteMetadata'
 
@@ -270,6 +271,7 @@ export const getStaticProps: GetStaticProps<BlogPageProps> = async function () {
       categories,
       $$app: {
         navigation: await createNavigation(),
+        footerData: await loadFooterData(),
       },
     },
   }

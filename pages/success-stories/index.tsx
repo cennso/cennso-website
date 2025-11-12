@@ -15,6 +15,7 @@ import { kebabCase } from '../../lib/casing'
 import { getQueryParam } from '../../lib/getQueryParam'
 import { parseMDX } from '../../lib/mdx'
 import { createNavigation } from '../../lib/navigation'
+import { loadFooterData } from '../../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
@@ -225,6 +226,7 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
         industries,
         $$app: {
           navigation: await createNavigation(),
+        footerData: await loadFooterData(),
         },
       },
     }
