@@ -193,8 +193,10 @@ Email: [email]
 1. **File Existence**: Both llms.txt and llms-full.txt must exist
 2. **UTF-8 Encoding**: Files must be valid UTF-8
 3. **File Size**:
-  - llms.txt: 1KB-5MB (sanity check)
-  - llms-full.txt: 10KB-20MB (sanity check)
+
+- llms.txt: 1KB-5MB (sanity check)
+- llms-full.txt: 10KB-20MB (sanity check)
+
 4. **Required Metadata**: Headers must include url, last_updated, version, content_summary
 5. **Required Sections**: Both files must have About, Services, Contact sections
 6. **URL Format**: All URLs must be absolute (start with https://www.cennso.com)

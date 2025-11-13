@@ -46,7 +46,9 @@ async function main(): Promise<void> {
     }
 
     if (fullSizeKB > 20 * 1024) {
-      console.warn(`⚠️  Warning: llms-full.txt is ${fullSize} KB (limit: 20 MB)`)
+      console.warn(
+        `⚠️  Warning: llms-full.txt is ${fullSize} KB (limit: 20 MB)`
+      )
     }
   } catch (error) {
     console.error('❌ Error generating LLM data:', error)

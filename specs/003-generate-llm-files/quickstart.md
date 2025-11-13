@@ -358,14 +358,14 @@ Before publishing, verify:
 
 ### Impact of Content Changes
 
-| Change             | Impact on LLM Files     | Regeneration Needed |
-| ------------------ | ----------------------- | ------------------- |
-| New blog post      | Appears in both files   | Automatic on build  |
-| Edit blog post     | Updated in both files   | Automatic on build  |
-| Delete blog post   | Removed from both files | Automatic on build  |
-| New solution       | Appears in both files   | Automatic on build  |
+| Change             | Impact on LLM Files      | Regeneration Needed |
+| ------------------ | ------------------------ | ------------------- |
+| New blog post      | Appears in both files    | Automatic on build  |
+| Edit blog post     | Updated in both files    | Automatic on build  |
+| Delete blog post   | Removed from both files  | Automatic on build  |
+| New solution       | Appears in both files    | Automatic on build  |
 | New job posting    | Appears in llms-full.txt | Automatic on build  |
-| Update author info | Updated in all posts    | Automatic on build  |
+| Update author info | Updated in all posts     | Automatic on build  |
 | Add testimonial    | Appears in llms-full.txt | Automatic on build  |
 
 **No manual steps required** - just publish content normally!

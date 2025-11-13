@@ -119,7 +119,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 - `title` must be non-empty
 - `url` must be absolute URL starting with site domain
 - `summary` must be 50-500 characters
- - `fullContent` only present in llms-full.txt
+- `fullContent` only present in llms-full.txt
 
 **Content Types**:
 

@@ -49,9 +49,7 @@
 
 ### Implementation for User Story 1
 
-
 **Checkpoint**: At this point, User Story 1 should be fully functional - LLM files generated, served, and discoverable via footer
-
 
 ## Phase 4: User Story 2 - Automated Content Generation and Validation (Priority: P2)
 
@@ -61,9 +59,7 @@
 
 ### Implementation for User Story 2
 
-
 **Checkpoint**: At this point, User Stories 1 AND 2 both work - files generated, served, discoverable, AND automatically validated on every build/CI run
-
 
 ## Phase 5: User Story 3 - Developers Understand LLM Data Format (Priority: P3)
 
