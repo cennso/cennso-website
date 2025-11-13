@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document defines the file format contract for `llm.txt` and `llm-full.txt` files served by the Cennso website. These files provide LLM-friendly structured data about the website's content.
+This document defines the file format contract for `llms.txt` and `llms-full.txt` files served by the Cennso website. These files provide LLM-friendly structured data about the website's content.
 
 ## File Format
 
@@ -130,7 +130,7 @@ Category: Technical Insights
 This article explores the fundamental components of 5G core networks...
 ```
 
-**Example (Job Posting)**:
+llms.txt
 
 ```
 ## Senior Network Engineer
@@ -152,7 +152,7 @@ All URLs MUST be absolute (include full domain):
 - Blog: https://www.cennso.com/blog
 ```
 
-### Quotes (Testimonials)
+llms-full.txt
 
 Use blockquote syntax with attribution:
 
@@ -192,8 +192,8 @@ Use blockquote syntax with attribution:
 
 | File | Minimum | Maximum | Typical |
 |------|---------|---------|---------|
-| `llm.txt` | 1 KB | 5 MB | 50-200 KB |
-| `llm-full.txt` | 10 KB | 20 MB | 1-5 MB |
+| `llms.txt` | 1 KB | 5 MB | 50-200 KB |
+| `llms-full.txt` | 10 KB | 20 MB | 1-5 MB |
 
 **Enforcement**: Validation script MUST fail if files exceed maximum size.
 
@@ -248,7 +248,7 @@ Use blockquote syntax with attribution:
 - [ ] Links point to existing pages
 - [ ] Author names resolved correctly
 
-## Example: Complete llm.txt
+## Example: Complete llms.txt
 
 ```
 # llms.txt - LLM-friendly website data
@@ -315,7 +315,7 @@ Summary: Learn the key considerations and step-by-step approach for successfully
 
 ## Differences: Basic vs. Full
 
-| Aspect | llm.txt (Basic) | llm-full.txt (Full) |
+| Aspect | llms.txt (Basic) | llms-full.txt (Full) |
 |--------|-----------------|---------------------|
 | Blog Posts | 5-10 most recent with summaries | All posts with full content |
 | Solutions | Names and brief descriptions | Full solution details |

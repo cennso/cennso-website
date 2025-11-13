@@ -3,7 +3,7 @@
 **Feature Branch**: `003-generate-llm-files`  
 **Created**: 2025-11-12  
 **Status**: Draft  
-**Input**: User description: "I want this project to expose to outside world data needed for consumer to easy use it for LLM so scripts that will generate llm.txt and llm-full.txt and expose as links in footer. Of course proper validation is needed. If other standards are known, implement them too"
+**Input**: User description: "I want this project to expose to outside world data needed for consumer to easy use it for LLM so scripts that will generate llms.txt and llms-full.txt and expose as links in footer. Of course proper validation is needed. If other standards are known, implement them too"
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -13,13 +13,13 @@ LLM systems (ChatGPT, Claude, Gemini, etc.) and AI crawlers can automatically di
 
 **Why this priority**: Core functionality that enables the entire feature - without discoverable endpoints, no LLM can access the data. This is the foundation that all other stories build upon.
 
-**Independent Test**: Can be fully tested by requesting `/llm.txt` and `/llm-full.txt` URLs and verifying they return properly formatted content with correct headers. Delivers immediate value by making website discoverable to AI systems.
+**Independent Test**: Can be fully tested by requesting `/llms.txt` and `/llms-full.txt` URLs and verifying they return properly formatted content with correct headers. Delivers immediate value by making website discoverable to AI systems.
 
 **Acceptance Scenarios**:
 
-1. **Given** an LLM crawler visits the website root, **When** it checks for `/llm.txt`, **Then** it receives a valid response with basic website information
-2. **Given** an LLM crawler needs detailed content, **When** it requests `/llm-full.txt`, **Then** it receives comprehensive structured data including all pages, blog posts, and solutions
-3. **Given** a user visits the website footer, **When** they look for AI access information, **Then** they see links to both `/llm.txt` and `/llm-full.txt` with clear labels
+1. **Given** an LLM crawler visits the website root, **When** it checks for `/llms.txt`, **Then** it receives a valid response with basic website information
+2. **Given** an LLM crawler needs detailed content, **When** it requests `/llms-full.txt`, **Then** it receives comprehensive structured data including all pages, blog posts, and solutions
+3. **Given** a user visits the website footer, **When** they look for AI access information, **Then** they see links to both `/llms.txt` and `/llms-full.txt` with clear labels
 4. **Given** an LLM accesses these files, **When** it parses the content, **Then** the format follows established standards (llms.txt, robots.txt patterns, and Schema.org where applicable)
 
 ---
@@ -30,7 +30,7 @@ The website automatically generates LLM-friendly data files during the build pro
 
 **Why this priority**: Ensures data accuracy and consistency - without automated generation, the LLM files would become stale and provide incorrect information. Critical for maintaining trust with AI systems.
 
-**Independent Test**: Can be tested by running the build process and verifying that llm.txt and llm-full.txt are generated with current content, then running validation to confirm they pass all quality checks. Delivers value by preventing outdated or malformed data from being served.
+**Independent Test**: Can be tested by running the build process and verifying that llms.txt and llms-full.txt are generated with current content, then running validation to confirm they pass all quality checks. Delivers value by preventing outdated or malformed data from being served.
 
 **Acceptance Scenarios**:
 
@@ -71,12 +71,13 @@ Documentation clearly explains the LLM data format, generation process, validati
 
 ### Functional Requirements
 
-- **FR-001**: System MUST generate `/llm.txt` file containing basic website information (name, description, primary services, contact information)
-- **FR-002**: System MUST generate `/llm-full.txt` file containing comprehensive structured data including all pages, blog posts, solutions, success stories, testimonials, job postings, and team information
+- **FR-001**: System MUST generate `/llms.txt` file containing basic website information (name, description, primary services, contact information)
+- **FR-002**: System MUST generate `/llms-full.txt` file containing comprehensive structured data including all pages, blog posts, solutions, success stories, testimonials, job postings, and team information
 - **FR-003**: System MUST run generation scripts automatically during the build process (integrated into `yarn build`)
 - **FR-004**: System MUST validate generated LLM files for proper formatting, required fields, data completeness, and size constraints
 - **FR-005**: System MUST fail the build if LLM validation detects critical errors
-- **FR-006**: Website footer MUST include visible links to both `/llm.txt` and `/llm-full.txt` with clear labels explaining their purpose
+- **FR-006**: Website footer MUST include visible links to both `/llms.txt` and `/llms-full.txt` with clear labels explaining their purpose
+- **FR-006**: Website footer MUST include visible links to both `/llms.txt` and `/llms-full.txt` with clear labels explaining their purpose
 - **FR-007**: LLM files MUST use UTF-8 encoding and handle special characters correctly
 - **FR-008**: System MUST follow the llms.txt specification (based on established patterns like robots.txt) for file structure and formatting
 - **FR-009**: System MUST include proper metadata headers in LLM files (last updated timestamp, version, content summary)
@@ -99,11 +100,12 @@ Documentation clearly explains the LLM data format, generation process, validati
 
 ### Measurable Outcomes
 
-- **SC-001**: LLM systems can successfully discover and parse website data through `/llm.txt` and `/llm-full.txt` endpoints within 1 second of request
+- **SC-001**: LLM systems can successfully discover and parse website data through `/llms.txt` and `/llms-full.txt` endpoints within 1 second of request
 - **SC-002**: Generated LLM files include 100% of current website content (all published blog posts, solutions, success stories, jobs, team members)
 - **SC-003**: Build process completes LLM file generation and validation in under 30 seconds
 - **SC-004**: Validation catches 100% of formatting errors, missing required fields, and broken internal references before deployment
-- **SC-005**: LLM files remain under 5MB for `/llm.txt` and under 20MB for `/llm-full.txt` to ensure reasonable load times
+- **SC-005**: LLM files remain under 5MB for `/llms.txt` and under 20MB for `/llms-full.txt` to ensure reasonable load times
+- **SC-005**: LLM files remain under 5MB for `/llms.txt` and under 20MB for `/llms-full.txt` to ensure reasonable load times
 - **SC-006**: Footer links to LLM files are visible and clickable on all pages across desktop and mobile viewports
 - **SC-007**: Documentation enables a new developer to understand and extend the LLM generation system within 30 minutes of reading
 - **SC-008**: LLM files conform to established standards (llms.txt specification, Schema.org types where applicable) with 100% compliance
@@ -117,7 +119,7 @@ Documentation clearly explains the LLM data format, generation process, validati
 - Website content sources (YAML, MDX) are the single source of truth for all data included in LLM files
 - The feature should work similarly to how sitemaps.xml and robots.txt are generated and served
 - Performance impact of serving static text files is negligible compared to HTML pages
-- Most LLM crawlers will request `/llm.txt` first (lightweight summary) before requesting `/llm-full.txt`
+- Most LLM crawlers will request `/llms.txt` first (lightweight summary) before requesting `/llms-full.txt`
 - The build process already has access to all content through existing parsing utilities (lib/mdx.ts, lib/markdown.ts)
 
 ## Dependencies

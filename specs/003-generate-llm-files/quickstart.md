@@ -8,8 +8,8 @@
 
 Exposes website content in LLM-friendly formats through two text files:
 
-- `/llm.txt` - Basic summary (~50-200KB)
-- `/llm-full.txt` - Comprehensive data (~1-5MB)
+- `/llms.txt` - Basic summary (~50-200KB)
+- `/llms-full.txt` - Comprehensive data (~1-5MB)
 
 These files make it easy for AI systems (ChatGPT, Claude, Gemini) to discover and reference accurate information about Cennso's services, content, and expertise.
 
@@ -25,20 +25,20 @@ These files make it easy for AI systems (ChatGPT, Claude, Gemini) to discover an
 
 **Via Direct URLs**:
 
-- Basic: `https://www.cennso.com/llm.txt`
-- Full: `https://www.cennso.com/llm-full.txt`
+- Basic: `https://www.cennso.com/llms.txt`
+- Full: `https://www.cennso.com/llms-full.txt`
 
 ### Using with AI Systems
 
 **ChatGPT/Claude/Gemini**:
 
-1. Share the llm.txt URL with the AI system
+1. Share the llms.txt URL with the AI system
 2. Ask questions about Cennso services, blog posts, solutions, etc.
 3. AI will use the structured data to provide accurate answers
 
 **Example Prompts**:
 
-- "Read https://www.cennso.com/llm.txt and tell me about Cennso's services"
+- "Read https://www.cennso.com/llms.txt and tell me about Cennso's services"
 - "What blog posts has Cennso published about 5G?"
 - "Summarize Cennso's success stories"
 
@@ -66,8 +66,8 @@ These files make it easy for AI systems (ChatGPT, Claude, Gemini) to discover an
    ```
 
    Output:
-   - `public/llm.txt`
-   - `public/llm-full.txt`
+   - `public/llms.txt`
+   - `public/llms-full.txt`
 
 3. **Validate Generated Files**:
 
@@ -84,8 +84,8 @@ These files make it easy for AI systems (ChatGPT, Claude, Gemini) to discover an
    ```
 
    Visit:
-   - http://localhost:3000/llm.txt
-   - http://localhost:3000/llm-full.txt
+   - http://localhost:3000/llms.txt
+   - http://localhost:3000/llms-full.txt
 
 ### Build Process
 
@@ -98,7 +98,7 @@ yarn build
 **Steps**:
 
 1. Runs `generate:llm` (via prebuild hook)
-2. Generates llm.txt and llm-full.txt
+2. Generates llms.txt and llms-full.txt
 3. Validates generated files
 4. Continues with Next.js build
 5. Files are deployed with static assets
@@ -112,8 +112,8 @@ LLM files are regenerated automatically when you add:
 - New blog posts → Appears in both files
 - New solutions → Appears in both files
 - New success stories → Appears in both files
-- New job postings → Appears in llm-full.txt
-- New team members → Appears in llm-full.txt
+- New job postings → Appears in llms-full.txt
+- New team members → Appears in llms-full.txt
 
 **No manual updates needed** - just run `yarn build`
 
@@ -121,7 +121,7 @@ LLM files are regenerated automatically when you add:
 
 1. Edit source files (MDX, YAML)
 2. Run `yarn generate:llm` to regenerate
-3. Review changes in `public/llm.txt` and `public/llm-full.txt`
+3. Review changes in `public/llms.txt` and `public/llms-full.txt`
 4. Validate with `yarn validate:llm`
 5. Commit changes (source files only, not generated files)
 
@@ -136,7 +136,7 @@ yarn validate:llm
 
 # Test locally
 yarn dev
-open http://localhost:3000/llm.txt
+open http://localhost:3000/llms.txt
 
 # Run full quality check
 yarn check:all
@@ -148,8 +148,8 @@ yarn check:all
 scripts/generate-llm-data/
 ├── index.ts              # Main orchestration
 ├── generators/
-│   ├── basic.ts         # Generate llm.txt
-│   ├── full.ts          # Generate llm-full.txt
+│   ├── basic.ts         # Generate llms.txt
+│   ├── full.ts          # Generate llms-full.txt
 │   └── shared.ts        # Shared utilities
 └── tsconfig.json        # TypeScript config
 
@@ -157,8 +157,8 @@ scripts/
 └── validate-llm-data.py # Validation script
 
 public/
-├── llm.txt              # Generated basic file
-└── llm-full.txt         # Generated full file
+├── llms.txt              # Generated basic file
+└── llms-full.txt         # Generated full file
 
 content/
 └── llm-links.yaml       # Footer link configuration
@@ -197,11 +197,11 @@ llm_links:
   basic:
     label: 'LLM Data (Basic)'
     description: 'Lightweight website summary for AI systems'
-    url: '/llm.txt'
+   url: '/llms.txt'
   full:
     label: 'LLM Data (Full)'
     description: 'Comprehensive website content for AI systems'
-    url: '/llm-full.txt'
+   url: '/llms-full.txt'
 ```
 
 #### Site URL
@@ -246,7 +246,7 @@ yarn generate:llm
 
 #### "File size exceeds limit"
 
-**Problem**: llm-full.txt > 20MB
+**Problem**: llms-full.txt > 20MB
 
 **Solution**:
 
@@ -303,7 +303,7 @@ yarn check:all
 
 ### What Gets Included
 
-**llm.txt (Basic)**:
+**llms.txt (Basic)**:
 
 - Company description
 - Services overview
@@ -313,9 +313,9 @@ yarn check:all
 - Success stories list
 - Key page links
 
-**llm-full.txt (Comprehensive)**:
+**llms-full.txt (Comprehensive)**:
 
-- Everything from llm.txt
+- Everything from llms.txt
 - ALL blog posts with full content
 - ALL solutions with full descriptions
 - ALL success stories with full case studies
@@ -364,9 +364,9 @@ Before publishing, verify:
 | Edit blog post     | Updated in both files   | Automatic on build  |
 | Delete blog post   | Removed from both files | Automatic on build  |
 | New solution       | Appears in both files   | Automatic on build  |
-| New job posting    | Appears in llm-full.txt | Automatic on build  |
+| New job posting    | Appears in llms-full.txt | Automatic on build  |
 | Update author info | Updated in all posts    | Automatic on build  |
-| Add testimonial    | Appears in llm-full.txt | Automatic on build  |
+| Add testimonial    | Appears in llms-full.txt | Automatic on build  |
 
 **No manual steps required** - just publish content normally!
 
@@ -381,7 +381,7 @@ Before publishing, verify:
 
 **Common Questions**:
 
-- How do I test my content in ChatGPT? → Share llm.txt URL with ChatGPT
+- How do I test my content in ChatGPT? → Share llms.txt URL with ChatGPT
 - Can I customize what's included? → Edit generation scripts in `scripts/generate-llm-data/`
 - How often are files updated? → On every deployment (every `yarn build`)
 - Can I download historical versions? → No, files are regenerated each build
@@ -409,5 +409,5 @@ Before publishing, verify:
 - Generate: `yarn generate:llm`
 - Validate: `yarn validate:llm`
 - Check: All `yarn check:all`
-- Basic file: `/llm.txt`
-- Full file: `/llm-full.txt`
+- Basic file: `/llms.txt`
+- Full file: `/llms-full.txt`

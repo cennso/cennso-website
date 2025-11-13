@@ -42,11 +42,11 @@ def main():
             url_path = url_path[:-5] or "/"
         all_pages.add(url_path)
     
-    # Add static files from public directory (or .next/standalone/public) (e.g., /llm.txt, /robots.txt)
+    # Add static files from public directory (or .next/standalone/public) (e.g., /llms.txt, /robots.txt)
     if public_dir.exists():
         for static_file in public_dir.rglob("*"):
             if static_file.is_file():
-                # Convert to URL path (e.g., public/llm.txt or .next/standalone/public/llm.txt -> /llm.txt)
+                # Convert to URL path (e.g., public/llms.txt or .next/standalone/public/llms.txt -> /llms.txt)
                 relative_path = static_file.relative_to(public_dir)
                 url_path = "/" + str(relative_path)
                 all_pages.add(url_path)

@@ -7,7 +7,7 @@
 
 ## Summary
 
-Expose website content in LLM-friendly formats (llms.txt standard) through two endpoints: `/llm.txt` (basic summary) and `/llm-full.txt` (comprehensive data). Files are generated during build from existing YAML/MDX content sources, validated for quality, and served as static text files. Footer links provide discoverability. Technical approach uses Node.js/TypeScript generation scripts integrated into existing build pipeline, Python validation scripts following established patterns, and Next.js static file serving.
+Expose website content in LLM-friendly formats (llms.txt standard) through two endpoints: `/llms.txt` (basic summary) and `/llms-full.txt` (comprehensive data). Files are generated during build from existing YAML/MDX content sources, validated for quality, and served as static text files. Footer links provide discoverability. Technical approach uses Node.js/TypeScript generation scripts integrated into existing build pipeline, Python validation scripts following established patterns, and Next.js static file serving.
 
 ## Technical Context
 
@@ -17,7 +17,7 @@ Expose website content in LLM-friendly formats (llms.txt standard) through two e
 - Existing: `lib/mdx.ts` (blog post parsing), `lib/markdown.ts` (content utilities), `js-yaml` (YAML parsing)
 - New: None required (use existing utilities)
 
-**Storage**: Static files in `/public` directory (llm.txt, llm-full.txt) - served by Next.js static file handler  
+**Storage**: Static files in `/public` directory (llms.txt, llms-full.txt) - served by Next.js static file handler  
 **Testing**:
 
 - Generation: TypeScript compilation, manual verification of output format
@@ -30,7 +30,7 @@ Expose website content in LLM-friendly formats (llms.txt standard) through two e
 
 - Generation: Complete in <30 seconds during build
 - Serving: Response time <1 second for both files
-- File sizes: <5MB (llm.txt), <20MB (llm-full.txt)
+- File sizes: <5MB (llms.txt), <20MB (llms-full.txt)
 
 **Constraints**:
 
@@ -94,7 +94,7 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - ⚠️ **Special Case**: LLM text files are NOT HTML pages, don't need title/description meta tags
 - ✅ **Discoverability**: Footer links provide human-discoverable access
 - ✅ **Robots.txt**: LLM files should be crawlable (no disallow needed)
-- ✅ **Sitemap**: Consider adding llm.txt and llm-full.txt to sitemap.xml for crawler discovery
+- ✅ **Sitemap**: Consider adding llms.txt and llms-full.txt to sitemap.xml for crawler discovery
 
 ### Content Management Standards
 
@@ -139,8 +139,8 @@ scripts/
 ├── generate-llm-data/              [NEW] Generation scripts
 │   ├── index.ts                   [NEW] Main orchestration script
 │   ├── generators/                [NEW] Content generators
-│   │   ├── basic.ts              [NEW] Generate llm.txt (basic summary)
-│   │   ├── full.ts               [NEW] Generate llm-full.txt (comprehensive)
+│   │   ├── basic.ts              [NEW] Generate llms.txt (basic summary)
+│   │   ├── full.ts               [NEW] Generate llms-full.txt (comprehensive)
 │   │   └── shared.ts             [NEW] Shared utilities (header, formatting)
 │   └── tsconfig.json             [NEW] TypeScript config for generation scripts
 ├── validate-llm-data.py           [NEW] Python validation script
@@ -148,8 +148,8 @@ scripts/
 └── [existing validation scripts]
 
 public/
-├── llm.txt                        [NEW] Generated basic summary file
-├── llm-full.txt                   [NEW] Generated comprehensive data file
+├── llms.txt                        [NEW] Generated basic summary file
+├── llms-full.txt                   [NEW] Generated comprehensive data file
 └── [existing static assets]
 
 components/
