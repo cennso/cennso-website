@@ -18,13 +18,13 @@ footer:
       target: _blank
   
   llm_links:
-    - title: llm.txt
-      link: /llm.txt
-      aria_label: Download basic LLM-friendly data about Cennso (llm.txt)
+    - title: llms.txt
+      link: /llms.txt
+      aria_label: Download basic LLM-friendly data about Cennso (llms.txt)
       description: Basic website information for AI systems
-    - title: llm-full.txt
-      link: /llm-full.txt
-      aria_label: Download comprehensive LLM-friendly data about Cennso (llm-full.txt)
+    - title: llms-full.txt
+      link: /llms-full.txt
+      aria_label: Download comprehensive LLM-friendly data about Cennso (llms-full.txt)
       description: Comprehensive website content for AI systems
   
   copyright:

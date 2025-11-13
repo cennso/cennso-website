@@ -1,5 +1,5 @@
 /**
- * Full LLM generator - creates llm-full.txt with comprehensive information
+ * Full LLM generator - creates llms-full.txt with comprehensive information
  * Per spec: All sections including complete blog posts, solutions, success stories,
  * team members, jobs, testimonials, partners
  */
@@ -30,7 +30,7 @@ import {
 import siteMetadata from '../../../siteMetadata'
 
 /**
- * Generate full LLM document (llm-full.txt)
+ * Generate full LLM document (llms-full.txt)
  * ~1-5MB with comprehensive information
  */
 export async function generateFullLLM(): Promise<string> {
