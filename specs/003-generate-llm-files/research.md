@@ -61,11 +61,11 @@ Email: [email]
 
 ## 2. Two-File Strategy: Basic vs. Full
 
-### Decision: Separate llm.txt (basic) and llm-full.txt (comprehensive)
+### Decision: Separate llms.txt (basic) and llms-full.txt (comprehensive)
 
 **Rationale**: Not all LLM systems need comprehensive data. Providing a lightweight summary file reduces bandwidth and parsing time for basic queries.
 
-**llm.txt (Basic Summary)** - ~50-200KB:
+**llms.txt (Basic Summary)** - ~50-200KB:
 
 - Metadata headers
 - Company overview
@@ -75,9 +75,9 @@ Email: [email]
 - Recent blog posts (5-10 most recent titles + URLs)
 - No full blog post content
 
-**llm-full.txt (Comprehensive Data)** - ~1-5MB:
+**llms-full.txt (Comprehensive Data)** - ~1-5MB:
 
-- Everything from llm.txt
+- Everything from llms.txt
 - All blog posts with full content (stripped of HTML)
 - All solutions with detailed descriptions
 - All success stories with full case studies
@@ -88,9 +88,9 @@ Email: [email]
 
 **Benefits**:
 
-- Faster initial discovery for LLM crawlers (llm.txt)
+- Faster initial discovery for LLM crawlers (llms.txt)
 - Reduced bandwidth for simple queries
-- Comprehensive data available when needed (llm-full.txt)
+- Comprehensive data available when needed (llms-full.txt)
 - Follows progressive enhancement pattern
 
 **Alternatives Considered**:
@@ -99,7 +99,7 @@ Email: [email]
 - Three-tier system (basic/medium/full): Overengineering, increases maintenance
 - On-demand generation: Adds latency, requires server processing
 
-**Why Two Files**: Balances simplicity with efficiency. Most LLM queries can be answered from llm.txt; detailed research uses llm-full.txt.
+**Why Two Files**: Balances simplicity with efficiency. Most LLM queries can be answered from llms.txt; detailed research uses llms-full.txt.
 
 ## 3. Generation Script Architecture
 
@@ -114,10 +114,10 @@ Email: [email]
 // Main orchestrator - reads content, calls generators, writes files
 
 // scripts/generate-llm-data/generators/basic.ts
-// Generates llm.txt with summary data
+// Generates llms.txt with summary data
 
 // scripts/generate-llm-data/generators/full.ts
-// Generates llm-full.txt with comprehensive data
+// Generates llms-full.txt with comprehensive data
 
 // scripts/generate-llm-data/generators/shared.ts
 // Shared utilities: header generation, URL formatting, text cleaning
@@ -128,7 +128,7 @@ Email: [email]
 1. **Read Sources**: Use existing `lib/mdx.ts` to parse blog posts, `js-yaml` for YAML files
 2. **Transform**: Strip HTML/JSX, format as plain text, convert relative URLs to absolute
 3. **Format**: Apply llms.txt structure with headers and sections
-4. **Write**: Output to `public/llm.txt` and `public/llm-full.txt`
+4. **Write**: Output to `public/llms.txt` and `public/llms-full.txt`
 
 **Build Integration**:
 
@@ -190,11 +190,13 @@ Email: [email]
 
 **Checks to Implement**:
 
-1. **File Existence**: Both llm.txt and llm-full.txt must exist
+1. **File Existence**: Both llms.txt and llms-full.txt must exist
 2. **UTF-8 Encoding**: Files must be valid UTF-8
 3. **File Size**:
-   - llm.txt: 1KB-5MB (sanity check)
-   - llm-full.txt: 10KB-20MB (sanity check)
+
+- llms.txt: 1KB-5MB (sanity check)
+- llms-full.txt: 10KB-20MB (sanity check)
+
 4. **Required Metadata**: Headers must include url, last_updated, version, content_summary
 5. **Required Sections**: Both files must have About, Services, Contact sections
 6. **URL Format**: All URLs must be absolute (start with https://www.cennso.com)
@@ -236,8 +238,8 @@ Email: [email]
     <li><Link href="/privacy-policy">Privacy Policy</Link></li>
     <li><Link href="/imprint">Imprint</Link></li>
     <!-- NEW -->
-    <li><Link href="/llm.txt">LLM Data (Basic)</Link></li>
-    <li><Link href="/llm-full.txt">LLM Data (Full)</Link></li>
+    <li><Link href="/llms.txt">LLM Data (Basic)</Link></li>
+    <li><Link href="/llms-full.txt">LLM Data (Full)</Link></li>
   </ul>
 </div>
 ```
@@ -250,11 +252,11 @@ llm_links:
   basic:
     label: 'LLM Data (Basic)'
     description: 'Lightweight website summary for AI systems'
-    url: '/llm.txt'
+    url: '/llms.txt'
   full:
     label: 'LLM Data (Full)'
     description: 'Comprehensive website content for AI systems'
-    url: '/llm-full.txt'
+    url: '/llms-full.txt'
 ```
 
 **Implementation**:
@@ -279,7 +281,7 @@ llm_links:
 
 ### Decision: Reference Schema.org types in comments, not embed structured data
 
-**Rationale**: The llm.txt files are plain text, not HTML. Schema.org structured data (JSON-LD) is already present in HTML pages. The LLM files should reference these existing schemas in comments for clarity.
+**Rationale**: The llms.txt files are plain text, not HTML. Schema.org structured data (JSON-LD) is already present in HTML pages. The LLM files should reference these existing schemas in comments for clarity.
 
 **Implementation**:
 
@@ -303,7 +305,7 @@ Summary: [excerpt]
 
 **Alternatives Considered**:
 
-- Embed JSON-LD in llm.txt: Mixing formats, harder for humans to read
+- Embed JSON-LD in llms.txt: Mixing formats, harder for humans to read
 - Separate schema.json file: Duplicates data, maintenance burden
 - No Schema.org reference: Misses opportunity to clarify content types
 
@@ -368,7 +370,7 @@ Summary: [excerpt]
 - Verify `yarn build` completes successfully
 - Check generated files exist and are non-empty
 - Confirm footer links render correctly
-- Test static file serving (request /llm.txt returns 200)
+- Test static file serving (request /llms.txt returns 200)
 
 **Test Cases**:
 
@@ -395,7 +397,7 @@ Summary: [excerpt]
 1. Implement generation scripts
 2. Add prebuild hook
 3. Run `yarn build` and verify files generated
-4. Manual review of llm.txt and llm-full.txt content
+4. Manual review of llms.txt and llms-full.txt content
 
 **Phase 2: Validation** (P2):
 
@@ -422,7 +424,7 @@ Summary: [excerpt]
 1. Create `/docs/llm-data-format.md` explaining format
 2. Document generation process
 3. Document validation requirements
-4. Add examples of good llm.txt content
+4. Add examples of good llms.txt content
 
 **Rollback Plan**:
 

@@ -51,8 +51,8 @@ next-env.d.ts
 
 # LLM data artifacts (generated during build)
 # Generated files
-/public/llm.txt
-/public/llm-full.txt
+/public/llms.txt
+/public/llms-full.txt
 
 # Python virtual environment
 /scripts/.venv

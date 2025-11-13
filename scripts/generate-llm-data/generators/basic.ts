@@ -1,5 +1,5 @@
 /**
- * Basic LLM generator - creates llm.txt with summary information
+ * Basic LLM generator - creates llms.txt with summary information
  * Per spec: About, Services, Contact, Recent Blog Posts (5 most recent),
  * Solutions (summaries only), Success Stories (summaries only), Pages
  */
@@ -27,7 +27,7 @@ import {
 import siteMetadata from '../../../siteMetadata'
 
 /**
- * Generate basic LLM document (llm.txt)
+ * Generate basic LLM document (llms.txt)
  * ~50-200KB with essential information
  */
 export async function generateBasicLLM(): Promise<string> {

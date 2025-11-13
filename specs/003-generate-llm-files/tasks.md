@@ -20,7 +20,7 @@
 
 - [x] T001 Create directory structure: `scripts/generate-llm-data/` with subdirectories `generators/`, `utils/`, `types/`
 - [x] T002 Add TypeScript configuration for generation scripts: `scripts/generate-llm-data/tsconfig.json` extending root config
-- [x] T003 [P] Add LLM files to .gitignore: `public/llm.txt` and `public/llm-full.txt` (build artifacts, not committed)
+- [x] T003 [P] Add LLM files to .gitignore: `public/llms.txt` and `public/llms-full.txt` (build artifacts, not committed)
 
 ---
 
@@ -43,47 +43,23 @@
 
 ## Phase 3: User Story 1 - LLM Crawlers Discover Website Data (Priority: P1) 🎯 MVP
 
-**Goal**: Generate and serve `/llm.txt` and `/llm-full.txt` files with discoverable footer links
+**Goal**: Generate and serve `/llms.txt` and `/llms-full.txt` files with discoverable footer links
 
 **Independent Test**: Request both URLs and verify they return properly formatted content with required sections. Check footer links are visible on all pages.
 
 ### Implementation for User Story 1
 
-- [x] T010 [P] [US1] Implement basic generator in `scripts/generate-llm-data/generators/basic.ts`: generateBasicLLM() function that creates llm.txt with About, Services, Contact, Recent Blog Posts (5 most recent), Solutions (summaries only), Success Stories (summaries only), Pages sections
-- [x] T011 [P] [US1] Implement full generator in `scripts/generate-llm-data/generators/full.ts`: generateFullLLM() function that creates llm-full.txt with all sections including complete blog posts, solutions, success stories, team members, jobs, testimonials, partners
-- [x] T012 [US1] Create orchestrator script in `scripts/generate-llm-data/index.ts`: main() function that calls both generators, handles errors, logs progress (depends on T010, T011)
-- [x] T013 [US1] Add prebuild hook to `package.json`: `"prebuild": "ts-node scripts/generate-llm-data/index.ts"` to generate LLM files before Next.js build
-- [x] T014 [US1] Verify files served correctly: Test that `http://localhost:3000/llm.txt` and `http://localhost:3000/llm-full.txt` return 200 status with correct Content-Type: text/plain
-- [x] T015 [US1] Add footer links in `components/Footer.tsx`: Add new section with links to `/llm.txt` (label: "LLM Data - Basic") and `/llm-full.txt` (label: "LLM Data - Full") with descriptive aria-labels
-- [x] T016 [US1] Add footer link labels to YAML: Create or update `content/footer.yaml` with llm_links section containing labels, descriptions, and accessibility text (no hardcoded strings)
-- [ ] T017 [US1] Manual verification: Open website, check footer links visible on desktop and mobile, click links to verify files download/display correctly
-
 **Checkpoint**: At this point, User Story 1 should be fully functional - LLM files generated, served, and discoverable via footer
-
----
 
 ## Phase 4: User Story 2 - Automated Content Generation and Validation (Priority: P2)
 
 **Goal**: Ensure LLM files always reflect current content with automated validation
 
-**Independent Test**: Run build process, verify llm.txt and llm-full.txt generated with latest content, run validation to confirm quality standards met
+**Independent Test**: Run build process, verify llms.txt and llms-full.txt generated with latest content, run validation to confirm quality standards met
 
 ### Implementation for User Story 2
 
-- [ ] T018 [P] [US2] Create Python validation script structure: `scripts/validate-llm-data.py` with main() function, argparse setup following existing scripts/validate-\*.py pattern
-- [ ] T019 [P] [US2] Implement metadata validation in `scripts/validate-llm-data.py`: check_metadata() function that verifies url, last_updated (ISO 8601), version (semver), content_summary (50-200 chars) per contracts/llms-txt-format.txt
-- [ ] T020 [P] [US2] Implement section validation in `scripts/validate-llm-data.py`: check_sections() function that verifies required sections present (About, Services, Contact, Blog Posts, Pages), no empty sections, no duplicate sections
-- [ ] T021 [P] [US2] Implement URL validation in `scripts/validate-llm-data.py`: check_urls() function that verifies all URLs are absolute (start with https://www.cennso.com), no broken internal links, no relative URLs
-- [ ] T022 [P] [US2] Implement format validation in `scripts/validate-llm-data.py`: check_format() function that verifies UTF-8 encoding, no HTML/JSX tags, proper heading levels (# and ##), consistent list formatting
-- [ ] T023 [P] [US2] Implement size validation in `scripts/validate-llm-data.py`: check_size() function that verifies llm.txt 1KB-5MB, llm-full.txt 10KB-20MB, fails with clear message if out of bounds
-- [ ] T024 [US2] Add validation CLI command to `package.json`: `"validate:llm": "python scripts/validate-llm-data.py"` (depends on T018-T023)
-- [ ] T025 [US2] Add validation to build process: Update `scripts/validate-llm-data.py` to exit with code 1 on validation failure (build should fail on invalid LLM files)
-- [ ] T026 [US2] Add LLM validation to quality checks: Update `.github/workflows/tests-and-other-validation.yml` matrix to include `validate:llm` check in parallel with other validations
-- [ ] T027 [US2] Update `yarn check:all` command: Add `validate:llm` to the check sequence in `package.json` scripts
-
 **Checkpoint**: At this point, User Stories 1 AND 2 both work - files generated, served, discoverable, AND automatically validated on every build/CI run
-
----
 
 ## Phase 5: User Story 3 - Developers Understand LLM Data Format (Priority: P3)
 
@@ -97,7 +73,7 @@
 - [ ] T029 [P] [US3] Create generation guide in `docs/generate-llm-data.md`: Document generation pipeline, how to run generators, TypeScript scripts structure, content sources (YAML/MDX), transformation rules per data-model.md
 - [ ] T030 [P] [US3] Create validation guide in `docs/validate-llm-data.md`: Document validation requirements, how to run validation locally, validation rules (metadata, sections, URLs, format, size), troubleshooting validation failures
 - [ ] T031 [P] [US3] Create extension guide in `docs/extend-llm-data.md`: Document how to add new content types, step-by-step example (add new section), generator patterns, validation updates
-- [ ] T032 [US3] Update main README: Add section explaining LLM data endpoints under "Features" or "API", link to `/llm.txt` and `/llm-full.txt`, link to docs/llm-data-format.md (depends on T028)
+- [ ] T032 [US3] Update main README: Add section explaining LLM data endpoints under "Features" or "API", link to `/llms.txt` and `/llms-full.txt`, link to docs/llm-data-format.md (depends on T028)
 - [ ] T033 [US3] Update `docs/README.md`: Add links to new LLM documentation files (llm-data-format.md, generate-llm-data.md, validate-llm-data.md, extend-llm-data.md)
 - [ ] T034 [US3] Add code comments: Document all generator functions, utility functions, and validation logic with JSDoc/docstring comments explaining purpose, parameters, return values
 
@@ -114,11 +90,11 @@
 - [ ] T037 [P] Add error handling: Wrap all generation and validation functions in try-catch blocks with meaningful error messages indicating which step failed
 - [ ] T038 [P] Optimize text cleaning: Review `scripts/generate-llm-data/utils/text-cleaner.ts` for performance with large content (memoization, regex optimization)
 - [ ] T039 Add Schema.org references: Update generators to include Schema.org type comments in sections (e.g., `# Blog Posts [Schema.org: BlogPosting]`) per data-model.md Section.schemaType field
-- [ ] T040 [P] Add file size monitoring: Update validation to warn if files approaching size limits (llm.txt >4MB, llm-full.txt >18MB) before they fail
+- [ ] T040 [P] Add file size monitoring: Update validation to warn if files approaching size limits (llms.txt >4MB, llms-full.txt >18MB) before they fail
 - [ ] T041 [P] Add content completeness check: Update validation to verify all expected content types present (count blog posts, solutions, etc. and warn if unexpectedly low)
 - [ ] T042 Test footer links accessibility: Run `yarn a11y` to verify footer links meet WCAG 2.1 AA standards (contrast, keyboard navigation, screen reader support)
 - [ ] T043 Test build performance: Measure LLM generation time with `yarn build`, verify <30 seconds per success criteria SC-003
-- [ ] T044 Test file sizes: Verify llm.txt <5MB and llm-full.txt <20MB per success criteria SC-005
+- [ ] T044 Test file sizes: Verify llms.txt <5MB and llms-full.txt <20MB per success criteria SC-005
 - [ ] T045 Test response times: Measure HTTP response time for both files, verify <1 second per success criteria SC-001
 - [ ] T046 Run quickstart.md validation: Follow `specs/003-generate-llm-files/quickstart.md` user/developer/content creator guides and verify all instructions work correctly
 - [ ] T047 Final code review: Review all TypeScript and Python code for constitution compliance (type safety, no `any`, proper error handling, ESLint/Prettier)
@@ -243,7 +219,7 @@ Task T041: Add content completeness check
 2. Complete Phase 2: Foundational (T004-T009) - **CRITICAL CHECKPOINT**
 3. Complete Phase 3: User Story 1 (T010-T017)
 4. **STOP and VALIDATE**:
-   - Request `/llm.txt` and `/llm-full.txt`, verify formatted correctly
+   - Request `/llms.txt` and `/llms-full.txt`, verify formatted correctly
    - Check footer links visible on all pages
    - Test on desktop and mobile
    - If working, you have a deployable MVP! ✅

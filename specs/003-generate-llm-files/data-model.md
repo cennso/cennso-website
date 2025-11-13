@@ -12,7 +12,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 
 ### 1. LLMDocument
 
-**Description**: Root structure representing a complete LLM text file (llm.txt or llm-full.txt)
+**Description**: Root structure representing a complete LLM text file (llms.txt or llms-full.txt)
 
 **Fields**:
 
@@ -119,7 +119,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 - `title` must be non-empty
 - `url` must be absolute URL starting with site domain
 - `summary` must be 50-500 characters
-- `fullContent` only present in llm-full.txt
+- `fullContent` only present in llms-full.txt
 
 **Content Types**:
 
@@ -192,7 +192,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
   author: authors.map(id => resolveAuthor(id).name).join(', ')
   published: formatDate(frontmatter.date)
   summary: frontmatter.excerpt
-  fullContent: stripMDX(content)  // llm-full.txt only
+  fullContent: stripMDX(content)  // llms-full.txt only
 }
 ```
 
@@ -223,7 +223,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
   title: frontmatter.title
   url: `${siteUrl}/solutions/${slug}`
   summary: frontmatter.description
-  fullContent: stripMDX(content) // llm-full.txt only
+  fullContent: stripMDX(content) // llms-full.txt only
 }
 ```
 
@@ -277,7 +277,7 @@ This data model describes how content from various sources (YAML, MDX) is transf
 
 ## File Structure Templates
 
-### llm.txt (Basic)
+### llms.txt (Basic)
 
 ```
 # llms.txt - LLM-friendly website data
@@ -331,10 +331,10 @@ Summary: [Excerpt]
 
 ---
 
-### llm-full.txt (Comprehensive)
+### llms-full.txt (Comprehensive)
 
 ```
-[Same header and sections as llm.txt, plus:]
+[Same header and sections as llms.txt, plus:]
 
 # All Blog Posts ([count] posts)
 [For each post:]
@@ -429,8 +429,8 @@ Location: [location]
 
 ### Size Constraints
 
-- llm.txt: 1KB - 5MB
-- llm-full.txt: 10KB - 20MB
+- llms.txt: 1KB - 5MB
+- llms-full.txt: 10KB - 20MB
 - Individual blog posts: <100KB in full file
 - Section sizes reasonable (<500KB per section)
 
@@ -466,8 +466,8 @@ Location: [location]
    └── Run Python validation script
 
 6. Write Files
-   ├── Write public/llm.txt
-   └── Write public/llm-full.txt
+  ├── Write public/llms.txt
+  └── Write public/llms-full.txt
 ```
 
 ---

@@ -1,7 +1,7 @@
 #!/usr/bin/env ts-node
 /**
  * LLM Data Generation Orchestrator
- * Generates llm.txt and llm-full.txt files during build process
+ * Generates llms.txt and llms-full.txt files during build process
  */
 
 import * as fs from 'fs/promises'
@@ -19,20 +19,20 @@ async function main(): Promise<void> {
 
   try {
     // Generate basic LLM file
-    console.log('📝 Generating llm.txt (basic)...')
+    console.log('📝 Generating llms.txt (basic)...')
     const basicContent = await generateBasicLLM()
-    const basicPath = path.join(process.cwd(), 'public', 'llm.txt')
+    const basicPath = path.join(process.cwd(), 'public', 'llms.txt')
     await fs.writeFile(basicPath, basicContent, 'utf-8')
     const basicSize = (basicContent.length / 1024).toFixed(2)
-    console.log(`✅ Generated llm.txt (${basicSize} KB)`)
+    console.log(`✅ Generated llms.txt (${basicSize} KB)`)
 
     // Generate full LLM file
-    console.log('📝 Generating llm-full.txt (comprehensive)...')
+    console.log('📝 Generating llms-full.txt (comprehensive)...')
     const fullContent = await generateFullLLM()
-    const fullPath = path.join(process.cwd(), 'public', 'llm-full.txt')
+    const fullPath = path.join(process.cwd(), 'public', 'llms-full.txt')
     await fs.writeFile(fullPath, fullContent, 'utf-8')
     const fullSize = (fullContent.length / 1024).toFixed(2)
-    console.log(`✅ Generated llm-full.txt (${fullSize} KB)`)
+    console.log(`✅ Generated llms-full.txt (${fullSize} KB)`)
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(2)
     console.log(`✨ LLM data generation completed in ${elapsed}s`)
@@ -42,11 +42,13 @@ async function main(): Promise<void> {
     const fullSizeKB = fullContent.length / 1024
 
     if (basicSizeKB > 5 * 1024) {
-      console.warn(`⚠️  Warning: llm.txt is ${basicSize} KB (limit: 5 MB)`)
+      console.warn(`⚠️  Warning: llms.txt is ${basicSize} KB (limit: 5 MB)`)
     }
 
     if (fullSizeKB > 20 * 1024) {
-      console.warn(`⚠️  Warning: llm-full.txt is ${fullSize} KB (limit: 20 MB)`)
+      console.warn(
+        `⚠️  Warning: llms-full.txt is ${fullSize} KB (limit: 20 MB)`
+      )
     }
   } catch (error) {
     console.error('❌ Error generating LLM data:', error)
