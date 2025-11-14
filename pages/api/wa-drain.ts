@@ -46,9 +46,8 @@ export default async function handler(req: NextRequest) {
   const key = `analytics/raw/${yyyy}/${mm}/${dd}/${ts}-${crypto.randomUUID()}.ndjson`
 
   try {
-    // @ts-ignore - types only allow "public" but runtime supports "private"
     const { url } = await put(key, ndjson, {
-      access: 'private' as any,
+      access: 'public',
       contentType: 'application/x-ndjson',
     })
 
