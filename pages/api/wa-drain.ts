@@ -1,3 +1,8 @@
+/**
+ * This API endpoint is configured as the drain endpoint for Vercel Web Analytics.
+ * It receives analytics data and stores it as NDJSON shards in blob storage.
+ */
+
 import { NextRequest, NextResponse } from 'next/server'
 import { put } from '@vercel/blob'
 
