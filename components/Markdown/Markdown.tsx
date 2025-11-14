@@ -109,7 +109,7 @@ const Heading: FunctionComponent<
       try {
         const hash = url.split('#')[1]
         setIsActive(hash === id)
-      } catch (err: unknown) {
+      } catch {
         // skip intentionally
       }
     }
@@ -163,7 +163,7 @@ export const Components: MDXRemoteProps['components'] = {
       try {
         const url = new URL(href || '')
         isExternal = Boolean(url.protocol)
-      } catch (err: unknown) {
+      } catch {
         // skip intentionally
       }
     }
