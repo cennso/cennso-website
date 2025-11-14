@@ -11,7 +11,7 @@ async function main() {
       const all = []
       let cursor
       do {
-        const res = await list({
+        const res = await blob.list({
           prefix: 'analytics/raw/',
           limit: 1000,
           cursor,
@@ -33,23 +33,49 @@ async function main() {
         console.log('Provide a blob key (e.g., analytics/raw/2023/10/01/...)')
         return
       }
+
+      // Find the blob URL by listing
+      const all = []
+      let cursor
+      do {
+        const res = await list({
+          prefix: 'analytics/raw/',
+          limit: 1000,
+          cursor,
+        })
+        all.push(...res.blobs)
+        cursor = res.cursor
+      } while (cursor)
+      const monthlyRes = await list({ prefix: 'analytics/monthly/' })
+      all.push(...monthlyRes.blobs)
+
+      const b = all.find((b) => b.pathname === key)
+      if (!b) {
+        console.log('Blob not found with key:', key)
+        console.log('Available keys:')
+        all.slice(-10).forEach((b) => console.log(`- ${b.pathname}`))
+        return
+      }
+
       console.log(`Viewing content of ${key}...`)
-      const { body, contentType } = await get(key)
+      const response = await fetch(b.url)
+      const contentType = response.headers.get('content-type') || ''
 
       let content
-      if (contentType && contentType.includes('gzip')) {
+      if (contentType.includes('gzip') || b.pathname.endsWith('.gz')) {
         // Decompress gzipped content
+        const buffer = await response.arrayBuffer()
         const chunks = []
         const gunzip = createGunzip()
         gunzip.on('data', (chunk) => chunks.push(chunk))
         await new Promise((resolve, reject) => {
           gunzip.on('end', resolve)
           gunzip.on('error', reject)
-          pipeline(body, gunzip).catch(reject)
+          gunzip.end(Buffer.from(buffer))
         })
         content = Buffer.concat(chunks).toString()
       } else {
-        content = await body.text()
+        content = await response.text()
       }
 
       // Log first 2000 chars to avoid flooding console
@@ -60,13 +86,13 @@ async function main() {
     } else {
       console.log('Usage:')
       console.log(
-        '  node scripts/test-analytics.js list-raw       # List recent raw shards'
+        '  node scripts/local-testing/test-analytics.js list-raw       # List recent raw shards'
       )
       console.log(
-        '  node scripts/test-analytics.js list-monthly   # List monthly dumps'
+        '  node scripts/local-testing/test-analytics.js list-monthly   # List monthly dumps'
       )
       console.log(
-        '  node scripts/test-analytics.js view <key>     # View content of a specific blob'
+        '  node scripts/local-testing/test-analytics.js view <key>     # View content of a specific blob'
       )
       console.log('\nSet BLOB_READ_WRITE_TOKEN env var before running.')
     }

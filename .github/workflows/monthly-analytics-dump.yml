@@ -1,6 +1,6 @@
  # Analytics drain is realtime and stores data under "analytics/raw/YYYY/MM/" prefix as ndjson shards.
- # This workflow aggregates all shards for a given month into a single gzipped ndjson file
- # stored under "analytics/monthly/YYYY-MM.ndjson.gz".
+ # This workflow calls the /api/wa-drain-monthly endpoint to aggregate all shards for a given month
+ # into a single gzipped ndjson file stored under "analytics/monthly/YYYY-MM.ndjson.gz".
 
 name: Monthly Analytics Dump
 on:
@@ -17,68 +17,6 @@ jobs:
   dump:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-
-      - name: Install deps
-        run: npm i @vercel/blob@2.0.0
-
-      - name: Run dump script (inline)
-        uses: actions/github-script@v8
-        env:
-          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
-          TARGET_MONTH: ${{ github.event.inputs.month || '' }}
-        with:
-          script: |
-            const { list, get, put } = require("@vercel/blob");
-            const { createGzip } = require("node:zlib");
-            const { pipeline } = require("node:stream/promises");
-
-            try {
-              const now = new Date();
-              const y = now.getUTCFullYear();
-              const m = now.getUTCMonth(); // 0-11
-              const last = new Date(Date.UTC(y, m - 1, 1));
-              const monthArg = process.env.TARGET_MONTH; // "YYYY-MM"
-              const yyyy = monthArg ? monthArg.split("-")[0] : last.getUTCFullYear();
-              const mm = monthArg ? monthArg.split("-")[1] : String(last.getUTCMonth() + 1).padStart(2, "0");
-
-              const prefix = `analytics/raw/${yyyy}/${mm}/`;
-              const archiveKey = `analytics/monthly/${yyyy}-${mm}.ndjson.gz`;
-
-              // List all shards under the month prefix
-              const all = [];
-              let cursor;
-              do {
-                const res = await list({ prefix, limit: 1000, cursor });
-                all.push(...res.blobs);
-                cursor = res.cursor;
-              } while (cursor);
-
-              if (!all.length) {
-                console.log("No shards found for", `${yyyy}-${mm}`);
-                return;
-              }
-
-              // Create a streaming gzip upload
-              const { url, writable } = await put(archiveKey, null, {
-                access: "private",
-                contentType: "application/gzip",
-              });
-
-              const gzip = createGzip();
-              gzip.pipe(writable);
-
-              // Stream shards sequentially into gzip
-              for (const b of all) {
-                const { body } = await get(b.url);
-                await pipeline(body, gzip, { end: false });
-                // add newline boundary if needed
-                gzip.write("\n");
-              }
-              gzip.end();
-              await new Promise((res) => writable.on("finish", res));
-              console.log("Wrote:", url);
-            } catch (err) {
-              core.setFailed(err && err.message ? err.message : String(err));
-            }
+      - name: Run monthly dump
+        run: |
+          curl -X POST "https://cennso.com/api/wa-drain-monthly?month=${{ github.event.inputs.month }}&token=${{ secrets.DRAIN_TOKEN }}"

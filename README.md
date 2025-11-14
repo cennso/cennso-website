@@ -112,6 +112,26 @@ Results are saved to `lighthouse-results.json`. All categories must achieve **â‰
 
 See [AGENTS.md](./AGENTS.md#lighthouse-automation) for detailed configuration and CI automation.
 
+#### Testing Web Analytics
+
+Test the Vercel Analytics drain and monthly dump functionality:
+
+```bash
+# Set the Vercel Blob token
+export BLOB_READ_WRITE_TOKEN=your_token_here
+
+# List recent raw analytics shards
+node scripts/local-testing/test-analytics.js list-raw
+
+# List monthly analytics dumps
+node scripts/local-testing/test-analytics.js list-monthly
+
+# View content of a specific blob
+node scripts/local-testing/test-analytics.js view analytics/raw/2023/10/01/some-uuid.ndjson
+```
+
+This script helps verify that analytics data is being collected and aggregated correctly.
+
 ## Development and AI Agents
 
 This project uses **[Spec-kit](https://github.com/github/spec-kit)**, a structured workflow for planning and implementing features with AI agents.
