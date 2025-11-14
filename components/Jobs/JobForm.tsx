@@ -72,7 +72,8 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
         inputs['first-name'].value = ''
         inputs['last-name'].value = ''
         inputs['email'].value = ''
-        ;((inputs['phone'].value = ''), (inputs['message'].value = ''))
+        inputs['phone'].value = ''
+        inputs['message'].value = ''
         setPrivacyPolicy(false)
         setFileData(undefined)
         setPdfCV('')

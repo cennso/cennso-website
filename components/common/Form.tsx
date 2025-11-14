@@ -9,11 +9,10 @@ import type {
   TextareaHTMLAttributes,
 } from 'react'
 
-interface FormLabelProps
-  extends DetailedHTMLProps<
-    LabelHTMLAttributes<HTMLLabelElement>,
-    HTMLLabelElement
-  > {}
+type FormLabelProps = DetailedHTMLProps<
+  LabelHTMLAttributes<HTMLLabelElement>,
+  HTMLLabelElement
+>
 
 export const FormLabel: FunctionComponent<FormLabelProps> = ({
   className = '',
@@ -30,11 +29,10 @@ export const FormLabel: FunctionComponent<FormLabelProps> = ({
   )
 }
 
-interface FormInputProps
-  extends DetailedHTMLProps<
-    InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  > {}
+type FormInputProps = DetailedHTMLProps<
+  InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+>
 
 export const FormInput: FunctionComponent<FormInputProps> = ({
   className = '',
@@ -48,11 +46,10 @@ export const FormInput: FunctionComponent<FormInputProps> = ({
   )
 }
 
-interface FormTextareaProps
-  extends DetailedHTMLProps<
-    TextareaHTMLAttributes<HTMLTextAreaElement>,
-    HTMLTextAreaElement
-  > {}
+type FormTextareaProps = DetailedHTMLProps<
+  TextareaHTMLAttributes<HTMLTextAreaElement>,
+  HTMLTextAreaElement
+>
 
 export const FormTextarea: FunctionComponent<FormTextareaProps> = ({
   className = '',

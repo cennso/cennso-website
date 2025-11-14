@@ -1,6 +1,6 @@
 import type { ComponentProps, FunctionComponent } from 'react'
 
-interface LoadingIndicatorProps extends ComponentProps<'svg'> {}
+type LoadingIndicatorProps = ComponentProps<'svg'>
 
 export const LoadingIndicator: FunctionComponent<LoadingIndicatorProps> = ({
   ...props
