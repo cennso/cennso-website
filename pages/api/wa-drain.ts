@@ -5,7 +5,11 @@ export const runtime = 'edge'
 
 const TOKEN = process.env.DRAIN_TOKEN
 
-export async function POST(req: NextRequest) {
+export default async function handler(req: NextRequest) {
+  if (req.method !== 'POST') {
+    return new NextResponse('Method not allowed', { status: 405 })
+  }
+
   // Basic auth guard that is stored in vercel envs
   const incommingUrl = new URL(req.url)
   if (incommingUrl.searchParams.get('token') !== TOKEN) {
