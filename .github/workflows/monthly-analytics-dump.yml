@@ -62,7 +62,7 @@ jobs:
 
               // Create a streaming gzip upload
               const { url, writable } = await put(archiveKey, null, {
-                access: "private",
+                access: "public",
                 contentType: "application/gzip",
               });
 
