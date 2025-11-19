@@ -12,8 +12,5 @@ Disallow: /*.json
 Disallow: /.next/
 Disallow: /.specify/
 
-# Host
-Host: https://www.cennso.com
-
 # Sitemaps
 Sitemap: https://www.cennso.com/sitemap.xml
