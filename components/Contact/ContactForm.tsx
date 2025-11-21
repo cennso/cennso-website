@@ -154,7 +154,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             />
           </div>
           <fieldset className="sm:col-span-2">
-            <legend className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+            <legend className="block text-sm leading-6 text-white mb-2">
               Phone number (optional):
             </legend>
             <div className="flex gap-4">
