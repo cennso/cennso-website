@@ -153,10 +153,15 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               required
             />
           </div>
-          <div className="sm:col-span-2">
-            <FormLabel htmlFor="phone">Phone number (optional):</FormLabel>
+          <fieldset className="sm:col-span-2">
+            <legend className="block text-sm font-medium leading-6 text-gray-900 mb-2">
+              Phone number (optional):
+            </legend>
             <div className="flex gap-4">
               <div className="w-24">
+                <FormLabel htmlFor="country-code" className="sr-only">
+                  Country code
+                </FormLabel>
                 <FormInput
                   type="text"
                   name="country-code"
@@ -166,6 +171,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
                 />
               </div>
               <div className="flex-1">
+                <FormLabel htmlFor="phone-number" className="sr-only">
+                  Phone number
+                </FormLabel>
                 <FormInput
                   type="tel"
                   name="phone-number"
@@ -175,7 +183,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
                 />
               </div>
             </div>
-          </div>
+          </fieldset>
           <div className="sm:col-span-2">
             <FormLabel htmlFor="message">Message:</FormLabel>
             <FormTextarea
