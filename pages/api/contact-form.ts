@@ -7,9 +7,14 @@ export type ContactFormBody = {
   lastName: string
   company: string
   email: string
-  phone: string
+  phoneCountryCode?: string
+  phoneNumber?: string
   message: string
   receiver: string
+  // Anti-spam fields
+  website?: string // Honeypot field
+  formTimestamp?: number
+  submitTimestamp?: number
 }
 
 export const config = {
@@ -20,12 +25,76 @@ export const config = {
   },
 }
 
+// Anti-spam validation function
+function validateAntiSpam(form: ContactFormBody): {
+  valid: boolean
+  reason?: string
+} {
+  // 1. Honeypot check - if website field is filled, it's likely a bot
+  if (form.website && form.website.trim().length > 0) {
+    console.log('🔍 SPAM SUBMISSION DETAILS:', {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      email: form.email,
+      company: form.company,
+      phoneCountryCode: form.phoneCountryCode,
+      phoneNumber: form.phoneNumber,
+      messageLength: form.message?.length,
+      formTimestamp: form.formTimestamp,
+      submitTimestamp: form.submitTimestamp,
+      website: form.website ? '[HIDDEN]' : undefined,
+    })
+    console.log(
+      '❌ SPAM BLOCKED: Honeypot field filled - value length:',
+      form.website.trim().length
+    )
+    return { valid: false, reason: 'Honeypot field filled' }
+  }
+
+  // 2. Timing check - forms submitted too quickly are suspicious
+  if (form.formTimestamp && form.submitTimestamp) {
+    const timeDiff = form.submitTimestamp - form.formTimestamp
+    if (timeDiff < 3000) {
+      // Less than 3 seconds
+      console.log('🔍 SPAM SUBMISSION DETAILS:', {
+        firstName: form.firstName,
+        lastName: form.lastName,
+        email: form.email,
+        company: form.company,
+        phoneCountryCode: form.phoneCountryCode,
+        phoneNumber: form.phoneNumber,
+        messageLength: form.message?.length,
+        formTimestamp: form.formTimestamp,
+        submitTimestamp: form.submitTimestamp,
+        website: form.website ? '[HIDDEN]' : undefined,
+      })
+      console.log(
+        '❌ SPAM BLOCKED: Form submitted too quickly -',
+        timeDiff,
+        'ms'
+      )
+      return { valid: false, reason: 'Form submitted too quickly' }
+    }
+  }
+
+  return { valid: true }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     res.status(405).send({ message: 'Only POST requests allowed' })
     return
   }
   const contactForm: ContactFormBody = req.body
+
+  // Anti-spam validation
+  const spamCheck = validateAntiSpam(contactForm)
+  if (!spamCheck.valid) {
+    console.log('Spam detected:', spamCheck.reason)
+    // Return success to avoid alerting spammers, but don't send email
+    res.status(200).json({ success: true })
+    return
+  }
 
   try {
     const senderEmail = process.env.MJ_SENDER_EMAIL
@@ -78,22 +147,37 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 }
 
+function getPhoneDisplay(
+  contactForm: ContactFormBody,
+  defaultValue = 'no phone'
+): string {
+  return contactForm.phoneCountryCode && contactForm.phoneNumber
+    ? `${contactForm.phoneCountryCode} ${contactForm.phoneNumber}`
+    : defaultValue
+}
+
 function createSubject(contactForm: ContactFormBody): string {
-  return `Cennso website contact form: ${contactForm.firstName} ${contactForm.lastName} (${contactForm.company}) - ${contactForm.email}`
+  const phoneDisplay = getPhoneDisplay(contactForm)
+
+  return `Cennso website contact form: ${contactForm.firstName} ${contactForm.lastName} (${contactForm.company}) - ${phoneDisplay} - ${contactForm.email}`
 }
 
 function createTextPart(contactForm: ContactFormBody): string {
+  const phoneDisplay = getPhoneDisplay(contactForm, 'not defined')
+
   return `---
 Name: ${contactForm.firstName} ${contactForm.lastName}
 Company: ${contactForm.company}
 E-mail: ${contactForm.email}
-Phone number: ${contactForm.phone || 'not defined'}
+Phone number: ${phoneDisplay}
 ---
 
 ${contactForm.message}`
 }
 
 function createHtmlPart(contactForm: ContactFormBody): string {
+  const phoneDisplay = getPhoneDisplay(contactForm, 'not defined')
+
   return `<div>
 <p>
   <span><strong>Name</strong>: ${contactForm.firstName} ${
@@ -101,9 +185,7 @@ function createHtmlPart(contactForm: ContactFormBody): string {
   }</span><br />
   <span><strong>Company</strong>: ${contactForm.company}</span><br />
   <span><strong>E-mail</strong>: ${contactForm.email}</span><br />
-  <span><strong>Phone number</strong>: ${
-    contactForm.phone || 'not defined'
-  }</span><br />
+  <span><strong>Phone number</strong>: ${phoneDisplay}</span><br />
 </p>
 
 <p>${contactForm.message}</p>

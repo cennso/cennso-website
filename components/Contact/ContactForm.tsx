@@ -26,6 +26,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
     'none' | 'sending' | 'success' | 'error'
   >('none')
   const [privacyPolicy, setPrivacyPolicy] = useState(false)
+  const [formTimestamp] = useState(Date.now()) // Track when form was loaded
 
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -42,9 +43,14 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         lastName: inputs['last-name'].value,
         company: inputs['company'].value,
         email: inputs['email'].value,
-        phone: inputs['phone'].value,
+        phoneCountryCode: inputs['country-code']?.value || '',
+        phoneNumber: inputs['phone-number']?.value || '',
         message: inputs['message'].value,
         receiver: receiverEmail,
+        // Anti-spam fields
+        website: inputs['website']?.value || '', // Honeypot field
+        formTimestamp: formTimestamp,
+        submitTimestamp: Date.now(),
       }
 
       // send form to the api
@@ -69,7 +75,8 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         inputs['last-name'].value = ''
         inputs['company'].value = ''
         inputs['email'].value = ''
-        inputs['phone'].value = ''
+        inputs['country-code'].value = ''
+        inputs['phone-number'].value = ''
         inputs['message'].value = ''
         setPrivacyPolicy(false)
         return
@@ -77,7 +84,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
 
       setAction('error')
     },
-    [setPrivacyPolicy, setAction, receiverEmail]
+    [setPrivacyPolicy, setAction, receiverEmail, formTimestamp]
   )
 
   return (
@@ -148,13 +155,26 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
           </div>
           <div className="sm:col-span-2">
             <FormLabel htmlFor="phone">Phone number (optional):</FormLabel>
-            <FormInput
-              type="tel"
-              name="phone"
-              id="phone"
-              placeholder="Enter the phone number to which we will call you back"
-              autoComplete="tel"
-            />
+            <div className="flex gap-4">
+              <div className="w-24">
+                <FormInput
+                  type="text"
+                  name="country-code"
+                  id="country-code"
+                  placeholder="+49"
+                  autoComplete="tel-country-code"
+                />
+              </div>
+              <div className="flex-1">
+                <FormInput
+                  type="tel"
+                  name="phone-number"
+                  id="phone-number"
+                  placeholder="Enter phone number"
+                  autoComplete="tel-national"
+                />
+              </div>
+            </div>
           </div>
           <div className="sm:col-span-2">
             <FormLabel htmlFor="message">Message:</FormLabel>
@@ -164,6 +184,16 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               rows={4}
               placeholder="Enter message content..."
               required
+            />
+          </div>
+          {/* Honeypot field - completely hidden from all users and bots */}
+          <div className="absolute -left-full -top-full opacity-0 pointer-events-none overflow-hidden h-0 w-0">
+            <FormInput
+              type="text"
+              name="website"
+              id="website"
+              autoComplete="off"
+              tabIndex={-1}
             />
           </div>
           <div className="flex gap-x-4 sm:col-span-2">
