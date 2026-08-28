@@ -5,6 +5,11 @@ description: Use when starting any change to cennso-website — creating a branc
 
 # cennso-website Dev Workflow
 
+How every change to this repo gets made: which branch you are on, an isolated
+worktree per topic, the `yarn check:all` gate that must pass before the work is
+done, and the push/PR flow. Read it before the first edit, not after the guard
+denies one.
+
 ## Step 0 — know your branch, every single time
 
 Before reading code to answer a question OR before editing, run `git status -sb`

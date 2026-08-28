@@ -42,7 +42,10 @@ branch=$(git -C "$project" symbolic-ref --short -q HEAD 2>/dev/null || true)
 
 # Site code + build config. Changing these REQUIRES `yarn check:all` and often
 # drifts the docs that describe commands, patterns, or bundle/perf numbers.
-CODE='^(components/|pages/|lib/|contexts/|scripts/|styles/|next\.config\.js|tailwind\.config\.js|postcss\.config\.js|siteMetadata\.js|next-sitemap\.config\.js|package\.json)'
+# Site code, build config, and the tooling config that decides whether the checks
+# themselves pass (a broken .eslintrc.json fails `yarn lint` as surely as bad code,
+# and a lockfile change can move any of it).
+CODE='^(components/|pages/|lib/|contexts/|scripts/|styles/|next\.config\.js|tailwind\.config\.js|postcss\.config\.js|siteMetadata\.js|next-sitemap\.config\.js|package\.json|yarn\.lock|package-lock\.json|tsconfig\.json|\.eslintrc\.json|\.prettierrc\.json|\.prettierignore|\.gitignore|\.lighthouserc(\.ci)?\.js|lighthouse\..*\.js|lychee\.toml)'
 # Content and specs — governed by the constitution and the feature specs.
 CONTENT_SPEC='^(content/|specs/|\.specify/memory/)'
 # Documentation surfaces for this repo.
