@@ -89,7 +89,10 @@ main checkout the same hook also denies heredocs and redirection into repo files
 `sed -i`, and the git verbs that move HEAD or stage work (`switch`, `checkout`,
 `add`, `commit`, `merge`, `rebase`, `reset`, `restore`, `stash`, `apply`,
 `cherry-pick`, `revert`, `am`). Read-only commands, `git worktree …`, redirection
-to `/tmp`, and everything inside a worktree pass untouched. This is deliberate — the main
+to `/tmp`, a command whose leading `cd` lands outside the main checkout, and
+everything inside a worktree pass untouched. The Bash check reads one command
+shape, not the whole shell grammar: anything it cannot classify is allowed, and
+the edit-tool guard remains the backstop. This is deliberate — the main
 checkout's HEAD is shared, and a concurrent session can switch it mid-task,
 landing your commit on the wrong branch. A worktree pins one branch to one
 directory, which git enforces.

@@ -55,6 +55,16 @@ if [ -z "$file" ] && [ -n "$command_str" ]; then
   cwd=$(cd "$cwd" 2>/dev/null && pwd -P) || exit 0
   [ "$cwd" != "$primary" ] && exit 0
 
+  # A leading `cd <path>` retargets the whole command. Honour it: writing into a
+  # worktree from a main-checkout shell (`cd .worktrees/x && echo y > f.tsx`) is
+  # legitimate and must not be denied. Only this common shape is understood; more
+  # convoluted control flow falls through to the conservative checks below.
+  cd_target=$(printf '%s' "$command_str" | sed -nE 's/^[[:space:]]*cd[[:space:]]+"?([^"[:space:];&|]+)"?.*/\1/p' | head -1)
+  if [ -n "$cd_target" ]; then
+    resolved=$(cd "$cwd" 2>/dev/null && cd "$cd_target" 2>/dev/null && pwd -P) || resolved=""
+    [ -n "$resolved" ] && [ "$resolved" != "$primary" ] && exit 0
+  fi
+
   bash_deny() {
     deny "dev-workflow violation: \`$1\` mutates the SHARED main checkout, which is read-only. Bash is not an exemption from the worktree rule — the main checkout's HEAD is shared across sessions and can be switched out from under you mid-task. Create a worktree and run this there instead: .claude/scripts/worktree.sh new <topic>. See .claude/skills/dev-workflow/SKILL.md."
   }

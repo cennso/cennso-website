@@ -249,7 +249,7 @@ yarn lighthouse   # Terminal 2
 - **Read constitution** (`.specify/memory/constitution.md`) - understand quality standards
 - **Read relevant specs** (`/specs/` directory) - understand requirements and context
 - **Check existing patterns** - search codebase for similar implementations
-- **Work in a worktree, not the main checkout** - a Claude Code hook denies edits in the shared main checkout and on `main`/`master`. Create an isolated worktree first: `.claude/scripts/worktree.sh new feat/<short-name>`, then work in `.worktrees/feat-<short-name>`. See `.claude/skills/dev-workflow/SKILL.md` (and `CLAUDE.md` for the entry point).
+- **Work in a worktree, not the main checkout** - a Claude Code hook denies edits in the shared main checkout and on `main`/`master`, whether made with the edit tools or through Bash (heredocs and redirection into repo files, `sed -i`, and the git verbs that move HEAD or stage work). Create an isolated worktree first: `.claude/scripts/worktree.sh new feat/<short-name>`, then work in `.worktrees/feat-<short-name>`. See `.claude/skills/dev-workflow/SKILL.md` (and `CLAUDE.md` for the entry point).
 
 ### 2. During Implementation
 
