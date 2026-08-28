@@ -67,7 +67,15 @@ copies `.env*.local` from the main checkout):
 .claude/scripts/worktree.sh new feat/<short-name>   # creates .worktrees/<name>, yarn install, scripts/.venv
 .claude/scripts/worktree.sh list
 .claude/scripts/worktree.sh rm  feat/<short-name>   # removes the dir; branch stays
+.claude/scripts/worktree.sh rm  feat/<short-name> --force   # same, discarding uncommitted work
 ```
+
+`rm` wraps `git worktree remove`, which **refuses to delete a dirty worktree**:
+`fatal: '<dir>' contains modified or untracked files, use --force to delete it`.
+Ignored files are not "dirty" — a worktree holding only `node_modules`,
+`scripts/.venv`, and `.env*.local` removes cleanly. Modified tracked files or
+untracked new files do block it, which is the point: commit or push them first,
+and reach for `--force` only when you mean to throw that work away.
 
 Then open `.worktrees/<name>` as the workspace for that session and work there.
 `.worktrees/` is gitignored, and the branch-guard hook is worktree-aware — it
@@ -76,7 +84,12 @@ gate or clobber each other.
 
 **A worktree is required, not optional:** the PreToolUse branch-guard hook makes
 the shared main checkout read-only for edits (on any branch), so all topic work
-happens in a `.worktrees/<topic>` directory. This is deliberate — the main
+happens in a `.worktrees/<topic>` directory. **Bash is not an exemption** — in the
+main checkout the same hook also denies heredocs and redirection into repo files,
+`sed -i`, and the git verbs that move HEAD or stage work (`switch`, `checkout`,
+`add`, `commit`, `merge`, `rebase`, `reset`, `restore`, `stash`, `apply`,
+`cherry-pick`, `revert`, `am`). Read-only commands, `git worktree …`, redirection
+to `/tmp`, and everything inside a worktree pass untouched. This is deliberate — the main
 checkout's HEAD is shared, and a concurrent session can switch it mid-task,
 landing your commit on the wrong branch. A worktree pins one branch to one
 directory, which git enforces.
@@ -93,7 +106,7 @@ merge.**
 
 ## The flow
 
-```
+```bash
 .claude/scripts/worktree.sh new feat/<short-name>   # 1. fresh worktree off upstream/main (main checkout is read-only)
 # open .worktrees/feat-<short-name> and work THERE
 # ... make changes ...
@@ -103,7 +116,9 @@ yarn check:all                               # 2. MUST pass before pushing
 git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh explicit user approval)
 # 4. open a PR against cennso/cennso-website -> Verify Cennso Website + Lighthouse
 #    + link-check + a11y-scan run on the PR
-# 5. review, then merge the PR to upstream main
+# 5. review, wait for CI green, then merge the PR to upstream main
+#    (merging into upstream/main needs its OWN fresh explicit user approval,
+#     immediately beforehand — approval to push is NOT approval to merge)
 ```
 
 ## The quality gate
@@ -156,6 +171,9 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 - About to describe "what the site does" without checking the branch → STOP. Run
   `git status -sb` first; if HEAD is behind `upstream/main`, reason about
   `upstream/main`, not the stale working tree.
+- About to reach for Bash (heredoc, `>`, `sed -i`, `git switch -c`) to change the
+  main checkout because the Edit tool is blocked → STOP. That is the same
+  violation by another route, and the guard denies it too.
 - About to edit in the shared main checkout, or `git switch -c` there instead of
   making a worktree → STOP. A concurrent session can switch the main checkout's
   HEAD out from under you, so your commit lands on another session's branch. Use
@@ -165,6 +183,11 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 - About to `git push` to `main`, or to `upstream` at all → branch, and push to
   `origin` (the fork) instead.
 - About to push without fresh explicit approval → STOP and ask.
+- About to merge a PR into `upstream/main` → STOP and ask, every time. It is
+  outward-facing and hard to reverse, and earlier approval to *push* does not
+  carry over to the merge.
+- About to `worktree.sh rm --force` a worktree you have not checked → STOP. Run
+  `git -C <dir> status --short` first; `--force` discards uncommitted work.
 - About to say "done" / "complete" without having run `yarn check:all` → STOP and
   run it. AGENTS.md forbids declaring work done unvalidated.
 - About to change a check script (or its thresholds) to make a failure go away →

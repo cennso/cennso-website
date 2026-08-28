@@ -8,7 +8,7 @@
 #
 #   .claude/scripts/worktree.sh new <branch-name>   create .worktrees/<name> off fresh upstream/main, then yarn install, scripts/.venv, and copy .env.local
 #   .claude/scripts/worktree.sh list                list worktrees
-#   .claude/scripts/worktree.sh rm <branch-name>    remove the worktree dir (keeps the branch)
+#   .claude/scripts/worktree.sh rm <branch-name> [--force]   remove the worktree dir (keeps the branch; --force discards uncommitted work)
 set -euo pipefail
 
 # Resolve the MAIN checkout root from the shared git-common-dir, so this works
@@ -67,6 +67,21 @@ case "$cmd" in
     dir=$(dir_for "$name")
     [ -e "$dir" ] && { echo "error: worktree already exists at $dir" >&2; exit 1; }
 
+    # Preflight the tools setup needs BEFORE creating anything. Previously
+    # pick_python ran only after `git worktree add` and `yarn install`, so a
+    # machine without Python >= 3.11 got a half-built worktree — and the retry
+    # then died on "worktree already exists".
+    command -v yarn >/dev/null 2>&1 || {
+      echo "error: yarn not found on PATH (this repo installs with yarn)." >&2
+      echo "       Install it, e.g. 'npm install --global yarn@1.22.22', then re-run." >&2
+      exit 1
+    }
+    py=$(pick_python) || {
+      echo "error: no Python >= 3.11 found on PATH (the validation scripts require it)." >&2
+      echo "       Install one, e.g. 'brew install python@3.12', then re-run." >&2
+      exit 1
+    }
+
     base=$(base_ref)
     remote=${base%%/*}
     echo "Fetching $remote ($base is the branch base)..."
@@ -79,6 +94,26 @@ case "$cmd" in
     echo "Creating worktree $dir on branch '$name' (off $base, no tracking)..."
     git -C "$main_root" worktree add --no-track -b "$name" "$dir" "$base"
 
+    # Past this point the worktree AND its branch exist, so any setup failure has
+    # to undo both — leaving either behind makes the obvious retry fail with
+    # "worktree already exists" or "branch already exists". Cleared on success.
+    cleanup_failed_setup() {
+      status=$?
+      echo "" >&2
+      echo "error: setup failed (exit $status) after the worktree was created — rolling back." >&2
+      git -C "$main_root" worktree remove --force "$dir" 2>/dev/null || {
+        echo "       could not remove the worktree. Run:" >&2
+        echo "         git -C \"$main_root\" worktree remove --force \"$dir\"" >&2
+      }
+      git -C "$main_root" branch -D "$name" >/dev/null 2>&1 || {
+        echo "       could not delete the branch. Run:" >&2
+        echo "         git -C \"$main_root\" branch -D \"$name\"" >&2
+      }
+      echo "       Rollback done; fix the cause and re-run the same command." >&2
+      exit "$status"
+    }
+    trap cleanup_failed_setup ERR
+
     # node_modules is gitignored and per-directory, so each worktree needs its
     # own install — a shared one would pin the wrong lockfile state.
     echo "Installing Node dependencies (yarn install --frozen-lockfile)..."
@@ -86,11 +121,7 @@ case "$cmd" in
 
     # Same for the Python venv the SEO/OG validation scripts resolve as
     # scripts/.venv/bin/python (a hard-coded relative path in package.json).
-    py=$(pick_python) || {
-      echo "error: no Python >= 3.11 found on PATH (the validation scripts require it)." >&2
-      echo "       Install one, e.g. 'brew install python@3.12', then re-run." >&2
-      exit 1
-    }
+    # $py was resolved in the preflight above.
     echo "Creating scripts/.venv with $py and installing scripts/requirements.txt..."
     (
       cd "$dir"
@@ -108,6 +139,8 @@ case "$cmd" in
       echo "Copied $(basename "$env_file") from the main checkout."
     done
 
+    trap - ERR   # setup complete; a later failure must not delete a good worktree
+
     echo ""
     echo "Ready: $dir   [branch $name]"
     echo "Open THIS folder in a new editor window / Claude session and work there."
@@ -120,7 +153,8 @@ case "$cmd" in
     name="${2:-}"
     [ -z "$name" ] && { echo "error: branch name required" >&2; usage 1; }
     dir=$(dir_for "$name")
-    git -C "$main_root" worktree remove "$dir"
+    shift 2 2>/dev/null || shift $#   # remaining args pass through, e.g. --force
+    git -C "$main_root" worktree remove "$@" "$dir"
     echo "Removed $dir. Branch '$name' still exists (delete with: git -C \"$main_root\" branch -d '$name')."
     ;;
   ""|-h|--help|help)
