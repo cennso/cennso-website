@@ -34,4 +34,4 @@ before any change to this repo. In short:
 - `.claude/settings.json` — hook wiring
 - `.claude/hooks/` — session-start reminder, branch guard, wrap-up gate
 - `.claude/scripts/worktree.sh` — per-topic worktree helper
-- `.claude/skills/` — `dev-workflow`, `plugin-lint`
+- `.claude/skills/` — `dev-workflow`, `github-actions-supply-chain-pinning`

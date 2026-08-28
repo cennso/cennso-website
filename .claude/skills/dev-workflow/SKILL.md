@@ -141,10 +141,11 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 
 ## GitHub Actions
 
-- **Always pin actions to a full commit SHA**, with the version tag as a trailing
-  comment: `uses: actions/checkout@de0fac…  # v6.0.2`. Never a bare tag/version.
-  The existing workflows still use bare tags (`actions/checkout@v4`) — pin any
-  action you touch, and treat the rest as a known gap rather than a precedent.
+- **Editing anything under `.github/workflows/` requires the
+  `github-actions-supply-chain-pinning` skill** — invoke it first. It carries the
+  SHA-pinning and tool-version rules, how to resolve a SHA correctly with `gh`,
+  and an audit of this repo's current (largely unpinned) state. Don't restate its
+  rules from memory; the skill is the source of truth.
 - CI installs `yarn install --frozen-lockfile` + `scripts/requirements.txt`, then
   runs `build`, and fans out `format`, `lint`, `a11y`, `perf`, `seo`,
   `validate:ogimages` as a matrix. Lighthouse runs against the Vercel preview and

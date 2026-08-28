@@ -133,7 +133,7 @@ fi
 reason="${reason}
 AUTOMATION + LEARNING review (ALWAYS do this, even if no code changed):
 Did the diff above, OR anything you learned THIS session (a recurring failure, a guard gap, a confusing or missing step), make any of these wrong, incomplete, or worth clarifying? A session learning is reason enough to update one now:
-- .claude/skills/ — workflow/process skills (e.g. dev-workflow, plugin-lint)
+- .claude/skills/ — workflow/process skills (e.g. dev-workflow, github-actions-supply-chain-pinning)
 - .claude/hooks/ + .claude/settings.json — session guards and automation
 - .github/workflows/ — CI/CD and supply-chain pinning
 - AGENTS.md / CLAUDE.md — rules + pointers
