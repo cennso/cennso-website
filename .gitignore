@@ -69,3 +69,9 @@ next-env.d.ts
 /lighthouse-desktop
 /lighthouse-mobile
 /.lighthouseci
+
+# per-topic git worktrees (.claude/scripts/worktree.sh)
+/.worktrees
+
+# per-user Claude Code settings (may hold credentials); shared config is settings.json
+.claude/settings.local.json

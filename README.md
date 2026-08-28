@@ -147,6 +147,8 @@ This repository is enhanced with AI-powered code review and support:
 
 - **[AGENTS.md](./AGENTS.md)** - Technical context and patterns for working in this codebase (stack, structure, commands)
 - **[Constitution](./.specify/memory/constitution.md)** - Non-negotiable standards (code quality, accessibility, performance, testing)
+- **[CLAUDE.md](./CLAUDE.md)** - Entry point for Claude Code: what to read, in what order, and how the dev workflow is enforced
+- **[.claude/](./.claude/)** - Claude Code configuration: hooks that make the main checkout read-only for edits (all topic work happens in a per-topic git worktree created by `.claude/scripts/worktree.sh`), plus skills for the dev workflow and GitHub Actions supply-chain pinning
 
 ### Spec-kit Workflow
 
