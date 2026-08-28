@@ -44,6 +44,9 @@ helm/charts/cennso-website/README.md
 # CI
 /.github
 
+# Agent instructions (hand-formatted; read verbatim by the agent)
+/.claude
+
 # Docs
 /docs
 /content
