@@ -16,8 +16,8 @@ layout: new
   src="/assets/success-stories/cennso-on-ibm-cloud/global-connectivity-map.webp"
   title="Global mobile connectivity across IBM Cloud locations"
   alt="World map showing mobile connectivity routes between IBM Cloud locations, with icons for automotive, IoT, industrial and telecommunications workloads"
-  width="1379"
-  height="816"
+  width="2400"
+  height="1420"
   sizes="(max-width: 1024px) 100vw, 1200px"
   priority
 />

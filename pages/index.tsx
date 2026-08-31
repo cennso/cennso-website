@@ -34,13 +34,13 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
         description="Our Mobile Core accelerates time-to-market with agility, delivering optimized performance, seamless reliability, and scalable power for modern networks."
       />
 
-      <Container className="bg-[#36AADD]">
+      <Container className="bg-[#277A9F]">
         <header className="flex flex-col md:flex-row items-center w-full relative py-12 lg:py-20">
           <div className="w-full md:w-1/2 flex flex-col z-10 pb-12 md:py-12 order-last lg:order-none">
-            <h1 className="font-bold text-3xl lg:text-5xl text-secondary-600">
+            <h1 className="font-bold text-3xl lg:text-5xl text-white">
               {main.title}
             </h1>
-            <p className="text-xl lg:text-3xl mt-6 text-secondary-600">
+            <p className="text-xl lg:text-3xl mt-6 text-white">
               {main.description}
             </p>
             <div className="mt-10 lg:mt-12 flex">
@@ -58,7 +58,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
           </div>
           <div className="w-full md:w-1/2">
             <Image
-              className="w-[112.5%] max-w-[112.5%] -ml-8 sm-ml-16 pointer-events-none"
+              className="w-[112.5%] max-w-[112.5%] -ml-8 sm-ml-16 pointer-events-none brightness-[0.72]"
               width={1290}
               height={779}
               src="/assets/backgrounds/bg-paper-models.webp"

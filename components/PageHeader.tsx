@@ -36,7 +36,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
       />
 
       <Container
-        className="bg-[#36AADD]"
+        className="bg-[#277A9F]"
         subClassName={
           background ? 'overflow-hidden flex-col-reverse md:flex-row' : ''
         }
@@ -47,11 +47,9 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
               <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
           ) : null} */}
-          <h1 className="font-bold text-4xl lg:text-5xl text-secondary-600">
-            {title}
-          </h1>
+          <h1 className="font-bold text-4xl lg:text-5xl text-white">{title}</h1>
           {description ? (
-            <p className="text-base md:text-lg lg:text-xl mt-2 text-secondary-600 max-w-[800px]">
+            <p className="text-base md:text-lg lg:text-xl mt-2 text-white max-w-[800px]">
               {description}
             </p>
           ) : null}
@@ -62,6 +60,9 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
             <Image
               {...background}
               alt={background.alt}
+              // brightness matches the darkened band so the illustration's
+              // baked-in light-blue background still blends seamlessly
+              className={`${background.className ?? ''} brightness-[0.72]`}
               sizes="(max-width: 768px) 0px, 500px"
             />
           </div>
