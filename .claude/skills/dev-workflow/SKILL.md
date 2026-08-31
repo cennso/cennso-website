@@ -181,6 +181,12 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   check whether the failing URL is even in your diff
   (`git diff --name-only upstream/main..HEAD`). Do not silently "fix" an
   unrelated legal/privacy URL — report it and let the user choose a replacement.
+  Also know the check's blind spots: a link checker only sees status codes, and
+  some hosts return `200` for pages that do not exist. LinkedIn is the worst
+  offender — `linkedin.com/in/<anything>` returns `200` even for a profile that
+  was never created (verified), so a **typo in a LinkedIn profile URL can never
+  be caught by CI** and has to be eyeballed. `401`/`403`/`999` responses
+  (auth-walls, bot blocking) are normal here and are not failures.
 
 ## Red flags — stop
 
