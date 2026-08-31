@@ -79,7 +79,7 @@ The success of GMCP has also strengthened Cennso Technologies' position as a tru
 
 Founded in 1911 and headquartered in the United States, IBM provides enterprise technology solutions, cloud platforms, and professional services that help organizations transform, manage, and optimize modern IT environments. The company combines deep technology expertise, purpose-built platforms, and consulting services, with IBM Cloud at the forefront, to deliver secure, scalable, reliable, and high-performance solutions for businesses worldwide.
 
-[Cennso cloud >](/)
+[Cennso cloud >](https://cloud.cennso.com/)
 
 [IBM cloud >](https://www.ibm.com/cloud)
 </ContentBlock>

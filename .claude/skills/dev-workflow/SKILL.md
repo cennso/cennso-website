@@ -199,3 +199,10 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   the YAML files under `content/`.
 - About to add an `<Image>` without a `sizes` prop, or a non-WebP / >100KB image →
   STOP. `yarn perf:images` and `yarn perf:mobile` will fail, and so will Lighthouse.
+- About to write a JSX expression property in MDX content (`width={1379}`,
+  `items={[...]}`, `unoptimized={true}`) → STOP. `parseMDX` keeps only string
+  attributes and **silently drops expressions** — the build succeeds and the prop
+  arrives `undefined`, which surfaces as a confusing render-time crash or a
+  missing image dimension. Use quoted strings (`width="1379"`); model repeating
+  data as child components (`<Stats><Stat value="50+" … /></Stats>`). A valueless
+  property (`priority`) is the one form that correctly becomes `true`.

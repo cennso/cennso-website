@@ -59,10 +59,16 @@ The optional `layout` property controls how the story body is rendered:
 
 Besides Markdown, the following components can be used in the `{CONTENT}` body:
 
+> **IMPORTANT**: Pass every property as a quoted string. The MDX pipeline keeps
+> only string attributes and **silently drops JSX expressions**, so
+> `width={1379}` reaches the component as no width at all, with no build error.
+> Write `width="1379"` instead. A property with no value at all (such as
+> `priority`) is the one exception — it correctly becomes `true`.
+
 - `<ContentBlock title='...'>` wraps a section, rendering the title in the left column and the content in the right one.
-- `<Stats items={[{ value: '50+', label: 'IBM Cloud locations worldwide' }]} />` renders a row of highlighted figures. Keep `value` short and put the explanation in `label`.
+- `<Stats>` wraps a row of highlighted figures, each one a `<Stat value='50+' label='IBM Cloud locations worldwide' />`. Keep `value` short and put the explanation in `label`.
 - `<Quote authorName='...' authorPosition='...' authorCompany='...' avatar='...'>` renders a pull quote. `authorPosition`, `authorCompany`, `avatar` and `authorSocialLink` are all optional; `avatar` takes a path to a square image.
-- `<Image src='...' title='...' alt='...' width={...} height={...} sizes='...' />` renders an image. The `sizes` property is mandatory, and images must be WebP under 100KB.
+- `<Image src='...' title='...' alt='...' width='...' height='...' sizes='...' />` renders an image. The `sizes` property is mandatory, and images must be WebP under 100KB. Add `priority` to an image that is visible without scrolling, so it is not lazy-loaded.
 - `<CallToAction>` and `<CennsoButton>` render a call to action and a button.
 
 ## Add assets to the content

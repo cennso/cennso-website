@@ -9,7 +9,7 @@ Each asset must be located in the `/public/assets` folder. To organise the conte
 All raster images (photos, screenshots, graphics) **MUST** be optimized before committing:
 
 - **Format**: WebP format (use `yarn perf:images:optimize` to convert automatically)
-- **Size**: Maximum 150KB per image file
+- **Size**: Maximum 100KB per image file
 - **Validation**: Run `yarn perf:images` to verify all images meet requirements
 
 **To optimize images:**
@@ -18,7 +18,7 @@ All raster images (photos, screenshots, graphics) **MUST** be optimized before c
 # Check if images need optimization
 yarn perf:images
 
-# Automatically optimize all images (converts to WebP, compresses to <150KB)
+# Automatically optimize all images (converts to WebP, compresses to <100KB)
 yarn perf:images:optimize
 
 # Optimize with custom quality (1-100, default: 80)
