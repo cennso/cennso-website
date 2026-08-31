@@ -241,6 +241,13 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   STOP, report it, ask first.
 - About to hardcode UI text in a component → STOP. All user-facing text lives in
   the YAML files under `content/`.
+- Asked to add an image the user **pasted into the conversation** → you can see it
+  but you cannot save it. It arrives as context, not as a file: nothing lands in
+  the session directory, and the clipboard is usually already empty by the time
+  you look. Do NOT redraw or approximate it — that ships a different asset than
+  the one they approved. Ask for a path (`~/Desktop/foo.png` is fine) and convert
+  from there. A path in the prompt, a repo file, or a URL you can `curl` are the
+  only real sources of image bytes.
 - About to add an `<Image>` without a `sizes` prop, or a non-WebP / >100KB image →
   STOP. `yarn perf:images` and `yarn perf:mobile` will fail, and so will Lighthouse.
 - About to write a JSX expression property in MDX content (`width={1379}`,
