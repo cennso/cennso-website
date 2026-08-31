@@ -168,6 +168,19 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   runs `build`, and fans out `format`, `lint`, `a11y`, `perf`, `seo`,
   `validate:ogimages` as a matrix. Lighthouse runs against the Vercel preview and
   blocks the merge below 95%.
+- **A PR from the fork does not deploy a preview until someone authorizes it.**
+  The `Vercel` check fails immediately with `Authorization required to deploy.`
+  and a `vercel.com/git/authorize` link, and `Wait for Vercel deployment` — and
+  therefore Lighthouse, the authoritative >=95% gate — stays pending until a
+  human with Vercel access approves it. This is not a code failure; don't chase
+  it. Surface the link and say the PR cannot go green without that click.
+- **`Link check` (lychee) validates every external link in `content/`, not just
+  the files you changed.** A pre-existing 404 elsewhere fails *your* PR — as of
+  this writing `content/privacy-policy.md` has a dead `dg-datenschutz.de` link
+  that does exactly that. Before assuming you broke it, read the job log and
+  check whether the failing URL is even in your diff
+  (`git diff --name-only upstream/main..HEAD`). Do not silently "fix" an
+  unrelated legal/privacy URL — report it and let the user choose a replacement.
 
 ## Red flags — stop
 
