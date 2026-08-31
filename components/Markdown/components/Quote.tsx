@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { FeatureCard } from '../../common'
 
 import type { FunctionComponent, PropsWithChildren } from 'react'
@@ -7,6 +9,7 @@ interface QuoteProps extends PropsWithChildren {
   authorPosition?: string
   authorCompany?: string
   authorSocialLink?: string
+  avatar?: string
 }
 
 export const Quote: FunctionComponent<QuoteProps> = ({
@@ -14,24 +17,36 @@ export const Quote: FunctionComponent<QuoteProps> = ({
   authorPosition,
   authorCompany,
   authorSocialLink,
+  avatar,
   children,
 }) => {
+  const authorDescription =
+    [authorName, authorPosition].filter(Boolean).join(', ') +
+    (authorCompany ? ` at ${authorCompany}` : '')
+
   return (
     <FeatureCard className='flex flex-row items-center bg-[3rem_1.5rem] bg-no-repeat bg-auto bg-[url("/assets/landing-page/quotes.webp")] bg-secondary-600 rounded-[32px] px-8'>
       <div className="flex flex-col gap-6 px-8">
         <figure className="flex flex-col">
-          <blockquote className="text-sm lg:text-base text-secondary-600 border-none pl-9">
+          <blockquote className="text-sm lg:text-base text-white border-none pl-9">
             {children}
           </blockquote>
-          <figcaption className="mt-0 ml-9">
+          <figcaption className="mt-0 ml-9 flex flex-row items-center gap-4">
+            {avatar ? (
+              <Image
+                className="rounded-full flex-none my-0"
+                src={avatar}
+                title={authorDescription}
+                alt={authorDescription}
+                width={92}
+                height={92}
+                sizes="92px"
+              />
+            ) : null}
             <cite className="font-semibold text-secondary-200 text-base lg:text-[1rem] not-italic">
               {authorSocialLink ? (
                 <a
-                  title={
-                    authorPosition
-                      ? `${authorName}, ${authorPosition}`
-                      : authorName
-                  }
+                  title={authorDescription}
                   href={authorSocialLink}
                   target="_blank"
                   rel="noopener"
@@ -46,8 +61,12 @@ export const Quote: FunctionComponent<QuoteProps> = ({
                 <>
                   {', '}
                   <span>{authorPosition}</span>
-                  <span className="mx-1">at</span>
-                  <span>{authorCompany}</span>
+                  {authorCompany ? (
+                    <>
+                      <span className="mx-1">at</span>
+                      <span>{authorCompany}</span>
+                    </>
+                  ) : null}
                 </>
               ) : null}
             </cite>

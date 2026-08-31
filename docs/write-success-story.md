@@ -48,6 +48,23 @@ Replace these parameters with real values:
 - `{EXCERPT}` is a content to be displayed on the `/success-stories` page. The **Read more...** button appears at the end of the paragraph.
 - `{CONTENT}` is a success story content written in Markdown/[MDX](https://mdxjs.com/) and/or HTML format.
 
+## Choose a layout
+
+The optional `layout` property controls how the story body is rendered:
+
+- `layout: new` renders the story body full width, directly under the page header. Use this for new stories.
+- `layout: old` (the default when `layout` is omitted) additionally renders a company logo card and a table of contents sidebar.
+
+## Components available in the content
+
+Besides Markdown, the following components can be used in the `{CONTENT}` body:
+
+- `<ContentBlock title='...'>` wraps a section, rendering the title in the left column and the content in the right one.
+- `<Stats items={[{ value: '50+', label: 'IBM Cloud locations worldwide' }]} />` renders a row of highlighted figures. Keep `value` short and put the explanation in `label`.
+- `<Quote authorName='...' authorPosition='...' authorCompany='...' avatar='...'>` renders a pull quote. `authorPosition`, `authorCompany`, `avatar` and `authorSocialLink` are all optional; `avatar` takes a path to a square image.
+- `<Image src='...' title='...' alt='...' width={...} height={...} sizes='...' />` renders an image. The `sizes` property is mandatory, and images must be WebP under 100KB.
+- `<CallToAction>` and `<CennsoButton>` render a call to action and a button.
+
 ## Add assets to the content
 
 Follow the [Use assets](./using-assets.md) document to learn how to add assets, such as images or diagrams, to the content.
