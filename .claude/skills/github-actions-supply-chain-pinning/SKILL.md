@@ -80,36 +80,42 @@ If you can't run `gh`, say so — do not guess a SHA. A wrong SHA either fails t
 
 Pinning by hand is necessary but not sufficient. Recommend the repo also runs [`zizmor`](https://github.com/zizmorcore/zizmor) in CI against `.github/workflows/` — it catches unpinned actions, `@latest` installs, and other supply-chain smells automatically. The skill enforces correctness during authoring; zizmor enforces it at PR time.
 
-## State of this repo (audited 2026-08-28)
+## State of this repo (audited 2026-08-31)
 
-Recorded so the next reader does not re-derive it. **Every violation below predates
-this skill** — none of it is a precedent to follow.
+Recorded so the next reader does not re-derive it.
 
-Already correct:
+**Everything is currently pinned.** All 10 actions across the 6 workflow files
+carry a 40-character commit SHA plus a trailing version comment, and every
+`npm install -g yarn` is pinned to `yarn@1.22.22` (the version `yarn.lock` was
+produced with). The earlier audit — 17 bare first-party tags and 4 unpinned tool
+installs — was resolved wholesale.
 
-- `.github/workflows/a11y-scan.yml` — `github/accessibility-scanner@dab8a8a…`
-  (SHA-pinned, but **missing the trailing version comment** Rule 1 requires).
-- `.github/workflows/lighthouse.yml` — `patrickedqvist/wait-for-vercel-preview@06c7933…`
-  (SHA-pinned; comment reads `#1.3.2 release` rather than the `# v1.3.2` form).
+So there is no longer a "surrounding bare tags" precedent to inherit. If you find
+a moving ref (`@v4`, `@main`, `@latest`) in a workflow, it is new drift: pin it.
 
-Rule 1 violations — 17 bare tags, all first-party:
+Worth remembering *why* the old state looked the way it did — the two
+**third-party** actions were pinned while every **first-party** `actions/*` one
+was not. That is exactly the "it's from GitHub, it's fine" rationalization this
+skill rejects. Same risk class, same treatment.
 
-- `actions/checkout@v4` ×4, `actions/setup-node@v4` ×4, `actions/setup-python@v5`,
-  `actions/cache/save@v4`, `actions/cache/restore@v4` ×2,
-  `actions/upload-artifact@v4`, `actions/download-artifact@v4` ×2,
-  `actions/github-script@v7`
-- Spread across `tests-and-other-validation.yml`, `lighthouse.yml`, `link-check.yml`.
+## Editing a `pull_request_target` or `workflow_run` workflow
 
-Note the shape of this: the two *third-party* actions are pinned and the *first-party*
-ones are not — which is precisely the "it's from GitHub, it's fine" rationalization
-this skill rejects. Same risk class, same treatment.
+GitHub reads these two triggers' workflow definitions from the **default branch**,
+never from the PR. Practical consequences:
 
-Rule 2 violations — 4 unpinned tool installs:
-
-- `npm install -g yarn` in `tests-and-other-validation.yml` (×3) and
-  `lighthouse.yml` (×1). Pin to an explicit version, e.g.
-  `npm install --global yarn@1.22.22` (the version `yarn.lock` was produced with),
-  or drop the install entirely and use the Node distribution's bundled Corepack.
+- A change to such a workflow has **no effect on the PR that contains it**. It
+  only takes effect once merged. Do not try to fix a failing
+  `pull_request_target` job from inside the branch that is failing — say so and
+  land the fix separately.
+- That same property is what makes them trusted, and why they must never execute
+  PR code. `actions/checkout` now refuses a fork checkout under
+  `pull_request_target` by default. **Never set `allow-unsafe-pr-checkout: true`
+  to get past it** — that flag restores the "pwn request" vulnerability the
+  refusal exists to prevent.
+- The safe shape, used by `lighthouse.yml` + `lighthouse-comment.yml`: run the
+  untrusted work on `pull_request` (no secrets, read-only token, so PR code is
+  safe to execute), then react to it from a `workflow_run` job that holds the
+  write permissions and checks out nothing.
 
 **When you touch any of these files, pin what you touch in the same change** — do
 not leave a workflow half-pinned and do not treat the surrounding bare tags as
