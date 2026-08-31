@@ -162,7 +162,7 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 - **Editing anything under `.github/workflows/` requires the
   `github-actions-supply-chain-pinning` skill** — invoke it first. It carries the
   SHA-pinning and tool-version rules, how to resolve a SHA correctly with `gh`,
-  and an audit of this repo's current (largely unpinned) state. Don't restate its
+  and a dated audit of this repo's current pinning state. Don't restate its
   rules from memory; the skill is the source of truth.
 - CI installs `yarn install --frozen-lockfile` + `scripts/requirements.txt`, then
   runs `build`, and fans out `format`, `lint`, `a11y`, `perf`, `seo`,
@@ -196,6 +196,12 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 - About to reach for Bash (heredoc, `>`, `sed -i`, `git switch -c`) to change the
   main checkout because the Edit tool is blocked → STOP. That is the same
   violation by another route, and the guard denies it too.
+- Guard denied a Bash write you believe is *inside* a worktree → check how the
+  command starts. The guard reads one command shape and cannot resolve variables,
+  so `WT=/path/to/worktree; cd "$WT" && cat > file` is denied even though the
+  target is legitimate. Begin the command with a **literal** `cd
+  /absolute/path/to/.worktrees/<topic>` and it passes. The denial message tells
+  you to create a worktree, which is misleading when you already have one.
 - About to edit in the shared main checkout, or `git switch -c` there instead of
   making a worktree → STOP. A concurrent session can switch the main checkout's
   HEAD out from under you, so your commit lands on another session's branch. Use
