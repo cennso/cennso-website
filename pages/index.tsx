@@ -37,10 +37,10 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
       <Container className="bg-[#36AADD]">
         <header className="flex flex-col md:flex-row items-center w-full relative py-12 lg:py-20">
           <div className="w-full md:w-1/2 flex flex-col z-10 pb-12 md:py-12 order-last lg:order-none">
-            <h1 className="font-bold text-3xl lg:text-5xl text-white">
+            <h1 className="font-bold text-3xl lg:text-5xl text-secondary-600">
               {main.title}
             </h1>
-            <p className="text-xl lg:text-3xl mt-6 text-white">
+            <p className="text-xl lg:text-3xl mt-6 text-secondary-600">
               {main.description}
             </p>
             <div className="mt-10 lg:mt-12 flex">

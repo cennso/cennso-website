@@ -47,7 +47,7 @@ export const Select: FunctionComponent<SelectProps> = ({
             id={id}
             aria-labelledby={ariaLabelledBy}
             aria-label={placeholder}
-            className="relative w-full cursor-pointer rounded-[32px] bg-primary-100/50 py-2 pl-3 pr-10 text-left border-[1px] focus:outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-300 sm:text-sm"
+            className="relative w-full cursor-pointer rounded-[32px] bg-primary-100/70 py-2 pl-3 pr-10 text-left border-[1px] focus:outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-300 sm:text-sm"
           >
             <span className="block truncate">
               {selectedValue || placeholder}

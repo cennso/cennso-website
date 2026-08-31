@@ -1,4 +1,4 @@
-import { useState, useCallback, FormEvent } from 'react'
+import { useState, useCallback, FormEvent, useId } from 'react'
 import Link from 'next/link'
 
 import { StatusModal } from '../common'
@@ -27,6 +27,11 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
   >('none')
   const [privacyPolicy, setPrivacyPolicy] = useState(false)
   const [formTimestamp] = useState(Date.now()) // Track when form was loaded
+
+  // This form is rendered once per contact section, so element ids must be
+  // unique per instance. Names are untouched: the submit handler reads
+  // form.elements by name.
+  const uid = useId()
 
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
@@ -110,44 +115,44 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
           <div>
-            <FormLabel htmlFor="first-name">First name:</FormLabel>
+            <FormLabel htmlFor={`${uid}-first-name`}>First name:</FormLabel>
             <FormInput
               type="text"
               name="first-name"
-              id="first-name"
+              id={`${uid}-first-name`}
               placeholder="Enter your first name"
               autoComplete="given-name"
               required
             />
           </div>
           <div>
-            <FormLabel htmlFor="last-name">Last name:</FormLabel>
+            <FormLabel htmlFor={`${uid}-last-name`}>Last name:</FormLabel>
             <FormInput
               type="text"
               name="last-name"
-              id="last-name"
+              id={`${uid}-last-name`}
               placeholder="Enter your last name"
               autoComplete="family-name"
               required
             />
           </div>
           <div className="sm:col-span-2">
-            <FormLabel htmlFor="company">Company:</FormLabel>
+            <FormLabel htmlFor={`${uid}-company`}>Company:</FormLabel>
             <FormInput
               type="text"
               name="company"
-              id="company"
+              id={`${uid}-company`}
               placeholder="Enter your company name"
               autoComplete="organization"
               required
             />
           </div>
           <div className="sm:col-span-2">
-            <FormLabel htmlFor="email">E-mail:</FormLabel>
+            <FormLabel htmlFor={`${uid}-email`}>E-mail:</FormLabel>
             <FormInput
               type="email"
               name="email"
-              id="email"
+              id={`${uid}-email`}
               placeholder="Enter the email to which the reply will be sent"
               autoComplete="email"
               required
@@ -159,25 +164,25 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             </legend>
             <div className="flex gap-4">
               <div className="w-24">
-                <FormLabel htmlFor="country-code" className="sr-only">
+                <FormLabel htmlFor={`${uid}-country-code`} className="sr-only">
                   Country code
                 </FormLabel>
                 <FormInput
                   type="text"
                   name="country-code"
-                  id="country-code"
+                  id={`${uid}-country-code`}
                   placeholder="+49"
                   autoComplete="tel-country-code"
                 />
               </div>
               <div className="flex-1">
-                <FormLabel htmlFor="phone-number" className="sr-only">
+                <FormLabel htmlFor={`${uid}-phone-number`} className="sr-only">
                   Phone number
                 </FormLabel>
                 <FormInput
                   type="tel"
                   name="phone-number"
-                  id="phone-number"
+                  id={`${uid}-phone-number`}
                   placeholder="Enter phone number"
                   autoComplete="tel-national"
                 />
@@ -185,10 +190,10 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             </div>
           </fieldset>
           <div className="sm:col-span-2">
-            <FormLabel htmlFor="message">Message:</FormLabel>
+            <FormLabel htmlFor={`${uid}-message`}>Message:</FormLabel>
             <FormTextarea
               name="message"
-              id="message"
+              id={`${uid}-message`}
               rows={4}
               placeholder="Enter message content..."
               required
@@ -199,9 +204,10 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             <FormInput
               type="text"
               name="website"
-              id="website"
+              id={`${uid}-website`}
               autoComplete="off"
               tabIndex={-1}
+              aria-hidden="true"
             />
           </div>
           <div className="flex gap-x-4 sm:col-span-2">
@@ -210,7 +216,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
                 onChange={() => setPrivacyPolicy((old) => !old)}
                 checked={privacyPolicy}
                 name="privacy-policy"
-                id="privacy-policy"
+                id={`${uid}-privacy-policy`}
                 required
               >
                 <span className="sr-only">Agree to policies</span>
@@ -218,7 +224,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             </div>
             <label
               className="text-sm leading-6 text-gray-600"
-              id="privacy-policy"
+              htmlFor={`${uid}-privacy-policy`}
             >
               By selecting this, you agree to our{' '}
               <Link

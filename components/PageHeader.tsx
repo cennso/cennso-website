@@ -47,9 +47,11 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
               <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
           ) : null} */}
-          <h1 className="font-bold text-4xl lg:text-5xl text-white">{title}</h1>
+          <h1 className="font-bold text-4xl lg:text-5xl text-secondary-600">
+            {title}
+          </h1>
           {description ? (
-            <p className="text-base md:text-lg lg:text-xl mt-2 text-white max-w-[800px]">
+            <p className="text-base md:text-lg lg:text-xl mt-2 text-secondary-600 max-w-[800px]">
               {description}
             </p>
           ) : null}
