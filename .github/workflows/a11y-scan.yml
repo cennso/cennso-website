@@ -14,7 +14,7 @@ jobs:
       issues: write
     steps:
       - name: Run accessibility scanner
-        uses: github/accessibility-scanner@dab8a8a3e066babb83677cd31fdc393c3580163e
+        uses: github/accessibility-scanner@dab8a8a3e066babb83677cd31fdc393c3580163e # v2.3.0
         with:
           urls: |
             https://www.cennso.com
