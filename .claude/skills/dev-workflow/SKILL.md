@@ -147,6 +147,16 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   Practices, SEO). Verify anything that could affect rendering weight, images,
   bundle size, or metadata: `yarn dev` in one terminal, `yarn lighthouse` in
   another. If you did not run it, say so explicitly rather than implying it passed.
+- **Verifying responsive layout: do not trust a narrow screenshot.** Launching a
+  headless browser with `--window-size=390,…` and no mobile emulation lays the
+  page out differently from a real phone, and reading overflow off that image
+  will mislead you — it produced a confident but wrong "the page scrolls
+  horizontally" diagnosis in one session. Measure instead, with the
+  `puppeteer-core` already in `node_modules` (Lighthouse depends on it) plus the
+  installed Chrome: set `isMobile: true` in `setViewport`, then compare
+  `document.documentElement.scrollWidth` against `clientWidth` for page overflow,
+  and use `getBoundingClientRect()` on the specific elements to get real widths,
+  offsets and the gaps between siblings. Numbers, not pixels.
 - `yarn test` is currently a no-op (`echo 'No tests.'`) — passing it proves
   nothing. `yarn check:all` is the real gate. If tests are ever added, the rule
   becomes: **never modify, add, or remove a test without explicit user
