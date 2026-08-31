@@ -34,7 +34,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
         description="Our Mobile Core accelerates time-to-market with agility, delivering optimized performance, seamless reliability, and scalable power for modern networks."
       />
 
-      <Container className="bg-[#277A9F]">
+      <Container className="bg-[#36AADD]">
         <header className="flex flex-col md:flex-row items-center w-full relative py-12 lg:py-20">
           <div className="w-full md:w-1/2 flex flex-col z-10 pb-12 md:py-12 order-last lg:order-none">
             <h1 className="font-bold text-3xl lg:text-5xl text-white">

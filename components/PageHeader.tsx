@@ -36,7 +36,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
       />
 
       <Container
-        className="bg-[#277A9F]"
+        className="bg-[#36AADD]"
         subClassName={
           background ? 'overflow-hidden flex-col-reverse md:flex-row' : ''
         }
