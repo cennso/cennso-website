@@ -58,7 +58,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content, partners }) => {
           </div>
           <div className="w-full md:w-1/2">
             <Image
-              className="w-[112.5%] max-w-[112.5%] -ml-8 sm-ml-16 pointer-events-none brightness-[0.72]"
+              className="w-[112.5%] max-w-[112.5%] -ml-8 sm-ml-16 pointer-events-none"
               width={1290}
               height={779}
               src="/assets/backgrounds/bg-paper-models.webp"

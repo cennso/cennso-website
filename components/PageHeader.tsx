@@ -60,9 +60,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
             <Image
               {...background}
               alt={background.alt}
-              // brightness matches the darkened band so the illustration's
-              // baked-in light-blue background still blends seamlessly
-              className={`${background.className ?? ''} brightness-[0.72]`}
+              className={background.className ?? ''}
               sizes="(max-width: 768px) 0px, 500px"
             />
           </div>
