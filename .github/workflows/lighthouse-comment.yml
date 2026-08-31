@@ -1,0 +1,123 @@
+name: Lighthouse comment
+# Runs in the TRUSTED base-repository context so it can write a PR comment, which
+# a fork's read-only token cannot do. workflow_run always uses the workflow file
+# from the default branch, so this definition cannot be altered by a PR.
+#
+# The safety property: this workflow NEVER checks out or executes pull request
+# code. It only downloads artifacts produced by the audit workflow and treats
+# their contents as untrusted data.
+on:
+  workflow_run:
+    workflows:
+      - Lighthouse Performance Check
+    types:
+      - completed
+permissions:
+  contents: read
+jobs:
+  comment:
+    name: Post Lighthouse comment
+    # Only act on audit runs triggered by a pull request.
+    if: github.event.workflow_run.event == 'pull_request'
+    permissions:
+      actions: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download PR number
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: lighthouse-pr-number
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download desktop results
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: lighthouse-results-desktop
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download mobile results
+        continue-on-error: true
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: lighthouse-results-mobile
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Post Lighthouse comment
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          AUDIT_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+        with:
+          script: |
+            const fs = require('fs').promises;
+
+            const runId = process.env.RUN_ID;
+            const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${runId}`;
+
+            const prNumber = Number.parseInt(
+              (await fs.readFile('pr-number.txt', 'utf8')).trim(),
+              10
+            );
+            if (!Number.isInteger(prNumber)) {
+              core.setFailed('Could not determine the pull request number.');
+              return;
+            }
+
+            async function readResults(file) {
+              try {
+                return JSON.parse(await fs.readFile(file, 'utf8'));
+              } catch {
+                return null;
+              }
+            }
+
+            const desktopResults = await readResults('lighthouse-results.json');
+            const mobileResults = await readResults('lighthouse-mobile-results.json');
+
+            let comment = '## 🔍 Lighthouse Audit Results\n\n';
+            let allPassed = true;
+
+            function renderTable(heading, results) {
+              if (!results) {
+                allPassed = false;
+                return `### ${heading}\n\nNo results were produced — the audit job did not complete.\n\n`;
+              }
+              let table = `### ${heading}\n\n`;
+              table += '| Category | Score | Status |\n';
+              table += '|----------|-------|--------|\n';
+              for (const [key, value] of Object.entries(results.categories)) {
+                if (key === 'pwa') continue;
+                const score = Math.round(value.score * 100);
+                const status = score >= 95 ? '✅ PASS' : '❌ FAIL';
+                if (score < 95) allPassed = false;
+                table += `| ${value.title} | ${score} | ${status} |\n`;
+              }
+              return table + '\n';
+            }
+
+            comment += renderTable('🖥️ Desktop', desktopResults);
+            comment += renderTable('📱 Mobile', mobileResults);
+
+            if (allPassed) {
+              comment += '✅ **All scores are ≥95%** - Quality gate passed!';
+            } else {
+              comment += '❌ **Some scores below 95%** - Please improve Lighthouse scores to ≥95% on all categories (Performance, Accessibility, Best Practices, SEO).\n\n';
+              comment += '💡 **Download the full HTML reports below** for detailed recommendations on what to fix.';
+            }
+
+            comment += '\n\n---\n\n';
+            comment += '### 📊 Detailed Reports\n\n';
+            comment += `📥 **[Download Full Reports (HTML)](${artifactUrl})**\n\n`;
+            comment += 'The workflow run contains detailed HTML reports:\n';
+            comment += '- `lighthouse-results-desktop` artifact - Desktop audit report\n';
+            comment += '- `lighthouse-results-mobile` artifact - Mobile audit report\n\n';
+            comment += '> 💡 Click the link above, scroll to "Artifacts" section at the bottom, and download the reports';
+
+            await github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
