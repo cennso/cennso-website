@@ -134,6 +134,15 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   The check scripts under `scripts/` are the spec for the constitution's
   standards. If a check looks wrong, report it and ask before touching it — same
   rule as tests.
+- **`yarn a11y:contrast` is not proof of contrast compliance.** It walks a
+  hardcoded `TEST_CASES` list of colour pairings in `scripts/check-contrast.py`,
+  so it only checks combinations someone remembered to add, against a `COLORS`
+  map that is maintained by hand. Both drift from the code. A real example: the
+  list asserted the page header was `gray-900` on the hero blue and passed, while
+  the component actually shipped white on `#36AADD` at 2.64:1 — failing even the
+  3:1 large-text floor on every page, undetected. Treat Lighthouse's
+  `color-contrast` audit as the authority, and when you change a text/background
+  pairing, check it by hand rather than trusting a green `a11y:contrast`.
 - **Lighthouse ≥95% on all four categories** (Performance, Accessibility, Best
   Practices, SEO). Verify anything that could affect rendering weight, images,
   bundle size, or metadata: `yarn dev` in one terminal, `yarn lighthouse` in

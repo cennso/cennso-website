@@ -40,7 +40,7 @@ Replace these parameters with real values:
 - `{TITLE}` is the success story title.
 - `{COMPANY_NAME}` is the company name.
 - `{COMPANY_WEBSITE}` is the link to the company's website.
-- `{COMPANY_LOGO}` is the link to the company's logo. Its source can be either local or external.
+- `{COMPANY_LOGO}` is the link to the company's logo. Its source can be either local or external. It is shown on a white card on the `/success-stories` page, so use a logo that reads on white, ideally with a transparent background. Any shape works — wordmarks are kept at their own aspect ratio and scaled to fit, so do not pad one into a square.
 - `{COMPANY_LOCATION}` is the link to the company's location.
 - `{COMPANY_INDUSTRY}` is the link to the company's industry.
 - `{TAG_1, TAG_2, ...}` are the tags or keywords of the described success story.
