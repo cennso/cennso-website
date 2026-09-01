@@ -16,9 +16,9 @@ layout: new
   src="/assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp"
   title="Equinix story picture"
   alt="Equinix story picture"
-  width={1943}
-  height={917}
-  unoptimized={true}
+  width="2856"
+  height="2010"
+  unoptimized
 />
 
 <ContentBlock title='The Challenge'>
@@ -35,9 +35,9 @@ Thanks to Cennso’s seamless integration with cloud and edge environments, the 
   src="/assets/success-stories/cennso-on-equinix-metal/equinix-cennso-diagram.webp"
   title="Equinix & Cennso diagram"
   alt="Equinix & Cennso diagram"
-  width={1943}
-  height={917}
-  unoptimized={true}
+  width="1943"
+  height="917"
+  unoptimized
 />
 
 <ContentBlock title='The Results'>
