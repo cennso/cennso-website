@@ -39,6 +39,10 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
               width={150}
               height={150}
               sizes="150px"
+              // Company logos are wordmarks of differing shapes. Without this the
+              // 150x150 box distorts them and Lighthouse reports an upscaled,
+              // low-resolution image.
+              className="w-auto h-auto max-w-[150px] max-h-[150px] object-contain"
             />
           </div>
         </div>

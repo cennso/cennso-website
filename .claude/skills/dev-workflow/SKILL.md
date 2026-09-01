@@ -134,10 +134,29 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   The check scripts under `scripts/` are the spec for the constitution's
   standards. If a check looks wrong, report it and ask before touching it — same
   rule as tests.
+- **`yarn a11y:contrast` is not proof of contrast compliance.** It walks a
+  hardcoded `TEST_CASES` list of colour pairings in `scripts/check-contrast.py`,
+  so it only checks combinations someone remembered to add, against a `COLORS`
+  map that is maintained by hand. Both drift from the code. A real example: the
+  list asserted the page header was `gray-900` on the hero blue and passed, while
+  the component actually shipped white on `#36AADD` at 2.64:1 — failing even the
+  3:1 large-text floor on every page, undetected. Treat Lighthouse's
+  `color-contrast` audit as the authority, and when you change a text/background
+  pairing, check it by hand rather than trusting a green `a11y:contrast`.
 - **Lighthouse ≥95% on all four categories** (Performance, Accessibility, Best
   Practices, SEO). Verify anything that could affect rendering weight, images,
   bundle size, or metadata: `yarn dev` in one terminal, `yarn lighthouse` in
   another. If you did not run it, say so explicitly rather than implying it passed.
+- **Verifying responsive layout: do not trust a narrow screenshot.** Launching a
+  headless browser with `--window-size=390,…` and no mobile emulation lays the
+  page out differently from a real phone, and reading overflow off that image
+  will mislead you — it produced a confident but wrong "the page scrolls
+  horizontally" diagnosis in one session. Measure instead, with the
+  `puppeteer-core` already in `node_modules` (Lighthouse depends on it) plus the
+  installed Chrome: set `isMobile: true` in `setViewport`, then compare
+  `document.documentElement.scrollWidth` against `clientWidth` for page overflow,
+  and use `getBoundingClientRect()` on the specific elements to get real widths,
+  offsets and the gaps between siblings. Numbers, not pixels.
 - `yarn test` is currently a no-op (`echo 'No tests.'`) — passing it proves
   nothing. `yarn check:all` is the real gate. If tests are ever added, the rule
   becomes: **never modify, add, or remove a test without explicit user
@@ -162,12 +181,31 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 - **Editing anything under `.github/workflows/` requires the
   `github-actions-supply-chain-pinning` skill** — invoke it first. It carries the
   SHA-pinning and tool-version rules, how to resolve a SHA correctly with `gh`,
-  and an audit of this repo's current (largely unpinned) state. Don't restate its
+  and a dated audit of this repo's current pinning state. Don't restate its
   rules from memory; the skill is the source of truth.
 - CI installs `yarn install --frozen-lockfile` + `scripts/requirements.txt`, then
   runs `build`, and fans out `format`, `lint`, `a11y`, `perf`, `seo`,
   `validate:ogimages` as a matrix. Lighthouse runs against the Vercel preview and
   blocks the merge below 95%.
+- **A PR from the fork does not deploy a preview until someone authorizes it.**
+  The `Vercel` check fails immediately with `Authorization required to deploy.`
+  and a `vercel.com/git/authorize` link, and `Wait for Vercel deployment` — and
+  therefore Lighthouse, the authoritative >=95% gate — stays pending until a
+  human with Vercel access approves it. This is not a code failure; don't chase
+  it. Surface the link and say the PR cannot go green without that click.
+- **`Link check` (lychee) validates every external link in `content/`, not just
+  the files you changed.** A pre-existing 404 elsewhere fails *your* PR — as of
+  this writing `content/privacy-policy.md` has a dead `dg-datenschutz.de` link
+  that does exactly that. Before assuming you broke it, read the job log and
+  check whether the failing URL is even in your diff
+  (`git diff --name-only upstream/main..HEAD`). Do not silently "fix" an
+  unrelated legal/privacy URL — report it and let the user choose a replacement.
+  Also know the check's blind spots: a link checker only sees status codes, and
+  some hosts return `200` for pages that do not exist. LinkedIn is the worst
+  offender — `linkedin.com/in/<anything>` returns `200` even for a profile that
+  was never created (verified), so a **typo in a LinkedIn profile URL can never
+  be caught by CI** and has to be eyeballed. `401`/`403`/`999` responses
+  (auth-walls, bot blocking) are normal here and are not failures.
 
 ## Red flags — stop
 
@@ -177,6 +215,12 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 - About to reach for Bash (heredoc, `>`, `sed -i`, `git switch -c`) to change the
   main checkout because the Edit tool is blocked → STOP. That is the same
   violation by another route, and the guard denies it too.
+- Guard denied a Bash write you believe is *inside* a worktree → check how the
+  command starts. The guard reads one command shape and cannot resolve variables,
+  so `WT=/path/to/worktree; cd "$WT" && cat > file` is denied even though the
+  target is legitimate. Begin the command with a **literal** `cd
+  /absolute/path/to/.worktrees/<topic>` and it passes. The denial message tells
+  you to create a worktree, which is misleading when you already have one.
 - About to edit in the shared main checkout, or `git switch -c` there instead of
   making a worktree → STOP. A concurrent session can switch the main checkout's
   HEAD out from under you, so your commit lands on another session's branch. Use
@@ -197,5 +241,19 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   STOP, report it, ask first.
 - About to hardcode UI text in a component → STOP. All user-facing text lives in
   the YAML files under `content/`.
+- Asked to add an image the user **pasted into the conversation** → you can see it
+  but you cannot save it. It arrives as context, not as a file: nothing lands in
+  the session directory, and the clipboard is usually already empty by the time
+  you look. Do NOT redraw or approximate it — that ships a different asset than
+  the one they approved. Ask for a path (`~/Desktop/foo.png` is fine) and convert
+  from there. A path in the prompt, a repo file, or a URL you can `curl` are the
+  only real sources of image bytes.
 - About to add an `<Image>` without a `sizes` prop, or a non-WebP / >100KB image →
   STOP. `yarn perf:images` and `yarn perf:mobile` will fail, and so will Lighthouse.
+- About to write a JSX expression property in MDX content (`width={1379}`,
+  `items={[...]}`, `unoptimized={true}`) → STOP. `parseMDX` keeps only string
+  attributes and **silently drops expressions** — the build succeeds and the prop
+  arrives `undefined`, which surfaces as a confusing render-time crash or a
+  missing image dimension. Use quoted strings (`width="1379"`); model repeating
+  data as child components (`<Stats><Stat value="50+" … /></Stats>`). A valueless
+  property (`priority`) is the one form that correctly becomes `true`.

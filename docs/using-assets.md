@@ -9,8 +9,28 @@ Each asset must be located in the `/public/assets` folder. To organise the conte
 All raster images (photos, screenshots, graphics) **MUST** be optimized before committing:
 
 - **Format**: WebP format (use `yarn perf:images:optimize` to convert automatically)
-- **Size**: Maximum 150KB per image file
+- **Size**: Maximum 100KB per image file
 - **Validation**: Run `yarn perf:images` to verify all images meet requirements
+
+### Resolution
+
+Size the export for high-density displays, not for the CSS width. An image
+exported at roughly the width it renders at looks soft on a retina screen,
+because it is only one device pixel per CSS pixel there.
+
+- Export at about **2x the rendered width**, then trade *quality* down until the
+  file fits under 100KB. Prefer more pixels at lower quality over fewer pixels at
+  high quality — for diagrams and flat illustration the difference is very
+  visible. A full-width diagram in an article renders at roughly 1200px, so
+  export around 2400px.
+- Set `width` and `height` on the `<Image>` to the exported file's real pixel
+  dimensions, and always set `sizes`. Next.js then generates smaller variants and
+  serves the one that fits the viewport, so a larger source does not cost
+  visitors bandwidth.
+
+When exporting from Figma, note that a plain screenshot is capped at the node's
+natural size — asking for a bigger one silently returns the same pixels. Use an
+asset export with an explicit scale (2x) to get real detail.
 
 **To optimize images:**
 
@@ -18,7 +38,7 @@ All raster images (photos, screenshots, graphics) **MUST** be optimized before c
 # Check if images need optimization
 yarn perf:images
 
-# Automatically optimize all images (converts to WebP, compresses to <150KB)
+# Automatically optimize all images (converts to WebP, compresses to <100KB)
 yarn perf:images:optimize
 
 # Optimize with custom quality (1-100, default: 80)

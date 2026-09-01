@@ -97,6 +97,7 @@ yarn check:all             # Run all checks (build, format, lint, a11y, perf, se
 - **Author**: Add to `content/authors.yaml` with unique ID
 - **Blog post**: Create `content/blog-posts/filename.mdx`, reference author IDs in frontmatter
 - **UI Text**: All user interface text (form labels, status messages, select options) MUST be defined in appropriate YAML files in `/content` directory, never hardcoded in components
+- **MDX properties**: In MDX content, pass component properties as quoted strings. `parseMDX` keeps only string attributes and silently drops JSX expressions, so `width={1379}` arrives as no width and fails at render, not at build. A valueless property (e.g. `priority`) correctly becomes `true`.
 - **Assets**: Place in `/public/assets/` folder, reference as `/assets/filename.ext`
 
 See `/docs` folder for detailed guides.

@@ -23,6 +23,7 @@ import elixir from 'react-syntax-highlighter/dist/cjs/languages/prism/elixir'
 import { CallToAction } from './components/CallToAction'
 import { CennsoButton } from './components/CennsoButton'
 import { ContentBlock } from './components/ContentBlock'
+import { Stat, Stats } from './components/Stats'
 import { Quote } from './components/Quote'
 
 import type {
@@ -51,7 +52,7 @@ export function serializeHeading(
       break
     }
     case 2: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary-600 font-bold text-[2em]'
       break
     }
     case 3: {
@@ -395,6 +396,8 @@ export const Components: MDXRemoteProps['components'] = {
   CallToAction: CallToAction as any,
   Quote: Quote as any,
   ContentBlock: ContentBlock as any,
+  Stats: Stats as any,
+  Stat: Stat as any,
   CennsoButton: CennsoButton as any,
   Image: Image as any,
 }

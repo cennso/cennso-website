@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 import { FeatureCard } from '../../common'
 
 import type { FunctionComponent, PropsWithChildren } from 'react'
@@ -7,6 +9,7 @@ interface QuoteProps extends PropsWithChildren {
   authorPosition?: string
   authorCompany?: string
   authorSocialLink?: string
+  avatar?: string
 }
 
 export const Quote: FunctionComponent<QuoteProps> = ({
@@ -14,41 +17,64 @@ export const Quote: FunctionComponent<QuoteProps> = ({
   authorPosition,
   authorCompany,
   authorSocialLink,
+  avatar,
   children,
 }) => {
+  const authorDescription =
+    [authorName, authorPosition].filter(Boolean).join(', ') +
+    (authorCompany ? ` at ${authorCompany}` : '')
+
   return (
-    <FeatureCard className='flex flex-row items-center bg-[3rem_1.5rem] bg-no-repeat bg-auto bg-[url("/assets/landing-page/quotes.webp")] bg-secondary-600 rounded-[32px] px-8'>
-      <div className="flex flex-col gap-6 px-8">
+    <FeatureCard
+      className="flex flex-row items-center rounded-[32px] w-full"
+      dropShadow={false}
+    >
+      <div className="flex flex-col gap-6 w-full">
         <figure className="flex flex-col">
-          <blockquote className="text-sm lg:text-base text-secondary-600 border-none pl-9">
-            {children}
-          </blockquote>
-          <figcaption className="mt-0 ml-9">
-            <cite className="font-semibold text-secondary-200 text-base lg:text-[1rem] not-italic">
-              {authorSocialLink ? (
-                <a
-                  title={
-                    authorPosition
-                      ? `${authorName}, ${authorPosition}`
-                      : authorName
-                  }
-                  href={authorSocialLink}
-                  target="_blank"
-                  rel="noopener"
-                  className="underline hover:decoration-2"
-                >
-                  <span>{authorName}</span>
-                </a>
-              ) : (
-                <span>{authorName}</span>
-              )}
+          <div className="relative z-0">
+            <Image
+              src="/assets/common/quotes.svg"
+              alt=""
+              width={150}
+              height={118}
+              className="absolute -top-[8px] left-0 z-[-1] w-24 h-auto"
+            />
+            <blockquote className="relative z-10 font-sans font-[300] leading-[1.5] italic text-[28px] text-white border-none">
+              {children}
+            </blockquote>
+          </div>
+          <figcaption className="mt-0 flex flex-row items-center gap-4">
+            {avatar ? (
+              <Image
+                className="rounded-full flex-none my-0"
+                src={avatar}
+                title={authorDescription}
+                alt={authorDescription}
+                width={92}
+                height={92}
+                sizes="92px"
+              />
+            ) : null}
+            <cite className="not-italic text-white text-[16px]">
+              <span className="block font-bold">
+                {authorSocialLink ? (
+                  <a
+                    href={authorSocialLink}
+                    target="_blank"
+                    rel="noopener"
+                    className="underline hover:decoration-2"
+                  >
+                    {authorName}
+                  </a>
+                ) : (
+                  authorName
+                )}
+              </span>
               {authorPosition ? (
-                <>
-                  {', '}
-                  <span>{authorPosition}</span>
-                  <span className="mx-1">at</span>
-                  <span>{authorCompany}</span>
-                </>
+                <span className="block font-normal">{authorPosition}</span>
+              ) : null}
+              {authorCompany ? (
+                <span className="block font-normal">{authorCompany}</span>
               ) : null}
             </cite>
           </figcaption>
