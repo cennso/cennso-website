@@ -10,6 +10,8 @@ interface FeatureCardProps extends PropsWithChildren {
   useGlow?: boolean
   useHexagon?: boolean
   useShinyEffect?: boolean
+  dropShadow?: boolean
+  stroke?: boolean
 }
 
 export const FeatureCard: FunctionComponent<FeatureCardProps> = ({
@@ -17,6 +19,8 @@ export const FeatureCard: FunctionComponent<FeatureCardProps> = ({
   useGlow = false,
   useHexagon = false,
   useShinyEffect = false,
+  dropShadow = true,
+  stroke = false,
   children,
 }) => {
   const ref = useRef<HTMLDivElement>(null)
@@ -46,11 +50,15 @@ export const FeatureCard: FunctionComponent<FeatureCardProps> = ({
   const glowClassName = useGlow ? 'feature-card-top-gradient' : ''
   const hexagonClassName = useHexagon ? 'feature-card-corner-hex' : ''
   const shinyEffectClassName = useShinyEffect ? 'feature-card-shiny' : ''
+  const shadowClassName = dropShadow
+    ? 'filter drop-shadow-[0px_2px_5px_rgba(68,141,200,0.35)]'
+    : ''
+  const borderClassName = stroke ? 'border border-[#043655]' : ''
 
   return (
     <div
       ref={ref}
-      className={`${glowClassName} ${hexagonClassName} ${shinyEffectClassName} relative overflow-hidden filter drop-shadow-[0px_2px_5px_rgba(68,141,200,0.35)] ${className}`}
+      className={`${glowClassName} ${hexagonClassName} ${shinyEffectClassName} relative overflow-hidden ${shadowClassName} ${borderClassName} ${className}`}
     >
       {children}
     </div>

@@ -25,13 +25,25 @@ export const Quote: FunctionComponent<QuoteProps> = ({
     (authorCompany ? ` at ${authorCompany}` : '')
 
   return (
-    <FeatureCard className='flex flex-row items-center bg-[3rem_1.5rem] bg-no-repeat bg-auto bg-[url("/assets/landing-page/quotes.webp")] bg-secondary-600 rounded-[32px] px-8 py-8 my-8 w-full'>
+    <FeatureCard
+      className="flex flex-row items-center rounded-[32px] w-full"
+      dropShadow={false}
+    >
       <div className="flex flex-col gap-6 w-full">
         <figure className="flex flex-col">
-          <blockquote className="text-sm lg:text-base text-white border-none pl-9">
-            {children}
-          </blockquote>
-          <figcaption className="mt-0 ml-9 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="relative z-0">
+            <Image
+              src="/assets/common/quotes.svg"
+              alt=""
+              width={150}
+              height={118}
+              className="absolute -top-[8px] left-0 z-[-1] w-24 h-auto"
+            />
+            <blockquote className="relative z-10 font-sans font-[300] leading-[1.5] italic text-[28px] text-white border-none">
+              {children}
+            </blockquote>
+          </div>
+          <figcaption className="mt-0 flex flex-row items-center gap-4">
             {avatar ? (
               <Image
                 className="rounded-full flex-none my-0"
@@ -43,31 +55,26 @@ export const Quote: FunctionComponent<QuoteProps> = ({
                 sizes="92px"
               />
             ) : null}
-            <cite className="font-semibold text-secondary-200 text-base lg:text-[1rem] not-italic">
-              {authorSocialLink ? (
-                <a
-                  title={authorDescription}
-                  href={authorSocialLink}
-                  target="_blank"
-                  rel="noopener"
-                  className="underline hover:decoration-2"
-                >
-                  <span>{authorName}</span>
-                </a>
-              ) : (
-                <span>{authorName}</span>
-              )}
+            <cite className="not-italic text-white text-[16px]">
+              <span className="block font-bold">
+                {authorSocialLink ? (
+                  <a
+                    href={authorSocialLink}
+                    target="_blank"
+                    rel="noopener"
+                    className="underline hover:decoration-2"
+                  >
+                    {authorName}
+                  </a>
+                ) : (
+                  authorName
+                )}
+              </span>
               {authorPosition ? (
-                <>
-                  {', '}
-                  <span>{authorPosition}</span>
-                  {authorCompany ? (
-                    <>
-                      <span className="mx-1">at</span>
-                      <span>{authorCompany}</span>
-                    </>
-                  ) : null}
-                </>
+                <span className="block font-normal">{authorPosition}</span>
+              ) : null}
+              {authorCompany ? (
+                <span className="block font-normal">{authorCompany}</span>
               ) : null}
             </cite>
           </figcaption>

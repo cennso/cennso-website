@@ -41,7 +41,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
           background ? 'overflow-hidden flex-col-reverse md:flex-row' : ''
         }
       >
-        <header className="flex flex-col justify-center w-full min-h-[250px] relative z-20 mt-0">
+        <header className="flex flex-col justify-center w-full min-h-[250px] relative z-20 mt-0 py-16">
           {/* {breadcrumbs.length > 1 ? (
             <div className="mb-3 lg:mb-6">
               <Breadcrumbs breadcrumbs={breadcrumbs} />

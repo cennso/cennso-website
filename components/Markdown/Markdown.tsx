@@ -52,7 +52,7 @@ export function serializeHeading(
       break
     }
     case 2: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary-600 font-bold text-[2em]'
       break
     }
     case 3: {

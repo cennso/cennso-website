@@ -32,7 +32,6 @@ The Cennso Technologies team identified a significant gap in the market. Traditi
 - Legacy network designs that struggled to support the low-latency demands of modern 5G, automotive and IoT workloads
 
 The pressure was most acute for Tier-1 telecommunications operators and automotive manufacturers, who needed carrier-grade performance, predictable latency, global reach and strict adherence to data residency rules. Without a platform built to meet those requirements, Cennso Technologies customers risked delayed deployments, reduced service quality, compliance exposure and an inability to support mission-critical connected-vehicle and mobile data services.
-</ContentBlock>
 
 <Stats>
   <Stat value="50+" label="IBM Cloud locations worldwide" />
@@ -48,6 +47,7 @@ The pressure was most acute for Tier-1 telecommunications operators and automoti
 >
 IBM Cloud builds a managed, IBM-native experience, giving GMCP a way to deploy global, carrier-grade connectivity services rapidly and consistently.
 </Quote>
+</ContentBlock>
 
 <ContentBlock title='Building carrier-grade connectivity on IBM Cloud'>
 To support the growing demands of connected vehicles and IoT services, Cennso Technologies worked with IBM to build the Global Mobile Connectivity Platform (GMCP), a cloud-native platform designed to deliver secure, low-latency mobile connectivity across international markets.
