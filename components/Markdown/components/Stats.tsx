@@ -18,10 +18,10 @@ export const Stat: FunctionComponent<StatProps> = ({ value, label }) => {
         className="flex flex-col items-center justify-center gap-2 h-full rounded-[32px] bg-secondary-600 px-6 py-8 text-center"
         useGlow={true}
       >
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-[#04D3D6] text-4xl lg:text-5xl font-bold leading-tight">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-secondary-200 to-[#A855F7] text-4xl lg:text-5xl font-bold leading-tight">
           {value}
         </span>
-        <span className="text-secondary-200 font-bold text-base">{label}</span>
+        <span className="text-white font-bold text-base">{label}</span>
       </FeatureCard>
     </li>
   )
