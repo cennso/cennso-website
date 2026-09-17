@@ -5,10 +5,12 @@ import { parse as YamlParse } from 'yaml'
 import { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
 
+import { Field, Select } from '@cennso/ui'
+
 import { PageHeader } from '../../components/PageHeader'
 import { SuccessStoryItem } from '../../components/SuccessStories/SuccessStoryItem'
 import { SEO } from '../../components/SEO'
-import { Container, Select } from '../../components/common'
+import { Container } from '../../components/common'
 
 import { mdRegex } from '../../lib/markdown'
 import { kebabCase } from '../../lib/casing'
@@ -19,12 +21,25 @@ import { loadFooterData } from '../../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
-import type { SelectProps, SelectOption } from '../../components/common'
+
+// `@cennso/ui`'s `Select` types `items` as
+// `Record<string, ReactNode> | readonly { label: ReactNode; value: any }[] | readonly Group<any>[]`
+// (verified against node_modules/@cennso/ui/dist/index.d.ts and
+// node_modules/@base-ui/react/select/root/SelectRoot.d.ts). `value` is the
+// identifier Select compares and reports back through `onValueChange`;
+// `label` is what's rendered. The old `SelectOption` had this inverted
+// (`id` was the identifier, `value` was the display text), so both
+// `getStaticProps`'s array construction and this page's lookups swap
+// accordingly.
+type IndustryOption = {
+  label: string
+  value: string
+}
 
 type SuccessStoriesPageProps = {
   content: Record<string, any>
   successStories: Array<SuccessStoryItemType>
-  industries: SelectProps['options']
+  industries: Array<IndustryOption>
 }
 
 const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
@@ -43,15 +58,15 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
       return successStories
     }
 
-    const industryValue = industries.find((i) => i.id === industry)?.value
+    const industryLabel = industries.find((i) => i.value === industry)?.label
     return successStories.filter(
-      (s) => s.frontmatter.company?.industry === industryValue
+      (s) => s.frontmatter.company?.industry === industryLabel
     )
   })
 
   const filterStories = useCallback(
-    (value: SelectOption) => {
-      if (value.id === '') {
+    (option: IndustryOption) => {
+      if (option.value === '') {
         setFilteredStories(successStories)
         delete router.query.industry
         router.replace(
@@ -66,14 +81,14 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
 
       router.replace(
         {
-          query: { ...router.query, industry: value.id },
+          query: { ...router.query, industry: option.value },
         },
         undefined,
         { shallow: false }
       )
       setFilteredStories(
         successStories.filter(
-          (s) => s.frontmatter.company?.industry === value.value
+          (s) => s.frontmatter.company?.industry === option.label
         )
       )
     },
@@ -106,22 +121,46 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
       <Container className="pt-12 pb-24 px-8 lg:px-4 bg-secondary-400">
         <div className="flex flex-col gap-12">
           <div>
-            <div className="mb-4">
-              <label
-                htmlFor="select-industry"
-                id="select-industry-label"
-                className="sr-only"
-              >
-                {content.industrySelectLabel}
-              </label>
-              <Select
-                id="select-industry"
-                ariaLabelledBy="select-industry-label"
-                placeholder="All Industries"
-                selected={getQueryParam(router.asPath, 'industry')}
-                options={industries}
-                onChange={filterStories}
-              />
+            <div className="mb-4 w-72">
+              <Field>
+                <Field.Label className="sr-only">
+                  {content.content.industrySelectLabel}
+                </Field.Label>
+                <Select
+                  items={industries}
+                  value={getQueryParam(router.asPath, 'industry') ?? ''}
+                  onValueChange={(value) => {
+                    const option = industries.find((i) => i.value === value)
+                    if (option) {
+                      filterStories(option)
+                    }
+                  }}
+                >
+                  {/* No explicit `id` here: Base UI's Field/Select association is
+                  registered client-side (see `useLabelableId` in
+                  `@base-ui/react/internals/labelable-provider`), and an
+                  explicit `id` prop is used verbatim on first render while the
+                  Field.Label's `for`/aria-labelledby still point at the
+                  Field's own generated id — the pair is unassociated in
+                  server-rendered HTML until hydration reconciles them.
+                  Leaving `id` unset lets Select.Trigger and Field.Label read
+                  the same generated id from the shared context on the very
+                  first render, so the label is correctly associated even in
+                  the pre-hydration markup. Verified in the built HTML: with an
+                  explicit id, the trigger's `id` and the label's `for`
+                  diverged; without it, they match. */}
+                  <Select.Trigger
+                    placeholder={content.content.industrySelectPlaceholder}
+                  />
+                  <Select.Content>
+                    {industries.map((industry) => (
+                      <Select.Item key={industry.value} value={industry.value}>
+                        {industry.label}
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select>
+              </Field>
             </div>
 
             <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full h-full">
@@ -154,10 +193,10 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
       withFileTypes: true,
     })
 
-    let industries: SelectProps['options'] = [
+    let industries: Array<IndustryOption> = [
       {
-        value: 'All Industries',
-        id: '',
+        label: 'All Industries',
+        value: '',
       },
     ]
     const successStories: SuccessStoryItemType[] = (
@@ -180,10 +219,10 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
             const industry = (
               mdxSource.frontmatter as unknown as SuccessStoryItemType['frontmatter']
             ).company?.industry
-            if (industry && !industries.some((i) => i.value === industry)) {
+            if (industry && !industries.some((i) => i.label === industry)) {
               industries.push({
-                value: industry,
-                id: kebabCase(industry),
+                label: industry,
+                value: kebabCase(industry),
               })
             }
 
@@ -202,10 +241,10 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
 
     // sorting industries
     industries = industries.sort((a, b) => {
-      if (a.id < b.id) {
+      if (a.value < b.value) {
         return -1
       }
-      if (a.id > b.id) {
+      if (a.value > b.value) {
         return 1
       }
       return 0
