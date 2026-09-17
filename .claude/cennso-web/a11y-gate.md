@@ -73,8 +73,8 @@ that re-pointing work ships.
 
 - `check-semantic-structure.py:223-262` requires the literal `<main`, `<nav`,
   and `<footer` substrings in `Layout.tsx`, `Navigation.tsx`, and `Footer.tsx`
-  respectively (`is_layout`/`is_navigation`/`is_footer` checks at lines 223,
-  237, 249).
+  respectively (`is_layout`/`is_navigation`/`is_footer` defined at lines 223,
+  224, 225; the corresponding `<nav`/`<footer` branches at lines 241 and 253).
 - `check-navigable.py:104-114` requires `Layout.tsx` to contain either
   `href="#main"`/`href="#content"` or `<main ` (the `has_skip_link` /
   `has_main_landmark` check).

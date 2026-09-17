@@ -15,6 +15,14 @@ package.json components pages lib tailwind.config.js` returns nothing at
 HEAD. Reintroducing any of these, or a finding that recommends one of them
 as a fix, is itself a defect.
 
+This list is not "`@cennso/ui` is now the only component library." `@headlessui/react`
+(`^2.1.10` in `package.json:53`, resolving to `2.2.9` installed) is still a live
+dependency: `components/common/Select.tsx`
+is built from its `Listbox`/`Transition`, and that `Select` still renders on
+`/blog` (`pages/blog/index.tsx:17,30`). Whether Headless UI also gets removed
+is a phase-4 decision this branch does not make — do not flag its presence as
+a defect or assume it is already gone.
+
 ## Mapping decisions already made — do not relitigate per page
 
 - `Button`'s old `tertiary` variant maps to `secondary`. `@cennso/ui`'s
@@ -43,10 +51,13 @@ as a fix, is itself a defect.
 they render with are this site's brand shape. The mask is a local
 `addUtilities` Tailwind plugin (`tailwind.config.js:125-134`, "Copied verbatim
 from daisyui@4 dist/full.css") kept in `safelist` (`tailwind.config.js:55-58`)
-because it's built from a template literal Tailwind's content scanner can't
-statically see. `@cennso/ui` has no hexagon-frame primitive; this is not a gap
-to report, and these files are not candidates for replacement by a library
-component.
+as defensive belt-and-braces, not because the scanner can't see it — every
+occurrence is the contiguous literal `mask mask-hexagon-2` (e.g.
+`Hexagon.tsx:17`, `HexagonAvatar.tsx:19`, `pages/about.tsx:141`,
+`SuccessStories/SuccessStoryItem.tsx:37`), which Tailwind's content scanner
+finds fine inside a template literal. `@cennso/ui` has no hexagon-frame
+primitive; this is not a gap to report, and these files are not candidates
+for replacement by a library component.
 
 ## Two lessons from converting the first page (`success-stories`)
 

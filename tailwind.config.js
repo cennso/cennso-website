@@ -46,7 +46,9 @@ const tailwindConfig = {
    * Performance optimization: Aggressive CSS purging configuration
    *
    * safelist: Explicitly preserve mask utilities we use throughout the site.
-   * This ensures mask-hexagon-2 is never purged even if detection is uncertain.
+   * This is defensive belt-and-braces, not a scanner workaround: every use is
+   * the contiguous literal "mask mask-hexagon-2", which the scanner detects
+   * fine. It guards against a future refactor making the class name dynamic.
    *
    * The content globs above tell Tailwind to scan all component, page, and content
    * files to detect which classes are actually used. Any classes not found in these

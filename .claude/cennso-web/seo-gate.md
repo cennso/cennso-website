@@ -6,7 +6,7 @@
 Titles are 50-60 characters (`validate-seo.py:32`); meta descriptions are 150-160
 (`validate-seo.py:46`). Both are warnings there (`validate-seo.py:186`,
 `validate-seo.py:200`), not errors — `main()` only returns non-zero when
-`has_errors` is set (`validate-seo.py:328`), so a title or description outside
+`has_errors` is set (`validate-seo.py:330`), so a title or description outside
 the band will not fail the build and has to be caught in review.
 
 ## Structured data per page type
@@ -61,7 +61,9 @@ HTML, so they need `yarn build` first. `yarn validate:ogimages` is separate.
 rendered output — not `.tsx` source, so it makes no difference to them whether a
 heading or image came from a literal tag or a `@cennso/ui` component. This is
 the working precedent `docs/accessibility-checkers-and-cennso-ui.md` points to
-for fixing the four a11y checkers that are not similarly immune.
+for fixing the five a11y checkers that are not similarly immune (four blind —
+`check-text-alternatives`, `check-semantic-structure`, `check-navigable`,
+`check-compatible` — plus one false positive, `check-input-assistance`).
 
 ## Out of scope for this gate
 
