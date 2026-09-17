@@ -1,6 +1,6 @@
 import { promises as fsPromises } from 'fs'
 import path from 'path'
-import { LinkIcon } from '@heroicons/react/24/outline'
+import { Link as LinkIcon } from 'lucide-react'
 
 import Image from 'next/image'
 

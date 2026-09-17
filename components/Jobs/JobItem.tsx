@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BriefcaseIcon, MapPinIcon } from '@heroicons/react/24/solid'
+import { Briefcase, MapPin } from 'lucide-react'
 
 import { Button, FeatureCard } from '../common'
 
@@ -25,11 +25,11 @@ export const JobItem: FunctionComponent<JobItemProps> = ({ job }) => {
 
       <ul className="flex-1 flex flex-col gap-1 my-4 text-white">
         <li className="flex flex-row gap-3">
-          <BriefcaseIcon className="w-5 h-5" />
+          <Briefcase className="w-5 h-5" />
           <span>{kind}</span>
         </li>
         <li className="flex flex-row gap-3">
-          <MapPinIcon className="w-5 h-5" />
+          <MapPin className="w-5 h-5" />
           <span>{mode}</span>
         </li>
       </ul>

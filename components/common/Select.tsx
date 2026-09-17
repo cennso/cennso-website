@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { Check, ChevronsUpDown } from 'lucide-react'
 
 import type { FunctionComponent } from 'react'
 
@@ -53,7 +53,7 @@ export const Select: FunctionComponent<SelectProps> = ({
               {selectedValue || placeholder}
             </span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-              <ChevronUpDownIcon
+              <ChevronsUpDown
                 className="h-5 w-5 text-gray-400"
                 aria-hidden="true"
               />
@@ -89,7 +89,7 @@ export const Select: FunctionComponent<SelectProps> = ({
                       </span>
                       {selected ? (
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-primary-600">
-                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          <Check className="h-5 w-5" aria-hidden="true" />
                         </span>
                       ) : null}
                     </>

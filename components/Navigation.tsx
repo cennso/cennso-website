@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Menu } from '@cennso/ui'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { ChevronDown } from 'lucide-react'
 
 import { Button } from './common'
 import { Logo } from './Logo'
@@ -159,7 +159,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
     >
       {link.title}
       {link.children ? (
-        <ChevronDownIcon
+        <ChevronDown
           strokeWidth={2.5}
           className={`h-6 w-6 transition-transform ${
             isMenuOpen ? 'rotate-180' : ''
@@ -236,7 +236,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           >
             {link.title}
             {link.children ? (
-              <ChevronDownIcon
+              <ChevronDown
                 strokeWidth={2.5}
                 className={`h-6 w-6 transition-transform ${
                   isMobileMenuOpen ? 'rotate-180' : ''

@@ -6,7 +6,7 @@ import mimeTypes from 'mime-types'
 // @ts-ignore
 import json2xml from 'jgexml/json2xml'
 
-import { ImRss2 } from 'react-icons/im'
+import { Rss } from 'lucide-react'
 
 import { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
@@ -119,7 +119,7 @@ const BlogPage: NextPage<BlogPageProps> = ({ content, posts, categories }) => {
           className="flex flex-row gap-1.5 text-white items-center hover:underline decoration-2"
         >
           <span>Subscribe to our</span>
-          <ImRss2 className="w-5 h-5" aria-hidden="true" />
+          <Rss className="w-5 h-5" aria-hidden="true" />
           <span>RSS Feed</span>
         </a>
       </PageHeader>

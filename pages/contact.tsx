@@ -2,11 +2,7 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { parse as YamlParse } from 'yaml'
 
-import {
-  EnvelopeIcon,
-  PhoneIcon,
-  ArrowTopRightOnSquareIcon,
-} from '@heroicons/react/24/solid'
+import { Mail, Phone, ExternalLink } from 'lucide-react'
 
 import { ContactForm } from '../components/Contact/ContactForm'
 import {
@@ -111,7 +107,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                                 className="p-1"
                                 subClassName="bg-secondary-400"
                               >
-                                <EnvelopeIcon className="w-12 p-2 text-white" />
+                                <Mail className="w-12 p-2 text-white" />
                               </HexagonDouble>
                               <div className="flex flex-col">
                                 <a
@@ -120,7 +116,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                                   className="flex flex-row gap-1 items-center text-secondary-200 hover:text-white transition duration-300 ease-in-out"
                                 >
                                   <span>Email</span>
-                                  <ArrowTopRightOnSquareIcon className="w-4" />
+                                  <ExternalLink className="w-4" />
                                 </a>
                                 <span className="text-sm text-white">
                                   {section.contact.email}
@@ -135,7 +131,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                                 className="p-1"
                                 subClassName="bg-secondary-400"
                               >
-                                <PhoneIcon className="w-12 p-2 text-white" />
+                                <Phone className="w-12 p-2 text-white" />
                               </HexagonDouble>
                               <div className="flex flex-col">
                                 <a
@@ -143,7 +139,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                                   className="flex flex-row gap-1 items-center text-secondary-200 hover:text-white transition duration-300 ease-in-out"
                                 >
                                   <span>Phone</span>
-                                  <ArrowTopRightOnSquareIcon className="w-4" />
+                                  <ExternalLink className="w-4" />
                                 </a>
                                 <span className="text-sm text-white">
                                   {section.contact.phone}

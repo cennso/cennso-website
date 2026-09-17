@@ -5,10 +5,7 @@ import type { JSX } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'
-import {
-  ArrowTopRightOnSquareIcon,
-  HashtagIcon,
-} from '@heroicons/react/24/outline'
+import { ExternalLink, Hash } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote'
 
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -137,7 +134,7 @@ const Heading: FunctionComponent<
         } hover:text-gray-100 border-0 group-hover:opacity-100 no-underline text-lg w-6 h-6 rounded-md shadow transition duration-300 ease-in-out`}
         aria-label="Anchor"
       >
-        <HashtagIcon className="p-[0.3rem] stroke-2" />
+        <Hash className="p-[0.3rem] stroke-2" />
       </Link>
       <div
         className="hover:underline cursor-pointer"
@@ -180,7 +177,7 @@ export const Components: MDXRemoteProps['components'] = {
           className="text-secondary-200 hover:decoration-2 my-0"
         >
           {children}
-          <ArrowTopRightOnSquareIcon className="inline-block ml-0.5 h-3" />
+          <ExternalLink className="inline-block ml-0.5 h-3" />
         </a>
       )
     }

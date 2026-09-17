@@ -1,5 +1,5 @@
 import { Fragment } from 'react'
-import { HomeModernIcon } from '@heroicons/react/24/outline'
+import { House } from 'lucide-react'
 
 import type { FunctionComponent } from 'react'
 import Link from 'next/link'
@@ -36,7 +36,7 @@ export const Breadcrumbs: FunctionComponent<BreadcrumbsProps> = ({
         <ul className="flex flex-row items-center gap-2">
           <li>
             <Link href="/" aria-label="Home">
-              <HomeModernIcon className={`w-3.5 h-3.5 ${className}`} />
+              <House className={`w-3.5 h-3.5 ${className}`} />
             </Link>
           </li>
           <li className={className}>/</li>
