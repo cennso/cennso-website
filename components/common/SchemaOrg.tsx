@@ -13,7 +13,7 @@ export interface SchemaOrgProps {
  * Supports single or multiple structured data objects.
  *
  * @param {SchemaOrgProps} props - Component props
- * @returns {JSX.Element} JSON-LD script tag(s)
+ * @returns {React.JSX.Element} JSON-LD script tag(s)
  *
  * @example
  * // Single schema
@@ -23,7 +23,7 @@ export interface SchemaOrgProps {
  * // Multiple schemas
  * <SchemaOrg data={[organizationSchema, breadcrumbSchema]} />
  */
-export function SchemaOrg({ data }: SchemaOrgProps): JSX.Element {
+export function SchemaOrg({ data }: SchemaOrgProps): React.JSX.Element {
   // Handle array of structured data
   if (Array.isArray(data)) {
     return (

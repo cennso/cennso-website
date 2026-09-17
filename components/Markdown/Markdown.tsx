@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks, @next/next/no-img-element */
 
 import { useState, useEffect } from 'react'
+import type { JSX } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'

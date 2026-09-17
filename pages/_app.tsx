@@ -1,5 +1,5 @@
 import { Poppins } from 'next/font/google'
-import { ThemeProvider } from '@cennso/ui'
+import { ThemeProvider, TooltipProvider } from '@cennso/ui'
 
 import { Layout } from '../components/Layout'
 
@@ -59,9 +59,11 @@ export default function App({ Component, pageProps }: AppProps) {
       `}</style>
 
       <ThemeProvider defaultSetting="light">
-        <Layout navigation={navigation} footerData={footerData}>
-          <Component {...rest} />
-        </Layout>
+        <TooltipProvider>
+          <Layout navigation={navigation} footerData={footerData}>
+            <Component {...rest} />
+          </Layout>
+        </TooltipProvider>
       </ThemeProvider>
     </>
   )

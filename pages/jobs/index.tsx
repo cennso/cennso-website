@@ -1,7 +1,7 @@
 import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { parse as YamlParse } from 'yaml'
-import { Typography } from '@material-tailwind/react'
+import { Typography } from '@cennso/ui'
 
 import { PageHeader } from '../../components/PageHeader'
 import { JobItem } from '../../components/Jobs/JobItem'
@@ -52,13 +52,7 @@ const JobsPage: NextPage<JobsPageProps> = ({ content, jobs }) => {
 
           {jobs.length === 0 ? (
             <div className="flex flex-row items-center justify-center text-center pt-4">
-              <Typography
-                variant="h4"
-                className="text-center text-white"
-                placeholder={undefined}
-                onPointerEnterCapture={undefined}
-                onPointerLeaveCapture={undefined}
-              >
+              <Typography variant="h4" className="text-center text-white">
                 {mainContent.zeroJobs}
               </Typography>
             </div>

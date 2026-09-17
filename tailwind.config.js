@@ -1,4 +1,3 @@
-const withMT = require('@material-tailwind/react/utils/withMT')
 const plugin = require('tailwindcss/plugin')
 const cennsoPreset = require('@cennso/theme/tailwind-preset')
 
@@ -157,4 +156,4 @@ const tailwindConfig = {
   ],
 }
 
-module.exports = withMT(tailwindConfig)
+module.exports = tailwindConfig
