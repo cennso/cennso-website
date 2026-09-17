@@ -219,10 +219,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
               sideOffset={10}
               className="hidden max-w-screen-xl rounded-[32px] lg:block bg-[#185F99] shadow-none border-[#185F99] filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"
             >
-              <ul
-                className="flex flex-col gap-0 outline-none outline-0"
-                role="menu"
-              >
+              <ul className="flex flex-col gap-0 outline-none outline-0">
                 {desktopItems}
               </ul>
             </Menu.Content>
