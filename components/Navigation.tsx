@@ -246,7 +246,6 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           </div>
           <ul
             className={`${isMobileMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 outline-none outline-0 ml-6 mt-1`}
-            role="menu"
           >
             {mobileItems}
           </ul>
