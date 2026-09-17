@@ -1,5 +1,6 @@
 const withMT = require('@material-tailwind/react/utils/withMT')
 const plugin = require('tailwindcss/plugin')
+const cennsoPreset = require('@cennso/theme/tailwind-preset')
 
 const colors = {
   primary: {
@@ -34,11 +35,13 @@ const colors = {
 
 /** @type {import('tailwindcss').Config} */
 const tailwindConfig = {
+  presets: [cennsoPreset],
   content: [
     './pages/**/*.{js,ts,jsx,tsx}',
     './lib/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
     './content/**/*.{md,mdx}',
+    './node_modules/@cennso/ui/dist/**/*.{js,mjs}',
   ],
   /**
    * Performance optimization: Aggressive CSS purging configuration

@@ -1,9 +1,11 @@
 import { Poppins } from 'next/font/google'
+import { ThemeProvider } from '@cennso/ui'
 
 import { Layout } from '../components/Layout'
 
 import type { AppProps } from 'next/app'
 
+import '@cennso/theme/theme.css'
 import '../styles/tailwind.css'
 
 const poppinsFont = Poppins({
@@ -56,9 +58,11 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
 
-      <Layout navigation={navigation} footerData={footerData}>
-        <Component {...rest} />
-      </Layout>
+      <ThemeProvider defaultSetting="light">
+        <Layout navigation={navigation} footerData={footerData}>
+          <Component {...rest} />
+        </Layout>
+      </ThemeProvider>
     </>
   )
 }

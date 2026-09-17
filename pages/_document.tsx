@@ -1,11 +1,17 @@
 import { Html, Head, Main, NextScript } from 'next/document'
+import { themeScript } from '@cennso/ui/theme-script'
 
 export default function Document() {
   return (
-    <Html lang="en">
+    <Html lang="en" data-theme="light" suppressHydrationWarning>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: themeScript({ defaultSetting: 'light' }),
+          }}
+        />
       </Head>
 
       <body>
