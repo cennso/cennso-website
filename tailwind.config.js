@@ -113,35 +113,28 @@ const tailwindConfig = {
       },
     },
   },
-  /**
-   * DaisyUI Configuration - Optimized for minimal CSS output
-   *
-   * Performance optimization: DaisyUI can add significant unused CSS to the bundle.
-   * This site only uses DaisyUI's mask-hexagon-2 utility (for hexagonal avatar shapes),
-   * so we disable all other DaisyUI features to reduce CSS bundle size.
-   *
-   * Optimizations:
-   * - themes: false - Disables all theme CSS (saves ~20KB)
-   * - styled: false - Disables component styling (buttons, cards, modals, etc.) (saves ~8KB)
-   * - base: false - Disables base styles since we use Tailwind's defaults
-   * - utils: true - Keeps DaisyUI utility classes (mask-hexagon-2) that we actually use
-   * - logs: false - Disables build logs for cleaner output
-   *
-   * Result: Reduces DaisyUI CSS output by ~28KB, keeping only the mask utilities
-   * we need for hexagon shapes throughout the site.
-   */
-  daisyui: {
-    themes: false, // No theme CSS
-    styled: false, // No component styles (buttons, cards, etc.)
-    base: false, // No base styles
-    utils: true, // Keep utilities (mask-hexagon-2)
-    logs: false, // Disable logs
-  },
   plugins: [
-    require('daisyui'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
     require('tailwind-scrollbar')({ nocompatible: true }),
+    // The hexagon mask, previously supplied by DaisyUI's utilities layer.
+    // DaisyUI was configured with themes/styled/base all off, so `mask` and
+    // `mask-hexagon-2` were the only two classes it contributed to this site.
+    // Copied verbatim from daisyui@4 dist/full.css, so removing the dependency
+    // changes no pixel.
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        '.mask': {
+          'mask-size': 'contain',
+          'mask-repeat': 'no-repeat',
+          'mask-position': 'center',
+        },
+        '.mask-hexagon-2': {
+          'mask-image':
+            "url(\"data:image/svg+xml,%3csvg width='200' height='182' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M64.786 181.4c-9.196 0-20.063-6.687-25.079-14.21L3.762 105.33c-5.016-8.36-5.016-20.9 0-29.259l35.945-61.86C44.723 5.851 55.59 0 64.786 0h71.055c9.196 0 20.063 6.688 25.079 14.211l35.945 61.86c4.18 8.36 4.18 20.899 0 29.258l-35.945 61.86c-4.18 8.36-15.883 14.211-25.079 14.211H64.786Z' fill='black' fill-rule='nonzero'/%3e%3c/svg%3e\")",
+        },
+      })
+    }),
     // text shadow
     plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
