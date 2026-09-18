@@ -58,36 +58,18 @@ jobs:
             });
 
             const authorizationRegex = /\[authorize it\]\((https:\/\/vercel\.com\/git\/authorize[^)\s]*)\)/i;
-            const previewRegex = /\[Preview\]\(https:\/\/[^)\s]+\.vercel\.app\)/i;
+            const latestVercelComment = comments
+              .filter((comment) => comment.user?.login === 'vercel[bot]' && comment.body)
+              .sort(
+                (a, b) =>
+                  Date.parse(b.updated_at || b.created_at || '1970-01-01T00:00:00Z') -
+                  Date.parse(a.updated_at || a.created_at || '1970-01-01T00:00:00Z'),
+              )[0];
 
-            let latestAuthorization = null;
-            let latestPreviewTimestamp = 0;
-
-            for (const comment of comments) {
-              if (comment.user?.login !== 'vercel[bot]' || !comment.body) continue;
-
-              if (previewRegex.test(comment.body)) {
-                latestPreviewTimestamp = Math.max(
-                  latestPreviewTimestamp,
-                  Date.parse(comment.updated_at || comment.created_at || '1970-01-01T00:00:00Z'),
-                );
-              }
-
-              const authorizationMatch = comment.body.match(authorizationRegex);
-              if (authorizationMatch) {
-                const timestamp = Date.parse(comment.updated_at || comment.created_at || '1970-01-01T00:00:00Z');
-                if (!latestAuthorization || timestamp > latestAuthorization.timestamp) {
-                  latestAuthorization = {
-                    timestamp,
-                    url: authorizationMatch[1],
-                  };
-                }
-              }
-            }
-
-            if (latestAuthorization && latestAuthorization.timestamp >= latestPreviewTimestamp) {
+            const authorizationMatch = latestVercelComment?.body.match(authorizationRegex);
+            if (authorizationMatch) {
               core.setFailed(
-                `Vercel preview is waiting for authorization. Open ${latestAuthorization.url}, authorize the deployment, then re-run this workflow.`,
+                `Vercel preview is waiting for authorization. Open ${authorizationMatch[1]}, authorize the deployment, then re-run this workflow.`,
               );
             }
       - name: Wait for Vercel deployment
