@@ -92,9 +92,9 @@ interface NavigationItemProps {
 /**
  * Builds the `<li>` list for a nav link's children, deferring the whole
  * interactive element to the caller. Each child is ONE element that is both the
- * link and the menu item — not a `Link` wrapping a `Menu.Item`, which would put
- * a `role="menuitem"` inside an anchor and leave navigation and menu focus owned
- * by two different nodes.
+ * link and the menu item — not a `Link` wrapping a `Menu.Item`, which would nest
+ * a menu-item role inside an anchor and leave navigation and menu focus owned by
+ * two different nodes.
  *
  * The desktop dropdown (inside `<Menu>`) uses `Menu.LinkItem`, which renders as
  * the link itself. The mobile accordion is a plain, always-in-flow `<ul>` with no
