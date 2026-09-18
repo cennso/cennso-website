@@ -50,21 +50,18 @@ jobs:
             const pr = context.payload.pull_request;
             if (!pr) return;
 
-            const comments = await github.paginate(github.rest.issues.listComments, {
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
               per_page: 100,
+              sort: 'updated',
+              direction: 'desc',
             });
 
             const authorizationRegex = /\[authorize it\]\((https:\/\/vercel\.com\/git\/authorize[^)\s]*)\)/i;
             const latestVercelComment = comments
-              .filter((comment) => comment.user?.login === 'vercel[bot]' && comment.body)
-              .sort(
-                (a, b) =>
-                  Date.parse(b.updated_at || b.created_at || '1970-01-01T00:00:00Z') -
-                  Date.parse(a.updated_at || a.created_at || '1970-01-01T00:00:00Z'),
-              )[0];
+              .filter((comment) => comment.user?.login === 'vercel[bot]' && comment.body)[0];
 
             const authorizationMatch = latestVercelComment?.body.match(authorizationRegex);
             if (authorizationMatch) {
