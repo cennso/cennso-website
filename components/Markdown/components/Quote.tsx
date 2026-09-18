@@ -37,6 +37,9 @@ export const Quote: FunctionComponent<QuoteProps> = ({
               alt=""
               width={150}
               height={118}
+              // Matches the w-24 (96px) it actually renders at, rather than the
+              // 150px intrinsic width.
+              sizes="96px"
               className="absolute -top-[8px] left-0 z-[-1] w-24 h-auto"
             />
             <blockquote className="relative z-10 font-sans font-[300] leading-[1.5] italic text-[28px] text-white border-none">
