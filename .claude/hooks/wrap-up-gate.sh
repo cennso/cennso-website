@@ -41,9 +41,18 @@ stop_active=$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/n
 latch=""
 session_id=$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null || true)
 if [ -n "$session_id" ]; then
-  latch_dir="${TMPDIR:-/tmp}/cennso-wrap-up-gate"
-  if mkdir -p "$latch_dir" 2>/dev/null; then
+  # Qualify by uid and create 0700, because the ${TMPDIR:-/tmp} fallback is
+  # world-writable on Linux: without this another user can pre-create the
+  # directory and either pre-place a latch (suppressing the gate) or leave it
+  # writable. Then refuse it unless it is a real directory, not a symlink, and
+  # owned by us — a hostile symlink here would otherwise redirect the latch.
+  latch_dir="${TMPDIR:-/tmp}/cennso-wrap-up-gate-$(id -u 2>/dev/null || echo 0)"
+  mkdir -m 700 -p "$latch_dir" 2>/dev/null
+  latch_owner=$(stat -f '%u' "$latch_dir" 2>/dev/null || stat -c '%u' "$latch_dir" 2>/dev/null || true)
+  if [ -d "$latch_dir" ] && [ ! -L "$latch_dir" ] && [ "$latch_owner" = "$(id -u 2>/dev/null)" ]; then
     latch="$latch_dir/$(printf '%s' "$session_id" | tr -c 'A-Za-z0-9_.-' '_')"
+    # Cheap short-circuit. The binding acquisition is the atomic mkdir at the
+    # emit site; this only avoids doing the diff work when we already know.
     [ -e "$latch" ] && exit 0
   fi
 fi
@@ -171,8 +180,15 @@ OTHERWISE, FINISH SILENTLY. Write nothing about this gate. Do not report that ch
 
 A checklist read out loud is not a review. The analysis is mandatory; the announcement is not."
 
-# Latch before emitting, so a crash in the review does not re-arm the gate.
-[ -n "$latch" ] && : > "$latch" 2>/dev/null
+# Acquire the latch atomically, and only now — at the one point where we have
+# decided to emit. `mkdir` either creates or fails; it is not check-then-act, so
+# two overlapping Stop hooks cannot both get through. It also never follows a
+# symlink for the final component, unlike the `: > "$latch"` this replaces.
+# Acquiring here rather than at the top is deliberate: a session that exits early
+# because nothing had changed yet must still be gated once it does change.
+if [ -n "$latch" ]; then
+  mkdir "$latch" 2>/dev/null || exit 0
+fi
 
 # Stop hooks use {decision:"block", reason} to keep the assistant going; the
 # reason is fed back as context. No systemMessage: the gate announcing itself is
