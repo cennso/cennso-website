@@ -50,18 +50,24 @@ jobs:
             const pr = context.payload.pull_request;
             if (!pr) return;
 
-            const { data: comments } = await github.rest.issues.listComments({
+            const authorizationRegex = /\[authorize it\]\((https:\/\/vercel\.com\/git\/authorize[^)\s]*)\)/i;
+            let latestVercelComment;
+            for await (const response of github.paginate.iterator(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: pr.number,
               per_page: 100,
               sort: 'updated',
               direction: 'desc',
-            });
+            })) {
+              latestVercelComment = response.data.find(
+                (comment) => comment.user?.login === 'vercel[bot]' && comment.body,
+              );
 
-            const authorizationRegex = /\[authorize it\]\((https:\/\/vercel\.com\/git\/authorize[^)\s]*)\)/i;
-            const latestVercelComment = comments
-              .filter((comment) => comment.user?.login === 'vercel[bot]' && comment.body)[0];
+              if (latestVercelComment) {
+                break;
+              }
+            }
 
             const authorizationMatch = latestVercelComment?.body.match(authorizationRegex);
             if (authorizationMatch) {
