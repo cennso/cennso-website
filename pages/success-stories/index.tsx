@@ -169,7 +169,12 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
                   key={successStory.frontmatter.title}
                   className="rounded-[32px]"
                 >
-                  <SuccessStoryItem successStory={successStory} index={index} />
+                  <SuccessStoryItem
+                    successStory={successStory}
+                    index={index}
+                    linkText={content.content.storyLinkText}
+                    linkAccessibleName={content.content.storyLinkAccessibleName}
+                  />
                 </li>
               ))}
             </ul>

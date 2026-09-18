@@ -10,11 +10,16 @@ import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
 interface SuccessStoryItemProps {
   successStory: SuccessStoryItemType
   index: number
+  linkText: string
+  /** Carries a `{title}` placeholder, replaced with this story's title. */
+  linkAccessibleName: string
 }
 
 export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
   successStory,
   index,
+  linkText,
+  linkAccessibleName,
 }) => {
   const { device } = useDeviceKind()
   const { link, frontmatter } = successStory
@@ -69,10 +74,16 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
 
           <Button
             variant={even ? 'secondary' : 'primary'}
-            render={(props) => <Link {...props} href={link} />}
+            render={(props) => (
+              <Link
+                {...props}
+                href={link}
+                aria-label={linkAccessibleName.replace('{title}', title)}
+              />
+            )}
             nativeButton={false}
           >
-            More info
+            {linkText}
           </Button>
         </div>
       </Card.Content>

@@ -9,3 +9,15 @@ content:
     - In addition, we offer comprehensive professional services like network consultancy, training, workshops, and custom development. From a single product delivery up to turnkey solutions, Cennso is the right partner for you.
   industrySelectLabel: Industries
   industrySelectPlaceholder: All Industries
+  # The trailing chevron is what production shipped, via the old Button's
+  # `useArrow`. It has to stay: without it the visible text is bare "More info",
+  # which is on Lighthouse's non-descriptive link-text blocklist, and the audit
+  # reads visible text rather than the accessible name below. Verified both ways
+  # against production. Genuinely descriptive link copy would be better than a
+  # chevron that only evades the blocklist, but that is a copy decision.
+  storyLinkText: More info >
+  # {title} is replaced with the story's own title. The visible text stays short,
+  # but the accessible name has to name the story: a page of links all reading
+  # "More info" is what Lighthouse's link-text audit flags, and it is genuinely
+  # useless to anyone listing the links with a screen reader.
+  storyLinkAccessibleName: More info about {title}

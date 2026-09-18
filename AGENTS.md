@@ -197,13 +197,14 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 - **Image optimization**: WebP format, ≤100KB, resized to display dimensions
 - **No page transitions**: Removed from `_app.tsx` for bundle size (see code comments for rationale)
 
-**Current bundle sizes**: First Load JS ~275KB, CSS ~28KB before `@cennso/ui` was
-adopted. While `@cennso/ui@0.1.2` is the pinned version, every route is ~1.15MB instead:
-its ESM barrel is a single pre-bundled module, so importing one component pulls all of
-them and no bundler can tree-shake it. This is a library defect with a fix open upstream
-(`cennso/design-system` PR #22, measured to bring routes back to ~483KB); it is not
-something this repository can fix, and the ≤500KB budget below is judged against the
-published version in use.
+**Current bundle sizes**: First Load JS ~438KB shared, 415-434KB per route, against a
+~275KB baseline before `@cennso/ui` was adopted. The design system costs roughly 150KB and
+stays inside the 500KB per-page budget below.
+
+Getting there needed an upstream fix. `@cennso/ui@0.1.2` shipped its ESM barrel as a single
+pre-bundled module, so importing one component pulled all 112 and no bundler could
+tree-shake it — every route measured ~1.15MB. Fixed in `@cennso/ui@0.2.1`
+(`cennso/design-system#22`), which emits the barrel as a module graph. Pin 0.2.1 or later.
 
 ## Quality Standards
 
