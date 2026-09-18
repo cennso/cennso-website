@@ -69,7 +69,12 @@ jobs:
               }
             }
 
-            const authorizationMatch = latestVercelComment?.body.match(authorizationRegex);
+            const isAuthorizationPrompt = /A member of the Team first needs to \[authorize it\]/i.test(
+              latestVercelComment?.body || '',
+            );
+            const authorizationMatch = isAuthorizationPrompt
+              ? latestVercelComment?.body.match(authorizationRegex)
+              : null;
             if (authorizationMatch) {
               core.setFailed(
                 `Vercel preview is waiting for authorization. Open ${authorizationMatch[1]}, authorize the deployment, then re-run this workflow.`,
