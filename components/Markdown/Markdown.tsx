@@ -177,7 +177,7 @@ export const Components: MDXRemoteProps['components'] = {
           className="text-secondary-200 hover:decoration-2 my-0"
         >
           {children}
-          <ExternalLink className="inline-block ml-0.5 h-3" />
+          <ExternalLink className="inline-block ml-0.5 h-3 w-3" />
         </a>
       )
     }

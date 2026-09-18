@@ -6,9 +6,9 @@
   `scripts/check-image-optimization.py:24` (`MAX_SIZE_BYTES = 100 * 1024`),
   required by `.specify/memory/constitution.md:259`.
 - No single page bundle over 500KB — `.specify/memory/constitution.md:241`.
-  **This budget is currently failing for every route** because of the
-  `@cennso/ui` barrel defect below; judge new findings against that baseline,
-  not against 500KB, until the upstream fix lands.
+  **Enforce this.** Routes measure 415-434KB on `@cennso/ui@0.2.1`, against a
+  ~275KB pre-adoption baseline, so there is roughly 70KB of headroom and a
+  regression is a real finding, not a pre-existing condition.
 - OG images under 300KB — `.specify/memory/constitution.md:255`, validated by
   `yarn validate:ogimages`.
 - Lighthouse at or above 95 on all four categories, audited on `/`,
@@ -39,16 +39,12 @@
    Do not suggest "import `Linkedin` from `lucide-react`" as a fix for this
    file — that import does not exist and would break the build.
 
-3. **The bundle-size defect is upstream, not this diff's fault.** Every route
-   is ~1.15MB instead of the pre-`@cennso/ui` ~275KB First Load JS, because
-   `@cennso/ui@0.1.2` ships a single pre-bundled ESM barrel that no bundler can
-   tree-shake — importing one component pulls all of them
-   (`AGENTS.md:199-206`). A fix is open upstream as `cennso/design-system`
-   PR #22, measured to bring routes back to ~483KB. Do not report the ~1.15MB
-   figure as caused by a diff that merely adds one more `@cennso/ui` import —
-   the number was already ~1.15MB before that import, and there is no
-   consumer-side workaround: the package exports no per-component subpaths to
-   import from instead.
+3. **The `@cennso/ui` barrel defect is FIXED — do not carry it forward.**
+   `@cennso/ui@0.1.2` shipped a single pre-bundled ESM barrel that no bundler
+   could tree-shake, so importing one component pulled all 112 and every route
+   measured ~1.15MB. `@cennso/ui@0.2.1` emits the barrel as a module graph
+   (`cennso/design-system#22`) and routes are back to 415-434KB. Pin 0.2.1 or
+   later. If a diff pins an older `@cennso/ui`, that is itself the finding.
 
 4. **The Equinix image is a known pre-existing failure.**
    `public/assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp`

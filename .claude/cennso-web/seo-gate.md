@@ -45,9 +45,10 @@ it; do report it under `unverifiable` when reviewing a page that renders PageHea
 
 ## The rule that fails a build
 
-`scripts/check-navigable.py:161-170` requires the literal string `<SEO ` in every
-file under `pages/`. A page that renders metadata any other way fails with an
-ERROR, not a warning. Treat the removal of a `<SEO ` call from a page as critical.
+`scripts/check-navigable.py:161-170` matches the regex `<SEO\s` — `<SEO` followed
+by any whitespace — in every file under `pages/`, excluding `pages/api/`. A page
+that renders metadata any other way fails with an ERROR, not a warning. Treat the
+removal of a `<SEO` call from a page as critical.
 
 ## Commands
 

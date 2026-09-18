@@ -81,7 +81,6 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
                 aria-label={linkAccessibleName.replace('{title}', title)}
               />
             )}
-            nativeButton={false}
           >
             {linkText}
           </Button>

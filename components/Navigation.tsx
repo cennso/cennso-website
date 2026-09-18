@@ -90,48 +90,55 @@ interface NavigationItemProps {
 }
 
 /**
- * Builds the `<li><Link>...</Link></li>` list for a nav link's children,
- * deferring only the innermost leaf element to the caller. The desktop
- * dropdown (inside `<Menu>`) and the mobile inline accordion (a plain,
- * always-in-flow `<ul>` with no `Menu.Root` ancestor) render the same
- * children with different leaves: `Menu.Item` requires a `Menu.Root`
- * ancestor, which the mobile accordion never has, so it must not be used
- * there. `renderLeaf` keeps the `className` strings byte-identical across
- * both call sites.
+ * Builds the `<li>` list for a nav link's children, deferring the whole
+ * interactive element to the caller. Each child is ONE element that is both the
+ * link and the menu item — not a `Link` wrapping a `Menu.Item`, which would put
+ * a `role="menuitem"` inside an anchor and leave navigation and menu focus owned
+ * by two different nodes.
+ *
+ * The desktop dropdown (inside `<Menu>`) uses `Menu.LinkItem`, which renders as
+ * the link itself. The mobile accordion is a plain, always-in-flow `<ul>` with no
+ * `Menu.Root` ancestor, so it uses a plain `Link`: anything `Menu.*` requires a
+ * root it never has, and a disclosure list of links wants link semantics anyway.
+ * `renderLeaf` keeps the `className` strings byte-identical across both.
  */
 function buildChildItems(
   link: NavigationLink,
   asPath: string,
   toggleOpen: () => void,
-  renderLeaf: (className: string, content: ReactNode) => ReactNode
+  renderLeaf: (props: {
+    className: string
+    href: string
+    onClick: () => void
+    target?: string
+    children: ReactNode
+  }) => ReactNode
 ): ReactNode[] {
   const items = (link.children ?? []).map((child) => (
     <li key={child.link}>
-      <Link
-        href={child.link}
-        onClick={() => toggleOpen()}
-        target={child.target}
-      >
-        {renderLeaf(
-          `flex items-center gap-3 text-[#185F99] lg:text-white hover:text-secondary-200 hover:!bg-[#185F99] lg:hover:!text-secondary-200 rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
-            asPath.startsWith(child.link)
-              ? 'text-secondary-200 !bg-[#185F99] lg:!text-secondary-200 lg:rounded-[32px]'
-              : ''
-          }`,
-          child.title
-        )}
-      </Link>
+      {renderLeaf({
+        className: `flex items-center gap-3 text-[#185F99] lg:text-white hover:text-secondary-200 hover:!bg-[#185F99] lg:hover:!text-secondary-200 rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
+          asPath.startsWith(child.link)
+            ? 'text-secondary-200 !bg-[#185F99] lg:!text-secondary-200 lg:rounded-[32px]'
+            : ''
+        }`,
+        href: child.link,
+        onClick: () => toggleOpen(),
+        target: child.target,
+        children: child.title,
+      })}
     </li>
   ))
 
   items.push(
     <li key="show-all" className="block lg:hidden">
-      <Link href={link.link} onClick={() => toggleOpen()} target={link.target}>
-        {renderLeaf(
-          `flex items-center gap-3 text-[#185F99] hover:text-secondary-200 hover:!bg-[#185F99] rounded-none font-normal`,
-          'Show all...'
-        )}
-      </Link>
+      {renderLeaf({
+        className: `flex items-center gap-3 text-[#185F99] hover:text-secondary-200 hover:!bg-[#185F99] rounded-none font-normal`,
+        href: link.link,
+        onClick: () => toggleOpen(),
+        target: link.target,
+        children: 'Show all...',
+      })}
     </li>
   )
 
@@ -170,24 +177,39 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
   )
 
   if (link.children) {
-    // Menu.Item is Base UI-backed and requires a Menu.Root ancestor
-    // (roving tabindex, typeahead, MenuRootContext). The desktop dropdown
-    // has one; the mobile accordion below is a plain, always-in-flow <ul>
-    // and never has (and must not get) one. Build the leaf twice instead.
+    // Menu.LinkItem renders AS the link, so one element owns both navigation and
+    // menu semantics. It also needs a Menu.Root ancestor, which the desktop
+    // dropdown has and the mobile accordion below never has (and must not get) —
+    // hence the leaf is built twice. closeOnClick is explicit because
+    // Menu.LinkItem defaults it to false, and a nav menu that stays open after
+    // you pick a destination is a bug.
     const desktopItems = buildChildItems(
       link,
       asPath,
       toggleOpen,
-      (className, itemContent) => (
-        <Menu.Item className={className}>{itemContent}</Menu.Item>
+      ({ className, href, onClick, target, children }) => (
+        <Menu.LinkItem
+          closeOnClick
+          className={className}
+          render={<Link href={href} onClick={onClick} target={target} />}
+        >
+          {children}
+        </Menu.LinkItem>
       )
     )
     const mobileItems = buildChildItems(
       link,
       asPath,
       toggleOpen,
-      (className, itemContent) => (
-        <span className={className}>{itemContent}</span>
+      ({ className, href, onClick, target, children }) => (
+        <Link
+          className={className}
+          href={href}
+          onClick={onClick}
+          target={target}
+        >
+          {children}
+        </Link>
       )
     )
 

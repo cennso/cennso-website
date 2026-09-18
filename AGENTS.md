@@ -224,7 +224,7 @@ All code changes must comply with constitution principles:
   - Images: WebP format, ≤100KB each (validated by `yarn perf:images`)
   - CSS: only the two hexagon mask utilities are hand-defined; there is no component CSS framework
   - JavaScript: Code-split heavy dependencies (framer-motion dynamically imported, ~60KB saved)
-  - Total bundle size: First Load JS ~275KB (down from 339KB), CSS ~28KB (down from 33.5KB)
+  - Total bundle size: First Load JS ~438KB shared / 415-434KB per route on `@cennso/ui@0.2.1`, against a ~275KB pre-adoption baseline; budget stays 500KB per page
   - **Next.js Image `sizes` prop**: REQUIRED on all `<Image>` components for responsive optimization
     - Fixed size: `sizes="150px"` (avatars, icons)
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)

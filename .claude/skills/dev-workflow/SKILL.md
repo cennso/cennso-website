@@ -151,8 +151,16 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   pairing, check it by hand rather than trusting a green `a11y:contrast`.
 - **Lighthouse ≥95% on all four categories** (Performance, Accessibility, Best
   Practices, SEO). Verify anything that could affect rendering weight, images,
-  bundle size, or metadata: `yarn dev` in one terminal, `yarn lighthouse` in
-  another. If you did not run it, say so explicitly rather than implying it passed.
+  bundle size, or metadata. If you did not run it, say so explicitly rather than
+  implying it passed.
+- **Audit a production build. `yarn dev` + `yarn lighthouse` is an informal smell
+  test only, and its numbers are not comparable to CI's.** A dev build is not what
+  CI measures — one session read Performance 0.57 off `yarn dev` and reported a
+  catastrophic regression that did not exist; the same commit scored 0.93 on a
+  production build. Starting `yarn dev` also wipes the `.next` a build just
+  produced. The authoritative local procedure is a fresh `yarn build`, then
+  `yarn next start -p <port>`, then `yarn lhci autorun` with a config that
+  requires `./lighthouse.desktop.base.js` and overrides `ci.collect.url`.
 - **The ≥95 gate is a CI gate, not a local one — locally it fails on `main`.**
   Measured on `upstream/main` with the repo's own desktop config: Performance
   0.90-0.93, Accessibility 0.96-0.98, Best Practices **0.92**, SEO 1.00. Two audits
@@ -166,10 +174,11 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 - **`yarn lighthouse` hardcodes `localhost:3000`** (`lighthouse.urls.js`). Another
   project's dev server on that port means you silently audit the wrong app. Check
   with `lsof -ti:3000` first, and never kill what you find — it belongs to another
-  session. To audit elsewhere, `npx next start -p <port>` against a fresh `yarn
-  build` and run `npx lhci autorun` with a config that overrides `ci.collect.url`.
-  Audit the production server, not `yarn dev`: dev builds are not what CI measures,
-  and starting `yarn dev` wipes the `.next` your build just produced.
+  session. Audit on another port instead, with the production procedure above.
+  Prefer `yarn next start` and `yarn lhci` over the `npx` forms: both packages are
+  declared dependencies, and bare `npx` silently fetches and executes from the
+  registry when the local binary is missing, which is not something an audit step
+  should ever do. If you must use `npx`, pass `--no-install`.
 - **Verifying responsive layout: do not trust a narrow screenshot.** Launching a
   headless browser with `--window-size=390,…` and no mobile emulation lays the
   page out differently from a real phone, and reading overflow off that image

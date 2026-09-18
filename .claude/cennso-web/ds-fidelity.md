@@ -4,7 +4,7 @@
 
 Next.js 15.5.25, Pages Router (not App Router), React 19.3.0, TypeScript
 strict mode, Tailwind 3 with `@cennso/theme/tailwind-preset`
-(`tailwind.config.js:2,38`), `@cennso/ui@0.1.2` + `@cennso/theme@0.1.2`
+(`tailwind.config.js:2,38`), `@cennso/ui@0.2.1` + `@cennso/theme@0.2.1`
 (`package.json`), `lucide-react` as the only icon set.
 
 ## Deliberately removed — must not come back

@@ -98,7 +98,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
                       <a href={company.website} target="_blank" rel="noopener">
                         <strong className="inline-flex flex-row items-center gap-0.5 font-semibold hover:underline">
                           <span>{company.name}</span>
-                          <LinkIcon className="w-4" />
+                          <LinkIcon className="w-4 h-4" />
                         </strong>
                       </a>
                     </span>
