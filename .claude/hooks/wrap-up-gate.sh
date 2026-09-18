@@ -18,6 +18,15 @@
 # - Allows the stop silently only when nothing relevant changed.
 # - Reads stop_hook_active to avoid an infinite stop loop: once we've blocked once
 #   in a stop-continuation chain, the next stop passes (the gate costs one pass).
+# - Fires ONCE PER SESSION, via a latch keyed on session_id under TMPDIR.
+#   stop_hook_active alone is not enough: it guards a single stop-continuation
+#   chain and resets on the next user turn, so on a branch with committed work the
+#   gate re-fired on EVERY turn for the rest of the session, charging a full review
+#   for turns that changed nothing. The latch fails open — no session_id, or an
+#   unwritable TMPDIR, and the gate behaves exactly as before.
+# - The review REPORTS ONLY WHEN THERE IS SOMETHING TO SAY. A clean review ends in
+#   silence. Announcing that everything is fine trains the reader to skim the one
+#   time it is not.
 
 set -u
 
@@ -26,6 +35,27 @@ set -u
 input=$(cat 2>/dev/null || true)
 stop_active=$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null || echo false)
 [ "$stop_active" = "true" ] && exit 0
+
+# Fire at most once per session. Fails open: if anything here does not work we
+# simply do not latch, and the gate keeps its old every-turn behaviour.
+latch=""
+session_id=$(printf '%s' "$input" | jq -r '.session_id // empty' 2>/dev/null || true)
+if [ -n "$session_id" ]; then
+  # Qualify by uid and create 0700, because the ${TMPDIR:-/tmp} fallback is
+  # world-writable on Linux: without this another user can pre-create the
+  # directory and either pre-place a latch (suppressing the gate) or leave it
+  # writable. Then refuse it unless it is a real directory, not a symlink, and
+  # owned by us — a hostile symlink here would otherwise redirect the latch.
+  latch_dir="${TMPDIR:-/tmp}/cennso-wrap-up-gate-$(id -u 2>/dev/null || echo 0)"
+  mkdir -m 700 -p "$latch_dir" 2>/dev/null
+  latch_owner=$(stat -f '%u' "$latch_dir" 2>/dev/null || stat -c '%u' "$latch_dir" 2>/dev/null || true)
+  if [ -d "$latch_dir" ] && [ ! -L "$latch_dir" ] && [ "$latch_owner" = "$(id -u 2>/dev/null)" ]; then
+    latch="$latch_dir/$(printf '%s' "$session_id" | tr -c 'A-Za-z0-9_.-' '_')"
+    # Cheap short-circuit. The binding acquisition is the atomic mkdir at the
+    # emit site; this only avoids doing the diff work when we already know.
+    [ -e "$latch" ] && exit 0
+  fi
+fi
 
 project=$(cd "$(dirname "$0")/../.." 2>/dev/null && pwd)
 [ -z "$project" ] && exit 0
@@ -138,8 +168,32 @@ Did the diff above, OR anything you learned THIS session (a recurring failure, a
 - .github/workflows/ — CI/CD and supply-chain pinning
 - AGENTS.md / CLAUDE.md — rules + pointers
 
-Then report the result in ONE sentence — no heading, no bullet list: name what you updated and state the rest are unaffected, and ALWAYS include an explicit automation verdict (a skill/hook/workflow was updated, or all unaffected) so it is never silently dropped (e.g. \`Checks: yarn check:all passed; docs: AGENTS.md updated; automation: dev-workflow skill updated; others unaffected.\`). The analysis must be real; only the written summary is compressed to that one sentence. You may finish once you have emitted it."
+Do the analysis in full. Then decide whether it is worth saying anything at all.
+
+SPEAK ONLY IF THERE IS SOMETHING TO ACT ON. That means exactly one of:
+- you changed something as a result of this review (name the file and what changed), or
+- something is wrong or unverified and the user needs to know (name it, and say plainly whether you fixed it, could not fix it, or chose not to).
+
+Say it in one or two short sentences, in your own words, as part of your normal reply.
+
+OTHERWISE, FINISH SILENTLY. Write nothing about this gate. Do not report that checks passed, do not list what is unaffected, do not confirm which files you examined, do not state that nothing changed, and do not mention the gate, the review, or these categories at all. A clean review produces NO text. Silence is what 'clean' looks like — and it is what makes the noisy case legible.
+
+A checklist read out loud is not a review. The analysis is mandatory; the announcement is not."
+
+# Acquire the latch atomically, and only now — at the one point where we have
+# decided to emit. `mkdir` either creates or fails; it is not check-then-act, so
+# two overlapping Stop hooks cannot both get through. It also never follows a
+# symlink for the final component, unlike the `: > "$latch"` this replaces.
+# Acquiring here rather than at the top is deliberate: a session that exits early
+# because nothing had changed yet must still be gated once it does change.
+if [ -n "$latch" ]; then
+  mkdir "$latch" 2>/dev/null || exit 0
+fi
 
 # Stop hooks use {decision:"block", reason} to keep the assistant going; the
-# reason is fed back as context. systemMessage surfaces the gate to the user.
-jq -n --arg r "$reason" '{ decision: "block", reason: $r, systemMessage: "Wrap-up gate: reviewing quality checks, docs, and .claude/.github automation before finishing." }'
+# reason is fed back as context. No systemMessage: the gate announcing itself is
+# the same noise the reason block now forbids, and a clean review should leave no
+# trace at all. When there IS something to report, the assistant says so in its
+# own reply, which is where the user is already reading.
+
+jq -n --arg r "$reason" '{ decision: "block", reason: $r }'
