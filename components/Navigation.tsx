@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Menu } from '@cennso/ui'
+import { Menu, ThemeToggle } from '@cennso/ui'
 import { ChevronDown } from 'lucide-react'
 
 import { Button } from './common'
@@ -58,6 +58,9 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
                 />
               </li>
             ))}
+            <li className="mt-4 xl:mt-0 font-normal">
+              <ThemeToggle variant="dropdown" />
+            </li>
             <li className="mt-4 xl:mt-0 font-normal">
               <Link href={metadata.explore.cloudPortal} target="_blank">
                 <Button
