@@ -28,7 +28,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
     footerData || defaultFooterData
 
   return (
-    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-secondary-600 px-8 lg:px-4 font-light">
+    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-light">
       <footer className="relative flex flex-col xl:flex-row justify-between 2xl:justify-between w-full max-w-screen-2xl pt-4 pb-8 gap-8 2xl:gap-32">
         <div className="flex flex-col order-last xl:order-none mt-0 2xl:mt-2">
           <Logo className="w-44 fill-white" />

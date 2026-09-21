@@ -27,11 +27,11 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
   useClickOutside(menuRef, () => setIsOpen(false))
 
   return (
-    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white border-none shadow-lg px-8 lg:px-4">
+    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-background border-none shadow-lg px-8 lg:px-4">
       <nav className="flex flex-row items-center justify-between w-full max-w-screen-2xl py-2">
         <div className="flex-none flex flex-row mr-12">
           <Link title="Home page" href="/">
-            <Logo className="w-44 fill-[#185f99]" />
+            <Logo className="w-44 fill-primary" />
           </Link>
         </div>
 
@@ -45,7 +45,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
               isOpen
                 ? 'opacity-100'
                 : 'opacity-0 -translate-y-[calc(100%+4.5rem)] xl:opacity-100 xl:translate-y-0'
-            } w-full h-auto shadow-2xl xl:shadow-none shadow-primary-400 px-8 py-4 xl:p-0 bg-white xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
+            } w-full h-auto shadow-2xl xl:shadow-none shadow-primary/40 px-8 py-4 xl:p-0 bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
           >
             {navigation.map((link) => (
               <li
@@ -120,9 +120,9 @@ function buildChildItems(
   const items = (link.children ?? []).map((child) => (
     <li key={child.link}>
       {renderLeaf({
-        className: `flex items-center gap-3 text-[#185F99] lg:text-white hover:text-secondary-200 hover:!bg-[#185F99] lg:hover:!text-secondary-200 rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
+        className: `flex items-center gap-3 text-foreground hover:!text-primary-foreground hover:!bg-primary rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
           asPath.startsWith(child.link)
-            ? 'text-secondary-200 !bg-[#185F99] lg:!text-secondary-200 lg:rounded-[32px]'
+            ? '!text-primary-foreground !bg-primary lg:rounded-[32px]'
             : ''
         }`,
         href: child.link,
@@ -136,7 +136,7 @@ function buildChildItems(
   items.push(
     <li key="show-all" className="block lg:hidden">
       {renderLeaf({
-        className: `flex items-center gap-3 text-[#185F99] hover:text-secondary-200 hover:!bg-[#185F99] rounded-none font-normal`,
+        className: `flex items-center gap-3 text-foreground hover:!text-primary-foreground hover:!bg-primary rounded-none font-normal`,
         href: link.link,
         onClick: () => toggleOpen(),
         target: link.target,
@@ -159,10 +159,10 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
   const content = (
     <Link
       href={link.link}
-      className={`block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-primary-400 xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
+      className={`block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-border xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
         asPath.startsWith(link.link)
-          ? 'bg-[#185F99] text-white'
-          : 'hover:bg-[#185F99] hover:text-shadow-primary text-[#185F99] hover:text-white'
+          ? 'text-primary underline underline-offset-4'
+          : 'text-foreground hover:text-primary hover:text-shadow-primary'
       } xl:rounded-full text-lg font-medium font-sans`}
       onClick={() => toggleOpen()}
       target={link.target}
@@ -242,7 +242,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
             <Menu.Content
               side="bottom"
               sideOffset={10}
-              className="hidden max-w-screen-xl rounded-[32px] lg:block bg-[#185F99] shadow-none border-[#185F99] filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"
+              className="hidden max-w-screen-xl rounded-[32px] lg:block bg-card shadow-none border-border filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"
             >
               <ul className="flex flex-col gap-0 outline-none outline-0">
                 {desktopItems}
@@ -252,11 +252,11 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
         </div>
         <div className="block lg:hidden">
           <div
-            className={`block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-primary-400 xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
+            className={`block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-border xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
               asPath.startsWith(link.link)
-                ? 'bg-[#185F99] text-secondary-200'
-                : 'hover:bg-[#185F99] hover:text-shadow-primary hover:text-secondary-200'
-            } xl:rounded-full text-[#185F99] text-base text-lg font-medium cursor-pointer`}
+                ? 'text-primary underline underline-offset-4'
+                : 'text-foreground hover:text-primary hover:text-shadow-primary'
+            } xl:rounded-full text-base text-lg font-medium cursor-pointer`}
             onClick={() => setIsMobileMenuOpen((cur) => !cur)}
           >
             {link.title}
