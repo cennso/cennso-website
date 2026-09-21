@@ -31,7 +31,16 @@
 
 html,
 body {
-  color: #003b6b;
+  /* Was a hardcoded #003b6b (a light-mode navy). Every piece of text that
+     doesn't set its own colour inherits from here, and this stylesheet is
+     imported after @cennso/theme/theme.css so it wins the cascade - in dark
+     mode that hardcoded navy was being inherited verbatim, producing
+     near-invisible text against dark surfaces (e.g. the success-stories
+     industry filter's placeholder). @cennso/theme's own stylesheet defines
+     --foreground but never applies it to html/body, so this has to be the
+     one place that does. Token-driven: resolves to the same family of slate
+     in light mode and white in dark. */
+  color: hsl(var(--foreground));
   font-family:
     inherit,
     'Poppins',
