@@ -18,13 +18,6 @@ const colors = {
     400: '#0b4468',
     600: '#0b3956',
   },
-  // The site footer is drawn dark in both the light and dark palette, so it
-  // cannot use the preset's own `footer` key, which is var(--footer)-backed and
-  // flips to a pale surface under [data-theme="light"]. This entry, being a
-  // plain string, wins the merge over the preset's object for the same key and
-  // gives Footer.tsx a `bg-footer` that never tracks the page theme. Value is
-  // lifted directly from the Design 4.0 footer frame (Figma node 1:7579).
-  footer: '#0d406a',
   gray: {
     50: '#F7F9FA',
     100: '#F0F4F5',

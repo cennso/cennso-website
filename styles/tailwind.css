@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* The footer band is drawn as one fixed dark surface in both palettes, not a
+   surface that switches per theme, so --footer is pinned here to a single
+   triplet rather than left to flip with the light/dark blocks that
+   @cennso/theme's own theme.css declares for it (imported in _app.tsx before
+   this file). A bare :root selector, with no [data-theme] qualifier, matches
+   the document root regardless of which theme attribute is present, and this
+   file loads after theme.css, so this declaration wins the cascade over both
+   of the preset's own :root/[data-theme="dark"] and [data-theme="light"]
+   blocks for that one custom property - bg-footer keeps working as an
+   ordinary token, it just no longer varies. HSL triplet computed exactly from
+   the Design 4.0 footer frame's colour (Figma node 1:7579, hex #0d406a); the
+   preset's own dark footer value is close (roughly the same hex family) but
+   not equal, so it was not reusable as-is. */
+:root {
+  --footer: 207.1 78.2% 23.3%;
+}
+
 ::-moz-selection {
   color: white;
   background: #448dc8;
