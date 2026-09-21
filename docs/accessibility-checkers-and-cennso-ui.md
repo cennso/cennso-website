@@ -52,7 +52,7 @@ answers is what each checker did, or failed to do, with what it found inside.
 | `check-input-modalities.py` | `.tsx` source. `check_label_in_name` (SC 2.5.3, lines 199–270) matches literal `<[Bb]utton...aria-label=...>` and `<input...aria-label=...>` paired with a `<label for=...>`. | unchanged | Probe file counted (58→59), no findings. The regex requires the literal substring `utton` or `input`, not a loose case-insensitive prefix the way `check-input-assistance.py`'s does — `Select`/`Select.Trigger` doesn't collide with it. No aria-label is present on anything in the probe either, so the check has nothing to compare even if the tag matched. | N/A for this probe; would need re-verification for a `Button`/`Input` consumed from `@cennso/ui` with a mismatched visible/aria label, which is a different scenario than this task tested. |
 | `check-readable.py` | `.tsx` source, but `check_language_of_page` (SC 3.1.1) is gated to `_document.tsx` only: `if '_document.tsx' not in str(file_path): return issues` at `check-readable.py:96`. | unchanged | Probe file counted (60→61), no findings. This checker is gated to a single file (`_document.tsx`) unrelated to component markup; `@cennso/ui` adoption in `components/` or `pages/` doesn't touch its scanning surface at all. | N/A |
 | `check-predictable.py` | `.tsx` source, on-focus context-change patterns such as `r'onFocus\s*=\s*\{[^}]*(?:window\.location\|router\.push\|navigate\()'` at `check-predictable.py:78-83`, plus on-input and navigation-consistency checks elsewhere in the file. | unchanged | File count changed (127→128), no new issues. Nothing in the probe matches its on-focus/on-input/nav-consistency heuristics. | N/A |
-| `check-input-assistance.py` | `.tsx` source, `find_labelled_inputs` (lines 65–72), regex `<(input\|select\|textarea)[^>]*>` case-insensitive, checking for `id`+matching `<label for>`, `aria-label`, or `aria-labelledby`. | **false positive** | Newly exit 1, 4 new "SC 3.3.2 — Form control missing associated label" issues at `CennsoProbe.tsx:32` (`<Select items={options}>`), `:33` (`<Select.Trigger placeholder={selectLabel} />`), `:34` (`<Select.Content>`), `:36` (`<Select.Item key={option.value} value={option.value}>`). This is *not* the checker understanding `@cennso/ui`'s `Select` — `re.IGNORECASE` on the pattern `<select[^>]*>` matches any tag whose name starts with `select` case-insensitively followed by any non-`>` characters, so it coincidentally also matches `Select.Trigger`, `Select.Content`, and `Select.Item`, none of which are form controls in their own right (`Select.Content` is a popup wrapper, `Select.Item` is a single option). Only one real form control exists in the probe (the `Select` as a whole) and it genuinely does lack an accessible name (`placeholder` alone is not one, matching the checker's own stated purpose) — but the checker reports the same defect four times, three of them against elements that are not controls at all, and would just as easily miss the identical defect on a component renamed `Dropdown` or `Combobox`, or falsely fire on an unrelated component whose name happens to start with "select" (e.g., a `SelectedItemsList`). | This is the one checker that both under- and over-fires by accident and needs a real fix, not a tolerance adjustment: teach it the compound-component shape (only the root/trigger element carries the accessible name) or, better, re-point at rendered HTML where the ARIA combobox pattern's actual accessible-name computation can be tested against the DOM instead of guessed from tag-name substrings. |
+| `check-input-assistance.py` | `.tsx` source, `find_labelled_inputs` (lines 65–72), regex `<(input\|select\|textarea)[^>]*>` case-insensitive, checking for `id`+matching `<label for>`, `aria-label`, or `aria-labelledby`. | **false positive** — SINCE FIXED, see Decision | Newly exit 1, 4 new "SC 3.3.2 — Form control missing associated label" issues at `CennsoProbe.tsx:32` (`<Select items={options}>`), `:33` (`<Select.Trigger placeholder={selectLabel} />`), `:34` (`<Select.Content>`), `:36` (`<Select.Item key={option.value} value={option.value}>`). This is *not* the checker understanding `@cennso/ui`'s `Select` — `re.IGNORECASE` on the pattern `<select[^>]*>` matches any tag whose name starts with `select` case-insensitively followed by any non-`>` characters, so it coincidentally also matches `Select.Trigger`, `Select.Content`, and `Select.Item`, none of which are form controls in their own right (`Select.Content` is a popup wrapper, `Select.Item` is a single option). Only one real form control exists in the probe (the `Select` as a whole) and it genuinely does lack an accessible name (`placeholder` alone is not one, matching the checker's own stated purpose) — but the checker reports the same defect four times, three of them against elements that are not controls at all, and would just as easily miss the identical defect on a component renamed `Dropdown` or `Combobox`, or falsely fire on an unrelated component whose name happens to start with "select" (e.g., a `SelectedItemsList`). | This is the one checker that both under- and over-fires by accident and needs a real fix, not a tolerance adjustment: teach it the compound-component shape (only the root/trigger element carries the accessible name) or, better, re-point at rendered HTML where the ARIA combobox pattern's actual accessible-name computation can be tested against the DOM instead of guessed from tag-name substrings. |
 | `check-compatible.py` | `.tsx` source; bails out entirely at line 482 (`if not re.search(r'<[a-z]', content): return []`) for any file with no lowercase JSX tag. Also skips `components/common/*` outright (line 91). | **blind** | File count changed (127→128), zero new issues — but that's because the file was never actually inspected: verified directly (Step 5) — `sed -n '478,486p' scripts/check-compatible.py` shows the exact guard, and `python3 -c "print(bool(re.search(r'<[a-z]', open('components/CennsoProbe.tsx').read())))"` printed `False`. All six of this checker's WCAG 4.1.2 (Name, Role, Value)/4.1.3 (Status Messages) checks — missing accessible names on interactive elements, ARIA-attribute/role mismatches, ARIA role-hierarchy violations, `aria-hidden` on focusable elements, nested interactive elements, missing live-region markup for dynamic content — are skipped for **any** file whose entire markup is `@cennso/ui` components, silently, with no output indicating the file was skipped rather than passed. | Drop the lowercase-tag heuristic (it exists to dodge TS generics like `<ButtonProps>`, which a smarter check — requiring a following space/`>`/`/` as line 88's `interactive_pattern` already does — handles without needing to skip the whole file) or re-point at rendered HTML, where every element is a real lowercase DOM tag regardless of source markup. |
 | `check-autocomplete.py` | `.tsx` source, the attribute itself rather than a tag name: `pattern = re.compile(r'auto[Cc]omplete\s*=\s*["\']([^"\']+)["\']', re.IGNORECASE)` at `check-autocomplete.py:125`. | unchanged | File count changed (112→113), no findings. The probe has no `autoComplete`/`autocomplete` attribute anywhere; this checker validates attribute *values*, not which tag carries the attribute, so it isn't sensitive to `Select` vs `select` at all. | N/A |
 
@@ -96,6 +96,13 @@ failing or printing that anything was skipped:
 
 ## What would produce a false positive
 
+> **Status.** The `check-input-assistance.py` false positive described below was
+> fixed after this document was written: `re.IGNORECASE` was removed from the three
+> element-name patterns, so `<Select>` is no longer mistaken for `<select>`. The
+> analysis is kept because it is the evidence that motivated the fix, and because
+> the two **latent** false positives named here are still armed. See the Decision
+> section for the current verdict.
+
 - **`check-input-assistance.py`** newly fails (exit 1) on the probe, and this
   is a genuine false positive on markup that WCAG does not require to change,
   not a real defect the checker happened to stumble onto. Its
@@ -135,78 +142,66 @@ failing or printing that anything was skipped:
 
 ## Decision
 
+> **Superseded — read this first.** This section originally read *"the answer is
+> bad: the named fallback applies; phase 4 waits."* That verdict rested entirely
+> on one false positive, and that false positive has since been fixed and merged.
+> The decision is now **proceed**. The original reasoning is kept below the line
+> because it is why the fix happened, and because the blind checkers it describes
+> are still blind.
+
+**The answer is acceptable: phase 4 may proceed.** Checkers go blind, but none
+produces a false positive on correct markup any more.
+
+`check-input-assistance.py` was the sole trigger for the fallback branch. Its
+`input_pattern` matched `<(input|select|textarea)` with `re.IGNORECASE`, which in
+JSX is not a harmless widening: a lowercase tag IS the HTML element and a
+capitalised one IS a component, so case is the entire distinction. Every part of
+a compound dropdown matched — `<Select>`, `<Select.Trigger>`, `<Select.Content>`,
+`<Select.Item>` — and three of those are not form controls at all. Case
+sensitivity was restored on the three element-name patterns; attribute patterns
+keep `IGNORECASE`, because HTML attribute names genuinely are case-insensitive.
+The obsolete skip for `components/common/Select.tsx`, which only ever worked
+around this bug, went with it.
+
+That was verified in both directions before it shipped: a throwaway file holding
+unlabelled `<input>`, `<select>`, `<textarea>` and a `<form>` is still reported on
+every one of them, and the real tree reports zero. No assertion was lost.
+
+**What phase 4 inherits, and must not forget.**
+
+Four checkers remain blind on `@cennso/ui` markup — `check-text-alternatives`,
+`check-semantic-structure`, `check-navigable` and `check-compatible`. A green
+`yarn a11y` is therefore **not** evidence about heading hierarchy, alt text or
+ARIA roles on a page built from the library. Those assertions now rest on
+Lighthouse's axe-based accessibility audit and on the four validators that already
+read `.next/server/pages/**/*.html`. Any finding in those areas belongs in
+`unverifiable` rather than being waved through.
+
+Two latent false positives are still armed and will fire the moment the shell is
+restructured, which is precisely what phase 4 does:
+`check-semantic-structure.py:223-262` requires the literal `<main`, `<nav` and
+`<footer` in `Layout.tsx`, `Navigation.tsx` and `Footer.tsx`, and
+`check-navigable.py:161-170` requires the literal `<SEO` followed by whitespace in
+every file under `pages/`, excluding `pages/api/`. Neither is triggered by a
+component in `components/`; both are waiting.
+
+A third hazard, learned the hard way three times during phase 2: **these checkers
+read source as text and do not skip comments.** A `role="menuitem"` written inside
+a JSDoc comment failed `check-compatible`, and the word "flash" inside a comment
+failed `check-seizures`. Prose about markup is indistinguishable from markup to a
+regex.
+
+**The re-pointing work is still worth doing — it is just no longer blocking.**
+Moving the four blind checkers to rendered HTML, following the pattern
+`validate-seo.py:115` already uses, is the repair that actually restores their
+assertions rather than teaching fifteen regex sets a component vocabulary that
+changes with every library release. It remains its own spec and its own pull
+request. What changed is that phase 4 no longer waits for it.
+
+---
+
+*Original verdict, superseded above, retained for the record:*
+
 **The answer is bad: the named fallback applies. Task 7 still runs; phase 4
 waits for the re-pointing work.**
 
-The brief's Step 7 gives exactly two outcomes. Proceed only holds if checkers
-go blind but *none* produces a false positive on correct markup. That
-condition is false: `check-input-assistance.py` produces a false positive on
-markup that is, or can trivially be made, fully correct — verified above by
-adding a real `aria-label` to the `Select` and its `Trigger` and observing the
-checker still fail on `Select.Content` and `Select.Item`. A Level A criterion
-(SC 3.3.2) failing on compliant markup is precisely the case the brief calls
-"bad," so the named fallback applies, not the "proceed" branch.
-
-**The fallback: re-point the affected checkers at rendered HTML.** Following
-the pattern `validate-seo.py:115` already uses to read
-`.next/server/pages/**/*.html` instead of `.tsx` source, the following five
-checkers need to move to reading rendered output rather than have their regex
-sets taught `@cennso/ui`'s vocabulary (a repair that would need to be redone
-for every future component the library ships, and would still only be reading
-source, never the actual accessible-name computation a screen reader
-performs):
-
-- `check-input-assistance.py` — the false positive that forces this decision.
-  Re-pointing lets it test the ARIA combobox pattern's real accessible-name
-  computation against the DOM instead of guessing from tag-name substrings,
-  which fixes both the over-firing on `Select.Content`/`Select.Item` and the
-  brittleness that would let the identical real defect through on a
-  differently-named or differently-aliased component.
-- `check-text-alternatives.py` — recovers alt-text verification for any image
-  component regardless of its JSX tag name (`Image`, `NextImage`, or any other
-  alias forced by import collisions).
-- `check-semantic-structure.py` — recovers heading-hierarchy verification for
-  any page using `Typography variant="hN"` instead of literal `<h1>`–`<h6>`,
-  and landmark verification for `Layout.tsx`/`Navigation.tsx`/`Footer.tsx`
-  regardless of what tag or component renders the `<main>`/`<nav>`/`<footer>`
-  role.
-- `check-navigable.py` — recovers heading/label-descriptiveness verification
-  (SC 2.4.6) for `Typography`-based headings and `placeholder`-only form
-  controls, and removes the latent `<SEO ` literal-string requirement that
-  would otherwise false-positive the moment a page's metadata call is
-  restructured.
-- `check-compatible.py` — removes the `if not re.search(r'<[a-z]', content):
-  return []` kill switch (line 482) entirely, since every element in rendered
-  HTML is a real lowercase DOM tag regardless of what authored it, recovering
-  all six of its WCAG 4.1.2/4.1.3 checks for `@cennso/ui`-only files.
-
-Per the constitution, this document *proposes* that fallback and stops there —
-nothing under `scripts/` is edited in this task, and no checker is weakened or
-disabled to make a failure go away. Turning the proposal into a change is,
-in the brief's own words, "its own spec and its own pull request," scoped to
-these five scripts and the shared pattern already proven by `validate-seo.py`.
-
-**Task 7 still runs.** One page, converted, is exactly the fixture the
-re-pointing work needs: it exercises `Typography` headings, real images, and
-(if the page has one) a real `@cennso/ui` `Select`, against real rendered
-output. Task 7's author gives any `Select` it uses a real accessible name
-regardless of this checker's state, since that is a genuine WCAG requirement
-independent of tooling — but `yarn check:all` will still need to pass, and
-`check-input-assistance.py` will still misfire on `Select.Content`/`Select.Item`
-after that fix ships, so Task 7 will hit this exact false positive and needs
-to be told, in advance, that it is expected and tracked by this document
-rather than something to route around locally.
-
-**Phase 4 waits for the re-pointing work.** The remaining ten checkers marked
-`unchanged` in the per-checker table above — contrast, media, distinguishable,
-keyboard, enough-time, seizures, input-modalities, readable, predictable, and
-autocomplete — stay as they are; none of their assertions apply to the markup
-this migration changes, and re-pointing them at rendered HTML is unnecessary
-work. That accounts for all fifteen: ten unchanged, four blind
-(text-alternatives, semantic-structure, navigable, compatible), and one false
-positive (input-assistance). Phase 4's
-page-by-page conversion does not start until the five checkers above are
-re-pointed, because phase 4 is exactly the work that would otherwise repeat
-this same false positive at scale, once per page, on every `Select` (and every
-other compound component the blind checkers can no longer see) the migration
-touches.

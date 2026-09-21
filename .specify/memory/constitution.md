@@ -209,7 +209,7 @@ React components MUST follow these architectural patterns:
 
 All user-facing features MUST maintain consistent experience:
 
-- Design system: TailwindCSS + DaisyUI components MUST be used; no inline styles or CSS modules
+- Design system: TailwindCSS with the `@cennso/theme` preset, and `@cennso/ui` components where one exists for the job; no inline styles or CSS modules
 - Responsive design MUST support mobile (375px), tablet (768px), and desktop (1024px+) breakpoints
 - Navigation MUST be consistent across all pages via `createNavigation()` from `lib/navigation.ts`
 - SEO metadata MUST be present on every page using `<SEO>` component with title, description, and OG image
@@ -233,8 +233,7 @@ Performance requirements that MUST be met:
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, (max-width: 1024px) 45vw, 33vw"` (blog cards)
   - `next.config.js` MUST configure image optimization (deviceSizes, imageSizes, formats)
 - **CSS Optimization**:
-  - DaisyUI MUST be configured to include only used utilities (`styled: false`, `base: false`, `utils: true`)
-  - Only mask-hexagon-2 utility is needed from DaisyUI (reduces CSS by ~6KB)
+  - The `mask` and `mask-hexagon-2` utilities are defined by a local `addUtilities` plugin in `tailwind.config.js`; they are this site's hexagon brand shape and come from no framework
   - Tailwind purge MUST be configured to scan all component files
   - Critical classes MUST be safelisted in `tailwind.config.js`
 - **JavaScript Optimization**:
@@ -362,7 +361,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 - Modal close: Focus MUST return to trigger element
 - Delete action: Focus MUST move to next logical element
 - Keyboard traps MUST be avoided (users can always escape modals, menus, etc.)
-- Material-Tailwind Menu components have built-in keyboard support
+- `@cennso/ui`'s `Menu` is Base UI-backed and brings roving tabindex, typeahead and Escape handling; its parts require a `Menu.Root` ancestor, and `Menu.LinkItem` is what makes a menu entry that navigates
 - Headless UI Dialog components have built-in Escape key handling
 
 **Enough Time (WCAG 2.1 Guideline 2.2 - EN 301 549 Section 9.2.2):**
@@ -509,7 +508,7 @@ All pages MUST have optimized metadata for search engine discoverability:
   - Use `focus-visible:` pseudo-class for keyboard-only focus styles
   - Provide custom focus styles with `ring-*`, `border-*`, or `shadow-*` classes
   - Tailwind: `focus:ring-2 focus:ring-primary-500 focus:outline-none`
-- DaisyUI and Material-Tailwind components have built-in focus styles
+- `@cennso/ui` components carry their own focus styles
 - **Automated**: `yarn a11y:navigable` detects `outline: none` without alternatives
 
 **Implementation Guidelines:**
@@ -573,7 +572,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 - Applies to: Buttons, links, form controls, touch targets
 - Mobile guideline: 48×48dp (≈44×44 CSS pixels)
 - Exceptions: Inline links in text, essential small targets
-- Tailwind/DaisyUI default button sizes meet this requirement
+- Tailwind's and `@cennso/ui`'s default button sizes meet this requirement
 - Icon buttons: Ensure adequate padding (p-2 minimum for touch targets)
 - Level AAA (best practice): Informational only, not enforced
 
@@ -594,7 +593,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 - Icon-only buttons: Provide aria-label matching visible tooltip/icon meaning
 - Voice control: Match visible text in accessible names
 - Multi-touch: Progressive enhancement only, never required for functionality
-- Drag-and-drop: Implement keyboard alternatives (Material-Tailwind DnD does this)
+- Drag-and-drop: Implement keyboard alternatives (`@cennso/ui`'s dnd-kit-backed `DataTable` does this, from its own `@cennso/ui/data-table` entry point)
 - Motion APIs: Always provide UI controls for same functionality
 - Target sizes: Use TailwindCSS classes that ensure adequate touch targets
 - Test with: Voice control (Voice Control on iOS/macOS, Voice Access on Android)
