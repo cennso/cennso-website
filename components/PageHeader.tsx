@@ -36,7 +36,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
       />
 
       <Container
-        className="bg-[#36AADD]"
+        className="bg-secondary"
         subClassName={
           background ? 'overflow-hidden flex-col-reverse md:flex-row' : ''
         }
@@ -47,9 +47,11 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
               <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
           ) : null} */}
-          <h1 className="font-bold text-4xl lg:text-5xl text-white">{title}</h1>
+          <h1 className="font-bold text-4xl lg:text-5xl text-primary">
+            {title}
+          </h1>
           {description ? (
-            <p className="text-base md:text-lg lg:text-xl mt-2 text-white max-w-[800px]">
+            <p className="text-base md:text-lg lg:text-xl mt-2 text-foreground max-w-[800px]">
               {description}
             </p>
           ) : null}

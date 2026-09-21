@@ -47,7 +47,7 @@ export const Layout: FunctionComponent<LayoutProps> = ({
         <Navigation navigation={navigation} />
       </div>
 
-      <main className="flex-1 flex flex-col z-10 bg-secondary-400">
+      <main className="flex-1 flex flex-col z-10 bg-background">
         {children}
         <Analytics />
       </main>
