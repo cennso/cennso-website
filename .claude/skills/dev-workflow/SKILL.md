@@ -130,12 +130,29 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   `build`, `format`, `lint`, `a11y`, `perf`, `seo`, `validate:ogimages`. If any
   check fails: fix the code, re-run, repeat until clean. Never declare the work
   complete on the assumption it would pass.
+- **Every stage chains with `&&`, so the first failure hides all of them.** "One
+  known failure" is never a safe conclusion — it is only ever "one known failure
+  and an unknown number behind it". `yarn perf` is `perf:images && perf:mobile`:
+  an oversized image masked a missing `sizes` prop in `Quote.tsx` for as long as
+  it stood, and fixing the image immediately surfaced it. The same happened in
+  `yarn a11y`, where a failing `input-assistance` hid `check-compatible`
+  completely. After fixing any stage, re-run the whole gate and expect something
+  new. To see the real picture at any time, run the individual scripts in a loop
+  rather than the chained target.
 - **Scratch files go outside the worktree.** `yarn format` is `prettier --check .`,
   and prettier reads only `.prettierignore` — not `.gitignore`, and not
   `.git/info/exclude`. A scratch or agent-workspace directory inside the worktree
   therefore fails the gate even though git ignores it, and adding it to the tracked
   `.prettierignore` puts scaffolding in your diff. Put scratch work in your
   session's temp directory instead.
+- **The Python checkers read source as TEXT and do not skip comments.** Every one
+  of them is a regex over the file, so prose about markup is indistinguishable
+  from markup. Writing `role="menuitem"` inside a JSDoc block failed
+  `check-compatible`; the word "flash" in a sentence explaining a no-flash theme
+  script failed `check-seizures` on `\b(blink|flash|strobe)\b`. Both were comments
+  explaining a fix, and both broke the build. When documenting markup in a
+  comment, describe it in words ("a menu-item role") rather than quoting the
+  attribute, and re-run the gate after writing a long comment.
 - **Never weaken, skip, or loosen a check script to make a failure go away.**
   The check scripts under `scripts/` are the spec for the constitution's
   standards. If a check looks wrong, report it and ask before touching it — same
@@ -171,6 +188,16 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   baseline you measured on `upstream/main` on the same machine**, and let the CI run
   against the Vercel preview be the authority. Do not chase the local number, and
   never report a local run as if it were the gate.
+- **The baseline is the PREVIEW, not production. Getting this wrong inverts the
+  answer.** CI audits the Vercel preview deployment. `www.cennso.com` is a
+  different host with different caching and different third-party scripts, and it
+  scores differently. When CI's mobile Lighthouse failed on a branch here, a
+  comparison against production said 0.90-0.93 — the same band — and the failure
+  looked pre-existing. It was not: comparing the branch's preview against a
+  preview of `main`, from the same machine, showed a real 0.05 regression with LCP
+  up by more than a second. Take both preview URLs from the two Lighthouse
+  workflow runs and measure them back to back. And note a branch that changes no
+  site code at all is the cheapest control you will ever get.
 - **`yarn lighthouse` hardcodes `localhost:3000`** (`lighthouse.urls.js`). Another
   project's dev server on that port means you silently audit the wrong app. Check
   with `lsof -ti:3000` first, and never kill what you find — it belongs to another
