@@ -2,10 +2,10 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { parse as YamlParse } from 'yaml'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Field, Select } from '@cennso/ui'
+import { Field, Pagination, Select } from '@cennso/ui'
 
 import { PageHeader } from '../../components/PageHeader'
 import { SuccessStoryItem } from '../../components/SuccessStories/SuccessStoryItem'
@@ -42,6 +42,9 @@ type SuccessStoriesPageProps = {
   industries: Array<IndustryOption>
 }
 
+// Matches the design's 4-rows-per-page layout (frames 1:1062 / 1:585).
+const PAGE_SIZE = 4
+
 const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
   content,
   successStories,
@@ -63,9 +66,12 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
       (s) => s.frontmatter.company?.industry === industryLabel
     )
   })
+  const [currentPage, setCurrentPage] = useState(1)
 
   const filterStories = useCallback(
     (option: IndustryOption) => {
+      setCurrentPage(1)
+
       if (option.value === '') {
         setFilteredStories(successStories)
         delete router.query.industry
@@ -96,13 +102,23 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
     [setFilteredStories, successStories, router]
   )
 
+  const totalPages = Math.ceil(filteredStories.length / PAGE_SIZE)
+  const pagedStories = useMemo(
+    () =>
+      filteredStories.slice(
+        (currentPage - 1) * PAGE_SIZE,
+        currentPage * PAGE_SIZE
+      ),
+    [filteredStories, currentPage]
+  )
+
   return (
     <>
       <SEO title={page.title} description={page.description} />
 
       <PageHeader
-        title={page.title}
-        description={page.description}
+        title={page.heading}
+        description={page.subheading}
         breadcrumbs={[
           {
             title: page.title,
@@ -118,7 +134,7 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
         }}
       />
 
-      <Container className="pt-12 pb-24 px-8 lg:px-4 bg-secondary-400">
+      <Container className="pt-12 pb-24 px-8 lg:px-4 bg-secondary">
         <div className="flex flex-col gap-12">
           <div>
             <div className="mb-4 w-72">
@@ -163,21 +179,67 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
               </Field>
             </div>
 
-            <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full h-full">
-              {filteredStories.map((successStory, index) => (
-                <li
-                  key={successStory.frontmatter.title}
-                  className="rounded-[32px]"
-                >
+            <ul className="flex w-full flex-col gap-8">
+              {pagedStories.map((successStory, index) => (
+                <li key={successStory.frontmatter.title}>
                   <SuccessStoryItem
                     successStory={successStory}
-                    index={index}
+                    index={(currentPage - 1) * PAGE_SIZE + index}
                     linkText={content.content.storyLinkText}
                     linkAccessibleName={content.content.storyLinkAccessibleName}
                   />
                 </li>
               ))}
             </ul>
+
+            {totalPages > 1 ? (
+              <Pagination className="mt-12">
+                <Pagination.Content>
+                  <Pagination.Item>
+                    <Pagination.Previous
+                      href="#"
+                      aria-label={content.content.pagination.previous}
+                      aria-disabled={currentPage === 1}
+                      onClick={(event) => {
+                        event.preventDefault()
+                        setCurrentPage((current) => Math.max(1, current - 1))
+                      }}
+                    />
+                  </Pagination.Item>
+
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                    (pageNumber) => (
+                      <Pagination.Item key={pageNumber}>
+                        <Pagination.Link
+                          href="#"
+                          isActive={pageNumber === currentPage}
+                          onClick={(event) => {
+                            event.preventDefault()
+                            setCurrentPage(pageNumber)
+                          }}
+                        >
+                          {pageNumber}
+                        </Pagination.Link>
+                      </Pagination.Item>
+                    )
+                  )}
+
+                  <Pagination.Item>
+                    <Pagination.Next
+                      href="#"
+                      aria-label={content.content.pagination.next}
+                      aria-disabled={currentPage === totalPages}
+                      onClick={(event) => {
+                        event.preventDefault()
+                        setCurrentPage((current) =>
+                          Math.min(totalPages, current + 1)
+                        )
+                      }}
+                    />
+                  </Pagination.Item>
+                </Pagination.Content>
+              </Pagination>
+            ) : null}
           </div>
         </div>
       </Container>
