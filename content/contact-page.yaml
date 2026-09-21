@@ -1,6 +1,11 @@
 page:
   title: Contact Cennso - Mobile Core Network Solutions & Support
   description: Get in touch with Cennso's Solution and Channel Partners. Learn how we can help you build custom mobile core network solutions for your business needs.
+  # Visible hero heading/paragraph shown on the page itself. Kept separate from
+  # title/description above, which stay tuned for the <title> tag and meta
+  # description - the two audiences want different copy.
+  heading: Let's Talk About Your Project
+  subheading: Connect with our experts to explore reliable solutions tailored to your business needs.
 
 # Contact information for Schema.org ContactPoint
 # Telephone format: E.164 standard (no spaces/parentheses) for Schema.org structured data
@@ -33,6 +38,7 @@ localBusiness:
   image: '/assets/logo.png'
 
 form:
+  sendLabel: Send
   statusMessages:
     sending: Sending...
     success: Message sent successfully.

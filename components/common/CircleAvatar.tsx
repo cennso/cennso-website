@@ -7,12 +7,18 @@ interface CircleAvatarProps {
   src: string
   author: Author
   className?: string
+  // Opt-in only: most callers render this well below the fold, where the
+  // next/image default (lazy) is correct. /contact places it inside the
+  // initial viewport, where lazy-loading it makes it the page's LCP
+  // candidate and tanks the Performance score - pass priority there.
+  priority?: boolean
 }
 
 export const CircleAvatar: FunctionComponent<CircleAvatarProps> = ({
   src,
   author,
   className = '',
+  priority = false,
 }) => {
   return (
     <div
@@ -26,6 +32,7 @@ export const CircleAvatar: FunctionComponent<CircleAvatarProps> = ({
         width={300}
         height={300}
         sizes="300px"
+        priority={priority}
       />
     </div>
   )

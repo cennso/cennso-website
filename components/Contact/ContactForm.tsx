@@ -1,14 +1,9 @@
 import { useState, useCallback, FormEvent, useId } from 'react'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
-import { StatusModal } from '../common'
-import {
-  FormLabel,
-  FormInput,
-  FormTextarea,
-  Button,
-  FormSwitch,
-} from '../common'
+import { Button } from '@cennso/ui'
+import { StatusModal, FormInput, FormTextarea, FormSwitch } from '../common'
 
 import type { FunctionComponent } from 'react'
 import type { ContactFormBody } from '../../pages/api/contact-form'
@@ -17,6 +12,13 @@ interface ContactFormProps {
   receiverEmail: string
   content?: Record<string, any>
 }
+
+// The visible label text is written here as a plain <label>, not the shared
+// FormLabel from components/common/Form.tsx: FormLabel hardcodes white text,
+// which disappears against a light-theme form panel. FormInput/FormTextarea
+// stay as the shared primitives below unstyled - the design keeps its fields
+// white-on-dark-text in both palettes, which is what they already render.
+const labelClassName = 'block text-sm leading-6 text-foreground mb-1'
 
 export const ContactForm: FunctionComponent<ContactFormProps> = ({
   receiverEmail,
@@ -93,7 +95,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
   )
 
   return (
-    <div className="isolate bg-gradient-to-b from-[#0f4f78] to-secondary-600 p-6 rounded-[32px] border border-secondary-600">
+    <div className="isolate bg-card border border-border p-6 rounded-[32px] shadow-lg">
       <StatusModal
         action={action}
         setAction={setAction}
@@ -115,7 +117,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
           <div>
-            <FormLabel htmlFor={`${uid}-first-name`}>First name:</FormLabel>
+            <label className={labelClassName} htmlFor={`${uid}-first-name`}>
+              First name:
+            </label>
             <FormInput
               type="text"
               name="first-name"
@@ -126,7 +130,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             />
           </div>
           <div>
-            <FormLabel htmlFor={`${uid}-last-name`}>Last name:</FormLabel>
+            <label className={labelClassName} htmlFor={`${uid}-last-name`}>
+              Last name:
+            </label>
             <FormInput
               type="text"
               name="last-name"
@@ -137,7 +143,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             />
           </div>
           <div className="sm:col-span-2">
-            <FormLabel htmlFor={`${uid}-company`}>Company:</FormLabel>
+            <label className={labelClassName} htmlFor={`${uid}-company`}>
+              Company:
+            </label>
             <FormInput
               type="text"
               name="company"
@@ -148,7 +156,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             />
           </div>
           <div className="sm:col-span-2">
-            <FormLabel htmlFor={`${uid}-email`}>E-mail:</FormLabel>
+            <label className={labelClassName} htmlFor={`${uid}-email`}>
+              E-mail:
+            </label>
             <FormInput
               type="email"
               name="email"
@@ -159,14 +169,14 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             />
           </div>
           <fieldset className="sm:col-span-2">
-            <legend className="block text-sm leading-6 text-white mb-2">
+            <legend className="block text-sm leading-6 text-foreground mb-2">
               Phone number (optional):
             </legend>
             <div className="flex gap-4">
               <div className="w-24">
-                <FormLabel htmlFor={`${uid}-country-code`} className="sr-only">
+                <label className="sr-only" htmlFor={`${uid}-country-code`}>
                   Country code
-                </FormLabel>
+                </label>
                 <FormInput
                   type="text"
                   name="country-code"
@@ -176,9 +186,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
                 />
               </div>
               <div className="flex-1">
-                <FormLabel htmlFor={`${uid}-phone-number`} className="sr-only">
+                <label className="sr-only" htmlFor={`${uid}-phone-number`}>
                   Phone number
-                </FormLabel>
+                </label>
                 <FormInput
                   type="tel"
                   name="phone-number"
@@ -190,7 +200,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             </div>
           </fieldset>
           <div className="sm:col-span-2">
-            <FormLabel htmlFor={`${uid}-message`}>Message:</FormLabel>
+            <label className={labelClassName} htmlFor={`${uid}-message`}>
+              Message:
+            </label>
             <FormTextarea
               name="message"
               id={`${uid}-message`}
@@ -223,14 +235,14 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               </FormSwitch>
             </div>
             <label
-              className="text-sm leading-6 text-gray-600"
+              className="text-sm leading-6 text-foreground"
               htmlFor={`${uid}-privacy-policy`}
             >
               By selecting this, you agree to our{' '}
               <Link
                 href="/privacy-policy"
                 target="_blank"
-                className="font-semibold text-secondary-200 underline hover:decoration-2"
+                className="font-semibold text-primary underline hover:decoration-2"
               >
                 privacy policy
               </Link>
@@ -238,8 +250,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             </label>
           </div>
           <div className="sm:col-span-2 flex justify-end">
-            <Button variant="action" useArrow={false} className="text-sm">
-              Send email
+            <Button type="submit" variant="cta">
+              {content?.form?.sendLabel || 'Send'}
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
