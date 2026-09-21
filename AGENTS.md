@@ -32,10 +32,11 @@
 
 ## Stack
 
-- Next.js 14 (Pages Router, not App Router)
-- React 18
+- Next.js 15 (Pages Router, not App Router)
+- React 19
 - TypeScript (strict mode enabled)
-- TailwindCSS + DaisyUI
+- TailwindCSS 3 with the `@cennso/theme` preset
+- `@cennso/ui` for components, `lucide-react` for icons (the only icon set)
 - MDX for content (blog posts, success stories)
 - YAML for structured content (authors, testimonials, jobs, etc.)
 
@@ -192,11 +193,18 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 **Key optimizations to maintain** (details in code comments):
 
 - **Dynamic imports**: Heavy dependencies like framer-motion are code-split (see `components/Layout.tsx`)
-- **DaisyUI config**: Only `mask-hexagon-2` utility enabled in `tailwind.config.js` (all other features disabled)
+- **Hexagon mask**: `mask` and `mask-hexagon-2` are defined by a local `addUtilities` plugin in `tailwind.config.js`, and kept in the `safelist` because they are built from template literals
 - **Image optimization**: WebP format, ≤100KB, resized to display dimensions
 - **No page transitions**: Removed from `_app.tsx` for bundle size (see code comments for rationale)
 
-**Current bundle sizes**: First Load JS ~275KB, CSS ~28KB
+**Current bundle sizes**: First Load JS ~438KB shared, 415-434KB per route, against a
+~275KB baseline before `@cennso/ui` was adopted. The design system costs roughly 150KB and
+stays inside the 500KB per-page budget below.
+
+Getting there needed an upstream fix. `@cennso/ui@0.1.2` shipped its ESM barrel as a single
+pre-bundled module, so importing one component pulled all 112 and no bundler could
+tree-shake it — every route measured ~1.15MB. Fixed in `@cennso/ui@0.2.1`
+(`cennso/design-system#22`), which emits the barrel as a module graph. Pin 0.2.1 or later.
 
 ## Quality Standards
 
@@ -214,9 +222,9 @@ All code changes must comply with constitution principles:
 - **Performance**: **Lighthouse ≥95% on all categories** (Performance, Accessibility, Best Practices, SEO)
   - Bundles <500KB, SSG only (no client-side content fetching)
   - Images: WebP format, ≤100KB each (validated by `yarn perf:images`)
-  - CSS: Optimized via DaisyUI configuration (only mask utilities)
+  - CSS: only the two hexagon mask utilities are hand-defined; there is no component CSS framework
   - JavaScript: Code-split heavy dependencies (framer-motion dynamically imported, ~60KB saved)
-  - Total bundle size: First Load JS ~275KB (down from 339KB), CSS ~28KB (down from 33.5KB)
+  - Total bundle size: First Load JS ~438KB shared / 415-434KB per route on `@cennso/ui@0.2.1`, against a ~275KB pre-adoption baseline; budget stays 500KB per page
   - **Next.js Image `sizes` prop**: REQUIRED on all `<Image>` components for responsive optimization
     - Fixed size: `sizes="150px"` (avatars, icons)
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)

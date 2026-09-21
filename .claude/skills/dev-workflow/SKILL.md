@@ -130,6 +130,12 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   `build`, `format`, `lint`, `a11y`, `perf`, `seo`, `validate:ogimages`. If any
   check fails: fix the code, re-run, repeat until clean. Never declare the work
   complete on the assumption it would pass.
+- **Scratch files go outside the worktree.** `yarn format` is `prettier --check .`,
+  and prettier reads only `.prettierignore` — not `.gitignore`, and not
+  `.git/info/exclude`. A scratch or agent-workspace directory inside the worktree
+  therefore fails the gate even though git ignores it, and adding it to the tracked
+  `.prettierignore` puts scaffolding in your diff. Put scratch work in your
+  session's temp directory instead.
 - **Never weaken, skip, or loosen a check script to make a failure go away.**
   The check scripts under `scripts/` are the spec for the constitution's
   standards. If a check looks wrong, report it and ask before touching it — same
@@ -145,8 +151,34 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   pairing, check it by hand rather than trusting a green `a11y:contrast`.
 - **Lighthouse ≥95% on all four categories** (Performance, Accessibility, Best
   Practices, SEO). Verify anything that could affect rendering weight, images,
-  bundle size, or metadata: `yarn dev` in one terminal, `yarn lighthouse` in
-  another. If you did not run it, say so explicitly rather than implying it passed.
+  bundle size, or metadata. If you did not run it, say so explicitly rather than
+  implying it passed.
+- **Audit a production build. `yarn dev` + `yarn lighthouse` is an informal smell
+  test only, and its numbers are not comparable to CI's.** A dev build is not what
+  CI measures — one session read Performance 0.57 off `yarn dev` and reported a
+  catastrophic regression that did not exist; the same commit scored 0.93 on a
+  production build. Starting `yarn dev` also wipes the `.next` a build just
+  produced. The authoritative local procedure is a fresh `yarn build`, then
+  `yarn next start -p <port>`, then `yarn lhci autorun` with a config that
+  requires `./lighthouse.desktop.base.js` and overrides `ci.collect.url`.
+- **The ≥95 gate is a CI gate, not a local one — locally it fails on `main`.**
+  Measured on `upstream/main` with the repo's own desktop config: Performance
+  0.90-0.93, Accessibility 0.96-0.98, Best Practices **0.92**, SEO 1.00. Two audits
+  cap it off-platform and neither is a code defect: `errors-in-console` fails on a
+  404 for `/_vercel/insights/script.js`, the Vercel Analytics beacon that only
+  exists when served from Vercel, and `valid-source-maps` fails on `_app`'s missing
+  map. So a local run below 95 is not evidence of a regression. **Compare against a
+  baseline you measured on `upstream/main` on the same machine**, and let the CI run
+  against the Vercel preview be the authority. Do not chase the local number, and
+  never report a local run as if it were the gate.
+- **`yarn lighthouse` hardcodes `localhost:3000`** (`lighthouse.urls.js`). Another
+  project's dev server on that port means you silently audit the wrong app. Check
+  with `lsof -ti:3000` first, and never kill what you find — it belongs to another
+  session. Audit on another port instead, with the production procedure above.
+  Prefer `yarn next start` and `yarn lhci` over the `npx` forms: both packages are
+  declared dependencies, and bare `npx` silently fetches and executes from the
+  registry when the local binary is missing, which is not something an audit step
+  should ever do. If you must use `npx`, pass `--no-install`.
 - **Verifying responsive layout: do not trust a narrow screenshot.** Launching a
   headless browser with `--window-size=390,…` and no mobile emulation lays the
   page out differently from a real phone, and reading overflow off that image

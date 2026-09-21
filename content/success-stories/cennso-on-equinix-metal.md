@@ -16,8 +16,8 @@ layout: new
   src="/assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp"
   title="Equinix story picture"
   alt="Equinix story picture"
-  width="2856"
-  height="2010"
+  width="2000"
+  height="1408"
   unoptimized
 />
 

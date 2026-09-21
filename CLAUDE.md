@@ -25,8 +25,10 @@ before any change to this repo. In short:
   `.claude/scripts/worktree.sh new feat/<short-name>`, then work in
   `.worktrees/feat-<short-name>`.
 - Never push to `main`. Branch → PR → CI green → merge.
-- **`yarn check:all` must pass** before the work is done, and Lighthouse
-  (`yarn dev` + `yarn lighthouse`) must stay ≥95% on all four categories.
+- **`yarn check:all` must pass** before the work is done, and Lighthouse must
+  stay ≥95% on all four categories — audited on a production build
+  (`yarn build`, `yarn next start`, `yarn lhci autorun`), never on `yarn dev`.
+  See the skill; a dev-server audit is not comparable to CI's.
 - No `Co-Authored-By: Claude` in commits.
 
 ## Harness files

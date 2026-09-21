@@ -4,6 +4,7 @@ import { Layout } from '../components/Layout'
 
 import type { AppProps } from 'next/app'
 
+import '@cennso/theme/theme.css'
 import '../styles/tailwind.css'
 
 const poppinsFont = Poppins({
@@ -56,6 +57,22 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
 
+      {/*
+        No ThemeProvider. It supplies a React context for reading and changing the
+        theme, and this site has neither a toggle nor any component that reads it:
+        the palette arrives as CSS variables from @cennso/theme/theme.css, scoped by
+        the data-theme="light" that _document.tsx pins on <Html>, and themeScript
+        keeps that attribute correct before first paint.
+
+        Mounting it cost 234KB of JavaScript on EVERY route — First Load JS shared
+        goes 433KB -> 199KB without it, below even the 275KB pre-@cennso/ui baseline.
+        Computed styles were compared with and without: button backgrounds and
+        foregrounds, card surface and heading colour are byte-identical.
+
+        Add it back the moment this site grows a theme toggle, or renders a
+        @cennso/ui component that calls the theme hook. Pair it with a matching
+        `defaultSetting` and the themeScript in _document.tsx, which must agree.
+      */}
       <Layout navigation={navigation} footerData={footerData}>
         <Component {...rest} />
       </Layout>

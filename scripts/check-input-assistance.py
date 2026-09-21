@@ -57,8 +57,6 @@ def get_files() -> List[Path]:
                 # generic input implementations and will be labeled at usage sites.
                 if str(p).endswith('components/common/Form.tsx'):
                     continue
-                if str(p).endswith('components/common/Select.tsx'):
-                    continue
                 files.append(p)
     return sorted(set(files))
 
@@ -69,7 +67,14 @@ def find_labelled_inputs(file_path: Path, lines: List[str]):
     content = ''.join(lines)
 
     # Find input/select/textarea elements
-    input_pattern = re.compile(r'<(input|select|textarea)[^>]*>', re.IGNORECASE)
+    # NO re.IGNORECASE on element names. In JSX, `<select>` is the HTML control and
+    # `<Select>` is a React component — case IS the distinction. Matching case-
+    # insensitively flagged every compound part of a design-system dropdown
+    # (`<Select>`, `<Select.Trigger>`, `<Select.Content>`, `<Select.Item>`) as an
+    # unlabelled form control, three of which are not form controls at all and one
+    # of which had a correctly associated `<label for>`. Attribute patterns below
+    # keep IGNORECASE, because HTML attribute names genuinely are case-insensitive.
+    input_pattern = re.compile(r'<(input|select|textarea)[^>]*>')
     label_pattern = re.compile(r'<label[^>]*for=["\'](?P<id>[^"\']+)["\'][^>]*>(?P<text>.*?)</label>', re.DOTALL | re.IGNORECASE)
 
     # Map of ids that have labels
@@ -163,7 +168,7 @@ def find_mismatch_label_aria(file_path: Path, lines: List[str]):
 
     # Match label with for=id and the input that references the id
     label_for_pattern = re.compile(r'<label[^>]*for=["\'](?P<id>[^"\']+)["\'][^>]*>(?P<text>.*?)</label>', re.DOTALL | re.IGNORECASE)
-    inputs_pattern = re.compile(r'<(input|select|textarea)[^>]*id=["\'](?P<id>[^"\']+)["\'][^>]*>', re.IGNORECASE)
+    inputs_pattern = re.compile(r'<(input|select|textarea)[^>]*id=["\'](?P<id>[^"\']+)["\'][^>]*>')
 
     label_map = {}
     for m in label_for_pattern.finditer(content):
@@ -198,7 +203,7 @@ def check_error_identification_and_suggestions(file_path: Path, lines: List[str]
     content = ''.join(lines)
 
     # Look for forms and check for role="alert" or aria-live usage for error messages
-    form_pattern = re.compile(r'<form[^>]*>', re.IGNORECASE)
+    form_pattern = re.compile(r'<form[^>]*>')
     if form_pattern.search(content):
         # Check for likely error containers
         if not re.search(r'role=["\']alert["\']|aria-live=', content, re.IGNORECASE):

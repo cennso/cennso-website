@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
-import { Typography } from '@material-tailwind/react/components/Typography'
-import { Bars3BottomLeftIcon } from '@heroicons/react/24/outline'
+import { Typography } from '@cennso/ui'
+import { AlignLeft } from 'lucide-react'
 
 import { TableOfContentsItem } from './TableOfContentsItem'
 
@@ -82,11 +82,8 @@ export const TableOfContents: FunctionComponent<TableOfContentsProps> = ({
       <Typography
         variant="h2"
         className="flex flex-row items-center gap-2 text-xl mb-2 ml-2 text-md text-secondary-200"
-        placeholder={undefined}
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
       >
-        <Bars3BottomLeftIcon className="w-5 h-5" />
+        <AlignLeft className="w-5 h-5" />
         Table of contents
       </Typography>
       <div className="w-full text-sm">

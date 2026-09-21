@@ -2,8 +2,8 @@ import { useState, useRef } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Menu, MenuHandler, MenuList, MenuItem } from '@material-tailwind/react'
-import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { Menu } from '@cennso/ui'
+import { ChevronDown } from 'lucide-react'
 
 import { Button } from './common'
 import { Logo } from './Logo'
@@ -12,7 +12,7 @@ import { useClickOutside } from '../lib/hooks'
 
 import metadata from '../siteMetadata'
 
-import type { FunctionComponent } from 'react'
+import type { FunctionComponent, ReactNode } from 'react'
 import type { NavigationLink } from '../contexts'
 
 interface NavigationProps {
@@ -89,6 +89,62 @@ interface NavigationItemProps {
   toggleOpen: () => void
 }
 
+/**
+ * Builds the `<li>` list for a nav link's children, deferring the whole
+ * interactive element to the caller. Each child is ONE element that is both the
+ * link and the menu item — not a `Link` wrapping a `Menu.Item`, which would nest
+ * a menu-item role inside an anchor and leave navigation and menu focus owned by
+ * two different nodes.
+ *
+ * The desktop dropdown (inside `<Menu>`) uses `Menu.LinkItem`, which renders as
+ * the link itself. The mobile accordion is a plain, always-in-flow `<ul>` with no
+ * `Menu.Root` ancestor, so it uses a plain `Link`: anything `Menu.*` requires a
+ * root it never has, and a disclosure list of links wants link semantics anyway.
+ * `renderLeaf` keeps the `className` strings byte-identical across both.
+ */
+function buildChildItems(
+  link: NavigationLink,
+  asPath: string,
+  toggleOpen: () => void,
+  renderLeaf: (props: {
+    className: string
+    href: string
+    onClick: () => void
+    target?: string
+    children: ReactNode
+  }) => ReactNode
+): ReactNode[] {
+  const items = (link.children ?? []).map((child) => (
+    <li key={child.link}>
+      {renderLeaf({
+        className: `flex items-center gap-3 text-[#185F99] lg:text-white hover:text-secondary-200 hover:!bg-[#185F99] lg:hover:!text-secondary-200 rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
+          asPath.startsWith(child.link)
+            ? 'text-secondary-200 !bg-[#185F99] lg:!text-secondary-200 lg:rounded-[32px]'
+            : ''
+        }`,
+        href: child.link,
+        onClick: () => toggleOpen(),
+        target: child.target,
+        children: child.title,
+      })}
+    </li>
+  ))
+
+  items.push(
+    <li key="show-all" className="block lg:hidden">
+      {renderLeaf({
+        className: `flex items-center gap-3 text-[#185F99] hover:text-secondary-200 hover:!bg-[#185F99] rounded-none font-normal`,
+        href: link.link,
+        onClick: () => toggleOpen(),
+        target: link.target,
+        children: 'Show all...',
+      })}
+    </li>
+  )
+
+  return items
+}
+
 const NavigationItem: FunctionComponent<NavigationItemProps> = ({
   link,
   toggleOpen,
@@ -110,7 +166,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
     >
       {link.title}
       {link.children ? (
-        <ChevronDownIcon
+        <ChevronDown
           strokeWidth={2.5}
           className={`h-6 w-6 transition-transform ${
             isMenuOpen ? 'rotate-180' : ''
@@ -121,86 +177,74 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
   )
 
   if (link.children) {
-    const items = link.children.map((child) => (
-      <li key={child.link}>
-        <Link
-          href={child.link}
-          onClick={() => toggleOpen()}
-          target={child.target}
+    // Menu.LinkItem renders AS the link, so one element owns both navigation and
+    // menu semantics. It also needs a Menu.Root ancestor, which the desktop
+    // dropdown has and the mobile accordion below never has (and must not get) —
+    // hence the leaf is built twice. closeOnClick is explicit because
+    // Menu.LinkItem defaults it to false, and a nav menu that stays open after
+    // you pick a destination is a bug.
+    const desktopItems = buildChildItems(
+      link,
+      asPath,
+      toggleOpen,
+      ({ className, href, onClick, target, children }) => (
+        <Menu.LinkItem
+          closeOnClick
+          className={className}
+          render={<Link href={href} onClick={onClick} target={target} />}
         >
-          <MenuItem
-            className={`flex items-center gap-3 text-[#185F99] lg:text-white hover:text-secondary-200 hover:!bg-[#185F99] lg:hover:!text-secondary-200 rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
-              asPath.startsWith(child.link)
-                ? 'text-secondary-200 !bg-[#185F99] lg:!text-secondary-200 lg:rounded-[32px]'
-                : ''
-            }`}
-            placeholder={undefined}
-            onPointerEnterCapture={undefined}
-            onPointerLeaveCapture={undefined}
-          >
-            {child.title}
-          </MenuItem>
-        </Link>
-      </li>
-    ))
-
-    items.push(
-      <li key="show-all" className="block lg:hidden">
+          {children}
+        </Menu.LinkItem>
+      )
+    )
+    const mobileItems = buildChildItems(
+      link,
+      asPath,
+      toggleOpen,
+      ({ className, href, onClick, target, children }) => (
         <Link
-          href={link.link}
-          onClick={() => toggleOpen()}
-          target={link.target}
+          className={className}
+          href={href}
+          onClick={onClick}
+          target={target}
         >
-          <MenuItem
-            className={`flex items-center gap-3 text-[#185F99] hover:text-secondary-200 hover:!bg-[#185F99] rounded-none font-normal`}
-            placeholder={undefined}
-            onPointerEnterCapture={undefined}
-            onPointerLeaveCapture={undefined}
-          >
-            Show all...
-          </MenuItem>
+          {children}
         </Link>
-      </li>
+      )
     )
 
     return (
       <>
         <div className="hidden lg:block">
-          <Menu
-            open={isMenuOpen}
-            handler={setIsMenuOpen}
-            allowHover={true}
-            offset={{ mainAxis: 10 }}
-            placement="bottom"
-          >
-            <MenuHandler>
-              <div
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault()
-                    setIsMenuOpen(!isMenuOpen)
-                  }
-                }}
-                className="p-0 bg-transparent hover:bg-transparent active:bg-transparent cursor-pointer"
-              >
-                {content}
-              </div>
-            </MenuHandler>
-            <MenuList
+          <Menu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <Menu.Trigger
+              openOnHover
+              render={
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setIsMenuOpen(!isMenuOpen)
+                    }
+                  }}
+                  className="p-0 bg-transparent hover:bg-transparent active:bg-transparent cursor-pointer"
+                >
+                  {content}
+                </div>
+              }
+              nativeButton={false}
+            />
+            <Menu.Content
+              side="bottom"
+              sideOffset={10}
               className="hidden max-w-screen-xl rounded-[32px] lg:block bg-[#185F99] shadow-none border-[#185F99] filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"
-              placeholder={undefined}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
             >
-              <ul
-                className="flex flex-col gap-0 outline-none outline-0"
-                role="menu"
-              >
-                {items}
+              <ul className="flex flex-col gap-0 outline-none outline-0">
+                {desktopItems}
               </ul>
-            </MenuList>
+            </Menu.Content>
           </Menu>
         </div>
         <div className="block lg:hidden">
@@ -214,7 +258,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           >
             {link.title}
             {link.children ? (
-              <ChevronDownIcon
+              <ChevronDown
                 strokeWidth={2.5}
                 className={`h-6 w-6 transition-transform ${
                   isMobileMenuOpen ? 'rotate-180' : ''
@@ -224,9 +268,8 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           </div>
           <ul
             className={`${isMobileMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 outline-none outline-0 ml-6 mt-1`}
-            role="menu"
           >
-            {items}
+            {mobileItems}
           </ul>
         </div>
       </>

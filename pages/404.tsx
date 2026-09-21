@@ -4,7 +4,7 @@ import { parse as YamlParse } from 'yaml'
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'
+import { ArrowLeft } from 'lucide-react'
 
 import { Button } from '../components/common'
 import { SEO } from '../components/SEO'
@@ -37,7 +37,7 @@ const Custom404Page: NextPage<Custom404PageProps> = ({ content }) => {
               variant="tertiary"
               className="flex flex-row items-center gap-2"
             >
-              <ArrowLeftIcon className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5" />
               {buttons.previous}
             </Button>
           </Link>
