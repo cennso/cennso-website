@@ -3,13 +3,13 @@ import { themeScript } from '@cennso/ui/theme-script'
 
 export default function Document() {
   return (
-    <Html lang="en" data-theme="light" suppressHydrationWarning>
+    <Html lang="en" suppressHydrationWarning>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.png" />
         <script
           dangerouslySetInnerHTML={{
-            __html: themeScript({ defaultSetting: 'light' }),
+            __html: themeScript({ defaultSetting: 'dark' }),
           }}
         />
       </Head>
