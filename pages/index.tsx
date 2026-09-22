@@ -58,8 +58,8 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               <NextImage
                 src="/assets/landing-page/hero-illustration.webp"
                 alt="Illustration of a phone, cell tower, server racks and a globe connected together in a hexagon panel, with the Cennso wordmark on the server node"
-                width={820}
-                height={649}
+                width={1300}
+                height={1013}
                 sizes="(max-width: 768px) 80vw, 40vw"
                 priority
                 className="w-full max-w-md md:max-w-none pointer-events-none"
@@ -78,11 +78,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
               <NextImage
-                src="/assets/landing-page/why-cennso-glyph.webp"
+                src="/assets/landing-page/why-cennso-glyph.svg"
                 alt=""
                 aria-hidden="true"
                 width={160}
-                height={146}
+                height={161}
                 sizes="56px"
                 className="h-14 w-auto"
               />
@@ -99,11 +99,18 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyCennso.cards.map(
               (card: { title: string; description: string }) => (
-                <Card key={card.title} className="shadow-none">
-                  <Card.Header>
+                // gap-5 py-5 / px-5 restate Card's own
+                // gap-(--card-spacing) / py-(--card-spacing) /
+                // px-(--card-spacing): this app runs Tailwind 3, which
+                // doesn't parse the `prop-(--var)` shorthand (a Tailwind 4
+                // feature), so those @cennso/ui classes compile to no CSS
+                // here and Card renders with zero padding/gap - see the
+                // comment on StatCard and `.claude/upstream-gaps.md`.
+                <Card key={card.title} className="gap-5 py-5 shadow-none">
+                  <Card.Header className="px-5">
                     <Card.Title render={<h3 />}>{card.title}</Card.Title>
                   </Card.Header>
-                  <Card.Content>
+                  <Card.Content className="px-5">
                     <Card.Description>{card.description}</Card.Description>
                   </Card.Content>
                 </Card>
@@ -126,8 +133,8 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                   src="/assets/landing-page/stat-locations.webp"
                   alt=""
                   aria-hidden="true"
-                  width={360}
-                  height={204}
+                  width={625}
+                  height={369}
                   sizes="160px"
                   className="h-20 w-auto"
                 />
@@ -147,11 +154,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             <StatCard
               figure={
                 <NextImage
-                  src="/assets/landing-page/stat-bandwidth.webp"
+                  src="/assets/landing-page/stat-bandwidth.svg"
                   alt=""
                   aria-hidden="true"
-                  width={360}
-                  height={255}
+                  width={163}
+                  height={145}
                   sizes="160px"
                   className="h-20 w-auto"
                 />
@@ -162,11 +169,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             <StatCard
               figure={
                 <NextImage
-                  src="/assets/landing-page/stat-sessions.webp"
+                  src="/assets/landing-page/stat-sessions.svg"
                   alt=""
                   aria-hidden="true"
-                  width={220}
-                  height={277}
+                  width={101}
+                  height={127}
                   sizes="120px"
                   className="h-20 w-auto"
                 />
