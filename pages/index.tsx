@@ -21,6 +21,17 @@ type LandingPageProps = {
   content: Record<string, any>
 }
 
+// Design 4.0 tints each "Why Cennso?" card with a different glow token at ~41%
+// over the page background (Figma frames 1:11 / 1:12 / 1:10, left to right).
+// The light frames (1:4442 / 1:4443 / 1:4441) leave all three plain white,
+// which is what Card's own bg-card already gives, so the tint is dark-only.
+// Written as whole static class names so Tailwind's scanner finds them.
+const whyCennsoTints = [
+  'dark:bg-glow-blue/40',
+  'dark:bg-glow-cyan/40',
+  'dark:bg-glow-teal/40',
+] as const
+
 const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
   const { page, sections } = content
   const { hero, customerLogos, whyCennso, stats } = sections
@@ -98,8 +109,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyCennso.cards.map(
-              (card: { title: string; description: string }) => (
-                <Card key={card.title} className="shadow-none">
+              (card: { title: string; description: string }, index: number) => (
+                <Card
+                  key={card.title}
+                  className={`shadow-none ${whyCennsoTints[index] ?? ''}`}
+                >
                   <Card.Header>
                     <Card.Title render={<h3 />}>{card.title}</Card.Title>
                   </Card.Header>
