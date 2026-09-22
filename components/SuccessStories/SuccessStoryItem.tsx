@@ -46,7 +46,7 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
         !even && 'md:flex-row-reverse'
       )}
     >
-      <div className="relative aspect-[16/10] w-full shrink-0 md:aspect-auto md:w-3/5">
+      <div className="relative aspect-16/10 w-full shrink-0 md:aspect-auto md:w-3/5">
         <NextImage
           src={cover}
           alt={`${title} cover image`}

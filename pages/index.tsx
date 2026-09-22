@@ -42,7 +42,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               <Typography
                 variant="h1"
                 render={<h1 />}
-                className="whitespace-pre-line text-primary text-[length:var(--type-size-h1)] leading-[var(--type-line-h1)]"
+                className="whitespace-pre-line text-primary text-(length:--type-size-h1) leading-(--type-line-h1)"
               >
                 {hero.headline}
               </Typography>
