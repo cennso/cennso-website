@@ -184,7 +184,7 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
 
             <ul className="flex w-full flex-col gap-8">
               {pagedStories.map((successStory, index) => (
-                <li key={successStory.frontmatter.title}>
+                <li key={successStory.link}>
                   <SuccessStoryItem
                     successStory={successStory}
                     index={(currentPage - 1) * PAGE_SIZE + index}
