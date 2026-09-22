@@ -3,10 +3,21 @@
 ## Stack this repository is on (judge against this, not against defaults)
 
 Next.js 15.5.25, Pages Router (not App Router), React 19.3.0, TypeScript
-strict mode, Tailwind 3 with `@cennso/theme/tailwind-preset`
-(`tailwind.config.js:2,38`), `@cennso/ui@0.2.3` + `@cennso/theme@0.2.3`
-(`package.json`, bumped from `0.2.1` in phase 4's design-4-theme branch),
-`lucide-react` as the only icon set. The site has a light/dark theme
+strict mode, **Tailwind 4** (`tailwindcss@^4.3.3`) with
+`@cennso/theme/tailwind-preset` still loaded, now through
+`@config '../tailwind.config.js'` in `styles/tailwind.css:3`
+(`tailwind.config.js:2,37`), `@cennso/ui@1.0.0` + `@cennso/theme@1.0.0`
+(`package.json:51-52`, bumped from `0.2.1` over phase 4's design-4-theme
+branch — `@cennso/ui@1.0.0` is what *requires* Tailwind 4),
+`lucide-react` as the only icon set. Tailwind 3-era advice is therefore
+obsolete on this branch: `bg-linear-to-r/srgb` (not `bg-gradient-to-r`),
+`shrink-0` (not `flex-shrink-0`), `@import 'tailwindcss'` (not the three
+`@tailwind` directives) and `bg-size-[...]` are correct v4 syntax, not
+typos, and a utility that looks redundant next to a v3 default may be
+load-bearing precisely because v4 dropped that default (see the Preflight
+`cursor: pointer` restore at `styles/tailwind.css:22-27`).
+
+The site has a light/dark theme
 (`ThemeProvider` in `_app.tsx`, `default dark` — see `a11y-gate.md`); judge
 colour usage against theme tokens (`hsl(var(--foreground))`, `bg-card`,
 `border-border`, etc.), not against a single fixed palette.
@@ -34,12 +45,15 @@ Do not flag this as "the token isn't actually themed" — that's the point.
 
 **Known, disclosed, deferred hex holders — do not re-flag these as new.**
 `components/common/CircleAvatar.tsx` (`from-[#1D75BC] to-[#04D3D6]`
-gradient), `components/MenuToogle.tsx`, and `components/common/Button.tsx`
-still carry hardcoded hex values. All three predate and are untouched by
-phase 4's page conversions so far and are knowingly deferred, not missed —
-only flag one of them if a diff actually touches that file's colour classes
-without removing the hex, or if `unverifiable` is more honest than silence
-because the diff is adjacent enough to raise the question.
+gradient) and `components/common/Button.tsx` (the four gradient variants at
+`Button.tsx:27,32,37,42`) still carry hardcoded hex values. Both predate and
+are untouched by phase 4's page conversions so far and are knowingly
+deferred, not missed — only flag one of them if a diff actually touches that
+file's colour classes without removing the hex, or if `unverifiable` is more
+honest than silence because the diff is adjacent enough to raise the
+question. `components/MenuToogle.tsx` was on this list and is off it: its
+three bar spans now use `bg-foreground`, so the file holds no literal colour
+at all — treat a new hex there as an ordinary defect, not a deferred one.
 
 ## Deliberately removed — must not come back
 
