@@ -68,8 +68,8 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               <NextImage
                 src="/assets/landing-page/hero-illustration.webp"
                 alt="Illustration of a phone, cell tower, server racks and a globe connected together in a hexagon panel, with the Cennso wordmark on the server node"
-                width={1300}
-                height={1013}
+                width={1533}
+                height={1284}
                 sizes="(max-width: 768px) 80vw, 40vw"
                 priority
                 className="w-full max-w-md md:max-w-none pointer-events-none"
@@ -86,15 +86,15 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
       <Container>
         <div className="flex flex-col gap-12 py-16 md:py-24 w-full">
           <div className="flex flex-col items-center gap-4">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 text-center sm:text-left">
               <NextImage
                 src="/assets/landing-page/why-cennso-glyph.webp"
                 alt=""
                 aria-hidden="true"
                 width={640}
                 height={643}
-                sizes="56px"
-                className="h-14 w-auto"
+                sizes="160px"
+                className="h-40 w-auto"
               />
               <Typography
                 variant="display"
