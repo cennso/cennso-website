@@ -23,11 +23,20 @@ export const StatCard: FunctionComponent<StatCardProps> = ({
   className = '',
 }) => {
   return (
-    <Card className={cn('shadow-none', className)}>
-      <Card.Content className="flex items-center justify-center">
+    // `gap-5 py-5` / `px-5` restate Card's own `gap-(--card-spacing)` /
+    // `py-(--card-spacing)` / `px-(--card-spacing)` as plain utilities:
+    // this app runs Tailwind 3 (`tailwind.config.js`), which has no
+    // arbitrary-property-shorthand syntax (`prop-(--var)` is a Tailwind 4
+    // feature), so those `@cennso/ui` classes compile to nothing here and
+    // Card renders with zero padding/gap. `5` matches --card-spacing's own
+    // documented default (`--spacing(5)`, 20px) - the Figma frame agrees,
+    // so this restates the intended value rather than overriding it upstream
+    // to a different one. Filed upstream: `.claude/upstream-gaps.md`.
+    <Card className={cn('gap-5 py-5 shadow-none', className)}>
+      <Card.Content className="flex items-center justify-center px-5">
         {figure}
       </Card.Content>
-      <Card.Header>
+      <Card.Header className="px-5">
         <Card.Title render={<h3 />} className="text-center">
           {title}
         </Card.Title>
