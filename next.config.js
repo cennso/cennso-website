@@ -15,15 +15,6 @@ const nextConfig = {
     formats: ['image/webp'],
     // Cache optimized images for 60 days (5184000 seconds)
     minimumCacheTTL: 5184000,
-    // next/image refuses local SVG sources unless explicitly allowed - the
-    // landing page's line-art icons and logos are exported as SVG (see the
-    // hero-illustration investigation), which needs this. All SVGs served
-    // this way are our own static, build-time assets under public/ (never
-    // user-supplied), so the CSP Next's docs recommend alongside this flag
-    // is enough to neutralise the "SVG could carry a script" risk without
-    // needing per-file sanitization.
-    dangerouslyAllowSVG: true,
-    contentSecurityPolicy: "script-src 'none'; frame-src 'none'; sandbox;",
   },
   // Custom headers for caching and compression
   async headers() {
