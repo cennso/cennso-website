@@ -50,8 +50,8 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
         ]}
         background={{
           src: '/assets/backgrounds/pencil-illustration.webp',
-          title: 'Pencil illustration',
-          alt: 'Pencil illustration',
+          alt: '',
+          'aria-hidden': 'true',
           width: 286,
           height: 128,
           className: 'mr-64',
