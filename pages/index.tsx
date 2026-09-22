@@ -52,9 +52,9 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="w-full md:w-1/2 flex justify-center">
             <NextImage
               src="/assets/landing-page/hero-illustration.webp"
-              alt="Illustration of a phone, cell tower, server racks and a globe connected together in a Cennso network"
-              width={760}
-              height={631}
+              alt="Illustration of a phone, cell tower, server racks and a globe connected together in a hexagon panel, with the Cennso wordmark on the server node"
+              width={820}
+              height={649}
               sizes="(max-width: 768px) 80vw, 40vw"
               priority
               className="w-full max-w-md md:max-w-none pointer-events-none"
