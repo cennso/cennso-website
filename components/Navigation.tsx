@@ -27,7 +27,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
   useClickOutside(menuRef, () => setIsOpen(false))
 
   return (
-    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-background border-none shadow-lg px-8 lg:px-4">
+    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-background border-none shadow-none px-8 lg:px-4">
       <nav className="flex flex-row items-center justify-between w-full max-w-screen-2xl py-2">
         <div className="flex-none flex flex-row mr-12">
           <Link title="Home page" href="/">
@@ -45,7 +45,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
               isOpen
                 ? 'opacity-100'
                 : 'opacity-0 -translate-y-[calc(100%+4.5rem)] xl:opacity-100 xl:translate-y-0'
-            } w-full h-auto shadow-2xl xl:shadow-none shadow-primary/40 px-8 py-4 xl:p-0 bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
+            } w-full h-auto shadow-none px-8 py-4 xl:p-0 bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
           >
             {navigation.map((link) => (
               <li
