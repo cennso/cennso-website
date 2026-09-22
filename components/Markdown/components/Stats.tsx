@@ -20,7 +20,7 @@ export const Stat: FunctionComponent<StatProps> = ({ value, label }) => {
         dropShadow={false}
         stroke={true}
       >
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-secondary-200 to-[#A855F7] text-[72px] font-bold leading-tight">
+        <span className="bg-clip-text text-transparent bg-linear-to-r/srgb from-secondary-200 to-[#A855F7] text-[72px] font-bold leading-tight">
           {value}
         </span>
         <span className="text-white font-bold text-base">{label}</span>

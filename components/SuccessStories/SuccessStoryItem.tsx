@@ -1,8 +1,6 @@
 import Link from 'next/link'
 import NextImage from 'next/image'
-import { Button, Card, Typography } from '@cennso/ui'
-
-import { useDeviceKind } from '../../lib/useDeviceKind'
+import { Button, Card, cn, Typography } from '@cennso/ui'
 
 import type { FunctionComponent } from 'react'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
@@ -21,59 +19,52 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
   linkText,
   linkAccessibleName,
 }) => {
-  const { device } = useDeviceKind()
   const { link, frontmatter } = successStory
-  const { title, company, excerpt } = frontmatter
+  const { title, cover } = frontmatter
 
-  const even =
-    device === 'mobile'
-      ? index % 2 === 0
-      : index === 1 ||
-        index === 2 ||
-        (index > 4 && (index % 4 === 1 || index % 4 === 2))
+  // Wide alternating row: image on one side, text on the other, sides
+  // swapping by index (design frames 1:1062 / 1:585).
+  const even = index % 2 === 0
 
   return (
+    // Card, not a hand-rolled div: bg-card/border-border are Card's own
+    // tokens - this row gets that for free. No shadow-none override any
+    // more: @cennso/ui 1.0.0 dropped Card's own shadow-sm (design-system
+    // #29), so the Design 4.0 frames' shadowless row is what Card already
+    // renders. Card's own layout is a vertical stack (flex-col,
+    // gap-(--card-spacing), py-(--card-spacing)) sized for
+    // Header/Content/Footer children, which this row doesn't use, so gap
+    // and py are zeroed here to avoid doubling up with the text panel's own
+    // padding below. The 32px radius has no match in the theme's scale
+    // (tops out at --radius-xl: 16px), so it's overridden the same way the
+    // pre-4.0 SuccessStoryItem already overrode it on Card.
     <Card
-      size="md"
-      className={`flex flex-col transition-all duration-300 rounded-[32px] h-full overflow-hidden px-6 py-12 ${even ? 'bg-secondary-600' : ''}`}
+      className={cn(
+        'gap-0 overflow-hidden rounded-[32px] py-0 md:flex-row',
+        !even && 'md:flex-row-reverse'
+      )}
     >
-      <Card.Header className="flex flex-row items-center justify-center">
-        <div className="bg-transparent flex flex-row items-center justify-center p-2 filter drop-shadow-[0px_15px_20px_rgba(68,141,200,0.35)]">
-          <div className="bg-white mask mask-hexagon-2 p-2 min-w-[200px] min-h-[200px] max-w-[200px] max-h-[200px] flex flex-row justify-center items-center">
-            <NextImage
-              title={`${title} logo`}
-              alt={`${title} logo`}
-              src={company.logo}
-              width={150}
-              height={150}
-              sizes="150px"
-              // Company logos are wordmarks of differing shapes. Without this the
-              // 150x150 box distorts them and Lighthouse reports an upscaled,
-              // low-resolution image.
-              className="w-auto h-auto max-w-[150px] max-h-[150px] object-contain"
-            />
-          </div>
-        </div>
-      </Card.Header>
+      <div className="relative aspect-16/10 w-full shrink-0 md:aspect-auto md:w-3/5">
+        <NextImage
+          src={cover}
+          alt={`${title} cover image`}
+          fill
+          sizes="(max-width: 768px) 100vw, 60vw"
+          className="object-cover"
+        />
+      </div>
 
-      <Card.Content className="flex flex-col h-full">
+      <div className="flex w-full flex-col justify-between gap-8 p-8 md:w-2/5 lg:p-12">
         <Typography
           variant="h3"
-          className="text-center font-bold text-2xl text-secondary-200"
+          className="text-2xl font-bold text-primary lg:text-3xl"
         >
           {title}
         </Typography>
 
-        <div className="flex-1 flex flex-col items-center">
-          <Typography
-            variant="body"
-            className="my-4 mb-6 text-center text-white px-8 lg:px-16 text-sm"
-          >
-            {excerpt}
-          </Typography>
-
+        <div>
           <Button
-            variant={even ? 'secondary' : 'primary'}
+            variant="cta"
             render={(props) => (
               <Link
                 {...props}
@@ -85,7 +76,7 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
             {linkText}
           </Button>
         </div>
-      </Card.Content>
+      </div>
     </Card>
   )
 }

@@ -1,6 +1,14 @@
 page:
   title: Customer Success Stories - Cennso Mobile Core Deployments
   description: Discover how organizations worldwide deploy Cennso mobile core. Real-world case studies of automated infrastructure and accelerated network innovation.
+  # Friendly on-page H1/lede from the Design 4.0 frames, decoupled from the
+  # SEO-tuned `title`/`description` above (same split Task 3 made for
+  # /contact): those keep feeding <SEO> and the breadcrumb, these feed
+  # PageHeader's on-page copy. The route, nav label and URL stay
+  # "success stories" - only the on-page heading reads "Use cases", matching
+  # the design.
+  heading: Use cases
+  subheading: Practical use cases in technology, connectivity, and digital solutions, drawing on the experience and expertise of the Cennso expert team.
 
 content:
   description:
@@ -21,3 +29,6 @@ content:
   # "More info" is what Lighthouse's link-text audit flags, and it is genuinely
   # useless to anyone listing the links with a screen reader.
   storyLinkAccessibleName: More info about {title}
+  pagination:
+    previous: Previous page
+    next: Next page

@@ -1,44 +1,124 @@
 page:
-  title: Cennso 
-  description: Your mobile core deployed within 24 hours
+  title: Cennso - 5G Network Solutions for MVNOs and Private 5G
+  description: >-
+    Cennso lets you deploy 5G anywhere - build MVNOs, travel SIM solutions, or
+    private networks with seamless interoperability and centralized control
+    today.
 
 sections:
-  main:
-    title: Your mobile core deployed within 24 hours
-    description: Use Cennso Network Solutions to create your global mobile core platform, ready to deploy in over 170 cloud locations.
-    link: https://cloud.cennso.com
-    linkContent: 'Start now'
+  # Hero: headline, supporting paragraph, and the design's one "cta" button
+  # (links to /contact - fixed in pages/index.tsx, not configurable content).
+  hero:
+    # Two literal lines in the frames (two stacked <p> tags), not one
+    # wrapped sentence - kept as a block scalar for that reason.
+    headline: |-
+      Build Network Solutions.
+      Anywhere.
+    description: >-
+      Cennso lets you deploy 5G anywhere: build MVNOs, travel SIM solutions,
+      or private networks with seamless interoperability and centralized
+      control.
+    ctaText: Book demo
 
-  overview:
-    title: Why Cennso?
-    description: >
-      Cennso lets you build custom network solutions with cloud-native technology, making central operations simpler and more efficient. With easy integration through standard APIs and real-time insights powered by analytics and automation, Cennso helps you proactively keep your network reliable and optimized.
-    link: https://docs.cennso.com
-    linkContent: 'Learn more'
+  # Customer logo band, left-to-right / top-row-then-bottom-row as drawn.
+  # width/height are each logo's native asset size (next/image needs both to
+  # avoid layout shift); display size is capped by LogoBand's own className.
+  customerLogos:
+    - name: IBM
+      src: /assets/landing-page/logos/ibm.webp
+      width: 288
+      height: 123
+    - name: Deutsche Telekom
+      src: /assets/landing-page/logos/deutsche-telekom.webp
+      width: 525
+      height: 123
+    - name: Hochbahn
+      src: /assets/landing-page/logos/hochbahn.webp
+      width: 801
+      height: 123
+    - name: Vultr
+      src: /assets/landing-page/logos/vultr.webp
+      width: 555
+      height: 132
+    - name: Telna
+      src: /assets/landing-page/logos/telna.webp
+      width: 171
+      height: 174
+    - name: wilhelm.tel
+      src: /assets/landing-page/logos/wilhelm-tel.webp
+      width: 495
+      height: 123
+    - name: 1NCE
+      src: /assets/landing-page/logos/1nce.webp
+      width: 345
+      height: 141
+    - name: Travelping
+      src: /assets/landing-page/logos/travelping.webp
+      width: 675
+      height: 123
+    - name: Zenlayer
+      src: /assets/landing-page/logos/zenlayer.webp
+      width: 636
+      height: 126
+    - name: Equinix
+      src: /assets/landing-page/logos/equinix.webp
+      width: 366
+      height: 186
 
-  features:
-    - title: Cennso in over 50 countries
-      description: Cennso solutions empower networks in over 50 countries across the globe, delivering scalable services for consumers and IoT. Join us to build your own global network services across multi-cloud and edge locations.
-      cover: /assets/landing-page/features/map.webp
-      link: '/contact'
-      linkContent: 'More info'
-    - title: 20 years of experience
-      description: Cennso brings over 20 years of experience in developing, integrating, and operating telecommunication networks into one powerful solution. Our trusted partners are here to assist you in creating your custom Cennso Network Solution, tailored to your specific needs.
-      cover: /assets/landing-page/features/20_years.webp
-      link: '/contact'
-      linkContent: 'More info'
-    - title: 3.000 Gbit/s peak bandwidth
-      description: 	Cennso’s powerful network functions let you create cost-effective services by maximizing your hardware and infrastructure investments. Enjoy high performance and efficiency as you build your network.
-      cover: /assets/landing-page/features/3000_gb.webp
-      link: '/contact'
-      linkContent: 'More info'
-    - title: 24 billion sessions per year
-      description: Cennso solutions handle over 24 billion user sessions each year. Our AAA and Control Plane applications are designed to scale easily, ensuring your network can grow without limits. Let’s explore your needs together in one of our Discovery Workshops!
-      cover: /assets/landing-page/features/user_sessions.webp
-      link: '/contact'
-      linkContent: 'More info'
+  whyCennso:
+    heading: Why Cennso?
+    cards:
+      - title: 5G Anywhere
+        description: >-
+          Cennso enables you to run 5G networks in any location—from
+          industrial sites to specialized facilities—with centralized
+          management. Manage all distributed sites from one control plane,
+          deploy high-performance configurations for low-latency
+          applications, and automatically verify hardware compatibility
+          remotely, without engineers onsite.
+      - title: Agile MVNO
+        description: >-
+          Cennso gives you the agility to expand virtual network services
+          rapidly. Maintain stable subscriber sessions across regions and
+          cloud providers, deploy high-performance core network functions or
+          integrate your own through standard interfaces, and update
+          configurations or launch new data plans with automated GitOps
+          workflows.
+      - title: Private 5G
+        description: >-
+          Cennso delivers secure, dedicated 5G networks for factories, ports,
+          and large campuses. Integrate with existing enterprise security and
+          credential providers, deploy only the network functions your
+          facility needs, and use Crossplane to unify on-site infrastructure
+          with cloud services through a single workflow.
 
-  partners:
-    title: Join the Cennso family!
-    link: '/contact'
-    linkContent: 'Join us now'
+  # Visually-hidden landmark heading for the 4-card stat grid - the design
+  # has no on-canvas label for this section, so this exists only for
+  # screen-reader/outline structure (see task-5-report.md for why).
+  stats:
+    heading: Cennso by the numbers
+    cards:
+      # Only this card (index 1, "20 years") has a standalone large-figure
+      # text layer in the frames ("21", directly under a title that reads
+      # "20 years" - a mismatch in the source design, shipped as drawn, not
+      # corrected). Cards 0, 2 and 3 have no separate figure text node - the
+      # only numbers are the ones already inside their titles below, so
+      # `figure` is omitted for them rather than invented.
+      - title: Available in over 170 locations
+        description: >-
+          Deployed in 170+ locations globally, Cennso delivers scalable
+          network services for consumers and IoT on any Kubernetes platform:
+          cloud, bare metal, or edge.
+      - figure: '21'
+        title: Over 20 years Experience
+        description: >-
+          Built on 20+ years of telecom expertise, Cennso and its solution
+          partners help you create custom network solutions.
+      - title: 3.000 Gbit/s peak Bandwidth
+        description: >-
+          Cennso's high-performance network functions maximize your hardware
+          investment, reducing costs and operational complexity.
+      - title: 24 Billion sessions per year
+        description: >-
+          Managing 24+ billion user sessions annually, Cennso's horizontally
+          scalable platform scales with your network demands.

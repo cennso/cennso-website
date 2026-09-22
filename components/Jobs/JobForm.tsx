@@ -112,7 +112,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
   )
 
   return (
-    <div className="isolate bg-gradient-to-b from-secondary-400 to-secondary-600 p-6 rounded-[32px]">
+    <div className="isolate bg-linear-to-b/srgb from-secondary-400 to-secondary-600 p-6 rounded-[32px]">
       <StatusModal
         action={action}
         setAction={setAction}

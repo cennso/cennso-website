@@ -27,7 +27,7 @@ export const BlogPostAuthors: FunctionComponent<BlogPostAuthorsProps> = ({
           {authors.map((author, index) => (
             <li
               key={author.name}
-              className="bg-white shadow-lg mask mask-hexagon-2 p-0.5 hover:!z-20"
+              className="bg-white shadow-lg mask mask-hexagon-2 p-0.5 hover:z-20!"
               style={{ zIndex: 10 - index, marginLeft: `${-1.5 * index}rem` }}
             >
               <span className="sr-only">{author.name}</span>

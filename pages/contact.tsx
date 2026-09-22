@@ -2,15 +2,10 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { parse as YamlParse } from 'yaml'
 
-import { Mail, Phone, ExternalLink } from 'lucide-react'
+import { Mail, Phone } from 'lucide-react'
 
 import { ContactForm } from '../components/Contact/ContactForm'
-import {
-  CircleAvatar,
-  Container,
-  GradientHeader,
-  HexagonDouble,
-} from '../components/common'
+import { CircleAvatar, Container } from '../components/common'
 import { PageHeader } from '../components/PageHeader'
 import { SEO } from '../components/SEO'
 import {
@@ -45,8 +40,8 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
       />
 
       <PageHeader
-        title={page.title}
-        description={page.description}
+        title={page.heading}
+        description={page.subheading}
         breadcrumbs={[
           {
             title: page.title,
@@ -54,33 +49,29 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-contact-3.webp',
-          title: 'Contact page background',
-          alt: 'Contact page background',
-          width: 180,
-          height: 150,
+          src: '/assets/backgrounds/pencil-illustration.webp',
+          alt: '',
+          'aria-hidden': 'true',
+          width: 286,
+          height: 128,
           className: 'mr-64',
         }}
       />
 
-      <Container className="pt-12 md:pt-24 pb-24 bg-secondary-400">
+      <Container className="pt-12 md:pt-24 pb-24 bg-secondary">
         <div className="flex flex-col gap-24">
-          {Object.entries(sections).map(([, section]: [string, any]) => {
+          {Object.entries(sections).map(([, section]: [string, any], index) => {
             return (
               <div className="w-full flex flex-col gap-2" key={section.company}>
                 <header className="flex flex-row">
-                  <GradientHeader
-                    as="h2"
-                    className="text-4xl font-bold text-left"
-                    variant="primary"
-                  >
+                  <h2 className="text-4xl font-bold text-left text-primary">
                     {section.title}
-                  </GradientHeader>
+                  </h2>
                 </header>
 
-                <div className="flex flex-col xl:flex-row gap-12 text-white">
+                <div className="flex flex-col xl:flex-row gap-12 text-foreground">
                   <div className="flex flex-col gap-8 w-full xl:w-1/2">
-                    <h3 className="text-3xl">{section.company}</h3>
+                    <h3 className="text-3xl text-primary">{section.company}</h3>
                     <div className="flex flex-col gap-4">
                       {section.description.map(
                         (text: string, index: number) => (
@@ -95,68 +86,51 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                             src={section.person.avatar}
                             author={section.person}
                             className="w-64 h-64"
+                            priority={index === 0}
                           />
                         </div>
                       </div>
                       {section.contact ? (
                         <div className="flex flex-col sm:flex-row md:flex-col items-center justify-center md:items-start gap-3 sm:gap-12 w-full md:w-1/2">
                           {section.contact.email ? (
-                            <div className="flex flex-row gap-6 items-center">
-                              <HexagonDouble
-                                gradient={true}
-                                className="p-1"
-                                subClassName="bg-secondary-400"
-                              >
-                                <Mail className="w-12 p-2 text-white" />
-                              </HexagonDouble>
-                              <div className="flex flex-col">
-                                <a
-                                  href={`mailto:${section.contact.email}`}
-                                  rel="noopener"
-                                  className="flex flex-row gap-1 items-center text-secondary-200 hover:text-white transition duration-300 ease-in-out"
-                                >
-                                  <span>Email</span>
-                                  <ExternalLink className="w-4" />
-                                </a>
-                                <span className="text-sm text-white">
-                                  {section.contact.email}
-                                </span>
-                              </div>
-                            </div>
+                            <a
+                              href={`mailto:${section.contact.email}`}
+                              rel="noopener"
+                              className="flex flex-row gap-4 items-center text-foreground hover:text-primary transition duration-300 ease-in-out"
+                            >
+                              <span className="flex items-center justify-center w-12 h-12 rounded-full border border-border shrink-0">
+                                <Mail
+                                  className="w-5 h-5 text-primary"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                              <span>{section.contact.email}</span>
+                            </a>
                           ) : null}
                           {section.contact.phone ? (
-                            <div className="flex flex-row gap-6 items-center">
-                              <HexagonDouble
-                                gradient={true}
-                                className="p-1"
-                                subClassName="bg-secondary-400"
-                              >
-                                <Phone className="w-12 p-2 text-white" />
-                              </HexagonDouble>
-                              <div className="flex flex-col">
-                                <a
-                                  href={`tel:${section.contact.phone.replace(' ', '')}`}
-                                  className="flex flex-row gap-1 items-center text-secondary-200 hover:text-white transition duration-300 ease-in-out"
-                                >
-                                  <span>Phone</span>
-                                  <ExternalLink className="w-4" />
-                                </a>
-                                <span className="text-sm text-white">
-                                  {section.contact.phone}
-                                </span>
-                              </div>
-                            </div>
+                            <a
+                              href={`tel:${section.contact.phone.replace(' ', '')}`}
+                              className="flex flex-row gap-4 items-center text-foreground hover:text-primary transition duration-300 ease-in-out"
+                            >
+                              <span className="flex items-center justify-center w-12 h-12 rounded-full border border-border shrink-0">
+                                <Phone
+                                  className="w-5 h-5 text-primary"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                              <span>{section.contact.phone}</span>
+                            </a>
                           ) : null}
                         </div>
                       ) : null}
                     </div>
                     <div className="flex flex-col gap-2 w-full xl:w-[calc(50%-1rem)]">
                       <header className="flex flex-row justify-center">
-                        <h4 className="font-bold text-xl text-secondary-200 text-center">
+                        <h4 className="font-bold text-xl text-primary text-center">
                           {section.person.name}
                         </h4>
                       </header>
-                      <p className="text-center text-white">
+                      <p className="text-center text-foreground">
                         {section.person.position}
                       </p>
                     </div>

@@ -6,9 +6,15 @@
   `scripts/check-image-optimization.py:24` (`MAX_SIZE_BYTES = 100 * 1024`),
   required by `.specify/memory/constitution.md:259`.
 - No single page bundle over 500KB — `.specify/memory/constitution.md:241`.
-  **Enforce this.** Routes measure 415-434KB on `@cennso/ui@0.2.1`, against a
-  ~275KB pre-adoption baseline, so there is roughly 70KB of headroom and a
-  regression is a real finding, not a pre-existing condition.
+  **Enforce this.** Routes measured 415-434KB on `@cennso/ui@0.2.1`, against a
+  ~275KB pre-adoption baseline — **stale as of the phase 4 design-4-theme
+  branch**, which bumps to `@cennso/ui@0.2.3` (`package.json`) and also
+  mounts `ThemeProvider` at the `_app.tsx` root (see rule 6 below). Neither
+  number has been re-measured against a production build on this branch; ask
+  for one, in `unverifiable`, rather than reusing 415-434KB as if it still
+  applies. The headroom-under-500KB reasoning still holds in principle — a
+  regression is a real finding, not a pre-existing condition — but the
+  specific baseline needs refreshing.
 - OG images under 300KB — `.specify/memory/constitution.md:255`, validated by
   `yarn validate:ogimages`.
 - Lighthouse at or above 95 on all four categories, audited on `/`,
@@ -43,8 +49,24 @@
    `@cennso/ui@0.1.2` shipped a single pre-bundled ESM barrel that no bundler
    could tree-shake, so importing one component pulled all 112 and every route
    measured ~1.15MB. `@cennso/ui@0.2.1` emits the barrel as a module graph
-   (`cennso/design-system#22`) and routes are back to 415-434KB. Pin 0.2.1 or
-   later. If a diff pins an older `@cennso/ui`, that is itself the finding.
+   (`cennso/design-system#22`) and routes went back to 415-434KB; the phase 4
+   branch is pinned to `@cennso/ui@0.2.3`, further ahead, not behind. Pin
+   0.2.1 or later — currently 0.2.3. If a diff pins an older `@cennso/ui`,
+   that is itself the finding.
+
+6. **`ThemeProvider` at the `_app.tsx` root is now justified — do not flag its
+   presence, do ask for its cost.** An earlier phase deliberately left
+   `ThemeProvider` out of `_app.tsx`, measuring its cost at 234KB of First
+   Load JS (433KB → 199KB shared without it) when nothing on the site read
+   the theme context. Phase 4 adds it back (`27fe485`) because the site now
+   has a theme toggle: `ThemeToggle` renders inside `Navigation`, which is on
+   every page via `Layout`. That satisfies this profile's own "watch what
+   gets mounted app-wide" test — the fraction of routes that need it is now
+   all of them — so mounting it at the root is not itself a finding. What
+   *is* still open is the actual number: 234KB was measured against the
+   pre-`0.2.1` barrel defect (rule 3), so it may no longer be accurate on
+   `0.2.3`'s module-graph export. Put the re-measurement in `unverifiable`,
+   not a guessed figure in a finding.
 
 4. **The Equinix image is a known pre-existing failure.**
    `public/assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp`
