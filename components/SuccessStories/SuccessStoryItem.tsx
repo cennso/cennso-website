@@ -28,12 +28,10 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
 
   return (
     // Card, not a hand-rolled div: bg-card/border-border are Card's own
-    // tokens - this row gets that for free. Card's own shadow-sm is
-    // suppressed with shadow-none: it's upstream's fix for a light-theme
-    // border-contrast problem (see the comment on cardVariants in
-    // @cennso/ui), but the Design 4.0 frames for this row draw no shadow,
-    // so the design wins here and the fix is being raised upstream
-    // separately. Card's own layout is a vertical stack (flex-col,
+    // tokens - this row gets that for free. No shadow-none override any
+    // more: @cennso/ui 1.0.0 dropped Card's own shadow-sm (design-system
+    // #29), so the Design 4.0 frames' shadowless row is what Card already
+    // renders. Card's own layout is a vertical stack (flex-col,
     // gap-(--card-spacing), py-(--card-spacing)) sized for
     // Header/Content/Footer children, which this row doesn't use, so gap
     // and py are zeroed here to avoid doubling up with the text panel's own
@@ -42,7 +40,7 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
     // pre-4.0 SuccessStoryItem already overrode it on Card.
     <Card
       className={cn(
-        'gap-0 overflow-hidden rounded-[32px] py-0 shadow-none md:flex-row',
+        'gap-0 overflow-hidden rounded-[32px] py-0 md:flex-row',
         !even && 'md:flex-row-reverse'
       )}
     >
