@@ -99,18 +99,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyCennso.cards.map(
               (card: { title: string; description: string }) => (
-                // gap-5 py-5 / px-5 restate Card's own
-                // gap-(--card-spacing) / py-(--card-spacing) /
-                // px-(--card-spacing): this app runs Tailwind 3, which
-                // doesn't parse the `prop-(--var)` shorthand (a Tailwind 4
-                // feature), so those @cennso/ui classes compile to no CSS
-                // here and Card renders with zero padding/gap - see the
-                // comment on StatCard and `.claude/upstream-gaps.md`.
-                <Card key={card.title} className="gap-5 py-5 shadow-none">
-                  <Card.Header className="px-5">
+                <Card key={card.title} className="shadow-none">
+                  <Card.Header>
                     <Card.Title render={<h3 />}>{card.title}</Card.Title>
                   </Card.Header>
-                  <Card.Content className="px-5">
+                  <Card.Content>
                     <Card.Description>{card.description}</Card.Description>
                   </Card.Content>
                 </Card>
