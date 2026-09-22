@@ -35,7 +35,8 @@
 - Next.js 15 (Pages Router, not App Router)
 - React 19
 - TypeScript (strict mode enabled)
-- TailwindCSS 3 with the `@cennso/theme` preset
+- TailwindCSS 4 with the `@cennso/theme` preset, still loaded as a JS config
+  (`tailwind.config.js`) via the `@config` directive in `styles/tailwind.css`
 - `@cennso/ui` for components, `lucide-react` for icons (the only icon set)
 - MDX for content (blog posts, success stories)
 - YAML for structured content (authors, testimonials, jobs, etc.)

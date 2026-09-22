@@ -1,6 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
+
+/* Tailwind 4 dropped Preflight's `button, [role="button"] { cursor: pointer }`
+   so that buttons match the browser default. Every button on this site is a
+   real control, none of them restate the cursor, and neither does @cennso/ui's
+   Button - so without this the pointer disappears sitewide (nav triggers, the
+   theme toggle, the contact form's submit, the cookie banner). Restored here
+   verbatim from the v4 upgrade guide's own compatibility snippet, with the
+   `:not(:disabled)` guard v4 recommends so a disabled control still shows the
+   default arrow.
+
+   The v4 codemod's other compatibility shim - re-pinning the default border
+   colour to gray-200 - is deliberately NOT kept. It emitted
+   `border-color: var(--color-gray-200, currentcolor)`, and v4 only materialises
+   a `--color-*` variable that some utility actually references, so with nothing
+   using gray-200 the variable never existed and the rule resolved to
+   `currentcolor` anyway: dead code that read as if it did something. The one
+   element on this site that relied on the v3 default (the /blog industry
+   filter's Select button) now names `border-gray-200` explicitly instead. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 /* The footer band is drawn as one fixed dark surface in both palettes, not a
    surface that switches per theme, so --footer is pinned here to a single
