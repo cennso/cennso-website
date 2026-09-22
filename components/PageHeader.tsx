@@ -68,7 +68,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
           {children ? <div className="mt-2">{children}</div> : null}
         </header>
         {background ? (
-          <div className="hidden md:block mt-8 -mb-24 md:mt-0 md:mb-0 md:-mr-16">
+          <div className="hidden md:block mt-8 -mb-24 md:mt-0 md:mb-0">
             <Image
               {...background}
               alt={background.alt}
