@@ -43,17 +43,33 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
   <ul
     className={`flex flex-wrap items-center justify-center gap-x-10 gap-y-6 ${className}`}
   >
-    {logos.map((logo) => (
-      <li key={logo.name} className="flex items-center justify-center">
-        <NextImage
-          src={logo.src}
-          alt={logo.name}
-          width={logo.width}
-          height={logo.height}
-          sizes="(max-width: 640px) 96px, 120px"
-          className={`h-8 w-auto sm:h-10 ${LOGO_TONE}`}
-        />
-      </li>
-    ))}
+    {logos.map((logo) => {
+      // `sizes` describes the rendered *width*, but this component fixes the
+      // *height* (`h-8`, `sm:h-10`) and lets width follow each logo's own
+      // aspect ratio - so no single literal width is right for all of them.
+      // The widest mark (hochbahn, 801x123) renders ~260 CSS px at `sm:h-10`,
+      // more than twice the 120px that used to be declared, so next/image
+      // picked a srcset candidate far below the needed resolution and the
+      // browser upscaled it. Deriving the width per logo keeps the wide marks
+      // sharp without making the near-square ones (telna renders ~39 CSS px)
+      // over-fetch. `sm:` is min-width 640px, so the query is written that way
+      // round to match the breakpoint exactly at 640px.
+      const aspectRatio = logo.width / logo.height
+      const baseWidth = Math.ceil(32 * aspectRatio)
+      const smWidth = Math.ceil(40 * aspectRatio)
+
+      return (
+        <li key={logo.name} className="flex items-center justify-center">
+          <NextImage
+            src={logo.src}
+            alt={logo.name}
+            width={logo.width}
+            height={logo.height}
+            sizes={`(min-width: 640px) ${smWidth}px, ${baseWidth}px`}
+            className={`h-8 w-auto sm:h-10 ${LOGO_TONE}`}
+          />
+        </li>
+      )
+    })}
   </ul>
 )
