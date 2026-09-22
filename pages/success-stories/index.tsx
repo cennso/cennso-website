@@ -126,11 +126,14 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
           },
         ]}
         background={{
-          src: '/assets/backgrounds/bg-header-success-stories.webp',
+          // Design 4.0's own banner illustration (frames 1:1062 / 1:585),
+          // exported from Figma - not `bg-header-success-stories.webp`
+          // (partners.tsx's old CENNSO-blocks graphic, still in place there).
+          src: '/assets/backgrounds/success-stories-illustration.webp',
           alt: '',
           'aria-hidden': 'true',
-          width: 900,
-          height: 250,
+          width: 339,
+          height: 263,
         }}
       />
 
