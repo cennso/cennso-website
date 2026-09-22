@@ -57,7 +57,7 @@ const PartnersPage: NextPage<PartnersPageProps> = ({ content, partners }) => {
                   key={partner.name}
                   className="flex flex-col lg:flex-row items-center justify-evenly gap-6 lg:gap-16 w-full"
                 >
-                  <div className="w-[275px] sm:w-[400px] flex justify-center order-none lg:order-last">
+                  <div className="w-[275px] sm:w-[400px] flex justify-center order-0 lg:order-last">
                     <Image
                       className="pointer-events-none max-w-[200px]"
                       width={partner.logoSize!.width}

@@ -29,8 +29,8 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
 
   return (
     <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-light">
-      <footer className="relative flex flex-col xl:flex-row justify-between 2xl:justify-between w-full max-w-screen-2xl pt-4 pb-8 gap-8 2xl:gap-32">
-        <div className="flex flex-col order-last xl:order-none mt-0 2xl:mt-2">
+      <footer className="relative flex flex-col xl:flex-row justify-between 2xl:justify-between w-full max-w-(--breakpoint-2xl) pt-4 pb-8 gap-8 2xl:gap-32">
+        <div className="flex flex-col order-last xl:order-0 mt-0 2xl:mt-2">
           <Logo className="w-44 fill-white" />
           <div className="flex flex-col mt-4 text-white text-sm">
             <span>{`${copyright.yearPrefix} ${year} ${copyright.companySuffix}`}</span>
@@ -40,7 +40,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
 
         <ul className="grid grid-cols-2 lg:grid-cols-3 xl:flex gap-16 gap-y-0 lg:gap-32 xl:gap-16 2xl:gap-32 mb-8 md:mb-0">
           <li className="col-span-2 lg:col-auto flex flex-col gap-4 lg:mb-0 mb-8">
-            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
+            <h2 className="font-bold text-lg text-white border-b pb-1 border-white">
               Company
             </h2>
             <ul className="grid grid-rows-2 grid-flow-col gap-x-12 gap-y-1">
@@ -58,7 +58,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           <li className="flex flex-col gap-4 mb-2 md:mb-0">
-            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
+            <h2 className="font-bold text-lg text-white border-b pb-1 border-white">
               Explore
             </h2>
             <ul className="flex flex-col gap-1">
@@ -77,7 +77,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           <li className="flex flex-col gap-4 mb-2 md:mb-0">
-            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-white">
+            <h2 className="font-bold text-lg text-white border-b pb-1 border-white">
               AI / LLM
             </h2>
             <ul className="flex flex-col gap-1">
@@ -96,7 +96,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           {/* <li className="flex flex-col gap-4 mb-2 md:mb-0 w-[205px]">
-            <h2 className="font-bold text-lg text-white border-b-[1px] pb-1 border-transparent">
+            <h2 className="font-bold text-lg text-white border-b pb-1 border-transparent">
               Social
             </h2>
             <ul className="flex flex-col gap-1">

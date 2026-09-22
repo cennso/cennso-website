@@ -24,17 +24,17 @@ export const GradientHeader: FunctionComponent<GradientHeaderProps> = ({
   switch (variant) {
     case 'default': {
       colorClassName =
-        'bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-[#04D3D6]'
+        'bg-clip-text text-transparent bg-linear-to-r from-primary-600 to-[#04D3D6]'
       break
     }
     case 'primary': {
       colorClassName =
-        'bg-clip-text text-transparent bg-gradient-to-r from-[#2E81D4] to-[#00FBFF]'
+        'bg-clip-text text-transparent bg-linear-to-r from-[#2E81D4] to-[#00FBFF]'
       break
     }
     case 'secondary': {
       colorClassName =
-        'bg-clip-text text-transparent bg-gradient-to-r from-[#2E81D4] to-[#00FBFF]'
+        'bg-clip-text text-transparent bg-linear-to-r from-[#2E81D4] to-[#00FBFF]'
       break
     }
   }

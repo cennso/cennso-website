@@ -22,10 +22,10 @@ export const CircleAvatar: FunctionComponent<CircleAvatarProps> = ({
 }) => {
   return (
     <div
-      className={`rounded-full bg-gradient-to-b from-[#1D75BC] to-[#04D3D6] text-white flex flex-row items-center justify-center ${className}`}
+      className={`rounded-full bg-linear-to-b from-[#1D75BC] to-[#04D3D6] text-white flex flex-row items-center justify-center ${className}`}
     >
       <Image
-        className="w-[calc(100%-14px)] h-[calc(100%-14px)] rounded-full -ml-[14px]"
+        className="w-[calc(100%-14px)] h-[calc(100%-14px)] rounded-full ml-[-14px]"
         src={src}
         title={`${author.name}, ${author.position} at ${author.company}`}
         alt={`${author.name}, ${author.position} at ${author.company}`}

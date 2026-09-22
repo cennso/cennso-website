@@ -37,7 +37,7 @@ export const BlogPostItem: FunctionComponent<BlogPostItemProps> = ({
         <div className="flex flex-col mt-0 md:mt-6 h-full z-50">
           <header className="flex-none flex flex-col gap-1">
             <div className="mb-2">
-              <span className="px-4 py-0.5 text-sm bg-gradient-to-r from-[#1983BF] to-[#AF37AA] rounded-full text-white font-semibold">
+              <span className="px-4 py-0.5 text-sm bg-linear-to-r from-[#1983BF] to-[#AF37AA] rounded-full text-white font-semibold">
                 {category}
               </span>
             </div>

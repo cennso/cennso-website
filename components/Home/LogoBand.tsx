@@ -27,7 +27,7 @@ interface LogoBandProps {
  * - no hex literal needed in this component).
  */
 const LOGO_TONE =
-  'opacity-[.37] dark:opacity-100 dark:[filter:brightness(0)_invert(68%)_sepia(49%)_saturate(398%)_hue-rotate(173deg)_brightness(78%)_contrast(83%)]'
+  'opacity-[.37] dark:opacity-100 dark:filter-[brightness(0)_invert(68%)_sepia(49%)_saturate(398%)_hue-rotate(173deg)_brightness(78%)_contrast(83%)]'
 
 /**
  * Responsive row of customer logos that wraps rather than scrolls. Not in

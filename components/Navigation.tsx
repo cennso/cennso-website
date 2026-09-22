@@ -28,7 +28,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
 
   return (
     <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-background border-none shadow-none px-8 lg:px-4">
-      <nav className="flex flex-row items-center justify-between w-full max-w-screen-2xl py-2">
+      <nav className="flex flex-row items-center justify-between w-full max-w-(--breakpoint-2xl) py-2">
         <div className="flex-none flex flex-row mr-12">
           <Link title="Home page" href="/">
             <Logo className="w-44 fill-primary" />
@@ -41,7 +41,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
           </div>
 
           <ul
-            className={`absolute top-[4.5rem] xl:top-0 left-0 right-0 xl:relative transition-all duration-300 ease-in-out ${
+            className={`absolute top-18 xl:top-0 left-0 right-0 xl:relative transition-all duration-300 ease-in-out ${
               isOpen
                 ? 'opacity-100'
                 : 'opacity-0 -translate-y-[calc(100%+4.5rem)] xl:opacity-100 xl:translate-y-0'
@@ -120,9 +120,9 @@ function buildChildItems(
   const items = (link.children ?? []).map((child) => (
     <li key={child.link}>
       {renderLeaf({
-        className: `flex items-center gap-3 text-foreground hover:!text-primary-foreground hover:!bg-primary rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
+        className: `flex items-center gap-3 text-foreground hover:text-primary-foreground! hover:bg-primary! rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
           asPath.startsWith(child.link)
-            ? '!text-primary-foreground !bg-primary lg:rounded-[32px]'
+            ? 'text-primary-foreground! bg-primary! lg:rounded-[32px]'
             : ''
         }`,
         href: child.link,
@@ -136,7 +136,7 @@ function buildChildItems(
   items.push(
     <li key="show-all" className="block lg:hidden">
       {renderLeaf({
-        className: `flex items-center gap-3 text-foreground hover:!text-primary-foreground hover:!bg-primary rounded-none font-normal`,
+        className: `flex items-center gap-3 text-foreground hover:text-primary-foreground! hover:bg-primary! rounded-none font-normal`,
         href: link.link,
         onClick: () => toggleOpen(),
         target: link.target,
@@ -242,9 +242,9 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
             <Menu.Content
               side="bottom"
               sideOffset={10}
-              className="hidden max-w-screen-xl rounded-[32px] lg:block bg-card shadow-none border-border filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"
+              className="hidden max-w-(--breakpoint-xl) rounded-[32px] lg:block bg-card shadow-none border-border filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"
             >
-              <ul className="flex flex-col gap-0 outline-none outline-0">
+              <ul className="flex flex-col gap-0 outline-hidden outline-0">
                 {desktopItems}
               </ul>
             </Menu.Content>
@@ -270,7 +270,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
             ) : null}
           </div>
           <ul
-            className={`${isMobileMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 outline-none outline-0 ml-6 mt-1`}
+            className={`${isMobileMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 outline-hidden outline-0 ml-6 mt-1`}
           >
             {mobileItems}
           </ul>

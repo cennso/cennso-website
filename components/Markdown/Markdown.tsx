@@ -129,8 +129,8 @@ const Heading: FunctionComponent<
         href={`#${id}`}
         className={`mask mask-hexagon-2 flex flex-row items-center justify-center font-mono absolute -ml-8 flex items-center ${
           isActive
-            ? 'opacity-100 text-gray-100 bg-gradient-to-r from-primary-600 to-[#04D3D6]'
-            : 'text-gray-100 opacity-0 bg-gradient-to-r from-primary-600 to-[#04D3D6]'
+            ? 'opacity-100 text-gray-100 bg-linear-to-r from-primary-600 to-[#04D3D6]'
+            : 'text-gray-100 opacity-0 bg-linear-to-r from-primary-600 to-[#04D3D6]'
         } hover:text-gray-100 border-0 group-hover:opacity-100 no-underline text-lg w-6 h-6 rounded-md shadow transition duration-300 ease-in-out`}
         aria-label="Anchor"
       >
@@ -210,7 +210,7 @@ export const Components: MDXRemoteProps['components'] = {
       return (
         <code
           {...rest}
-          className="before:content-none after:content-none text-secondary-200 bg-secondary-600 py-[0.2rem] px-1.5 rounded-full font-code font-normal break-words"
+          className="before:content-none after:content-none text-secondary-200 bg-secondary-600 py-[0.2rem] px-1.5 rounded-full font-code font-normal wrap-break-word"
         >
           {children}
         </code>
@@ -240,7 +240,7 @@ export const Components: MDXRemoteProps['components'] = {
           codeTagProps={{
             className: 'text-xs',
           }}
-          className={`!bg-secondary-600 !border-secondary-600 !mt-3 !font-code shadow scrollbar scrollbar-thumb-secondary-200 scrollbar-track-secondary-200/30 scrollbar-thin scrollbar-track-rounded-[32px] scrollbar-thumb-rounded-[32px] overflow-x-auto overflow-y-hidden`}
+          className={`bg-secondary-600! border-secondary-600! mt-3! font-code! shadow scrollbar scrollbar-thumb-secondary-200 scrollbar-track-secondary-200/30 scrollbar-thin scrollbar-track-rounded-[32px] scrollbar-thumb-rounded-[32px] overflow-x-auto overflow-y-hidden`}
           style={SyntaxHighlighterTheme}
         >
           {code}
