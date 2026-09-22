@@ -129,8 +129,8 @@ const Heading: FunctionComponent<
         href={`#${id}`}
         className={`mask mask-hexagon-2 flex flex-row items-center justify-center font-mono absolute -ml-8 flex items-center ${
           isActive
-            ? 'opacity-100 text-gray-100 bg-linear-to-r from-primary-600 to-[#04D3D6]'
-            : 'text-gray-100 opacity-0 bg-linear-to-r from-primary-600 to-[#04D3D6]'
+            ? 'opacity-100 text-gray-100 bg-linear-to-r/srgb from-primary-600 to-[#04D3D6]'
+            : 'text-gray-100 opacity-0 bg-linear-to-r/srgb from-primary-600 to-[#04D3D6]'
         } hover:text-gray-100 border-0 group-hover:opacity-100 no-underline text-lg w-6 h-6 rounded-md shadow transition duration-300 ease-in-out`}
         aria-label="Anchor"
       >
