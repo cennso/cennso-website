@@ -44,16 +44,10 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
         <div className="flex w-full flex-col">
           <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16 py-16 md:py-24 w-full">
             <div className="flex flex-col gap-6 w-full md:w-1/2 items-center md:items-start text-center md:text-left">
-              {/* tailwind-merge (bundled inside @cennso/ui's cn()) doesn't know the app's
-              custom `h1` fontSize key, so it buckets `text-h1` as a text *colour* utility
-              and a plain `text-primary` here would evict it, silently collapsing the
-              headline back to browser-default size (see the branch review). Re-declaring
-              the size as a typed arbitrary value keeps it in tailwind-merge's font-size
-              group instead, so it survives alongside the color override. */}
               <Typography
                 variant="h1"
                 render={<h1 />}
-                className="whitespace-pre-line text-primary text-(length:--type-size-h1) leading-(--type-line-h1)"
+                className="whitespace-pre-line text-primary"
               >
                 {hero.headline}
               </Typography>
@@ -110,10 +104,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyCennso.cards.map(
               (card: { title: string; description: string }, index: number) => (
-                <Card
-                  key={card.title}
-                  className={`shadow-none ${whyCennsoTints[index] ?? ''}`}
-                >
+                <Card key={card.title} className={whyCennsoTints[index] ?? ''}>
                   <Card.Header>
                     <Card.Title render={<h3 />}>{card.title}</Card.Title>
                   </Card.Header>
