@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import NextImage from 'next/image'
-import { Button, Typography } from '@cennso/ui'
+import { Button, Card, Typography } from '@cennso/ui'
 
 import type { FunctionComponent } from 'react'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
@@ -27,8 +27,18 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
   const even = index % 2 === 0
 
   return (
-    <div
-      className={`flex flex-col overflow-hidden rounded-[32px] border border-border bg-card md:flex-row ${
+    // Card, not a hand-rolled div: bg-card/border-border are Card's own
+    // tokens, and its shadow-sm is a considered fix for a light-theme
+    // problem a bare border has (see the comment on cardVariants in
+    // @cennso/ui) - this row gets that for free. Card's own layout is a
+    // vertical stack (flex-col, gap-(--card-spacing), py-(--card-spacing))
+    // sized for Header/Content/Footer children, which this row doesn't use,
+    // so gap and py are zeroed here to avoid doubling up with the text
+    // panel's own padding below. The 32px radius has no match in the
+    // theme's scale (tops out at --radius-xl: 16px), so it's overridden the
+    // same way the pre-4.0 SuccessStoryItem already overrode it on Card.
+    <Card
+      className={`gap-0 overflow-hidden rounded-[32px] py-0 md:flex-row ${
         even ? '' : 'md:flex-row-reverse'
       }`}
     >
@@ -65,6 +75,6 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
           </Button>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }
