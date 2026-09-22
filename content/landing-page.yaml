@@ -25,43 +25,43 @@ sections:
   # avoid layout shift); display size is capped by LogoBand's own className.
   customerLogos:
     - name: IBM
-      src: /assets/landing-page/logos/ibm.svg
+      src: /assets/landing-page/logos/ibm.webp
       width: 288
       height: 123
     - name: Deutsche Telekom
-      src: /assets/landing-page/logos/deutsche-telekom.svg
+      src: /assets/landing-page/logos/deutsche-telekom.webp
       width: 525
       height: 123
     - name: Hochbahn
-      src: /assets/landing-page/logos/hochbahn.svg
+      src: /assets/landing-page/logos/hochbahn.webp
       width: 801
       height: 123
     - name: Vultr
-      src: /assets/landing-page/logos/vultr.svg
+      src: /assets/landing-page/logos/vultr.webp
       width: 555
       height: 132
     - name: Telna
-      src: /assets/landing-page/logos/telna.svg
+      src: /assets/landing-page/logos/telna.webp
       width: 171
       height: 174
     - name: wilhelm.tel
-      src: /assets/landing-page/logos/wilhelm-tel.svg
+      src: /assets/landing-page/logos/wilhelm-tel.webp
       width: 495
       height: 123
     - name: 1NCE
-      src: /assets/landing-page/logos/1nce.svg
+      src: /assets/landing-page/logos/1nce.webp
       width: 345
       height: 141
     - name: Travelping
-      src: /assets/landing-page/logos/travelping.svg
+      src: /assets/landing-page/logos/travelping.webp
       width: 675
       height: 123
     - name: Zenlayer
-      src: /assets/landing-page/logos/zenlayer.svg
+      src: /assets/landing-page/logos/zenlayer.webp
       width: 636
       height: 126
     - name: Equinix
-      src: /assets/landing-page/logos/equinix.svg
+      src: /assets/landing-page/logos/equinix.webp
       width: 366
       height: 186
 

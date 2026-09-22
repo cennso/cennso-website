@@ -78,11 +78,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-left">
               <NextImage
-                src="/assets/landing-page/why-cennso-glyph.svg"
+                src="/assets/landing-page/why-cennso-glyph.webp"
                 alt=""
                 aria-hidden="true"
-                width={160}
-                height={161}
+                width={640}
+                height={643}
                 sizes="56px"
                 className="h-14 w-auto"
               />
@@ -154,11 +154,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             <StatCard
               figure={
                 <NextImage
-                  src="/assets/landing-page/stat-bandwidth.svg"
+                  src="/assets/landing-page/stat-bandwidth.webp"
                   alt=""
                   aria-hidden="true"
-                  width={163}
-                  height={145}
+                  width={652}
+                  height={580}
                   sizes="160px"
                   className="h-20 w-auto"
                 />
@@ -169,11 +169,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             <StatCard
               figure={
                 <NextImage
-                  src="/assets/landing-page/stat-sessions.svg"
+                  src="/assets/landing-page/stat-sessions.webp"
                   alt=""
                   aria-hidden="true"
-                  width={101}
-                  height={127}
+                  width={402}
+                  height={508}
                   sizes="120px"
                   className="h-20 w-auto"
                 />
