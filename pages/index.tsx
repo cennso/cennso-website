@@ -26,10 +26,15 @@ type LandingPageProps = {
 // The light frames (1:4442 / 1:4443 / 1:4441) leave all three plain white,
 // which is what Card's own bg-card already gives, so the tint is dark-only.
 // Written as whole static class names so Tailwind's scanner finds them.
+// Spelled hsl(var(--x)/0.4) rather than the /40 opacity modifier: Tailwind 4
+// compiles a `/40` opacity modifier to color-mix(in oklab, ...), which the browser
+// computes as oklab(...). Lighthouse's bundled axe-core cannot parse that and
+// nulls the whole accessibility category, failing the CI gate. This spelling
+// computes to plain rgba() and is the same colour.
 const whyCennsoTints = [
-  'dark:bg-glow-blue/40',
-  'dark:bg-glow-cyan/40',
-  'dark:bg-glow-teal/40',
+  'dark:bg-[hsl(var(--glow-blue)/0.4)]',
+  'dark:bg-[hsl(var(--glow-cyan)/0.4)]',
+  'dark:bg-[hsl(var(--glow-teal)/0.4)]',
 ] as const
 
 const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
