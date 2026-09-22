@@ -19,25 +19,6 @@
   --footer: 207.1 78.2% 23.3%;
 }
 
-/* Temporary bridge: in the preset's light block, `--foreground` and
-   `--card-foreground` sit on a neutral grey family (216.9 19.1% 26.7%,
-   #374151) while nine sibling light tokens - `primary`,
-   `secondary-foreground`, `accent-foreground`, `ring`, `shadow-color` and
-   four `sidebar-*` tokens - already carry the brand blue
-   (207.0 72.9% 34.7%, hex 185F99). The Design 4.0 light frames paint every
-   piece of body text that colour, so grey `foreground`/`card-foreground`
-   are the outliers here, not the rule. A design-system change to correct
-   those two tokens at the source is queued as its own upstream pull
-   request; until it lands, override them here for light only, matching
-   this preset's own [data-theme="light"] selector so this later-loaded
-   declaration wins the cascade for that block alone and dark stays
-   untouched (dark `--foreground` is white and already correct - no change
-   needed there). Delete this block once the upstream token fix ships. */
-[data-theme='light'] {
-  --foreground: 207 72.9% 34.7%;
-  --card-foreground: 207 72.9% 34.7%;
-}
-
 ::-moz-selection {
   color: white;
   background: #448dc8;

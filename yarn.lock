@@ -65,20 +65,20 @@
   resolved "https://registry.yarnpkg.com/@braintree/sanitize-url/-/sanitize-url-7.1.2.tgz#ca2035b0fefe956a8676ff0c69af73e605fcd81f"
   integrity sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==
 
-"@cennso/theme@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@cennso/theme/-/theme-0.2.1.tgz#99a4c60b7a0e235e58ca26d7f351e9e606fe6bd8"
-  integrity sha512-7hEX+RVWbtNROkBjB/ZNKN4CAlDdbZweXKkYwbkjD6jExtGKKYKX0ab4ybEn5rVEt8eY9TmxMDgD9afXhdcdKA==
+"@cennso/theme@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@cennso/theme/-/theme-0.2.3.tgz#74a8d238084ae01e79ff08348f48b9274d541295"
+  integrity sha512-Sbi7tPW5j7t/UEYd0d99d25UvuWaitHX3CVjRkCdNuJ7DKhte6IGsWRnZj4KfMiY1pHE3SeD1GJiMX2LTEDagg==
   dependencies:
     tailwindcss-animate "^1.0.7"
 
-"@cennso/ui@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@cennso/ui/-/ui-0.2.1.tgz#33a518737832eb8c44983ba0deb2ab03e09cbc6a"
-  integrity sha512-ElV2Amu9dPl8agIbE0Cjka3tmSbqth2nZgoVNB1/eiac2vj7IEDoL8DnjBJTjJKE1uNFYtgHFZSjumzYXSuOyQ==
+"@cennso/ui@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@cennso/ui/-/ui-0.2.3.tgz#000a2c87f8da5c2b17905757393a6d3b177d7ea9"
+  integrity sha512-inafrboSZhIxcCVTO2K3DXPKogRC5ppV7lRFB3wsojvQ0OlEm9N3Jg7LLDSejI7CzqcGoV1vv46OrH5znrynCw==
   dependencies:
     "@base-ui/react" "^1.6.0"
-    "@cennso/theme" "0.2.1"
+    "@cennso/theme" "0.2.3"
     "@dnd-kit/core" "^6"
     "@dnd-kit/modifiers" "^9"
     "@dnd-kit/sortable" "^10"
