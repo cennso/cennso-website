@@ -116,7 +116,7 @@ const BlogPostPage: NextPage<BlogPostPageProps> = ({
                       rel="noreferrer noopener"
                       target="_blank"
                       href={canonical}
-                      className="inline-flex flex-row items-center text-shadow-[1.5px_1.5px_rgb(0_0_0/0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-linear-to-r from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-size-[200%_200%] hover:bg-right rounded-full text-white text-lg"
+                      className="inline-flex flex-row items-center text-shadow-[1.5px_1.5px_rgb(0_0_0/0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-linear-to-r/srgb from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-size-[200%_200%] hover:bg-right rounded-full text-white text-lg"
                     >
                       Read rest of the blog post {'>'}
                     </a>

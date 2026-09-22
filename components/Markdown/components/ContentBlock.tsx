@@ -13,9 +13,9 @@ export const ContentBlock: FunctionComponent<ContentBlockProps> = ({
   const Title = as
 
   return (
-    <section className="flex flex-col md:flex-row gap-8 bg-linear-to-r from-secondary-600 to-secondary-400 p-8 rounded-[32px] w-full mb-6">
+    <section className="flex flex-col md:flex-row gap-8 bg-linear-to-r/srgb from-secondary-600 to-secondary-400 p-8 rounded-[32px] w-full mb-6">
       <header className="flex flex-row w-full md:w-1/4">
-        <Title className="bg-clip-text text-transparent bg-linear-to-b from-primary-600 to-[#04D3D6] my-0 md:my-6 text-3xl">
+        <Title className="bg-clip-text text-transparent bg-linear-to-b/srgb from-primary-600 to-[#04D3D6] my-0 md:my-6 text-3xl">
           {title}
         </Title>
       </header>

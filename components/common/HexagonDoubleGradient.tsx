@@ -16,7 +16,7 @@ export const HexagonDoubleGradient: FunctionComponent<HexagonDoubleProps> = ({
     <div className="relative">
       <div
         className={`w-full h-full absolute top-0 left-[5%] ${
-          gradient ? 'bg-linear-to-t from-[#1b7dbe] to-[#1b7dbe]' : ''
+          gradient ? 'bg-linear-to-t/srgb from-[#1b7dbe] to-[#1b7dbe]' : ''
         } mask mask-hexagon-2 flex flex-row items-center justify-center p-0.5 z-10`}
       >
         <div
@@ -25,7 +25,7 @@ export const HexagonDoubleGradient: FunctionComponent<HexagonDoubleProps> = ({
       </div>
       <div
         className={`relative ${className} shadow-lg shadow-white ${
-          gradient ? 'bg-linear-to-t from-primary-600 to-[#1b7dbe]' : ''
+          gradient ? 'bg-linear-to-t/srgb from-primary-600 to-[#1b7dbe]' : ''
         } mask mask-hexagon-2 flex flex-row items-center justify-center z-20`}
       >
         {children}
