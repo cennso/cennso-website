@@ -30,40 +30,46 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
       <SEO title={page.title} description={page.description} />
 
       <Container className="bg-secondary">
-        <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16 py-16 md:py-24 w-full">
-          <div className="flex flex-col gap-6 w-full md:w-1/2 items-center md:items-start text-center md:text-left">
-            <Typography
-              variant="h1"
-              render={<h1 />}
-              className="whitespace-pre-line text-foreground"
-            >
-              {hero.headline}
-            </Typography>
-            <Typography variant="lead" className="text-foreground">
-              {hero.description}
-            </Typography>
-            <Button
-              variant="cta"
-              render={(props) => <Link {...props} href="/contact" />}
-            >
-              {hero.ctaText}
-            </Button>
+        <div className="flex w-full flex-col">
+          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16 py-16 md:py-24 w-full">
+            <div className="flex flex-col gap-6 w-full md:w-1/2 items-center md:items-start text-center md:text-left">
+              {/* tailwind-merge (bundled inside @cennso/ui's cn()) doesn't know the app's
+              custom `h1` fontSize key, so it buckets `text-h1` as a text *colour* utility
+              and a plain `text-primary` here would evict it, silently collapsing the
+              headline back to browser-default size (see the branch review). Re-declaring
+              the size as a typed arbitrary value keeps it in tailwind-merge's font-size
+              group instead, so it survives alongside the color override. */}
+              <Typography
+                variant="h1"
+                render={<h1 />}
+                className="whitespace-pre-line text-primary text-[length:var(--type-size-h1)] leading-[var(--type-line-h1)]"
+              >
+                {hero.headline}
+              </Typography>
+              <Typography variant="lead">{hero.description}</Typography>
+              <Button
+                variant="cta"
+                render={(props) => <Link {...props} href="/contact" />}
+              >
+                {hero.ctaText}
+              </Button>
+            </div>
+            <div className="w-full md:w-1/2 flex justify-center">
+              <NextImage
+                src="/assets/landing-page/hero-illustration.webp"
+                alt="Illustration of a phone, cell tower, server racks and a globe connected together in a hexagon panel, with the Cennso wordmark on the server node"
+                width={820}
+                height={649}
+                sizes="(max-width: 768px) 80vw, 40vw"
+                priority
+                className="w-full max-w-md md:max-w-none pointer-events-none"
+              />
+            </div>
           </div>
-          <div className="w-full md:w-1/2 flex justify-center">
-            <NextImage
-              src="/assets/landing-page/hero-illustration.webp"
-              alt="Illustration of a phone, cell tower, server racks and a globe connected together in a hexagon panel, with the Cennso wordmark on the server node"
-              width={820}
-              height={649}
-              sizes="(max-width: 768px) 80vw, 40vw"
-              priority
-              className="w-full max-w-md md:max-w-none pointer-events-none"
-            />
-          </div>
-        </div>
 
-        <div className="pb-16 md:pb-20 w-full">
-          <LogoBand logos={customerLogos} />
+          <div className="pb-16 md:pb-20 w-full">
+            <LogoBand logos={customerLogos} />
+          </div>
         </div>
       </Container>
 
