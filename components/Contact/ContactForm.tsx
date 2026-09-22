@@ -95,7 +95,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
   )
 
   return (
-    <div className="isolate bg-card border border-border p-6 rounded-[32px] shadow-lg">
+    <div className="isolate bg-card border border-border p-6 rounded-[32px]">
       <StatusModal
         action={action}
         setAction={setAction}

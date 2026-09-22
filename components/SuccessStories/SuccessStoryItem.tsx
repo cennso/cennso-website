@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import NextImage from 'next/image'
-import { Button, Card, Typography } from '@cennso/ui'
+import { Button, Card, cn, Typography } from '@cennso/ui'
 
 import type { FunctionComponent } from 'react'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
@@ -28,19 +28,23 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
 
   return (
     // Card, not a hand-rolled div: bg-card/border-border are Card's own
-    // tokens, and its shadow-sm is a considered fix for a light-theme
-    // problem a bare border has (see the comment on cardVariants in
-    // @cennso/ui) - this row gets that for free. Card's own layout is a
-    // vertical stack (flex-col, gap-(--card-spacing), py-(--card-spacing))
-    // sized for Header/Content/Footer children, which this row doesn't use,
-    // so gap and py are zeroed here to avoid doubling up with the text
-    // panel's own padding below. The 32px radius has no match in the
-    // theme's scale (tops out at --radius-xl: 16px), so it's overridden the
-    // same way the pre-4.0 SuccessStoryItem already overrode it on Card.
+    // tokens - this row gets that for free. Card's own shadow-sm is
+    // suppressed with shadow-none: it's upstream's fix for a light-theme
+    // border-contrast problem (see the comment on cardVariants in
+    // @cennso/ui), but the Design 4.0 frames for this row draw no shadow,
+    // so the design wins here and the fix is being raised upstream
+    // separately. Card's own layout is a vertical stack (flex-col,
+    // gap-(--card-spacing), py-(--card-spacing)) sized for
+    // Header/Content/Footer children, which this row doesn't use, so gap
+    // and py are zeroed here to avoid doubling up with the text panel's own
+    // padding below. The 32px radius has no match in the theme's scale
+    // (tops out at --radius-xl: 16px), so it's overridden the same way the
+    // pre-4.0 SuccessStoryItem already overrode it on Card.
     <Card
-      className={`gap-0 overflow-hidden rounded-[32px] py-0 md:flex-row ${
-        even ? '' : 'md:flex-row-reverse'
-      }`}
+      className={cn(
+        'gap-0 overflow-hidden rounded-[32px] py-0 shadow-none md:flex-row',
+        !even && 'md:flex-row-reverse'
+      )}
     >
       <div className="relative aspect-[16/10] w-full shrink-0 md:aspect-auto md:w-3/5">
         <NextImage

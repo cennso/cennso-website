@@ -1,4 +1,4 @@
-import { Card } from '@cennso/ui'
+import { Card, cn } from '@cennso/ui'
 
 import type { FunctionComponent, ReactNode } from 'react'
 
@@ -23,7 +23,7 @@ export const StatCard: FunctionComponent<StatCardProps> = ({
   className = '',
 }) => {
   return (
-    <Card className={className}>
+    <Card className={cn('shadow-none', className)}>
       <Card.Content className="flex items-center justify-center">
         {figure}
       </Card.Content>

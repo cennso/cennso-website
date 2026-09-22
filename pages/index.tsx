@@ -99,7 +99,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyCennso.cards.map(
               (card: { title: string; description: string }) => (
-                <Card key={card.title}>
+                <Card key={card.title} className="shadow-none">
                   <Card.Header>
                     <Card.Title render={<h3 />}>{card.title}</Card.Title>
                   </Card.Header>
