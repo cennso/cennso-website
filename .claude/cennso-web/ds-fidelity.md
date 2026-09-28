@@ -89,3 +89,59 @@ third-party component as the trigger itself. When reviewing a `render={<ThirdPar
 check whether that component is known to forward arbitrary props — if it
 isn't (or can't be verified), the wrap-instead-of-render pattern is the safer
 default.
+
+## Working from Figma — the five rules Phase 4 paid for
+
+Phase 4 put `/`, `/success-stories` and `/contact` on the Cennso Design 4.0
+Figma (file `OqKo0g7Hb85V8YlEVYWUhf`). It shipped substantially wrong with every
+automated gate green, and the site owner found it by looking at the preview.
+None of the defects were subtle: a 36px `<h1>` where Figma says 48px, 16px nav
+links where Figma says 18px, a yellow logo where the design draws a white one, a
+blue "Sign in" button where the design has an outlined "Book demo" pill, the
+light frame's hero artwork on a dark page, and a hero band the design does not
+have. **This reviewer missed all six.** Treat each rule below as a defect class
+to look for, not as advice.
+
+**1. Expand every symbol before you believe a frame.** `1:99` is a symbol named
+"Header". In a frame screenshot it is a picture of a navigation bar — its
+typography, its logo colour and its CTA simply are not in the image as values.
+Call `get_metadata` on the symbol id, then `get_design_context` on it, and read
+the children (`1:104`–`1:111`). The nav in Phase 4 was rebuilt from the old site
+and restyled by eye because this step was skipped. A change that touches a
+region a symbol covers, with no evidence the symbol was read, is a finding.
+
+**2. Read node values with `get_design_context`, never sample a screenshot.**
+`get_design_context` returns declared fills, font family/weight/size, line
+height, radii, padding and gaps. `get_screenshot` returns pixels. A review that
+cites a colour without a node id behind it is citing a pixel.
+
+**3. A composited colour is not a fill.** One Phase 4 agent sampled hues
+206°/196°/175° off a rendered image, concluded that no design token matched, and
+hand-rolled colours. Those were composited values — opacity, blur and blend over
+a dark background. The raw fills matched `glow-blue` (207°), `glow-cyan` (191°)
+and `glow-teal` (161°) exactly. "No token matches this colour" is a claim that
+has to be checked against `@cennso/theme`'s tokens and the node's own fill, not
+against an eyedropper.
+
+**4. Never ship one theme's artwork into the other.** The design draws the hero
+illustration twice — node `1:561` on the dark frame, node `1:4987` on the light
+one — and the two exports are different bitmaps with differently lit slabs. One
+file used for both themes is a defect even when it "looks fine" in the theme it
+was drawn for. Same for the logo (`fill: #ffffff` dark, `#185f99` light) and the
+nav CTA (outlined dark, filled light): these are two designs, not one design
+with an opacity change.
+
+**5. Start from the frames, not from the existing page.** Phase 4 started from
+the current site and adjusted what looked wrong, so everything that already
+looked plausible was never compared to anything. Open the frame, list what it
+declares, and check the page against that list — including the parts you did not
+change.
+
+## The gate that now enforces this
+
+`yarn design:fidelity` (in `yarn check:all`, and its own CI matrix job) renders
+the built site and asserts computed values against `design/figma/snapshot.json`.
+See `.claude/cennso-web/design-fidelity-gate.md` for what it covers and what it
+still does not. A finding it already catches does not need repeating in review;
+a finding in a frame the snapshot marks `not-captured` or `awaiting-implementation`
+absolutely does.

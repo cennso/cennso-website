@@ -127,9 +127,9 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 ## The quality gate
 
 - **`yarn check:all` is mandatory before declaring work done** — it runs
-  `build`, `format`, `lint`, `a11y`, `perf`, `seo`, `validate:ogimages`. If any
-  check fails: fix the code, re-run, repeat until clean. Never declare the work
-  complete on the assumption it would pass.
+  `build`, `format`, `lint`, `a11y`, `perf`, `seo`, `validate:ogimages`,
+  `design:fidelity`. If any check fails: fix the code, re-run, repeat until
+  clean. Never declare the work complete on the assumption it would pass.
 - **Every stage chains with `&&`, so the first failure hides all of them.** "One
   known failure" is never a safe conclusion — it is only ever "one known failure
   and an unknown number behind it". `yarn perf` is `perf:images && perf:mobile`:
@@ -244,7 +244,7 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   rules from memory; the skill is the source of truth.
 - CI installs `yarn install --frozen-lockfile` + `scripts/requirements.txt`, then
   runs `build`, and fans out `format`, `lint`, `a11y`, `perf`, `seo`,
-  `validate:ogimages` as a matrix. Lighthouse runs against the Vercel preview and
+  `validate:ogimages`, `design:fidelity` as a matrix. Lighthouse runs against the Vercel preview and
   blocks the merge below 95%.
 - **A PR from the fork does not deploy a preview until someone authorizes it.**
   The `Vercel` check fails immediately with `Authorization required to deploy.`
@@ -300,6 +300,14 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   STOP, report it, ask first.
 - About to hardcode UI text in a component → STOP. All user-facing text lives in
   the YAML files under `content/`.
+- About to implement a Figma frame → STOP and read `design/figma/README.md` plus
+  `.claude/cennso-web/ds-fidelity.md` first. Expand every symbol, read node
+  values with `get_design_context` instead of sampling a screenshot, and work
+  from the frame rather than from the page that is already there. `yarn
+  design:fidelity` asserts the result against `design/figma/snapshot.json`.
+- About to widen a `tolerance`, drop an `expect` key, or flip a frame back to
+  `awaiting-implementation` so `yarn design:fidelity` goes green → STOP. That is
+  the same violation as editing a check script.
 - Asked to add an image the user **pasted into the conversation** → you can see it
   but you cannot save it. It arrives as context, not as a file: nothing lands in
   the session directory, and the clipboard is usually already empty by the time

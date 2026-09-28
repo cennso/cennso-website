@@ -84,7 +84,10 @@ yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
 yarn seo:validate          # Validate SEO metadata (titles 50-60 chars, descriptions 150-160 chars)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
-yarn check:all             # Run all checks (build, format, lint, a11y, perf, seo)
+yarn design:fidelity       # Assert the built site against the Figma snapshot (both themes)
+yarn design:fidelity:selftest  # Prove the fidelity harness still fails on degenerate input
+yarn design:fingerprints   # Print digests for frames still awaiting implementation
+yarn check:all             # Run all checks (build, format, lint, a11y, perf, seo, design fidelity)
 ```
 
 ### Pages
@@ -187,6 +190,17 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
   - Descriptions from YAML `page.description` or MDX frontmatter `excerpt`
   - SEO component in `components/SEO.tsx` handles meta tag generation
   - BeautifulSoup4 required for validation (in `scripts/requirements.txt`)
+
+## Design Fidelity
+
+The Cennso Design 4.0 Figma file is ground truth for `/`, `/success-stories` and
+`/contact`. CI cannot call Figma, so the node values are pulled locally and
+committed to `design/figma/snapshot.json`; `yarn design:fidelity` renders the
+built site in a real browser and asserts the live computed values against them,
+per theme. Read `design/figma/README.md` before implementing or refreshing a
+frame — in particular: expand every Figma symbol, read values with
+`get_design_context` rather than sampling a screenshot, and never reuse one
+theme's artwork in the other.
 
 ## Performance Patterns
 
