@@ -60,6 +60,7 @@ jobs:
           - perf
           - seo
           - validate:ogimages
+          - design:fidelity
     steps:
       - name: Check out repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -79,6 +80,15 @@ jobs:
             node_modules
             scripts/.venv
           key: build-${{ github.sha }}
+      - name: Locate Chrome for the design-fidelity check
+        if: matrix.check == 'design:fidelity'
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium-browser || true)"
+          if [ -z "$CHROME" ]; then
+            echo "No Chrome on this runner. The design-fidelity check renders the built site in a real browser and must not be skipped." >&2
+            exit 1
+          fi
+          echo "CHROME_PATH=$CHROME" >> "$GITHUB_ENV"
       - name: Run ${{ matrix.check }}
         run: yarn ${{ matrix.check }}
   
