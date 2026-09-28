@@ -43,6 +43,28 @@
   --footer: 207.1 78.2% 23.3%;
 }
 
+/* The light palette's page plate. @cennso/theme sets light --background to pure
+   white; every Design 4.0 light frame paints a flat #E1EAF0 instead (sampled
+   from 1:4440, 1:1062 and 1:7084 - all three agree), and every surface those
+   frames draw ON that plate is white: the "Why Cennso?" cards (1:4442), the
+   stat panels (1:4447), the use-case rows (1:1069) and the contact form
+   (1:7433). With the plate also white those white cards have nothing to sit
+   against - the previous build hid the problem behind a `bg-secondary` band
+   the frames do not draw, and removing that band (which they asked for) is
+   what exposes it.
+
+   Scoped here rather than changed in @cennso/theme, and written as one
+   declaration so it is a one-line revert: whether the design system's own
+   light --background should move is the owner's call, not this branch's. Same
+   mechanism and same cascade position as --footer above.
+
+   Contrast re-checked at this value, not assumed: --foreground (#185f99) on
+   #E1EAF0 is 5.54:1, still clear of the 4.5:1 floor WCAG 2.1 AA sets for body
+   text (it was 6.75:1 on white). */
+[data-theme='light'] {
+  --background: 204 33.3% 91.2%;
+}
+
 ::-moz-selection {
   color: white;
   background: #448dc8;
