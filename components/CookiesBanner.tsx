@@ -61,6 +61,13 @@ export const CookiesBanner: FunctionComponent = () => {
               href="/privacy-policy"
               className="font-semibold text-secondary-200 underline hover:decoration-2"
               target="_blank"
+              // The banner is fixed to the bottom of the viewport, so this
+              // link is in view on every page load and next/link prefetches
+              // /privacy-policy on every page of the site: ~82KB of extra
+              // chunks and a `_next/data` fetch competing for bandwidth and
+              // main thread right after load. It opens in a new tab and is a
+              // rarely followed link, so the prefetch buys nothing.
+              prefetch={false}
             >
               Read our Privacy Policy
             </Link>
