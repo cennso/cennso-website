@@ -17,6 +17,7 @@ import { createNavigation } from '../lib/navigation'
 import { loadFooterData } from '../lib/footer'
 
 import type { NextPage, GetStaticProps } from 'next'
+import type { FunctionComponent } from 'react'
 
 type LandingPageProps = {
   content: Record<string, any>
@@ -69,6 +70,55 @@ const whyCennsoOutlines = [
 // are reinstated by whyCennsoOutlines below.
 const CARD_SHELL =
   'rounded-3xl gap-[13px] pt-[19px] pb-[55px] border-transparent dark:border-border [--card-spacing:--spacing(8)]'
+
+/**
+ * The three stat-card illustrations, one file per theme.
+ *
+ * Every one of them is drawn in #ffb31b in the dark frame (1:29, 1:69, 1:83)
+ * and in #ff6d12 in the light one (1:4456, 1:4496, 1:4510) - read off the
+ * nodes, not sampled off a screenshot. A single orange export was being used
+ * for both, which is why the dark page showed an orange world map where the
+ * design draws a yellow one. Same split the hero already needs, for the same
+ * reason.
+ *
+ * Each pair is exported from its own frame with `contentsOnly`, so no page
+ * plate is baked in and the corners are genuinely transparent - a plain node
+ * export composites the frame's background rectangle into the PNG.
+ *
+ * `height` is the figure's height in the frame; the width follows the
+ * artwork's own ratio, and `sizes` states that rendered width so next/image
+ * picks a srcset candidate for the box it actually paints.
+ */
+const StatIllustration: FunctionComponent<{
+  name: string
+  dark: { width: number; height: number }
+  light: { width: number; height: number }
+  /** Tailwind height utility, e.g. `h-[111px]` - the Figma figure height. */
+  heightClass: string
+  /** Rendered CSS width at that height, for `sizes`. */
+  sizes: string
+}> = ({ name, dark, light, heightClass, sizes }) => (
+  <>
+    <NextImage
+      src={`/assets/landing-page/${name}-dark.webp`}
+      alt=""
+      aria-hidden="true"
+      width={dark.width}
+      height={dark.height}
+      sizes={sizes}
+      className={`hidden w-auto dark:block ${heightClass}`}
+    />
+    <NextImage
+      src={`/assets/landing-page/${name}-light.webp`}
+      alt=""
+      aria-hidden="true"
+      width={light.width}
+      height={light.height}
+      sizes={sizes}
+      className={`w-auto dark:hidden ${heightClass}`}
+    />
+  </>
+)
 
 const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
   const { page, sections } = content
@@ -232,24 +282,20 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             {stats.heading}
           </Typography>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* 37px between the stat panels and 43px between the rows in the
+              frames (1:20 ends at x=661, 1:21 starts at 698; row 1 ends at
+              y=1981, row 2 starts at 2024), across a 1237px card row; on this
+              1200px column that is 36px and 42px. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-9 gap-y-[42px]">
             <StatCard
               figure={
-                <NextImage
-                  src="/assets/landing-page/stat-locations.webp"
-                  alt=""
-                  aria-hidden="true"
-                  width={625}
-                  height={369}
-                  // `h-20 w-auto` pins the height to 80px at every breakpoint
-                  // and lets the width follow the artwork's own aspect ratio,
-                  // so the rendered width is 80 * 625/369 = 136px - not the
-                  // 160px that used to be declared. `sizes` is what next/image
-                  // multiplies by the device pixel ratio to pick a srcset
-                  // candidate, so over-declaring it fetches a needlessly large
-                  // source for the same on-screen box.
-                  sizes="136px"
-                  className="h-20 w-auto"
+                <StatIllustration
+                  name="stat-locations"
+                  dark={{ width: 810, height: 460 }}
+                  light={{ width: 810, height: 460 }}
+                  // Figma 1:29 / 1:4456: 196.46 x 111 in the frame.
+                  heightClass="h-[111px]"
+                  sizes="196px"
                 />
               }
               title={stats.cards[0].title}
@@ -257,18 +303,20 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             />
             <StatCard
               figure={
-                // Figma 1:61 / 1:4488: Bold 115px, -4.6px tracking. `stat` is
-                // the theme's 80px step, so the size and tracking are taken
-                // from the frame - but NOT its light-frame colour. 1:4488
-                // paints the figure #ff6d12 (--cta) on the white stat panel,
-                // which measures 2.82:1 and misses WCAG 2.1 AA even at the
-                // 3:1 large-text floor (axe-core flags it as a colour-contrast
-                // violation); the constitution outranks the frame, so it stays
-                // on --primary, which is the amber the dark frame asks for
-                // anyway and the navy every other light-mode heading uses.
+                // Figma 1:61 / 1:4488: Poppins Bold 115.063px, -4.6025px
+                // tracking (-0.04em), line height auto - 1.5 for Poppins,
+                // which is the 173px box the frame measures and what centres
+                // the figure in the 205px band the way the frames do.
+                //
+                // Colour is per theme, from the nodes: 1:61 is #ffb31b, which
+                // is exactly what --primary resolves to in the dark theme;
+                // 1:4488 is #ff6d12, which is --cta. The light value measures
+                // 2.82:1 on the white panel and misses WCAG 2.1 AA even at
+                // the 3:1 large-text floor - the same pair as the CTA pill's
+                // label, and the same owner decision. See ctaButton.ts.
                 <Typography
                   variant="stat"
-                  className="text-[115px] leading-none tracking-[-0.04em] text-primary"
+                  className="text-[115px] leading-[1.5] tracking-[-0.04em] text-cta dark:text-primary"
                 >
                   {stats.cards[1].figure}
                 </Typography>
@@ -278,18 +326,13 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             />
             <StatCard
               figure={
-                <NextImage
-                  src="/assets/landing-page/stat-bandwidth.webp"
-                  alt=""
-                  aria-hidden="true"
-                  width={652}
-                  height={580}
-                  // 80 * 652/580 = 90px rendered, not the 160px declared
-                  // before: Lighthouse measured this one at 90x80 CSS px while
-                  // next/image was serving the 640px-wide candidate, 82% of
-                  // which was thrown away.
-                  sizes="90px"
-                  className="h-20 w-auto"
+                <StatIllustration
+                  name="stat-bandwidth"
+                  dark={{ width: 652, height: 580 }}
+                  light={{ width: 652, height: 580 }}
+                  // Figma 1:69 / 1:4496: 158.10 x 145 in the frame.
+                  heightClass="h-[145px]"
+                  sizes="163px"
                 />
               }
               title={stats.cards[2].title}
@@ -297,16 +340,13 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             />
             <StatCard
               figure={
-                <NextImage
-                  src="/assets/landing-page/stat-sessions.webp"
-                  alt=""
-                  aria-hidden="true"
-                  width={402}
-                  height={508}
-                  // 80 * 402/508 = 64px rendered, not the 120px declared
-                  // before.
-                  sizes="64px"
-                  className="h-20 w-auto"
+                <StatIllustration
+                  name="stat-sessions"
+                  dark={{ width: 394, height: 500 }}
+                  light={{ width: 402, height: 508 }}
+                  // Figma 1:83 / 1:4510: 96.39 x 122.79 in the frame.
+                  heightClass="h-[123px]"
+                  sizes="98px"
                 />
               }
               title={stats.cards[3].title}
