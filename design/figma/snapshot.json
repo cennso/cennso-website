@@ -1,0 +1,498 @@
+{
+  "schemaVersion": 1,
+  "figma": {
+    "fileKey": "OqKo0g7Hb85V8YlEVYWUhf",
+    "designName": "Cennso Design 4.0",
+    "pulledAt": "2026-09-28",
+    "pulledWith": "Figma MCP — get_metadata (to expand symbols) + get_design_context (for node values). No value in this file was sampled from a screenshot.",
+    "nodesPulled": [
+      "1:9",
+      "1:24",
+      "1:66",
+      "1:99",
+      "1:114",
+      "1:561",
+      "1:4440",
+      "1:4451",
+      "1:4530",
+      "1:4987"
+    ],
+    "note": "1:99 is a SYMBOL named \"Header\". In a frame screenshot it is a picture of a nav; its typography, logo colour and CTA only exist once the symbol is expanded with get_metadata and then read with get_design_context. Node 1:107/1:4534 is the nav CTA, node 1:111/1:4538 the logo."
+  },
+  "themes": {
+    "dark": {
+      "storageKey": "cennso-ui-theme",
+      "storageValue": "dark",
+      "documentAttributeValue": "dark"
+    },
+    "light": {
+      "storageKey": "cennso-ui-theme",
+      "storageValue": "light",
+      "documentAttributeValue": "light"
+    }
+  },
+  "viewport": { "width": 1360, "height": 1000 },
+
+  "designFrames": [
+    {
+      "figmaNode": "1:9",
+      "name": "Main page v.3 (dark)",
+      "theme": "dark",
+      "capture": "captured"
+    },
+    {
+      "figmaNode": "1:4440",
+      "name": "Main page light blue (light)",
+      "theme": "light",
+      "capture": "captured"
+    },
+    {
+      "figmaNode": "1:585",
+      "name": "Use cases (dark)",
+      "theme": "dark",
+      "capture": "not-captured",
+      "reason": "Not pulled yet. The confirmed Phase 4 defects were all on the main frame, so that frame was captured first. Pull this one with the procedure in design/figma/README.md before /success-stories is rebuilt."
+    },
+    {
+      "figmaNode": "1:1062",
+      "name": "Use cases (light)",
+      "theme": "light",
+      "capture": "not-captured",
+      "reason": "Not pulled yet. Same as node 1:585 — the light twin has to be captured in the same pass, so the per-theme artwork pair can be asserted."
+    },
+    {
+      "figmaNode": "1:3471",
+      "name": "Contact (dark)",
+      "theme": "dark",
+      "capture": "not-captured",
+      "reason": "Not pulled yet. /contact carries the live Mailjet form, so capturing it needs a pass that reads the frame without ever exercising the submit path."
+    },
+    {
+      "figmaNode": "1:7084",
+      "name": "Contact (light)",
+      "theme": "light",
+      "capture": "not-captured",
+      "reason": "Not pulled yet. Same as node 1:3471 — the light twin has to be captured in the same pass as the dark one."
+    }
+  ],
+
+  "tokens": [
+    {
+      "id": "token-primary-dark",
+      "figmaNode": "1:24",
+      "figmaEvidence": "hero <h1> fill #ffb31b; the same value is the nav CTA border and label on node 1:107/1:108",
+      "theme": "dark",
+      "route": "/",
+      "cssExpression": "hsl(var(--primary))",
+      "expect": "#ffb31b",
+      "tolerance": 2,
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --primary in the :root/[data-theme=dark] block",
+      "why": "The design's accent is a token, not a one-off hex. An agent that sampled a screenshot here read a composited colour and concluded no token matched; the raw fill matches exactly. Tolerance 2 covers the HSL->sRGB rounding in the token pipeline, nothing else."
+    },
+    {
+      "id": "token-primary-light",
+      "figmaNode": "1:4451",
+      "figmaEvidence": "light hero <h1> fill #185f99; the same value is the nav link and CTA fill on nodes 1:4531-1:4534",
+      "theme": "light",
+      "route": "/",
+      "cssExpression": "hsl(var(--primary))",
+      "expect": "#185f99",
+      "tolerance": 2,
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --primary in the [data-theme=light] block"
+    },
+    {
+      "id": "token-background-dark",
+      "figmaNode": "1:107",
+      "figmaEvidence": "nav CTA fill bg-[#001a2a] — the pill is painted in the page colour it sits on, so this is the dark frame's flat background",
+      "theme": "dark",
+      "route": "/",
+      "cssExpression": "hsl(var(--background))",
+      "expect": "#001a2a",
+      "tolerance": 2,
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --background in the :root/[data-theme=dark] block"
+    },
+    {
+      "id": "token-background-light",
+      "figmaNode": "1:4530",
+      "figmaEvidence": "light Header frame fill bg-white",
+      "theme": "light",
+      "route": "/",
+      "cssExpression": "hsl(var(--background))",
+      "expect": "#ffffff",
+      "tolerance": 2,
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --background in the [data-theme=light] block"
+    },
+    {
+      "id": "token-cta-dark",
+      "figmaNode": "1:66",
+      "figmaEvidence": "hero \"Book demo\" button fill #ff6d12",
+      "theme": "dark",
+      "route": "/",
+      "cssExpression": "hsl(var(--cta))",
+      "expect": "#ff6d12",
+      "tolerance": 2,
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --cta in the :root/[data-theme=dark] block"
+    }
+  ],
+
+  "frames": [
+    {
+      "id": "main-dark",
+      "figmaNode": "1:9",
+      "figmaName": "Main page v.3",
+      "route": "/",
+      "theme": "dark",
+      "status": "awaiting-implementation",
+      "statusNote": "Cennso Design 4.0 is not on this branch yet. These assertions are held back until the page implements the frame; the fingerprint below is what stops that state from being permanent and silent — the moment any of these files changes, the check fails and asks for the frame to be enforced.",
+      "implementationFingerprint": {
+        "files": [
+          "pages/index.tsx",
+          "pages/_document.tsx",
+          "components/Navigation.tsx",
+          "components/Logo.tsx",
+          "components/common/Container.tsx"
+        ],
+        "sha256": "823e589eb0038f45fead7b0765354b4d10fcc24a6296c08202738f94f29b1a57"
+      },
+      "elements": [
+        {
+          "id": "main-dark-page-background",
+          "figmaNode": "1:9",
+          "figmaName": "frame fill — one flat colour, no band",
+          "selector": "body",
+          "implementedIn": "pages/_document.tsx, components/common/Container.tsx",
+          "expect": { "backgroundColor": "#001a2a" }
+        },
+        {
+          "id": "main-dark-hero-section",
+          "figmaNode": "1:9",
+          "figmaName": "hero area of the frame",
+          "selector": "[data-figma-node=\"1:9\"]",
+          "implementedIn": "pages/index.tsx",
+          "expect": { "backgroundColor": "#001a2a" },
+          "why": "The frame has no lighter hero band. A Container painting bg-secondary behind the hero is exactly the drift this catches."
+        },
+        {
+          "id": "main-dark-hero-h1",
+          "figmaNode": "1:24",
+          "figmaName": "Build Network Solutions. Anywhere.",
+          "selector": "main h1",
+          "implementedIn": "pages/index.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "700",
+            "fontSize": "48px",
+            "lineHeight": "64px",
+            "color": "#ffb31b",
+            "text": "Build Network Solutions. Anywhere."
+          }
+        },
+        {
+          "id": "main-dark-hero-cta",
+          "figmaNode": "1:66",
+          "figmaName": "Frame 2 — hero Book demo button",
+          "selector": "[data-figma-node=\"1:66\"]",
+          "implementedIn": "pages/index.tsx",
+          "expect": {
+            "backgroundColor": "#ff6d12",
+            "borderRadius": "37px",
+            "gap": "17px",
+            "paddingLeft": "32px",
+            "paddingRight": "13px"
+          }
+        },
+        {
+          "id": "main-dark-hero-cta-label",
+          "figmaNode": "1:67",
+          "figmaName": "Book demo",
+          "selector": "[data-figma-node=\"1:67\"]",
+          "implementedIn": "pages/index.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "700",
+            "fontSize": "20px",
+            "color": "#ffffff",
+            "text": "Book demo"
+          }
+        },
+        {
+          "id": "main-dark-nav-cta",
+          "figmaNode": "1:107",
+          "figmaName": "Frame 3 — nav Book demo pill (inside symbol 1:99 \"Header\")",
+          "selector": "[data-figma-node=\"1:107\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "backgroundColor": "#001a2a",
+            "borderColor": "#ffb31b",
+            "borderWidth": "1px",
+            "borderRadius": "37px",
+            "gap": "9px",
+            "paddingLeft": "16px",
+            "paddingRight": "16px"
+          },
+          "why": "An outlined pill, not a filled blue button, and labelled \"Book demo\", not \"Sign in\"."
+        },
+        {
+          "id": "main-dark-nav-cta-label",
+          "figmaNode": "1:108",
+          "figmaName": "Book demo",
+          "selector": "[data-figma-node=\"1:108\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#ffb31b",
+            "text": "Book demo"
+          }
+        },
+        {
+          "id": "main-dark-nav-use-cases",
+          "figmaNode": "1:106",
+          "figmaName": "Use cases",
+          "selector": "[data-figma-node=\"1:106\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#ffffff",
+            "text": "Use cases"
+          }
+        },
+        {
+          "id": "main-dark-nav-solutions",
+          "figmaNode": "1:105",
+          "figmaName": "Solutions",
+          "selector": "[data-figma-node=\"1:105\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#ffffff",
+            "text": "Solutions"
+          }
+        },
+        {
+          "id": "main-dark-nav-resources",
+          "figmaNode": "1:104",
+          "figmaName": "Resources (active state)",
+          "selector": "[data-figma-node=\"1:104\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#ffb31b",
+            "textDecorationLine": "underline",
+            "text": "Resources"
+          }
+        },
+        {
+          "id": "main-dark-nav-blog",
+          "figmaNode": "1:110",
+          "figmaName": "Blog",
+          "selector": "[data-figma-node=\"1:110\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#ffffff",
+            "text": "Blog"
+          }
+        },
+        {
+          "id": "main-dark-nav-logo",
+          "figmaNode": "1:111",
+          "figmaName": "Cennso logo",
+          "selector": "[data-figma-node=\"1:111\"]",
+          "implementedIn": "components/Logo.tsx, components/Navigation.tsx",
+          "expect": { "fill": "#ffffff" },
+          "why": "White in the dark frame. Not the brand yellow, and not the light frame's blue."
+        },
+        {
+          "id": "main-dark-hero-illustration",
+          "figmaNode": "1:561",
+          "figmaName": "hero_section_y 2 — dark artwork",
+          "selector": "[data-figma-node=\"1:561\"]",
+          "implementedIn": "pages/index.tsx",
+          "expect": {
+            "assetBasename": "hero-illustration-dark.webp"
+          },
+          "why": "The dark frame draws its own artwork with dark slabs. Exporting the light frame's art and using it here is the defect this names; the themePairedAssets rule below is the second line of defence."
+        }
+      ]
+    },
+    {
+      "id": "main-light",
+      "figmaNode": "1:4440",
+      "figmaName": "Main page light blue",
+      "route": "/",
+      "theme": "light",
+      "status": "awaiting-implementation",
+      "statusNote": "Same as main-dark — held back until the page implements the frame, and fingerprinted so it cannot stay held back quietly.",
+      "implementationFingerprint": {
+        "files": [
+          "pages/index.tsx",
+          "pages/_document.tsx",
+          "components/Navigation.tsx",
+          "components/Logo.tsx",
+          "components/common/Container.tsx"
+        ],
+        "sha256": "823e589eb0038f45fead7b0765354b4d10fcc24a6296c08202738f94f29b1a57"
+      },
+      "elements": [
+        {
+          "id": "main-light-page-background",
+          "figmaNode": "1:4440",
+          "figmaName": "frame fill",
+          "selector": "body",
+          "implementedIn": "pages/_document.tsx",
+          "expect": { "backgroundColor": "#ffffff" }
+        },
+        {
+          "id": "main-light-header",
+          "figmaNode": "1:4530",
+          "figmaName": "Header",
+          "selector": "[data-figma-node=\"1:4530\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": { "backgroundColor": "#ffffff" }
+        },
+        {
+          "id": "main-light-hero-h1",
+          "figmaNode": "1:4451",
+          "figmaName": "Build Network Solutions. Anywhere.",
+          "selector": "main h1",
+          "implementedIn": "pages/index.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "700",
+            "fontSize": "48px",
+            "lineHeight": "64px",
+            "color": "#185f99",
+            "text": "Build Network Solutions. Anywhere."
+          }
+        },
+        {
+          "id": "main-light-nav-cta",
+          "figmaNode": "1:4534",
+          "figmaName": "nav Book demo pill",
+          "selector": "[data-figma-node=\"1:4534\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "backgroundColor": "#185f99",
+            "borderRadius": "37px",
+            "gap": "9px",
+            "paddingLeft": "16px",
+            "paddingRight": "16px"
+          },
+          "why": "Filled in the light frame, outlined in the dark one. The two themes are not the same control restyled by opacity."
+        },
+        {
+          "id": "main-light-nav-cta-label",
+          "figmaNode": "1:4535",
+          "figmaName": "Book demo",
+          "selector": "[data-figma-node=\"1:4535\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#ffffff",
+            "text": "Book demo"
+          }
+        },
+        {
+          "id": "main-light-nav-use-cases",
+          "figmaNode": "1:4533",
+          "figmaName": "Use cases",
+          "selector": "[data-figma-node=\"1:4533\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#185f99",
+            "text": "Use cases"
+          }
+        },
+        {
+          "id": "main-light-nav-solutions",
+          "figmaNode": "1:4532",
+          "figmaName": "Solutions",
+          "selector": "[data-figma-node=\"1:4532\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#185f99",
+            "text": "Solutions"
+          }
+        },
+        {
+          "id": "main-light-nav-resources",
+          "figmaNode": "1:4531",
+          "figmaName": "Resources (active state)",
+          "selector": "[data-figma-node=\"1:4531\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#185f99",
+            "textDecorationLine": "underline",
+            "text": "Resources"
+          }
+        },
+        {
+          "id": "main-light-nav-blog",
+          "figmaNode": "1:4537",
+          "figmaName": "Blog",
+          "selector": "[data-figma-node=\"1:4537\"]",
+          "implementedIn": "components/Navigation.tsx",
+          "expect": {
+            "fontFamily": "Poppins",
+            "fontWeight": "500",
+            "fontSize": "18px",
+            "color": "#185f99",
+            "text": "Blog"
+          }
+        },
+        {
+          "id": "main-light-nav-logo",
+          "figmaNode": "1:4538",
+          "figmaName": "Cennso logo",
+          "selector": "[data-figma-node=\"1:4538\"]",
+          "implementedIn": "components/Logo.tsx, components/Navigation.tsx",
+          "expect": { "fill": "#185f99" }
+        },
+        {
+          "id": "main-light-hero-illustration",
+          "figmaNode": "1:4987",
+          "figmaName": "hero_section_y 2 — light artwork",
+          "selector": "[data-figma-node=\"1:4987\"]",
+          "implementedIn": "pages/index.tsx",
+          "expect": {
+            "assetBasename": "hero-illustration-light.webp"
+          }
+        }
+      ]
+    }
+  ],
+
+  "themePairedAssets": [
+    {
+      "id": "hero-illustration-pair",
+      "description": "The hero illustration is drawn twice in Figma — node 1:561 on the dark frame, node 1:4987 on the light one — and the two exports are different bitmaps. Shipping one file for both themes puts a bright slab on a dark page.",
+      "figmaNodes": { "dark": "1:561", "light": "1:4987" },
+      "implementedIn": "pages/index.tsx",
+      "refs": [
+        { "frame": "main-dark", "element": "main-dark-hero-illustration" },
+        { "frame": "main-light", "element": "main-light-hero-illustration" }
+      ]
+    }
+  ]
+}
