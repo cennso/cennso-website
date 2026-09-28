@@ -51,9 +51,24 @@ const whyCennsoOutlines = [
   'dark:border-[#00ffe4]',
 ] as const
 
-// 24px corner, 32px inset - Figma 1:11 (400x338, r24) with its title at x+33
-// and body at x+33. Card ships an 8px corner and a 20px --card-spacing.
-const CARD_SHELL = 'rounded-3xl [--card-spacing:--spacing(8)]'
+// 24px corner, 32px horizontal inset - Figma 1:11 (400x338, r24) with its body
+// at x+33 (1:94 and 1:95 are hand-placed at +43 and +38, so 32 is the round
+// value closest to what the frames repeat). Card ships an 8px corner and a
+// 20px --card-spacing that drives padding and gap alike, so the vertical
+// metrics are pinned separately: 19px above the title, 13px between title and
+// body, 55px under the body. All three are identical on all six cards across
+// both frames - 1:96 at y+19 in a card at y=1100, 1:93 starting 13px under its
+// 45px title box, and ending 55px above the card's bottom edge.
+//
+// The 13px is the one the owner reported: --card-spacing alone put 32px there,
+// two and a half times the frame's.
+//
+// The light frames draw these cards as a plain white rounded rectangle
+// (1:4442 is `bg-white rounded-[24px]` with no stroke), so the border box is
+// kept for layout and its colour cleared; the dark frames' per-card outlines
+// are reinstated by whyCennsoOutlines below.
+const CARD_SHELL =
+  'rounded-3xl gap-[13px] pt-[19px] pb-[55px] border-transparent dark:border-border [--card-spacing:--spacing(8)]'
 
 const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
   const { page, sections } = content
@@ -140,7 +155,9 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
       </Container>
 
       <Container>
-        <div className="flex flex-col gap-12 py-16 md:py-24 w-full">
+        {/* 80px between the heading row and the cards: the glyph (Figma 1:13)
+            ends at y=1019.65 and the first card (1:11) starts at y=1100. */}
+        <div className="flex flex-col gap-20 py-16 md:py-24 w-full">
           <div className="flex flex-col items-center gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 text-center sm:text-left">
               <NextImage
@@ -152,17 +169,26 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                 sizes="160px"
                 className="h-40 w-auto"
               />
+              {/* Figma 1:16 / 1:4529: Poppins Bold 64px on a 42px line box
+                  and no tracking. The `display` variant is the right size but
+                  carries `tracking-tight` (-0.025em, i.e. -1.6px here) and
+                  inherits the body's 1.5 line height, which set the heading
+                  96px tall - more than twice the frame's box, and what pushed
+                  the glyph row apart from the cards under it. */}
               <Typography
                 variant="display"
                 render={<h2 />}
-                className="text-foreground"
+                className="text-foreground leading-[42px] tracking-normal"
               >
                 {whyCennso.heading}
               </Typography>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* 23px between cards in the frames (1:11 ends at x=461, 1:12 starts
+              at 484), across a 1246px card row; on this 1200px column that is
+              22px. */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[22px]">
             {whyCennso.cards.map(
               (card: { title: string; description: string }, index: number) => (
                 <Card
@@ -172,10 +198,15 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                   }`}
                 >
                   <Card.Header>
-                    {/* Figma 1:96-1:98: Bold 32px, 1.4 line height. */}
+                    {/* Figma 1:96-1:98 / 1:4526-1:4528: Poppins Bold 32px,
+                        1.4 line height, CENTRED - all six title nodes carry
+                        text-align center, and each sits on its card's own
+                        centre line (1:98 spans x=1022..1192 in a card centred
+                        at 1107). This was left-aligned, which is the defect
+                        the owner reported. */}
                     <Card.Title
                       render={<h3 />}
-                      className="text-[32px] font-bold leading-[1.4]"
+                      className="text-[32px] font-bold leading-[1.4] text-center"
                     >
                       {card.title}
                     </Card.Title>
