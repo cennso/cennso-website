@@ -2,6 +2,8 @@ import Link from 'next/link'
 import NextImage from 'next/image'
 import { Button, Card, cn, Typography } from '@cennso/ui'
 
+import { CTA_ACTION } from '../common'
+
 import type { FunctionComponent } from 'react'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
 
@@ -37,10 +39,12 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
     // and py are zeroed here to avoid doubling up with the text panel's own
     // padding below. The 32px radius has no match in the theme's scale
     // (tops out at --radius-xl: 16px), so it's overridden the same way the
-    // pre-4.0 SuccessStoryItem already overrode it on Card.
+    // pre-4.0 SuccessStoryItem already overrode it on Card. Measured again
+    // against the frames: the rows are r24 (1:592-1:595 / 1:1069-1:1072), not
+    // r32, so the override is now the theme's own --radius2xl step.
     <Card
       className={cn(
-        'gap-0 overflow-hidden rounded-[32px] py-0 md:flex-row',
+        'gap-0 overflow-hidden rounded-3xl py-0 md:flex-row',
         !even && 'md:flex-row-reverse'
       )}
     >
@@ -64,9 +68,13 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
       </div>
 
       <div className="flex w-full flex-col justify-between gap-8 p-8 md:w-2/5 lg:p-12">
+        {/* Figma 1:600 / 1:1077: Bold 32px in the page's own foreground -
+            white on the dark frames, #185f99 on the light ones. It was
+            --primary, which paints these headlines amber in dark mode; the
+            frames reserve amber for the page H1 and the "21" figure. */}
         <Typography
           variant="h3"
-          className="text-2xl font-bold text-primary lg:text-3xl"
+          className="text-2xl font-bold text-foreground lg:text-[32px] lg:leading-[1.3]"
         >
           {title}
         </Typography>
@@ -74,6 +82,7 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
         <div>
           <Button
             variant="cta"
+            className={CTA_ACTION}
             render={(props) => (
               <Link
                 {...props}

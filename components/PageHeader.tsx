@@ -36,7 +36,6 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
       />
 
       <Container
-        className="bg-secondary"
         subClassName={
           // `justify-between` (from Container) has no minimum gap of its
           // own - at md widths the header text's flex-basis and the
@@ -57,11 +56,16 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
               <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
           ) : null} */}
-          <h1 className="font-bold text-4xl lg:text-5xl text-primary">
+          {/* Design 4.0 page headings are Poppins Bold 48/64 in --primary
+              (Figma 1:589 use cases, 1:1066 light) and the supporting line is
+              Regular 26px in --foreground (1:590 / 1:1067). Both were a step
+              too small here: the lead topped out at 20px and the heading
+              carried no line height of its own. */}
+          <h1 className="font-bold text-4xl lg:text-5xl lg:leading-[64px] text-primary">
             {title}
           </h1>
           {description ? (
-            <p className="text-base md:text-lg lg:text-xl mt-2 text-foreground max-w-[800px]">
+            <p className="text-base md:text-xl lg:text-[26px] mt-2 text-foreground max-w-[800px]">
               {description}
             </p>
           ) : null}
