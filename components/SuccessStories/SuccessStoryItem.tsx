@@ -51,6 +51,15 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
           fill
           sizes="(max-width: 768px) 100vw, 60vw"
           className="object-cover"
+          // The first row sits above the fold and is the Largest Contentful
+          // Paint element on mobile (360px viewport: the cover fills the full
+          // width at 16:10 while every other candidate is below the fold).
+          // next/image lazy-loads by default, so Lighthouse's
+          // `lcp-lazy-loaded` audit scored 0 and Lantern could not start the
+          // fetch until the main thread went idle - simulated LCP 8.1s. Only
+          // the first row gets `priority`; the rest stay lazy so this does not
+          // turn into four eager full-width fetches.
+          priority={index === 0}
         />
       </div>
 
