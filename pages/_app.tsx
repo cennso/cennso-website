@@ -8,8 +8,19 @@ import type { AppProps } from 'next/app'
 import '@cennso/theme/theme.css'
 import '../styles/tailwind.css'
 
+// Only the weights the site actually renders. next/font emits a `<link
+// rel="preload">` for every declared weight x style, so the previous
+// 9 weights x 2 styles meant 18 high-priority font preloads (~157KB) on every
+// page, competing with the LCP element for bandwidth. 100/200/800/900 are
+// rendered nowhere: no `font-thin`/`font-extralight`/`font-extrabold`/
+// `font-black` in this repo, in `@cennso/ui`'s dist or in `@cennso/theme`, and
+// none appear in the rendered HTML of any route. Probing `document.fonts` with
+// headless Chrome across every route confirms the faces the browser actually
+// loads are 300/400/500/600/700 normal plus 300 italic (`Quote.tsx`'s
+// `font-light italic`), so this drops 8 preloads without changing a single
+// rendered glyph.
 const poppinsFont = Poppins({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['300', '400', '500', '600', '700'],
   style: ['normal', 'italic'],
   subsets: ['latin'],
 })
