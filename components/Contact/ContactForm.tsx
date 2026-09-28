@@ -3,7 +3,13 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
 import { Button } from '@cennso/ui'
-import { StatusModal, FormInput, FormTextarea, FormSwitch } from '../common'
+import {
+  StatusModal,
+  FormInput,
+  FormTextarea,
+  FormSwitch,
+  CTA_ACTION,
+} from '../common'
 
 import type { FunctionComponent } from 'react'
 import type { ContactFormBody } from '../../pages/api/contact-form'
@@ -18,7 +24,9 @@ interface ContactFormProps {
 // which disappears against a light-theme form panel. FormInput/FormTextarea
 // stay as the shared primitives below unstyled - the design keeps its fields
 // white-on-dark-text in both palettes, which is what they already render.
-const labelClassName = 'block text-sm leading-6 text-foreground mb-1'
+// Figma 1:3949 etc. set the field labels at Regular 20px; `text-sm` was two
+// steps under that. The legend below matches.
+const labelClassName = 'block text-xl leading-7 text-foreground mb-1'
 
 export const ContactForm: FunctionComponent<ContactFormProps> = ({
   receiverEmail,
@@ -95,7 +103,8 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
   )
 
   return (
-    <div className="isolate bg-card border border-border p-6 rounded-[32px]">
+    // Figma 1:3937 / 1:7433: the form panel is a 24px-cornered card, not 32.
+    <div className="isolate bg-card border border-border p-6 rounded-3xl">
       <StatusModal
         action={action}
         setAction={setAction}
@@ -169,7 +178,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             />
           </div>
           <fieldset className="sm:col-span-2">
-            <legend className="block text-sm leading-6 text-foreground mb-2">
+            <legend className="block text-xl leading-7 text-foreground mb-2">
               Phone number (optional):
             </legend>
             <div className="flex gap-4">
@@ -250,9 +259,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             </label>
           </div>
           <div className="sm:col-span-2 flex justify-end">
-            <Button type="submit" variant="cta">
+            <Button type="submit" variant="cta" className={CTA_ACTION}>
               {content?.form?.sendLabel || 'Send'}
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+              <ArrowRight className="w-5 h-5" aria-hidden="true" />
             </Button>
           </div>
         </div>

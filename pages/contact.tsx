@@ -58,7 +58,9 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
         }}
       />
 
-      <Container className="pt-12 md:pt-24 pb-24 bg-secondary">
+      {/* Both contact frames (1:3471 / 1:7084) sit on one flat plate; there is
+          no band behind the form column. */}
+      <Container className="pt-12 md:pt-24 pb-24">
         <div className="flex flex-col gap-24">
           {Object.entries(sections).map(([, section]: [string, any], index) => {
             return (
@@ -72,7 +74,9 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                 <div className="flex flex-col xl:flex-row gap-12 text-foreground">
                   <div className="flex flex-col gap-8 w-full xl:w-1/2">
                     <h3 className="text-3xl text-primary">{section.company}</h3>
-                    <div className="flex flex-col gap-4">
+                    {/* Figma 1:3924 / 1:7420: the body copy beside the form is
+                        Regular 20px, not the inherited 16px. */}
+                    <div className="flex flex-col gap-4 text-xl">
                       {section.description.map(
                         (text: string, index: number) => (
                           <p key={index}>{text}</p>
@@ -92,15 +96,18 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                       </div>
                       {section.contact ? (
                         <div className="flex flex-col sm:flex-row md:flex-col items-center justify-center md:items-start gap-3 sm:gap-12 w-full md:w-1/2">
+                          {/* Figma 1:3936 / 1:3929: the address lines are
+                              Regular 22px next to 58px icon discs (1:3958 /
+                              1:3959); they were 16px next to 48px discs. */}
                           {section.contact.email ? (
                             <a
                               href={`mailto:${section.contact.email}`}
                               rel="noopener"
-                              className="flex flex-row gap-4 items-center text-foreground hover:text-primary transition duration-300 ease-in-out"
+                              className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
-                              <span className="flex items-center justify-center w-12 h-12 rounded-full border border-border shrink-0">
+                              <span className="flex items-center justify-center w-14 h-14 rounded-full border border-border shrink-0">
                                 <Mail
-                                  className="w-5 h-5 text-primary"
+                                  className="w-6 h-6 text-primary"
                                   aria-hidden="true"
                                 />
                               </span>
@@ -110,11 +117,11 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                           {section.contact.phone ? (
                             <a
                               href={`tel:${section.contact.phone.replace(' ', '')}`}
-                              className="flex flex-row gap-4 items-center text-foreground hover:text-primary transition duration-300 ease-in-out"
+                              className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
-                              <span className="flex items-center justify-center w-12 h-12 rounded-full border border-border shrink-0">
+                              <span className="flex items-center justify-center w-14 h-14 rounded-full border border-border shrink-0">
                                 <Phone
-                                  className="w-5 h-5 text-primary"
+                                  className="w-6 h-6 text-primary"
                                   aria-hidden="true"
                                 />
                               </span>
@@ -125,12 +132,14 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                       ) : null}
                     </div>
                     <div className="flex flex-col gap-2 w-full xl:w-[calc(50%-1rem)]">
+                      {/* Figma 1:3945 / 1:3946: Bold 24px in --primary over
+                          Regular 20px in --foreground, both centred. */}
                       <header className="flex flex-row justify-center">
-                        <h4 className="font-bold text-xl text-primary text-center">
+                        <h4 className="font-bold text-2xl text-primary text-center">
                           {section.person.name}
                         </h4>
                       </header>
-                      <p className="text-center text-foreground">
+                      <p className="text-center text-xl text-foreground">
                         {section.person.position}
                       </p>
                     </div>
