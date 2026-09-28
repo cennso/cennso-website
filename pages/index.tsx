@@ -138,7 +138,14 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                   aria-hidden="true"
                   width={625}
                   height={369}
-                  sizes="160px"
+                  // `h-20 w-auto` pins the height to 80px at every breakpoint
+                  // and lets the width follow the artwork's own aspect ratio,
+                  // so the rendered width is 80 * 625/369 = 136px - not the
+                  // 160px that used to be declared. `sizes` is what next/image
+                  // multiplies by the device pixel ratio to pick a srcset
+                  // candidate, so over-declaring it fetches a needlessly large
+                  // source for the same on-screen box.
+                  sizes="136px"
                   className="h-20 w-auto"
                 />
               }
@@ -162,7 +169,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                   aria-hidden="true"
                   width={652}
                   height={580}
-                  sizes="160px"
+                  // 80 * 652/580 = 90px rendered, not the 160px declared
+                  // before: Lighthouse measured this one at 90x80 CSS px while
+                  // next/image was serving the 640px-wide candidate, 82% of
+                  // which was thrown away.
+                  sizes="90px"
                   className="h-20 w-auto"
                 />
               }
@@ -177,7 +188,9 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                   aria-hidden="true"
                   width={402}
                   height={508}
-                  sizes="120px"
+                  // 80 * 402/508 = 64px rendered, not the 120px declared
+                  // before.
+                  sizes="64px"
                   className="h-20 w-auto"
                 />
               }
