@@ -1,19 +1,38 @@
 import { useState, useRef } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Menu, ThemeToggle } from '@cennso/ui'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ChevronRight } from 'lucide-react'
 
-import { Button } from './common'
+import { CONTENT_MEASURE } from './common'
 import { Logo } from './Logo'
 import { MenuToggle } from './MenuToogle'
 import { useClickOutside } from '../lib/hooks'
 
-import metadata from '../siteMetadata'
-
 import type { FunctionComponent, ReactNode } from 'react'
 import type { NavigationLink } from '../contexts'
+
+/**
+ * The header's own call to action, as drawn in the Design 4.0 Header symbol
+ * (Figma 1:107 dark / 1:4534 light - the symbol nobody expanded, which is how
+ * a "Sign in" pill ended up here instead). The two palettes draw it
+ * differently, so this is not one of `@cennso/ui`'s Button variants:
+ *
+ * - dark  (1:107): page-coloured fill, 1px `#ffb31b` border, `#ffb31b` label
+ * - light (1:4534): solid `#185f99` fill, white label, no border
+ *
+ * Every literal below is the frame's: 37px radius (`rounded-btn`), 16px
+ * horizontal padding, 9px gap, Poppins Medium 18px, 36px tall. `dark:` resolves
+ * to `:root:not([data-theme="light"])` via the theme preset, so the dark
+ * treatment is the one that survives if the attribute is ever missing - which
+ * matches `defaultSetting="dark"`.
+ */
+const NAV_CTA_CLASS = [
+  'inline-flex h-9 items-center gap-[9px] rounded-btn border px-4',
+  'text-lg font-medium transition-colors',
+  'border-primary bg-primary text-primary-foreground hover:bg-primary/90',
+  'dark:bg-background dark:text-primary dark:hover:bg-primary/10',
+].join(' ')
 
 interface NavigationProps {
   navigation: NavigationLink[]
@@ -28,10 +47,16 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
 
   return (
     <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-background border-none shadow-none px-8 lg:px-4">
-      <nav className="flex flex-row items-center justify-between w-full max-w-(--breakpoint-2xl) py-2">
+      <nav
+        className={`flex flex-row items-center justify-between w-full ${CONTENT_MEASURE} py-2`}
+      >
         <div className="flex-none flex flex-row mr-12">
           <Link title="Home page" href="/">
-            <Logo className="w-44 fill-primary" />
+            {/* Figma 1:111 renders the wordmark white on the dark frame and
+                `#185f99` (= --primary in the light palette) on the light one.
+                `fill-primary` alone painted it gold in dark, because --primary
+                is the amber accent there. */}
+            <Logo className="w-44 fill-primary dark:fill-white" />
           </Link>
         </div>
 
@@ -62,22 +87,13 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
               <ThemeToggle variant="dropdown" />
             </li>
             <li className="mt-4 xl:mt-0 font-normal">
-              <Link href={metadata.explore.cloudPortal} target="_blank">
-                <Button
-                  variant="primary"
-                  className="flex flex-row items-center gap-2"
-                >
-                  <Image
-                    src="/assets/common/cloud.svg"
-                    alt="Cloud icon"
-                    title="Cloud icon"
-                    width={24}
-                    height={24}
-                    className="w-6 h-6"
-                    sizes="24px"
-                  />
-                  Sign in
-                </Button>
+              <Link href="/contact" className={NAV_CTA_CLASS}>
+                Book demo
+                <ChevronRight
+                  className="h-[13px] w-[10px]"
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                />
               </Link>
             </li>
           </ul>

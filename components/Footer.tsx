@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { CONTENT_MEASURE } from './common'
 import { Logo } from './Logo'
 
 import type { FunctionComponent } from 'react'
@@ -29,7 +30,12 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
 
   return (
     <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-light">
-      <footer className="relative flex flex-col xl:flex-row justify-between 2xl:justify-between w-full max-w-(--breakpoint-2xl) pt-4 pb-8 gap-8 2xl:gap-32">
+      {/* Same content measure as Container/Navigation, so the footer wordmark
+          lines up with the header's and with every page heading - the frames
+          put both logos on the page's own gutter (1:584 at x=81). */}
+      <footer
+        className={`relative flex flex-col xl:flex-row justify-between 2xl:justify-between w-full ${CONTENT_MEASURE} pt-4 pb-8 gap-8 2xl:gap-32`}
+      >
         <div className="flex flex-col order-last xl:order-0 mt-0 2xl:mt-2">
           <Logo className="w-44 fill-white" />
           <div className="flex flex-col mt-4 text-white text-sm">
