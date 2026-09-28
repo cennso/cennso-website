@@ -6,8 +6,9 @@ import NextImage from 'next/image'
 import Link from 'next/link'
 
 import { Button, Card, Typography } from '@cennso/ui'
+import { ChevronRight } from 'lucide-react'
 
-import { Container } from '../components/common'
+import { Container, CTA_HERO } from '../components/common'
 import { LogoBand } from '../components/Home/LogoBand'
 import { StatCard } from '../components/Home/StatCard'
 import { SEO } from '../components/SEO'
@@ -37,6 +38,23 @@ const whyCennsoTints = [
   'dark:bg-[hsl(var(--glow-teal)/0.4)]',
 ] as const
 
+// Each tinted card is outlined in the bright end of its own glow family in the
+// dark frames - #3fabff on 1:11, #41d2ff on 1:12, #00ffe4 on 1:10 - not in the
+// theme's flat --border. There is no token for these: --glow-* is the fill
+// (35%/33% lightness), and the outlines sit far above it, so they are written
+// as literals here the same way the tints above name their token. Dark only:
+// the light frames (1:4442 / 1:4443 / 1:4441) draw the cards as plain white
+// with no outline at all. Decorative, so no non-text contrast floor applies.
+const whyCennsoOutlines = [
+  'dark:border-[#3fabff]',
+  'dark:border-[#41d2ff]',
+  'dark:border-[#00ffe4]',
+] as const
+
+// 24px corner, 32px inset - Figma 1:11 (400x338, r24) with its title at x+33
+// and body at x+33. Card ships an 8px corner and a 20px --card-spacing.
+const CARD_SHELL = 'rounded-3xl [--card-spacing:--spacing(8)]'
+
 const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
   const { page, sections } = content
   const { hero, customerLogos, whyCennso, stats } = sections
@@ -45,34 +63,72 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
     <>
       <SEO title={page.title} description={page.description} />
 
-      <Container className="bg-secondary">
+      {/* No `bg-secondary` band: both 4.0 main-page frames paint one flat
+          plate edge to edge (#001a2a dark / #e1eaf0 light) and draw no
+          separate hero surface on top of it. */}
+      <Container>
         <div className="flex w-full flex-col">
-          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-16 py-16 md:py-24 w-full">
-            <div className="flex flex-col gap-6 w-full md:w-1/2 items-center md:items-start text-center md:text-left">
+          {/* The frames put the copy in a 601px column (1:24 x=81 -> 1:25
+              right edge 686) hard against the artwork at x=687, so the split
+              is not 50/50 and the gutter between them is nominal. A half-width
+              column with a 64px gutter left the 48px headline too narrow for
+              its own first line and broke "Build Network Solutions." across
+              two, which the design sets on one. */}
+          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-6 pt-10 pb-16 md:pt-16 md:pb-24 w-full">
+            <div className="flex flex-col gap-6 w-full md:w-[52%] items-center md:items-start text-center md:text-left">
+              {/* Figma 1:24 / 1:4451: Poppins Bold 48/64, no tracking. The
+                  library's `h1` variant is the theme's 36/40 step with
+                  -0.025em tracking, which is the app-UI heading, not this
+                  marketing hero. */}
               <Typography
                 variant="h1"
                 render={<h1 />}
-                className="whitespace-pre-line text-primary"
+                className="whitespace-pre-line text-primary md:text-5xl md:leading-[64px] md:tracking-normal"
               >
                 {hero.headline}
               </Typography>
-              <Typography variant="lead">{hero.description}</Typography>
+              {/* Figma 1:25 / 1:4452: Regular 26px. `lead` is 18/28. */}
+              <Typography variant="lead" className="md:text-[26px]">
+                {hero.description}
+              </Typography>
               <Button
                 variant="cta"
+                className={CTA_HERO}
                 render={(props) => <Link {...props} href="/contact" />}
               >
                 {hero.ctaText}
+                {/* Figma 1:68 trails the label with an 11x15 chevron vector,
+                    17px after it. Decorative: the label already names the
+                    action, so it carries no accessible name of its own. */}
+                <ChevronRight className="h-4 w-3" aria-hidden="true" />
               </Button>
             </div>
-            <div className="w-full md:w-1/2 flex justify-center">
+            <div className="w-full md:w-[48%] flex justify-center">
+              {/* Two exports, not one. The dark and light frames draw the slab
+                  in different colours (dark navy vs. bright blue) over
+                  different plates, and the single artwork shipped before was
+                  cut from the LIGHT frame and reused for both, which is why
+                  the dark page showed a light slab. Each file is the hero
+                  composite of its own frame (Figma 687,126 -> 1344,596),
+                  alpha-keyed off that frame's flat plate so neither carries a
+                  background rectangle. */}
               <NextImage
-                src="/assets/landing-page/hero-illustration.webp"
-                alt="Illustration of a phone, cell tower, server racks and a globe connected together in a hexagon panel, with the Cennso wordmark on the server node"
-                width={1533}
-                height={1284}
+                src="/assets/landing-page/hero-illustration-dark.webp"
+                alt={hero.illustrationAlt}
+                width={1000}
+                height={715}
                 sizes="(max-width: 768px) 80vw, 40vw"
                 priority
-                className="w-full max-w-md md:max-w-none pointer-events-none"
+                className="hidden w-full max-w-md md:max-w-none pointer-events-none dark:block"
+              />
+              <NextImage
+                src="/assets/landing-page/hero-illustration-light.webp"
+                alt={hero.illustrationAlt}
+                width={1000}
+                height={715}
+                sizes="(max-width: 768px) 80vw, 40vw"
+                priority
+                className="w-full max-w-md md:max-w-none pointer-events-none dark:hidden"
               />
             </div>
           </div>
@@ -109,12 +165,28 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {whyCennso.cards.map(
               (card: { title: string; description: string }, index: number) => (
-                <Card key={card.title} className={whyCennsoTints[index] ?? ''}>
+                <Card
+                  key={card.title}
+                  className={`${CARD_SHELL} ${whyCennsoTints[index] ?? ''} ${
+                    whyCennsoOutlines[index] ?? ''
+                  }`}
+                >
                   <Card.Header>
-                    <Card.Title render={<h3 />}>{card.title}</Card.Title>
+                    {/* Figma 1:96-1:98: Bold 32px, 1.4 line height. */}
+                    <Card.Title
+                      render={<h3 />}
+                      className="text-[32px] font-bold leading-[1.4]"
+                    >
+                      {card.title}
+                    </Card.Title>
                   </Card.Header>
                   <Card.Content>
-                    <Card.Description>{card.description}</Card.Description>
+                    {/* Figma 1:93-1:95: Regular 16px, 1.6 line height, in the
+                        page's own foreground - not the muted 14px the library
+                        gives a Card.Description by default. */}
+                    <Card.Description className="text-base leading-[1.6] text-foreground">
+                      {card.description}
+                    </Card.Description>
                   </Card.Content>
                 </Card>
               )
@@ -154,7 +226,19 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
             />
             <StatCard
               figure={
-                <Typography variant="stat" className="text-primary">
+                // Figma 1:61 / 1:4488: Bold 115px, -4.6px tracking. `stat` is
+                // the theme's 80px step, so the size and tracking are taken
+                // from the frame - but NOT its light-frame colour. 1:4488
+                // paints the figure #ff6d12 (--cta) on the white stat panel,
+                // which measures 2.82:1 and misses WCAG 2.1 AA even at the
+                // 3:1 large-text floor (axe-core flags it as a colour-contrast
+                // violation); the constitution outranks the frame, so it stays
+                // on --primary, which is the amber the dark frame asks for
+                // anyway and the navy every other light-mode heading uses.
+                <Typography
+                  variant="stat"
+                  className="text-[115px] leading-none tracking-[-0.04em] text-primary"
+                >
                   {stats.cards[1].figure}
                 </Typography>
               }

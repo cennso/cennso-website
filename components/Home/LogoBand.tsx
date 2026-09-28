@@ -40,23 +40,35 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
   logos,
   className = '',
 }) => (
+  // Figma 1:564 / 1:4990 lay the ten marks out as two rows of five across a
+  // 1170px band. A `flex-wrap` row packs by measured width instead, which put
+  // seven on the first row and three on the second - the same ten logos, the
+  // wrong shape. An explicit 5-column grid from `sm:` up reproduces the band;
+  // below that it steps down to 3 and then 2 columns, which the design has no
+  // artboard for (there are no mobile frames in the file at all).
   <ul
-    className={`flex flex-wrap items-center justify-center gap-x-10 gap-y-6 ${className}`}
+    className={`grid grid-cols-2 place-items-center gap-x-10 gap-y-6 sm:grid-cols-3 md:grid-cols-5 ${className}`}
   >
     {logos.map((logo) => {
-      // `sizes` describes the rendered *width*, but this component fixes the
-      // *height* (`h-8`, `sm:h-10`) and lets width follow each logo's own
-      // aspect ratio - so no single literal width is right for all of them.
-      // The widest mark (hochbahn, 801x123) renders ~260 CSS px at `sm:h-10`,
-      // more than twice the 120px that used to be declared, so next/image
-      // picked a srcset candidate far below the needed resolution and the
-      // browser upscaled it. Deriving the width per logo keeps the wide marks
-      // sharp without making the near-square ones (telna renders ~39 CSS px)
-      // over-fetch. `sm:` is min-width 640px, so the query is written that way
-      // round to match the breakpoint exactly at 640px.
+      // `sizes` describes the rendered *width*, but this component caps the
+      // *height* and lets width follow each logo's own aspect ratio - so no
+      // single literal width is right for all of them. The widest mark
+      // (hochbahn, 801x123) wants ~260 CSS px at the 40px cap, more than twice
+      // the 120px that used to be declared, so next/image picked a srcset
+      // candidate far below the needed resolution and the browser upscaled it.
+      //
+      // The grid column is the other constraint, and the one that used to be
+      // missing: on the 1200px measure a 5-column row with a 40px gutter gives
+      // each cell 208px, which is narrower than hochbahn and travelping want.
+      // With a *fixed* height those two were squeezed sideways by the cell's
+      // max-width and rendered out of proportion (Lighthouse
+      // `image-aspect-ratio`). Capping BOTH axes instead - `max-h-*` with
+      // `h-auto`/`w-auto` - lets the browser fit the mark inside the cell with
+      // its ratio intact, and the same cap is what `sizes` declares, so the
+      // srcset candidate matches what is actually painted.
       const aspectRatio = logo.width / logo.height
-      const baseWidth = Math.ceil(32 * aspectRatio)
-      const smWidth = Math.ceil(40 * aspectRatio)
+      const fit = (capHeight: number, cellWidth: number) =>
+        Math.ceil(Math.min(capHeight * aspectRatio, cellWidth))
 
       return (
         <li key={logo.name} className="flex items-center justify-center">
@@ -65,8 +77,11 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
             alt={logo.name}
             width={logo.width}
             height={logo.height}
-            sizes={`(min-width: 640px) ${smWidth}px, ${baseWidth}px`}
-            className={`h-8 w-auto sm:h-10 ${LOGO_TONE}`}
+            sizes={`(min-width: 768px) ${fit(40, 208)}px, (min-width: 640px) ${fit(
+              40,
+              165
+            )}px, ${fit(32, 130)}px`}
+            className={`h-auto max-h-8 w-auto max-w-full sm:max-h-10 ${LOGO_TONE}`}
           />
         </li>
       )

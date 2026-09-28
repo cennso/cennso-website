@@ -23,15 +23,27 @@ export const StatCard: FunctionComponent<StatCardProps> = ({
   className = '',
 }) => {
   return (
-    <Card className={className}>
+    // Figma 1:20-1:23 (dark) / 1:4447-1:4450 (light): 600x447, 24px corner,
+    // 65px inset. Card ships an 8px corner and a 20px --card-spacing.
+    // The figure is centred in the card but the copy under it is LEFT aligned
+    // in every frame (title and body both start at the card's own 65px inset,
+    // e.g. 1:26/1:27 at x=126 inside a card at x=61) - it used to be centred
+    // here, which is what made the block read as a stat tile rather than the
+    // design's text panel.
+    <Card className={`rounded-3xl [--card-spacing:--spacing(10)] ${className}`}>
       <Card.Content className="flex items-center justify-center">
         {figure}
       </Card.Content>
       <Card.Header>
-        <Card.Title render={<h3 />} className="text-center">
+        {/* Figma 1:26 etc: Bold 32px. */}
+        <Card.Title
+          render={<h3 />}
+          className="text-[32px] font-bold leading-[1.3]"
+        >
           {title}
         </Card.Title>
-        <Card.Description className="text-center">
+        {/* Figma 1:27 etc: Regular 18px in the page foreground. */}
+        <Card.Description className="text-lg text-foreground">
           {description}
         </Card.Description>
       </Card.Header>

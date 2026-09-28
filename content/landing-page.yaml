@@ -19,6 +19,11 @@ sections:
       or private networks with seamless interoperability and centralized
       control.
     ctaText: Book demo
+    # One string for both theme cuts of the hero artwork - the two files draw
+    # the same scene, only the palette differs.
+    illustrationAlt: >-
+      Illustration of a phone, cell tower, server racks and a globe connected
+      together in a hexagon panel, with the Cennso wordmark on the server node
 
   # Customer logo band, left-to-right / top-row-then-bottom-row as drawn.
   # width/height are each logo's native asset size (next/image needs both to
