@@ -78,6 +78,14 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
               <Link
                 {...props}
                 href={link}
+                // Every row's link sits in or near the viewport, so the
+                // default viewport prefetch pulled each story page's chunks
+                // and data on load - 72KB on a 562KB page, contending with
+                // the cover image that is this page's LCP element. The pages
+                // router still prefetches on hover/focus, so a deliberate
+                // click is as warm as before; only the speculative
+                // fetch-everything-on-sight pass is gone.
+                prefetch={false}
                 aria-label={linkAccessibleName.replace('{title}', title)}
               />
             )}
