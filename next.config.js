@@ -25,7 +25,14 @@ function assertLucideShimIsComplete() {
     'node_modules/lucide-react/dist/esm/lucide-react.mjs'
   )
   const uiDist = path.join(__dirname, 'node_modules/@cennso/ui/dist')
-  if (!fs.existsSync(lucideEntry) || !fs.existsSync(uiDist)) return
+  // Throw rather than return: a silent skip leaves NormalModuleReplacementPlugin
+  // swapping the barrel with nothing verifying the shim, which is exactly the
+  // undefined-icon render this guard exists to prevent.
+  if (!fs.existsSync(lucideEntry) || !fs.existsSync(uiDist)) {
+    throw new Error(
+      `Cannot verify ${LUCIDE_ICONS_SHIM}: missing ${lucideEntry} or ${uiDist}.`
+    )
+  }
 
   // Only the re-exports that come out of `./icons/*` count: lucide's entry
   // also exports helpers like `Icon` and `createLucideIcon`, whose names
@@ -42,8 +49,19 @@ function assertLucideShimIsComplete() {
     }
   }
 
+  // An empty set would make every later check pass vacuously, so treat a parse
+  // that finds nothing as a broken parser rather than as "no icons needed".
+  if (iconExportNames.size === 0) {
+    throw new Error(
+      `Parsed zero icon exports from ${lucideEntry}; lucide-react's format ` +
+        `changed and the parser in next.config.js needs updating.`
+    )
+  }
+
   const required = new Set()
-  for (const file of fs.readdirSync(uiDist)) {
+  // Recursive: @cennso/ui ships most of its components in subdirectories of
+  // dist, so a top-level-only scan misses the majority of icon references.
+  for (const file of fs.readdirSync(uiDist, { recursive: true })) {
     if (!file.endsWith('.mjs')) continue
     const source = fs.readFileSync(path.join(uiDist, file), 'utf8')
     for (const match of source.matchAll(/"([A-Z][A-Za-z0-9]{1,40})"/g)) {
