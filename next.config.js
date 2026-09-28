@@ -1,10 +1,83 @@
+const fs = require('fs')
+const path = require('path')
+
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 
+const LUCIDE_BARREL = /lucide-react[\\/]dist[\\/]esm[\\/]icons[\\/]index\.mjs$/
+const LUCIDE_ICONS_SHIM = path.join(__dirname, 'lib', 'lucide-icons.mjs')
+
+/**
+ * `@cennso/ui`'s Icon looks glyphs up through lucide-react's `icons` namespace,
+ * which covers all ~1845 icons and therefore cannot be tree-shaken - 648KB
+ * parsed / 179KB transferred on every page for a handful of glyphs. The plugin
+ * below swaps that namespace for `lib/lucide-icons.mjs`.
+ *
+ * This recomputes what the swap has to cover, so the build fails loudly if
+ * `@cennso/ui` ever reaches for a glyph the shim does not re-export - the
+ * alternative is `icons[name]` returning undefined and React throwing on a
+ * page nobody audited. See `lib/lucide-icons.mjs` for the standing limits.
+ */
+function assertLucideShimIsComplete() {
+  const lucideEntry = path.join(
+    __dirname,
+    'node_modules/lucide-react/dist/esm/lucide-react.mjs'
+  )
+  const uiDist = path.join(__dirname, 'node_modules/@cennso/ui/dist')
+  if (!fs.existsSync(lucideEntry) || !fs.existsSync(uiDist)) return
+
+  // Only the re-exports that come out of `./icons/*` count: lucide's entry
+  // also exports helpers like `Icon` and `createLucideIcon`, whose names
+  // collide with ordinary strings in `@cennso/ui` and would be reported as
+  // missing glyphs forever.
+  const iconExportNames = new Set()
+  const lucideSource = fs.readFileSync(lucideEntry, 'utf8')
+  for (const block of lucideSource.matchAll(
+    /export \{([^}]*)\} from '\.\/icons\/[^']+';/g
+  )) {
+    for (const specifier of block[1].split(',')) {
+      const exported = specifier.trim().match(/^default as (\w+)$/)
+      if (exported) iconExportNames.add(exported[1])
+    }
+  }
+
+  const required = new Set()
+  for (const file of fs.readdirSync(uiDist)) {
+    if (!file.endsWith('.mjs')) continue
+    const source = fs.readFileSync(path.join(uiDist, file), 'utf8')
+    for (const match of source.matchAll(/"([A-Z][A-Za-z0-9]{1,40})"/g)) {
+      if (iconExportNames.has(match[1])) required.add(match[1])
+    }
+  }
+
+  const shim = fs.readFileSync(LUCIDE_ICONS_SHIM, 'utf8')
+  const provided = new Set(
+    [...shim.matchAll(/default as (\w+)/g)].map((match) => match[1])
+  )
+  const missing = [...required].filter((name) => !provided.has(name)).sort()
+  if (missing.length) {
+    throw new Error(
+      `lib/lucide-icons.mjs is missing ${missing.length} icon(s) that @cennso/ui ` +
+        `references: ${missing.join(', ')}.\nAdd them (see the header comment in ` +
+        `that file) or the icons will render as undefined at runtime.`
+    )
+  }
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  webpack: (config, { webpack }) => {
+    assertLucideShimIsComplete()
+    config.plugins.push(
+      new webpack.NormalModuleReplacementPlugin(
+        LUCIDE_BARREL,
+        LUCIDE_ICONS_SHIM
+      )
+    )
+    return config
+  },
   output: 'standalone',
   images: {
     // Device sizes for responsive images (used with sizes prop)
