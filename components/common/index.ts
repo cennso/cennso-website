@@ -1,6 +1,7 @@
 export * from './Button'
 export * from './CircleAvatar'
 export * from './Container'
+export * from './ctaButton'
 export * from './FeatureCard'
 export * from './GradientHeader'
 export * from './Hexagon'
