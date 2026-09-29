@@ -58,3 +58,9 @@ helm/charts/cennso-website/README.md
 /lighthouse-mobile
 lighthouse-*.json
 lighthouse-*.html
+
+# Captured Figma output, committed verbatim as the provenance of
+# design/figma/inventory.json. Reformatting it would mean the committed bytes
+# are no longer what the Figma MCP tool returned, and the refresh diff would
+# stop being readable as a design change.
+/design/figma/raw
