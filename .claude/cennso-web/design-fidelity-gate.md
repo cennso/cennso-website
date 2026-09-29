@@ -48,14 +48,29 @@ removed. Reject it.**
 ## What the review compares
 
 - **Every text node in every frame under review**, matched to the DOM by its own
-  text content, with font family/weight/size, line height, letter spacing,
-  transform, decoration, alignment and colour diffed on each match.
-- **Boxes**, bridged to the DOM through the text they enclose: fill, border
-  colour and radius, with element opacity composited onto fill _and_ border
-  before comparison.
-- **Vertical gaps** between stacked copy, measured in the frame.
-- **Artwork colours** read from the SVGs Figma exported with the frame. A colour
-  the design paints with that appears in no SVG on the page is a finding.
+  text content _and_ by where the design puts it, with font family/weight/size,
+  line height, letter spacing, transform, decoration, alignment and colour
+  diffed on each match. Text alone is not a key: "Book demo" is in the header and
+  in the hero, the nav and the footer share half their links, and `/contact`
+  renders two partner blocks. Copy that appears once on both sides is paired
+  first and calibrates a design-Y → rendered-Y projection; everything repeated is
+  placed through that and through containment (a node from the Footer symbol may
+  only pair inside the page's footer). **A pair that still cannot be decided is
+  reported as an ambiguity, not guessed** — a wrong pairing costs the reader the
+  trust they need for every other finding.
+- **Boxes**, bridged either through the text they enclose or, where they enclose
+  none, through geometry alone: fill, border colour and width, radius and width,
+  with element opacity composited onto fill _and_ border before comparison. A box
+  that cannot be bridged confidently is reported as unreached, never bridged to
+  whatever was nearest.
+- **Vertical gaps** between stacked copy, edge to edge where the frame gives a
+  height and top to top where it does not.
+- **Artwork**, by fetching the image Figma exported for the node and the image
+  the page actually served for it and comparing their dominant palettes. Both are
+  decoded in the browser, so WebP is readable; the tolerance is a palette
+  distance, not pixel equality, because our assets are re-encoded at different
+  dimensions. Plus the theme-paired rule: where the two frames draw a position's
+  artwork differently, the two themes must resolve to different files.
 - **Both themes**, forced through `localStorage` before first paint, at 1360px.
   The run aborts if `<html data-theme>` does not come back as the mapping asked.
 
@@ -81,8 +96,10 @@ parses to zero nodes or zero text; a review selecting no frames; `--frames`
 naming an unknown frame; a route that 404s, 500s, throws or renders empty; a
 page in the wrong theme; a missing Chrome; an exclusion with no reason, a shrug
 reason, a dangling node or a duplicate story. Findings: an unrendered design
-node, a differing property or gap, an uncomposited fill or border, an artwork
-colour absent from the page.
+node, a differing property, gap or width, an uncomposited fill or border, a
+dominant artwork colour the served image does not have, one file serving both
+themes where the design draws them differently, and a repeated string the matcher
+cannot pair confidently.
 
 Plus positive controls — the committed mapping loads, a fresh dump enumerates,
 and a fixture page matching its design passes — so "always red" cannot
@@ -92,7 +109,10 @@ says anything about the site.
 ## What it does not cover
 
 - **Responsive breakpoints.** Everything is compared at the Figma frame width
-  (1360px). Mobile is Lighthouse's and `yarn perf:mobile`'s problem.
+  (1360px), and the report says so on every run. There are no mobile artboards in
+  this Figma file, so there is nothing below 1360px to compare against and none of
+  these numbers is a claim about narrow screens — "62% matched" is 62% of one
+  viewport. Mobile is Lighthouse's and `yarn perf:mobile`'s problem.
 - **Frames nobody fetched.** The review covers the frames passed to `--frames`.
   If a change reached a route whose frame was not fetched, that route was not
   reviewed — say so rather than implying coverage.

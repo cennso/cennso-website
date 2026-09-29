@@ -202,7 +202,11 @@ async function main() {
       baseUrl = site.baseUrl
     }
     process.stdout.write(
-      `\nComparing against ${baseUrl} at ${inventory.viewport.width}px.\n`
+      `\nComparing against ${baseUrl} at ${inventory.viewport.width}x${inventory.viewport.height}px — ` +
+        'the width the Figma frames are drawn at.\n' +
+        '  Every number below is that viewport and no other. There are no mobile artboards\n' +
+        '  in this Figma file, so nothing here is a statement about narrow screens; those are\n' +
+        "  Lighthouse's and yarn perf:mobile's to answer.\n"
     )
 
     const enumerated = await runInventory({
@@ -238,14 +242,17 @@ async function main() {
           `   mismatched ${String(mismatched).padStart(3)}` +
           `   unreached ${String(c.unmatchedDesignTextNodes).padStart(3)}\n` +
           `    rendered     ${String(c.unmatchedRenderedTextNodes).padStart(3)} element(s) on the page match no design node` +
-          `   ${c.ambiguousTextGroups} repeated-copy group(s) of unequal size\n` +
+          `   ${c.ambiguousTextGroups} repeated-copy group(s) of unequal size` +
+          `   ${c.ambiguousPairings} node(s) too ambiguous to pair\n` +
           `    boxes        ${String(c.designBoxNodes).padStart(3)} in the design` +
           `   ${String(c.matchedBoxNodes).padStart(3)} bridged to an element` +
-          `   ${String(c.unmatchedBoxNodes).padStart(3)} not bridged\n` +
+          `   ${String(c.unmatchedBoxNodes).padStart(3)} not bridged` +
+          `   (+${c.artworkLayerNodes} image layer(s), read as artwork below)\n` +
           `    gaps         ${String(c.designGaps).padStart(3)} measured in the design` +
           `   ${String(c.comparedGaps).padStart(3)} compared\n` +
-          `    artwork      ${String(c.designAssetFills).padStart(3)} colour(s) in the frame's exported vectors` +
-          `   ${c.missingAssetFills.length} absent from the page\n` +
+          `    artwork      ${String(c.designArtworkNodes).padStart(3)} node(s) the frame exports art for` +
+          `   ${String(c.bridgedArtworkNodes).padStart(3)} compared against the served image` +
+          `   ${String(c.unbridgedArtworkNodes).padStart(3)} not bridged\n` +
           `    excluded     ${String(c.excluded).padStart(3)} node(s), each with a written reason in design/figma/exclusions.json\n`
       )
     }
@@ -253,7 +260,7 @@ async function main() {
     const reachedPct = total.designNodes
       ? Math.round((total.matched / total.designNodes) * 100)
       : 0
-    heading('Result')
+    heading(`Result — measured at ${inventory.viewport.width}px only`)
     process.stdout.write(
       `  design nodes  ${total.designNodes}\n` +
         `  matched       ${total.matched} (${reachedPct}%)\n` +

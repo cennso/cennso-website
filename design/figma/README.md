@@ -94,27 +94,84 @@ from `#ffb31b`. **An unreached design node is a finding, not a silent pass.**
 
 ### How a design node is found on the page
 
-By its own text, normalised for whitespace, case, curly quotes and dashes. Text
-content is a strong natural key and needs no hand-maintained selector, so the
-match cannot be quietly narrowed to the elements somebody remembered to tag.
+By its text, normalised for whitespace, case, curly quotes and dashes — **and by
+where the design puts it.** Text alone is not a key, and treating it as one made
+the first full six-frame run 43% noise: "Book demo" is in the header and in the
+hero, the nav and the footer share half their links, `/contact` renders two
+partner blocks. Pairing those by text and then sorting by vertical position
+paired the design's footer against the page's nav and swapped the two CTAs — then
+reported both swapped values as defects, when direct measurement showed both
+rendered exactly as designed.
 
-Repeated copy ("Book demo" in the nav and in the hero) is paired top-to-bottom
-by vertical position. A repeated-copy group whose two sides are different sizes
-is **not** guessed at — that mismatch is itself the finding.
+Three things decide a pair, in this order:
+
+1. **Unique copy first.** A string that appears once in the frame and once on the
+   page cannot be cross-paired. Those pairs are anchors, and they are trusted.
+2. **Position, projected through the anchors.** The artboard and the page are
+   never the same height, so a design Y cannot be compared with a rendered Y
+   directly. The anchors give a monotone design-Y → rendered-Y map fitted to that
+   page — by its longest non-decreasing run, so one bad anchor cannot drag the
+   rest. Horizontally the two sides share a scale, because the frames are drawn at
+   the viewport width.
+3. **Containment.** The design tree says which container a node came from; the
+   anchors inside that container say which element on the page it became. A node
+   from the Footer symbol may then only pair inside the page's footer.
+
+**Where those three still leave a choice, the pair is reported as an ambiguity
+rather than guessed.** A wrong pairing is worse than an admitted one: it costs a
+reader the trust they need to act on every other finding.
+
+A repeated-copy group whose two sides are different sizes is **not** guessed at
+either — that mismatch is itself the finding.
 
 A Figma text layer holding several lines is tried whole first and then line by
 line, because "Success Stories / About / Blog" is one layer in Figma and three
-anchors on the page.
+anchors on the page. Each line carries its own position, stacked down from the
+layer's, so a footer column's lines cannot drift up into the identically worded
+nav. A layer whose lines ALL fail to match is reported once, as one missing
+layer, not three times.
 
-Boxes have no text, so they are bridged through the text they enclose: take the
-design text nodes geometrically inside the box, find where they landed, and walk
-up to the nearest ancestor they share. A box that cannot be bridged is reported,
-never assumed correct.
+Boxes have no text, so two bridges are tried. Through the text they enclose:
+the design text nodes inside the box landed somewhere, and the element among
+their shared ancestors whose position matches the design's wins — not simply the
+nearest, which is how a footer band came to be compared against `<body>` and a
+24px radius against the contact form. Or, for a box enclosing no text at all,
+through geometry: same left, same width, same projected height, and a top where
+the anchors say it should be, with a unique winner required. **A box that neither
+bridge reaches is reported as unreached, never bridged to something implausible.**
 
-Vertical gaps between stacked copy are measured in the frame and compared
-against the rendered geometry. Artwork colours are read out of the SVGs Figma
-exported with the frame; a colour the design paints with that appears in no SVG
-on the page is a finding, and needs no per-node mapping to see.
+Vertical gaps between stacked copy are measured in the frame and compared against
+the rendered geometry — edge to edge where the frame resolves a height, and top to
+top where `leading-[normal]` leaves it without one.
+
+### Artwork
+
+Illustrations are compared as images, not as colour lists. The frame's export for
+a node is fetched, so is the file the page actually served at that position, and
+both are decoded in the browser that is already open and reduced to a coarse
+dominant palette. A colour the design's artwork is substantially made of that the
+served image does not have, within tolerance, is a finding.
+
+It is deliberately not a pixel diff: our assets are re-encoded WebP at different
+dimensions, so pixel equality would fail on every correct image and prove nothing.
+It is also not what was here before — that read `fill` off the page's `<svg>`
+elements, and since the illustrations ship as WebP it never once looked inside
+one. All fourteen of its findings on the last full run were the same non-finding,
+while a genuinely orange illustration in a frame that draws `#ffb31b` went
+unreported.
+
+Two guards keep it honest. A design node and an `<img>` can share a rectangle
+without being the same picture — Figma composes, the site flattens — so where the
+two palettes are concentrated very differently (the contact frame's flat amber
+ring against the photograph the page puts inside it) the bridge is not believed
+and the node is counted as not compared. And a Figma layer that draws an image is
+not counted as a box at all: three out of five "design boxes" are vector fragments
+inside one flattened WebP, with no element to be bridged to.
+
+Separately, **dark and light must resolve to different files** wherever the design
+draws that position's artwork differently. One file for both is a defect even when
+it looks fine in the theme it was drawn for — it is how the light hero shipped
+into dark mode.
 
 ### Compositing
 
@@ -133,9 +190,13 @@ of pixels.
 
 Both themes are covered: each route is opened once per theme, with the theme
 forced through `localStorage` before first paint, and the run aborts if
-`<html data-theme>` does not come back as `frames.json` asked. Everything is
-compared at the Figma frame width (1360px); mobile is Lighthouse's and
-`yarn perf:mobile`'s problem.
+`<html data-theme>` does not come back as `frames.json` asked.
+
+Everything is compared at the Figma frame width (**1360px**), and the report says
+so on every run, next to every number. There are no mobile artboards in this Figma
+file, so there is nothing below 1360px to compare against and none of these counts
+is a claim about narrow screens — "62% matched" is 62% of one viewport. Mobile is
+Lighthouse's and `yarn perf:mobile`'s problem.
 
 ## `exclusions.json` — the only way a node stops being checked
 
@@ -149,6 +210,14 @@ frame, the node key, the properties it covers (`["*"]` for the whole node) and a
   node it was written for. (An entry for a frame that was not fetched this time
   is simply not checked; inventing a verdict either way would be worse.)
 - The same node cannot be excluded twice with two different stories.
+
+An entry is written against the layer a reviewer sees in Figma, and it covers
+**the line-level nodes read out of that layer** as well. It did not, once:
+`I1:1533;1:579` never matched `I1:1533;1:579:L1`, and the occluded duplicate
+Footer in `use-cases-light` leaked a dozen findings past an exclusion that named
+it exactly. A node excluded with `["*"]` also leaves the matching entirely — while
+the occluded footer still competed for elements, the _visible_ footer's links
+became unpairable, because two design nodes claimed the same place on the page.
 
 The reasons currently written down are of three kinds: placeholder copy the
 frame invents where the page renders CMS content, a footer layer the designer
@@ -181,9 +250,12 @@ if the harness is not behaving.
 | page renders in the wrong theme                               | abort                   |
 | Chrome missing                                                | abort (never "skipped") |
 | a design node nothing on the page renders                     | finding                 |
-| a property that differs, a gap that differs                   | finding                 |
+| a property, a gap or a box width that differs                 | finding                 |
 | a fill or border compared without compositing its opacity     | finding                 |
-| an artwork colour absent from every SVG on the page           | finding                 |
+| a dominant artwork colour the served image does not have      | finding                 |
+| one file served for both themes where the design differs      | finding                 |
+| repeated copy the matcher cannot pair confidently             | finding                 |
+| identical copy in two regions paired across them              | proven not to happen    |
 | exclusion with no reason, a shrug reason, or a dangling node  | abort                   |
 
 Plus **positive controls**: the committed mapping must load, a fresh dump must
@@ -212,8 +284,9 @@ The root causes, and what this does about each:
    looked plausible was never compared. → the enumeration starts from the frame
    and reports what it could not reach.
 4. **One theme's artwork shipped into the other.** The design draws the hero, the
-   logo and the nav CTA separately per theme. → both themes are reviewed, and an
-   artwork colour the design paints with that no SVG on the page uses is a
+   logo and the nav CTA separately per theme. → both themes are reviewed, the
+   served image's palette is compared against the frame's own export, and a
+   position the design draws differently per theme that resolves to ONE file is a
    finding.
 5. **Nothing checked fidelity, and then something checked a stale copy of it.** →
    this reviews the live file, refuses a stale dump, and fails closed on every
