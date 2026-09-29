@@ -6,6 +6,17 @@ import { Logo } from './Logo'
 import type { FunctionComponent } from 'react'
 import type { FooterData } from '../lib/footer'
 
+/**
+ * The footer's link type. Every link column in both Footer nodes (dark 1:579 /
+ * 1:580 / 1:581, light 1:7583 / 1:7584 / 1:7585) is Poppins Regular 15px on a
+ * 24px line box in white - one step under the 16px these links inherited from
+ * the body. The 18px SemiBold column headings and the 14px copyright below are
+ * already the frames' own and do not move with it. `py-3` stays: at 15/24 the
+ * hit area is still 48px tall, clear of the 44px target-size floor.
+ */
+const LINK_CLASS =
+  'flex flex-row items-center text-[15px] leading-6 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out py-3'
+
 interface FooterProps {
   footerData?: FooterData
 }
@@ -64,7 +75,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
                   <Link
                     title={link.title}
                     href={link.link}
-                    className="flex flex-row items-center text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out lg:min-w-[125px] py-3"
+                    className={LINK_CLASS + ' lg:min-w-[125px]'}
                   >
                     <span>{link.title}</span>
                   </Link>
@@ -82,7 +93,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
                   <Link
                     title={link.title}
                     href={link.link}
-                    className="flex flex-row items-center gap-2 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out py-3"
+                    className={LINK_CLASS + ' gap-2'}
                     target={link.target}
                   >
                     <span>{link.title}</span>
@@ -102,7 +113,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
                     title={link.title}
                     href={link.link}
                     aria-label={link.ariaLabel}
-                    className="flex flex-row items-center gap-2 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out py-3"
+                    className={LINK_CLASS + ' gap-2'}
                   >
                     <span>{link.title}</span>
                   </Link>
