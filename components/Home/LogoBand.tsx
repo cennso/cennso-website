@@ -46,8 +46,13 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
   // wrong shape. An explicit 5-column grid from `sm:` up reproduces the band;
   // below that it steps down to 3 and then 2 columns, which the design has no
   // artboard for (there are no mobile frames in the file at all).
+  //
+  // The band is its own measure, narrower than the page column: both frames
+  // draw it at x=95..1265, a 1170px row with a 95px gutter where the type
+  // column keeps 81. Centred inside the 1200px column (which on a 1360px
+  // viewport runs 80..1280), `max-w-[1170px]` lands it at exactly 95..1265.
   <ul
-    className={`grid grid-cols-2 place-items-center gap-x-10 gap-y-6 sm:grid-cols-3 md:grid-cols-5 ${className}`}
+    className={`mx-auto grid w-full max-w-[1170px] grid-cols-2 place-items-center gap-x-10 gap-y-6 sm:grid-cols-3 md:grid-cols-5 ${className}`}
   >
     {logos.map((logo) => {
       // `sizes` describes the rendered *width*, but this component caps the
@@ -58,8 +63,9 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
       // candidate far below the needed resolution and the browser upscaled it.
       //
       // The grid column is the other constraint, and the one that used to be
-      // missing: on the 1200px measure a 5-column row with a 40px gutter gives
-      // each cell 208px, which is narrower than hochbahn and travelping want.
+      // missing: on the frames' 1170px band a 5-column row with a 40px gutter
+      // gives each cell 202px, which is narrower than hochbahn and travelping
+      // want.
       // With a *fixed* height those two were squeezed sideways by the cell's
       // max-width and rendered out of proportion (Lighthouse
       // `image-aspect-ratio`). Capping BOTH axes instead - `max-h-*` with
@@ -77,7 +83,7 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
             alt={logo.name}
             width={logo.width}
             height={logo.height}
-            sizes={`(min-width: 768px) ${fit(40, 208)}px, (min-width: 640px) ${fit(
+            sizes={`(min-width: 768px) ${fit(40, 202)}px, (min-width: 640px) ${fit(
               40,
               165
             )}px, ${fit(32, 130)}px`}
