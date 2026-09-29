@@ -60,6 +60,7 @@ jobs:
           - perf
           - seo
           - validate:ogimages
+          - design:inventory:check
           - design:fidelity
     steps:
       - name: Check out repository

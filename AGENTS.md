@@ -87,6 +87,8 @@ yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn design:fidelity       # Assert the built site against the Figma snapshot (both themes)
 yarn design:fidelity:selftest  # Prove the fidelity harness still fails on degenerate input
 yarn design:fingerprints   # Print digests for frames still awaiting implementation
+yarn design:inventory      # Regenerate design/figma/inventory.json from the committed Figma dumps
+yarn design:inventory:check    # Prove the committed inventory is exactly what those dumps produce
 yarn check:all             # Run all checks (build, format, lint, a11y, perf, seo, design fidelity)
 ```
 
@@ -195,12 +197,25 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 
 The Cennso Design 4.0 Figma file is ground truth for `/`, `/success-stories` and
 `/contact`. CI cannot call Figma, so the node values are pulled locally and
-committed to `design/figma/snapshot.json`; `yarn design:fidelity` renders the
-built site in a real browser and asserts the live computed values against them,
-per theme. Read `design/figma/README.md` before implementing or refreshing a
-frame — in particular: expand every Figma symbol, read values with
-`get_design_context` rather than sampling a screenshot, and never reuse one
-theme's artwork in the other.
+committed; `yarn design:fidelity` renders the built site in a real browser and
+asserts the live computed values against them, per theme.
+
+There are two passes, and the difference matters:
+
+- **Curated** (`design/figma/snapshot.json`) — named tokens and named elements.
+  Precise, and only ever as complete as the list.
+- **Enumerative** (`design/figma/inventory.json`, generated from the committed
+  `design/figma/raw/*.jsx` dumps) — **every** text node in all six frames,
+  matched to the DOM by its own text content, with every property diffed. It
+  reports its own coverage, and an unreached design node is a finding rather
+  than a silent pass. That is the pass that answers "what is nobody checking?".
+
+Read `design/figma/README.md` before implementing or refreshing a frame. In
+particular: expand every Figma symbol, read values with `get_design_context`
+rather than sampling a screenshot, composite element opacity onto fill _and_
+border before comparing anything, never reuse one theme's artwork in the other,
+and put anything you cannot compare in `design/figma/exclusions.json` with a
+written reason instead of dropping it.
 
 ## Performance Patterns
 
