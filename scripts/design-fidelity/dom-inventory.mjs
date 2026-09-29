@@ -184,8 +184,30 @@ function collectAll() {
     'body',
   ])
 
+  /** The file an <img> really resolved to, with Next.js' /_next/image wrapper undone. */
+  const assetPathOf = (el) => {
+    const raw = el.currentSrc || el.src || ''
+    if (!raw) return null
+    let url
+    try {
+      url = new URL(raw, document.baseURI)
+    } catch {
+      return raw
+    }
+    const wrapped = url.searchParams.get('url')
+    if (wrapped) {
+      try {
+        return new URL(wrapped, document.baseURI).pathname
+      } catch {
+        return wrapped
+      }
+    }
+    return url.pathname
+  }
+
   const texts = []
   const boxes = []
+  const images = []
   const svgFills = new Set()
   for (const el of all) {
     if (el.tagName === 'SVG' || el instanceof SVGElement) {
@@ -195,6 +217,22 @@ function collectAll() {
       if (attr && attr !== 'none') svgFills.add(attr)
     }
     const r = record(el)
+    if (el.tagName === 'IMG' && r.rendered) {
+      const assetPath = assetPathOf(el)
+      if (assetPath) {
+        images.push({
+          i: r.i,
+          ancestors: r.ancestors,
+          path: r.path,
+          rect: r.rect,
+          assetPath,
+          assetBasename: assetPath.split('/').pop(),
+          naturalWidth: el.naturalWidth,
+          naturalHeight: el.naturalHeight,
+          alt: el.getAttribute('alt') || '',
+        })
+      }
+    }
     if (r.ownsText && r.text) texts.push(r)
     else if (
       r.rendered &&
@@ -209,8 +247,11 @@ function collectAll() {
   return {
     texts,
     boxes,
+    images,
     svgFills: [...svgFills],
     documentHeight: document.documentElement.scrollHeight,
+    documentWidth: document.documentElement.scrollWidth,
+    viewportWidth: window.innerWidth,
   }
 }
 /* c8 ignore stop */

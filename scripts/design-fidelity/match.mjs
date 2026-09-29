@@ -13,8 +13,19 @@
  */
 import { existsSync, readFileSync } from 'node:fs'
 
+import {
+  AMBIGUITY_MARGIN_PX,
+  assign,
+  buildContainerIndex,
+  createProjector,
+  isInside,
+  positionalCost,
+} from './bridge.mjs'
 import { FidelityError } from './errors.mjs'
 import { evaluate, parseColor, formatColor } from './properties.mjs'
+
+/** Added to an edge that breaks containment, so such a pair loses but stays reachable. */
+const CONTAINMENT_PENALTY = 1e6
 
 /** Reads the exclusion list. A missing file is a hard failure, not an empty list. */
 export function loadExclusions(filePath) {
@@ -81,6 +92,9 @@ const TEXT_PROPERTIES = [
 ]
 
 const DEFAULT_TOLERANCE = { length: 1, color: 2 }
+
+/** How far a rendered box width may sit from the design's before it is a finding. */
+const WIDTH_TOLERANCE_PX = 4
 
 function toleranceFor(property) {
   if (property === 'color') return DEFAULT_TOLERANCE.color
@@ -171,115 +185,279 @@ function exclusionIndex(exclusions) {
   return map
 }
 
+/**
+ * The keys an exclusion may be written against for this node.
+ *
+ * A multi-line Figma layer is enumerated both whole (`I1:1533;1:579`) and line by line
+ * (`I1:1533;1:579:L1`). An exclusion is written against the layer, because that is the
+ * layer a reviewer sees in Figma — so it has to cover the layer's lines too. It did not,
+ * and the occluded duplicate Footer in `use-cases-light` leaked thirteen findings past an
+ * exclusion that named it exactly.
+ */
+export function exclusionKeysFor(nodeKey) {
+  const keys = [nodeKey]
+  const line = /^(.*):L\d+$/.exec(nodeKey)
+  if (line) keys.push(line[1])
+  return keys
+}
+
 function isExcluded(index, frameId, nodeKey, property) {
-  const entry = index.get(`${frameId}::${nodeKey}`)
-  if (!entry) return false
-  return entry.properties.includes('*') || entry.properties.includes(property)
+  for (const key of exclusionKeysFor(nodeKey)) {
+    const entry = index.get(`${frameId}::${key}`)
+    if (!entry) continue
+    if (entry.properties.includes('*') || entry.properties.includes(property))
+      return true
+  }
+  return false
 }
 
 /* ------------------------------------------------------------------ */
 /* text matching                                                       */
 /* ------------------------------------------------------------------ */
 
+function groupBy(items, keyOf) {
+  const map = new Map()
+  for (const item of items) {
+    const key = keyOf(item)
+    if (!key) continue
+    if (!map.has(key)) map.set(key, [])
+    map.get(key).push(item)
+  }
+  return map
+}
+
+/** A whole Figma text layer, as one unit to match. */
+function wholeUnit(node) {
+  return {
+    key: node.key,
+    figmaNode: node.figmaNode,
+    name: node.name,
+    text: node.text,
+    style: node.style,
+    geometry: node.geometry ?? {},
+    ancestorKeys: node.ancestorKeys ?? [],
+    mixedProperties: node.mixedProperties,
+    lines: node.lines,
+  }
+}
+
 /**
- * Groups both sides by normalised text and pairs them.
+ * The same layer read line by line.
  *
- * Repeated copy — "Book demo" in the nav and in the hero, "Resources" in the nav and in
- * the footer — is paired top-to-bottom by vertical position, which is the only ordering
- * both sides genuinely share. A group whose sides are different sizes is not guessed at:
- * it is reported, because that IS the finding (a nav item missing, a label rendered twice).
+ * Figma stores "Success Stories / About / Blog" as ONE text layer while the site renders
+ * three anchors, so a layer whose whole text appears nowhere is retried this way. Each
+ * line carries its own position (stacked down from the layer's) and counts the layer as
+ * one of its ancestors — which is what keeps a footer column's lines inside the footer
+ * instead of matching the identically-worded nav links above them.
  */
-function pairByText(designUnits, domNodes) {
-  const designByKey = new Map()
-  for (const node of designUnits) {
-    const key = normaliseKey(node.text)
-    if (!key) continue
-    if (!designByKey.has(key)) designByKey.set(key, [])
-    designByKey.get(key).push(node)
-  }
-  const domByKey = new Map()
-  for (const node of domNodes) {
-    const key = normaliseKey(node.text)
-    if (!key) continue
-    if (!domByKey.has(key)) domByKey.set(key, [])
-    domByKey.get(key).push(node)
-  }
+function lineUnits(node) {
+  return (node.lines ?? []).map((line) => ({
+    key: line.key,
+    figmaNode: node.figmaNode,
+    name: node.name,
+    text: line.text,
+    style: line.style,
+    geometry: line.geometry ?? node.geometry ?? {},
+    ancestorKeys: [...(node.ancestorKeys ?? []), node.key],
+    parentKey: node.key,
+  }))
+}
 
-  const matches = []
-  const unmatchedDesign = []
-  const ambiguous = []
-
-  for (const [key, design] of designByKey) {
-    const dom = (domByKey.get(key) ?? []).filter((d) => d.rendered)
-    if (dom.length === 0) {
-      unmatchedDesign.push(...design)
+/**
+ * A layer whose lines ALL failed to match is one missing layer, not three missing lines.
+ *
+ * Reporting each line separately says the same thing three times and inflates the count a
+ * reader is meant to act on. Where some lines matched and others did not, the ones that
+ * did not are still reported individually — that is a real difference between them.
+ */
+function collapseLines(unmatched, matchedParents, wholeUnits) {
+  const byParent = new Map(wholeUnits.map((u) => [u.key, u]))
+  const out = []
+  const collapsed = new Set()
+  for (const unit of unmatched) {
+    const parentKey = unit.parentKey
+    if (!parentKey || matchedParents.has(parentKey)) {
+      out.push(unit)
       continue
     }
-    const sortedDesign = [...design].sort(
-      (a, b) => (a.geometry?.top ?? 0) - (b.geometry?.top ?? 0)
-    )
-    const sortedDom = [...dom].sort((a, b) => a.rect.top - b.rect.top)
-    if (sortedDesign.length !== sortedDom.length) {
-      ambiguous.push({
-        key,
-        designCount: sortedDesign.length,
-        domCount: sortedDom.length,
-        design: sortedDesign,
-      })
+    const parent = byParent.get(parentKey)
+    const siblings = parent?.lines?.length ?? 0
+    const unmatchedSiblings = unmatched.filter(
+      (u) => u.parentKey === parentKey
+    ).length
+    if (!parent || unmatchedSiblings < siblings) {
+      out.push(unit)
+      continue
     }
-    const pairs = Math.min(sortedDesign.length, sortedDom.length)
-    for (let i = 0; i < pairs; i += 1) {
-      matches.push({ design: sortedDesign[i], dom: sortedDom[i] })
-    }
-    unmatchedDesign.push(...sortedDesign.slice(pairs))
+    if (collapsed.has(parentKey)) continue
+    collapsed.add(parentKey)
+    out.push(parent)
   }
-  return { matches, unmatchedDesign, ambiguous }
+  return out
 }
 
 /**
  * Matches every design text node to the rendered page.
  *
- * Pass 1 pairs whole text nodes. Pass 2 retries the ones that did not match using their
- * per-line breakdown, because Figma stores "Success Stories / About / Blog" as ONE text
- * layer while the site renders three anchors. Without pass 2 a whole footer column would
- * sit in the unmatched column forever and the real signal would drown in it.
+ * Unique copy is paired first and trusted. Those pairs calibrate a design-Y -> rendered-Y
+ * projection and tell every design container which element on the page it became. Only
+ * then is repeated copy resolved, against both — and where that still leaves a choice,
+ * the pair is reported as ambiguous instead of guessed.
  */
-export function matchTextNodes(designNodes, domNodes) {
-  const first = pairByText(designNodes, domNodes)
-  const usedDom = new Set(first.matches.map((m) => m.dom.i))
+export function matchTextNodes(
+  designNodes,
+  domNodes,
+  { frameHeight = null, documentHeight = null } = {}
+) {
+  const renderedDom = domNodes.filter((d) => d.rendered && normaliseKey(d.text))
+  const domByKey = groupBy(renderedDom, (d) => normaliseKey(d.text))
 
-  const retryable = first.unmatchedDesign.filter((n) => n.lines?.length > 1)
-  const lineUnits = retryable.flatMap((node) =>
-    node.lines.map((line) => ({
-      key: line.key,
-      figmaNode: node.figmaNode,
-      name: node.name,
-      parentKey: node.key,
-      text: line.text,
-      style: line.style,
-      geometry: node.geometry,
-    }))
+  const whole = designNodes.map(wholeUnit)
+  // A multi-line layer falls back to its lines only when its whole text is nowhere on
+  // the page. Trying the layer first is what keeps a wrapped heading one node.
+  const expanded = new Set(
+    whole.filter(
+      (u) =>
+        u.lines?.length > 1 && !(domByKey.get(normaliseKey(u.text))?.length > 0)
+    )
   )
-  const second = pairByText(
-    lineUnits,
-    domNodes.filter((d) => !usedDom.has(d.i))
-  )
+  const units = [
+    ...whole.filter((u) => !expanded.has(u)),
+    ...[...expanded].flatMap(lineUnits),
+  ]
+  const designByKey = groupBy(units, (u) => normaliseKey(u.text))
+
+  // 1. The pairs that cannot be wrong: one in the frame, one on the page.
+  const anchors = []
+  for (const [key, design] of designByKey) {
+    const dom = domByKey.get(key) ?? []
+    if (design.length === 1 && dom.length === 1) {
+      anchors.push({ design: design[0], dom: dom[0] })
+    }
+  }
+
+  const project = createProjector({
+    anchors: anchors.map((a) => ({
+      designTop: a.design.geometry?.top,
+      renderedTop: a.dom.rect.top,
+    })),
+    frameHeight,
+    documentHeight,
+  })
+  const containers = buildContainerIndex(anchors)
+
+  const matches = []
+  const unmatchedDesign = []
+  const unequalGroups = []
+  const ambiguousPairs = []
+
+  for (const [key, design] of designByKey) {
+    const dom = domByKey.get(key) ?? []
+    if (dom.length === 0) {
+      unmatchedDesign.push(...design)
+      continue
+    }
+    if (design.length !== dom.length) {
+      unequalGroups.push({
+        key,
+        designCount: design.length,
+        domCount: dom.length,
+        design,
+      })
+    }
+    if (design.length === 1 && dom.length === 1) {
+      matches.push({ design: design[0], dom: dom[0] })
+      continue
+    }
+
+    // 2. Containment, but only where it actually discriminates. A container whose
+    //    rendered counterpart holds none of the candidates tells us nothing here, and
+    //    acting on it would turn a pairing problem into a false "this text is missing".
+    const constraints = design.map((d) => {
+      const container = containers.containerFor(d)
+      if (!container) return null
+      return dom.some((c) => isInside(c, container.index)) ? container : null
+    })
+
+    const costs = design.map((d, row) =>
+      dom.map((c) => {
+        const base = positionalCost(d, c, project)
+        const constraint = constraints[row]
+        return constraint && !isInside(c, constraint.index)
+          ? base + CONTAINMENT_PENALTY
+          : base
+      })
+    )
+    const assigned = assign(costs)
+
+    const claimed = new Set()
+    for (let row = 0; row < design.length; row += 1) {
+      const col = assigned[row]
+      if (col === undefined || col < 0) continue
+      claimed.add(row)
+      const chosen = costs[row][col]
+      let runnerUp = Infinity
+      for (let other = 0; other < dom.length; other += 1) {
+        if (other === col) continue
+        runnerUp = Math.min(runnerUp, costs[row][other])
+      }
+      // The other direction matters just as much: two design nodes that fit the SAME
+      // element equally well are not resolved by whichever one the assignment reached
+      // first. Only checking the runner-up candidate leaves that coin flip in place.
+      let contested = false
+      for (let other = 0; other < design.length; other += 1) {
+        if (other === row) continue
+        if (Math.abs(costs[other][col] - chosen) < AMBIGUITY_MARGIN_PX) {
+          contested = true
+          break
+        }
+      }
+      const constraint = constraints[row]
+      const breaksContainment =
+        constraint && !isInside(dom[col], constraint.index)
+      const tooClose =
+        Number.isFinite(runnerUp) && runnerUp - chosen < AMBIGUITY_MARGIN_PX
+      if (breaksContainment || tooClose || contested) {
+        ambiguousPairs.push({
+          design: design[row],
+          candidates: dom,
+          why: breaksContainment
+            ? `the design puts this inside ${constraint.key}, and nothing carrying this text renders inside the element that container became`
+            : contested
+              ? `another design node carrying this text is drawn just as close to the same element, so which of them it is cannot be decided`
+              : `two rendered elements are within ${AMBIGUITY_MARGIN_PX}px of where the design puts this node, so which one it is cannot be decided`,
+        })
+        continue
+      }
+      matches.push({ design: design[row], dom: dom[col] })
+    }
+    // Design units the group could not seat at all. The group-size finding above already
+    // says the page renders fewer of these than the design draws, so this is not
+    // reported a second time as "missing".
+    for (let row = 0; row < design.length; row += 1) {
+      if (!claimed.has(row)) unmatchedDesign.push(design[row])
+    }
+  }
 
   const matchedParents = new Set(
-    second.matches.map((m) => m.design.parentKey).filter(Boolean)
+    matches.map((m) => m.design.parentKey).filter(Boolean)
   )
-  const stillUnmatched = first.unmatchedDesign.filter(
-    (n) => !matchedParents.has(n.key)
+  const seatedByCount = new Set(
+    unequalGroups.flatMap((g) => g.design.map((d) => d.key))
+  )
+  const stillUnmatched = collapseLines(
+    unmatchedDesign.filter(
+      (u) => !matchedParents.has(u.key) && !seatedByCount.has(u.key)
+    ),
+    matchedParents,
+    whole
   )
 
-  const matches = [...first.matches, ...second.matches]
   const matchedDom = new Set(matches.map((m) => m.dom.i))
   const matchedTexts = new Set(matches.map((m) => normaliseKey(m.design.text)))
-  const unmatchedDom = domNodes.filter((node) => {
+  const unmatchedDom = renderedDom.filter((node) => {
     if (matchedDom.has(node.i)) return false
-    if (!node.rendered) return false
     const key = normaliseKey(node.text)
-    if (!key) return false
     // Text that is part of a node already matched (an inline <strong> inside a matched
     // paragraph, or a wrapper around a matched line) is not an unmatched node; it is a
     // fragment of one.
@@ -294,7 +472,11 @@ export function matchTextNodes(designNodes, domNodes) {
     matches,
     unmatchedDesign: stillUnmatched,
     unmatchedDom,
-    ambiguous: [...first.ambiguous, ...second.ambiguous],
+    ambiguous: unequalGroups,
+    ambiguousPairs,
+    anchorCount: anchors.length,
+    project,
+    containers,
     lineMatchedNodes: matchedParents.size,
   }
 }
@@ -316,38 +498,197 @@ function contains(box, node) {
   )
 }
 
+/** How far a candidate is from where the design draws the box, horizontally. */
+const CONTAINMENT_LEFT_TOLERANCE = 32
+const CONTAINMENT_TOP_TOLERANCE = 64
+const GEOMETRIC_LEFT_TOLERANCE = 12
+const GEOMETRIC_WIDTH_TOLERANCE = 12
+const GEOMETRIC_TOP_TOLERANCE = 48
+
+function boxFit(box, record, project, { useWidth }) {
+  const predictedTop = project(box.geometry.top)
+  const dLeft = Math.abs(record.rect.left - box.geometry.left)
+  const dTop =
+    predictedTop === null || predictedTop === undefined
+      ? 0
+      : Math.abs(record.rect.top - predictedTop)
+  const dWidth =
+    useWidth && box.geometry.width !== undefined
+      ? Math.abs(record.rect.width - box.geometry.width)
+      : 0
+  // How tall the design says it is, put through the same projection as its top. A 2px
+  // rule across the top of the footer and the 200px footer itself start at the same
+  // place and have the same width; only the height tells them apart, and without it the
+  // rule's colour was compared against the band below it.
+  const predictedBottom =
+    box.geometry.height === undefined
+      ? null
+      : project(box.geometry.top + box.geometry.height)
+  const predictedHeight =
+    predictedBottom === null || predictedTop === null
+      ? null
+      : predictedBottom - predictedTop
+  const dHeight =
+    predictedHeight === null
+      ? 0
+      : Math.abs(record.rect.height - predictedHeight)
+  return {
+    dLeft,
+    dTop,
+    dWidth,
+    dHeight,
+    heightAllowance:
+      predictedHeight === null ? Infinity : Math.max(48, predictedHeight * 0.5),
+    score: dLeft + dTop + dWidth,
+  }
+}
+
+/** True when one of the two records is an ancestor of the other. */
+function nested(a, b) {
+  return (
+    (a.ancestors ?? []).includes(b.i) ||
+    (b.ancestors ?? []).includes(a.i) ||
+    a.i === b.i
+  )
+}
+
 /**
- * A box has no text of its own, so it has no natural key. It is bridged through the text
- * it encloses: take the design text nodes geometrically inside it, find where those
- * landed in the DOM, and walk up to the nearest painted ancestor they share. Where that
- * bridge cannot be built the box is reported as unmatched — never assumed correct.
+ * A box has no text of its own, so it has no natural key. Two bridges are tried, and a
+ * box that neither reaches is reported as unreached rather than bridged to whatever was
+ * nearest — a footer fill compared against <body>, or a 24px radius compared against the
+ * contact form, are worse than an honest gap.
+ *
+ *  1. **Through the text it encloses.** The design text nodes inside the box landed
+ *     somewhere; their shared DOM ancestors are the elements that could be this box. The
+ *     one whose position matches the design's wins, not simply the nearest — nearest is
+ *     how a full-width band ended up compared against <body>.
+ *  2. **Through geometry alone**, for a box that encloses no text at all: same left, same
+ *     width, and a top where the anchors say it should be. It must be the only such
+ *     element, or the box stays unreached.
  */
-export function matchBoxNodes(boxNodes, textMatches, domRecords) {
+export function matchBoxNodes(boxNodes, textMatches, domRecords, context = {}) {
+  const { project = (y) => y } = context
   const byIndex = new Map(domRecords.map((r) => [r.i, r]))
+  const rendered = domRecords.filter(
+    (r) => r.rendered && r.rect.width > 0 && r.rect.height > 0
+  )
   const matched = []
   const unmatched = []
 
   for (const box of boxNodes) {
-    const inside = textMatches.filter((m) => contains(box, m.design))
-    if (!inside.length) {
-      unmatched.push({ box, why: 'no design text node sits inside it' })
+    if (box.geometry?.left === undefined || box.geometry?.top === undefined) {
+      unmatched.push({ box, why: 'the design gives it no resolvable position' })
       continue
     }
-    const ancestorSets = inside.map((m) => m.dom.ancestors)
-    const [first, ...rest] = ancestorSets
-    const shared = first.filter((i) => rest.every((set) => set.includes(i)))
-    // The nearest ancestor shared by everything the box contains, that the collector
-    // actually recorded. Nearest wins: the element that paints the surface sits closer to
-    // the copy than <body> does.
-    const painted = shared.map((i) => byIndex.get(i)).find(Boolean)
-    if (!painted) {
+
+    const inside = textMatches.filter((m) => contains(box, m.design))
+    let bridged = null
+    let via = null
+
+    if (inside.length) {
+      // The element itself counts, not only its ancestors. A pill, a badge or a button is
+      // one design box around one piece of copy, and the element that owns the copy IS
+      // the surface — excluding it left every CTA in the design unbridged.
+      const ancestorSets = inside.map((m) => [m.dom.i, ...m.dom.ancestors])
+      const [first, ...rest] = ancestorSets
+      const shared = first
+        .filter((i) => rest.every((set) => set.includes(i)))
+        .map((i) => byIndex.get(i))
+        .filter(Boolean)
+      // Width is deliberately NOT part of the fit here: the text containment is what
+      // anchors this bridge, which leaves the width free to be compared as a value.
+      const scored = shared
+        .map((record) => ({
+          record,
+          ...boxFit(box, record, project, { useWidth: false }),
+        }))
+        .filter(
+          (c) =>
+            c.dLeft <= CONTAINMENT_LEFT_TOLERANCE &&
+            c.dTop <= CONTAINMENT_TOP_TOLERANCE &&
+            c.dHeight <= c.heightAllowance
+        )
+        // Ties go to the deepest: the element that paints a surface sits closer to the
+        // copy inside it than <body> does, and "nearest recorded ancestor, fit be damned"
+        // is how a footer band came to be compared against <body>.
+        .sort(
+          (a, b) =>
+            a.score - b.score ||
+            (b.record.ancestors?.length ?? 0) -
+              (a.record.ancestors?.length ?? 0)
+        )
+      if (scored.length) {
+        // Same rule as below: of the candidates that fit alike, the one that actually
+        // paints is the one a fill was drawn on. `<body>` encloses every piece of copy on
+        // the page and paints nothing, so it fits every full-page artboard perfectly and
+        // reports the page as white.
+        const close = scored.filter((c) => c.score <= scored[0].score + 32)
+        const painting = close.filter(
+          (c) => (parseColor(c.record.backgroundColor)?.a ?? 0) > 0
+        )
+        bridged = (painting[0] ?? close[0]).record
+        via = 'text'
+      }
+    }
+
+    if (!bridged) {
+      const scored = rendered
+        .map((record) => ({
+          record,
+          ...boxFit(box, record, project, { useWidth: true }),
+        }))
+        .filter(
+          (c) =>
+            c.dLeft <= GEOMETRIC_LEFT_TOLERANCE &&
+            c.dWidth <= GEOMETRIC_WIDTH_TOLERANCE &&
+            c.dTop <= GEOMETRIC_TOP_TOLERANCE &&
+            c.dHeight <= c.heightAllowance
+        )
+        .sort((a, b) => a.score - b.score)
+      if (scored.length) {
+        // Wrappers and the element they wrap share a rect. That is not an ambiguity —
+        // the outermost of a nested run is the one that paints the surface. Two
+        // equally good candidates that are NOT nested genuinely are one, and the box
+        // is left unreached rather than assigned to a coin flip.
+        const best = scored[0]
+        const ties = scored.filter((c) => c.score <= best.score + 2)
+        const rival = ties.find((c) => !nested(c.record, best.record))
+        if (rival) {
+          unmatched.push({
+            box,
+            why: `two elements fit it equally well (${best.record.path} and ${rival.record.path}), so which one it is cannot be decided`,
+            ambiguous: true,
+          })
+          continue
+        }
+        // Of a nested run that fits equally, the one that actually paints is the one the
+        // design means. `<body>` fits every full-bleed band on the page and paints
+        // nothing; the wrapper one level in carries the theme's background, and
+        // comparing the design's band against <body> reported the page as white.
+        const painting = ties.filter(
+          (c) => (parseColor(c.record.backgroundColor)?.a ?? 0) > 0
+        )
+        const pool = painting.length ? painting : ties
+        bridged = pool.reduce((outermost, c) =>
+          (c.record.ancestors?.length ?? 0) <
+          (outermost.record.ancestors?.length ?? 0)
+            ? c
+            : outermost
+        ).record
+        via = 'geometry'
+      }
+    }
+
+    if (!bridged) {
       unmatched.push({
         box,
-        why: 'the elements rendering its contents share no painted ancestor',
+        why: inside.length
+          ? 'nothing rendering its contents sits where the design draws it'
+          : 'no rendered element sits where the design draws it',
       })
       continue
     }
-    matched.push({ box, dom: painted })
+    matched.push({ box, dom: bridged, via })
   }
   return { matched, unmatched }
 }
@@ -365,7 +706,22 @@ export function diffFrame({ frame, dom, exclusions }) {
   const findings = []
   const notComparable = []
 
-  const text = matchTextNodes(frame.textNodes, dom.texts)
+  // A node excluded wholesale is not merely a node whose findings are suppressed: it does
+  // not take part in the matching at all. `use-cases-light` carries two Footer layers on
+  // top of each other, one of them fully occluded and excluded for exactly that reason —
+  // and while the occluded one still competed for elements, the VISIBLE footer's links
+  // became unpairable, because two design nodes claimed the same place on the page.
+  const textNodes = frame.textNodes.filter(
+    (n) => !isExcluded(index, frame.id, n.key, '*')
+  )
+  const boxNodes = frame.boxNodes.filter(
+    (n) => !isExcluded(index, frame.id, n.key, '*')
+  )
+
+  const text = matchTextNodes(textNodes, dom.texts, {
+    frameHeight: frame.frameHeight,
+    documentHeight: dom.documentHeight,
+  })
   // Coverage is counted in design NODES, the same unit the denominator uses. A node
   // matched through its lines counts once, not once per line, so the percentage cannot
   // drift above what it really covers.
@@ -411,7 +767,10 @@ export function diffFrame({ frame, dom, exclusions }) {
   }
 
   for (const node of text.unmatchedDesign) {
-    if (isExcluded(index, frame.id, node.key, '*')) continue
+    // `text` and not `*`: an entry that excludes only the string ("this copy is a
+    // person's name from the CMS") has to suppress the finding that the string is
+    // nowhere on the page, or it suppresses nothing at all and reads as if it did.
+    if (isExcluded(index, frame.id, node.key, 'text')) continue
     findings.push({
       scope: `${frame.id} / text ${node.key}`,
       figmaNode: node.figmaNode,
@@ -424,6 +783,26 @@ export function diffFrame({ frame, dom, exclusions }) {
       expected: `text "${node.text}"`,
       actual:
         'nothing on the rendered page has this text. Either it is missing, its copy differs, or it belongs in design/figma/exclusions.json with a written reason.',
+    })
+  }
+
+  // A pair the matcher could not decide is reported AS the ambiguity. Guessing and then
+  // reporting the guess's properties is what produced a report claiming the hero CTA was
+  // 18px/amber and the header 20px/white — a clean swap of two elements that both
+  // rendered exactly as designed.
+  for (const entry of text.ambiguousPairs) {
+    if (isExcluded(index, frame.id, entry.design.key, 'pairing')) continue
+    findings.push({
+      scope: `${frame.id} / text ${entry.design.key}`,
+      figmaNode: entry.design.figmaNode,
+      evidence: entry.design.name ?? entry.design.text.slice(0, 48),
+      route: frame.route,
+      theme: frame.theme,
+      selector: entry.candidates.map((c) => c.path).join('   |   '),
+      file: '(see the components rendering this copy)',
+      property: 'pairing',
+      expected: `one element carrying "${entry.design.text.slice(0, 60)}"`,
+      actual: `${entry.candidates.length} candidates and no way to choose — ${entry.why}. Nothing about this node was compared; disambiguate it in the markup or exclude it with a reason.`,
     })
   }
 
@@ -445,11 +824,12 @@ export function diffFrame({ frame, dom, exclusions }) {
   // BEFORE comparison. Comparing a raw fill against a dimmed rendering is what made a
   // 41%-opacity card outline look correct while it rendered fully opaque.
   const boxes = matchBoxNodes(
-    frame.boxNodes,
+    boxNodes,
     text.matches,
-    dom.boxes.concat(dom.texts)
+    dom.boxes.concat(dom.texts),
+    { project: text.project }
   )
-  for (const { box, dom: rendered } of boxes.matched) {
+  for (const { box, dom: rendered, via } of boxes.matched) {
     const base = {
       scope: `${frame.id} / box ${box.key}`,
       figmaNode: box.figmaNode,
@@ -509,6 +889,21 @@ export function diffFrame({ frame, dom, exclusions }) {
       }
     }
     if (
+      box.borderWidth &&
+      box.borderColor &&
+      rendered.compositedBorderColor &&
+      !isExcluded(index, frame.id, box.key, 'borderWidth')
+    ) {
+      const failure = evaluate(
+        'borderWidth',
+        box.borderWidth,
+        rendered,
+        DEFAULT_TOLERANCE.length
+      )
+      if (failure)
+        push(findings, base, 'borderWidth', failure.expected, failure.actual)
+    }
+    if (
       box.borderRadius &&
       !isExcluded(index, frame.id, box.key, 'borderRadius')
     ) {
@@ -521,6 +916,26 @@ export function diffFrame({ frame, dom, exclusions }) {
       if (failure)
         push(findings, base, 'borderRadius', failure.expected, failure.actual)
     }
+    // Width is only asserted on a box that was bridged through the text it encloses.
+    // The geometric bridge finds its candidate BY width, so comparing it there would be
+    // a tautology dressed up as a check.
+    if (
+      via === 'text' &&
+      box.geometry.width !== undefined &&
+      !isExcluded(index, frame.id, box.key, 'width')
+    ) {
+      const failure = evaluate(
+        'width',
+        `${box.geometry.width}px`,
+        { width: `${rendered.rect.width}px` },
+        // Looser than a typographic length. A pill sized by its own label lands within a
+        // few pixels of the frame on any two font stacks, and reporting that is reporting
+        // the font renderer. The card that is 385px against a designed 400px still is.
+        WIDTH_TOLERANCE_PX
+      )
+      if (failure)
+        push(findings, base, 'width', failure.expected, failure.actual)
+    }
   }
 
   // Gaps the design draws between stacked copy.
@@ -530,7 +945,10 @@ export function diffFrame({ frame, dom, exclusions }) {
     const from = domByDesignKey.get(gap.from)
     const to = domByDesignKey.get(gap.to)
     if (!from || !to) continue
-    const rendered = to.rect.top - (from.rect.top + from.rect.height)
+    const rendered =
+      gap.kind === 'top-to-top'
+        ? to.rect.top - from.rect.top
+        : to.rect.top - (from.rect.top + from.rect.height)
     const failure = evaluate(
       'gapBetween',
       gap.gap,
@@ -545,61 +963,49 @@ export function diffFrame({ frame, dom, exclusions }) {
         theme: frame.theme,
         selector: `${from.path}  →  ${to.path}`,
         file: '(see the component that stacks these two)',
-        property: 'vertical gap',
+        property:
+          gap.kind === 'top-to-top'
+            ? 'vertical gap (top to top)'
+            : 'vertical gap',
         expected: failure.expected,
         actual: failure.actual,
       })
     }
   }
 
-  // Artwork colours. A design frame that draws its illustrations in #ffb31b and a page
-  // whose SVGs never use that colour is a finding, and needs no per-node mapping to see.
-  const renderedFills = new Set(
-    dom.svgFills.map((f) => formatColor(f).toLowerCase())
-  )
-  const missingFills = frame.assetFills.filter(
-    (fill) => !renderedFills.has(formatColor(fill).toLowerCase())
-  )
-  for (const fill of missingFills) {
-    if (isExcluded(index, frame.id, 'assetFills', fill)) continue
-    findings.push({
-      scope: `${frame.id} / artwork`,
-      figmaNode: frame.figmaNode,
-      evidence: "colour read from the frame's exported vectors",
-      route: frame.route,
-      theme: frame.theme,
-      selector: '(no SVG on the page paints with this colour)',
-      file: '(see the illustration components for this route)',
-      property: 'artwork colour',
-      expected: formatColor(fill),
-      actual:
-        'no SVG on the rendered page uses it. Either the illustration was recoloured, or it ships as a raster image whose colours this check cannot read — both are worth knowing.',
-    })
-  }
+  // Artwork is NOT compared here. It used to be: the frame's exported vectors were read
+  // for fill colours and the page's SVG elements for theirs, and a colour the design used
+  // that no SVG on the page painted with was a finding. Our illustrations ship as WebP,
+  // so that check never once looked inside one — all fourteen of its findings on the last
+  // full run were the same non-finding, while a genuinely orange illustration in a frame
+  // that draws #ffb31b went unnoticed. It lives in artwork.mjs now, where the rendered
+  // image is actually fetched and its palette compared.
 
   return {
     findings,
     notComparable,
     coverage: {
-      designTextNodes: frame.textNodes.length,
+      designTextNodes: textNodes.length,
       matchedTextNodes: matchedNodeKeys.size,
       matchedTextUnits: text.matches.length,
       unmatchedDesignTextNodes: text.unmatchedDesign.length,
       unmatchedRenderedTextNodes: text.unmatchedDom.length,
       ambiguousTextGroups: text.ambiguous.length,
-      designBoxNodes: frame.boxNodes.length,
+      designBoxNodes: boxNodes.length,
+      artworkLayerNodes: frame.artworkLayerCount ?? 0,
       matchedBoxNodes: boxes.matched.length,
       unmatchedBoxNodes: boxes.unmatched.length,
       designGaps: frame.gaps.length,
       comparedGaps: frame.gaps.filter(
         (g) => domByDesignKey.has(g.from) && domByDesignKey.has(g.to)
       ).length,
-      designAssetFills: frame.assetFills.length,
-      missingAssetFills: missingFills,
+      ambiguousPairings: text.ambiguousPairs.length,
+      anchors: text.anchorCount,
       excluded: exclusions.exclusions.filter((e) => e.frame === frame.id)
         .length,
     },
     unmatchedDom: text.unmatchedDom,
     unmatchedBoxes: boxes.unmatched,
+    project: text.project,
   }
 }
