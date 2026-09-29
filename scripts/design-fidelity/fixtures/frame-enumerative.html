@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <title>fidelity fixture — enumerative</title>
+    <style>
+      /*
+        A page that matches the enumerative fixture inventory exactly. It is the positive
+        control: if this page does NOT pass, the suite is merely "always red" and proves
+        nothing. Every degenerate case in selftest.mjs mutates the inventory away from
+        this page, so each mutation must turn into a finding.
+      */
+      body {
+        margin: 0;
+        background: #001a2a;
+        font-family: Poppins, sans-serif;
+      }
+      .card {
+        /* The composited case: opacity dims BOTH fill and border. */
+        background: #185f99;
+        border: 1px solid #3fabff;
+        border-radius: 24px;
+        opacity: 0.41;
+        padding: 19px 0 0;
+        margin: 0 0 40px;
+      }
+      .card h2 {
+        margin: 0;
+        font-weight: 700;
+        font-size: 32px;
+        line-height: 44.8px;
+        text-align: center;
+        color: #ffffff;
+      }
+      .card p {
+        /* 13.2px below the heading, the way the frame draws it. */
+        margin: 13.2px 0 0;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 25.6px;
+        color: #ffffff;
+      }
+      footer {
+        /* No fill of its own in the design: the frame's band shows through. */
+        background: #001a2a;
+        color: #ffffff;
+        padding: 24px;
+      }
+      footer a {
+        font-weight: 400;
+        font-size: 15px;
+        line-height: 24px;
+        color: #ffffff;
+        display: block;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="card" data-figma-node="9:10">
+        <h2>5G Anywhere</h2>
+        <p>
+          Cennso enables you to run 5G networks in any location with centralized
+          management.
+        </p>
+      </div>
+    </main>
+    <footer>
+      <a href="#">Success Stories</a>
+      <a href="#">About</a>
+      <a href="#">Blog</a>
+    </footer>
+    <svg width="8" height="8" aria-hidden="true">
+      <rect width="8" height="8" fill="#ffb31b" />
+    </svg>
+  </body>
+</html>

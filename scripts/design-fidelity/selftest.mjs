@@ -4,7 +4,9 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { startStaticServer } from './env.mjs'
+import { parseFigmaDump } from './figma-source.mjs'
 import { runSnapshot } from './runner.mjs'
+import { runInventorySelfTest } from './selftest-inventory.mjs'
 import { loadSnapshot, validateSnapshot } from './snapshot.mjs'
 
 const FIXTURES = fileURLToPath(new URL('./fixtures/', import.meta.url))
@@ -333,6 +335,29 @@ export async function runSelfTest({ browser, repoRoot, verbose = false }) {
     const emptyFile = path.join(dir, 'empty.json')
     writeFileSync(emptyFile, '{}')
     results.push(await fileCase('snapshot that is an empty object', emptyFile))
+
+    // The Figma dump parser: a dump that yields nothing must abort, not enumerate
+    // nothing and call it full coverage.
+    results.push(
+      parserCase(
+        'Figma dump that parses to zero design nodes',
+        'export default function Empty() {\n  return (\n    <div />\n  );\n}'
+      )
+    )
+    results.push(
+      parserCase(
+        'Figma dump with nodes but no text at all',
+        'export default function NoText() {\n  return (\n    <div data-node-id="9:1"><div data-node-id="9:2" /></div>\n  );\n}'
+      )
+    )
+    results.push(
+      parserCase('Figma dump that is not a component at all', 'const x = 1')
+    )
+
+    // The enumerative pass.
+    results.push(
+      ...(await runInventorySelfTest({ browser, baseUrl: server.baseUrl }))
+    )
   } finally {
     await server.close()
   }
@@ -345,6 +370,15 @@ export async function runSelfTest({ browser, repoRoot, verbose = false }) {
     }
   }
   return results
+}
+
+function parserCase(name, source) {
+  try {
+    parseFigmaDump(source, 'self-test dump')
+    return { name, ok: false, got: 'passed: parsed without complaint' }
+  } catch (err) {
+    return { name, ok: true, got: `rejected: ${firstLine(err.message)}` }
+  }
 }
 
 async function fileCase(name, filePath) {
