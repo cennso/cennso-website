@@ -56,72 +56,120 @@ const MAX_INTERESTING_GAP = 200
 
 function computeGaps(textNodes) {
   const positioned = textNodes
-    .filter((n) => n.geometry.top !== undefined && textHeight(n) !== null)
+    .filter((n) => n.geometry.top !== undefined)
     .sort((a, b) => a.geometry.top - b.geometry.top)
 
   const gaps = []
   for (let i = 0; i < positioned.length; i += 1) {
     const from = positioned[i]
-    const fromBottom = from.geometry.top + textHeight(from)
-    // the nearest node below that shares a column
+    const height = textHeight(from)
+    // The nearest node below that shares a column. Where the height is known the gap is
+    // measured edge to edge, which is what a designer draws; where it is not — Figma's
+    // `leading-[normal]` leaves a node with no resolvable height, and roughly half of
+    // them are like that — the distance from one node's top to the next's is measured
+    // instead. Both are statements about vertical rhythm, and neither guesses a height.
+    const fromEdge = from.geometry.top + (height ?? 0)
     const to = positioned
       .slice(i + 1)
-      .find(
-        (n) => n.geometry.top >= fromBottom && overlapsHorizontally(from, n)
-      )
+      .find((n) => n.geometry.top >= fromEdge && overlapsHorizontally(from, n))
     if (!to) continue
-    const gap = Math.round((to.geometry.top - fromBottom) * 100) / 100
+    const gap = Math.round((to.geometry.top - fromEdge) * 100) / 100
     if (gap < 0 || gap > MAX_INTERESTING_GAP) continue
-    gaps.push({ from: from.key, to: to.key, gap: `${gap}px` })
+    gaps.push({
+      from: from.key,
+      to: to.key,
+      gap: `${gap}px`,
+      kind: height === null ? 'top-to-top' : 'edge-to-edge',
+    })
   }
   return gaps
 }
 
-/** Pulls every fill colour out of an exported SVG. */
-export function svgFills(svg) {
-  const out = new Set()
-  for (const m of svg.matchAll(/fill="([^"]+)"/g)) {
-    const value = m[1].trim().toLowerCase()
-    if (value === 'none' || value.startsWith('url(')) continue
-    out.add(
-      value === 'white' ? '#ffffff' : value === 'black' ? '#000000' : value
-    )
-  }
-  return [...out].sort()
-}
-
 /**
- * The colours inside the vectors Figma exported with the frame.
+ * Proves the frame's exported artwork is still fetchable.
  *
- * This is the one thing that cannot be read out of the dump itself, and it is the reason
- * freshness matters twice over: the export URLs Figma hands out expire about a week after
- * the pull, so a dump old enough to be refused here would not have been readable anyway.
+ * Figma expires the export URLs it hands out about a week after the pull, so a URL that
+ * 404s means the dump is older than its timestamp claims — the committed-copy problem
+ * wearing a temp directory. Three URLs are enough to tell; fetching all of them for every
+ * frame would cost a minute per review to learn the same thing.
  */
-async function fetchAssetFills(assets, frameId) {
-  const fills = new Set()
+async function assertAssetsFresh(assets, frameId) {
+  const urls = Object.entries(assets).slice(0, 3)
   const unreachable = []
-  for (const [name, url] of Object.entries(assets)) {
-    if (!url.endsWith('.svg')) continue
-    let response
+  for (const [name, url] of urls) {
     try {
-      response = await fetch(url)
+      const response = await fetch(url)
+      if (!response.ok) unreachable.push(`${name}: HTTP ${response.status}`)
+      else await response.arrayBuffer()
     } catch (err) {
       unreachable.push(`${name}: ${err.message}`)
-      continue
     }
-    if (!response.ok) {
-      unreachable.push(`${name}: HTTP ${response.status}`)
-      continue
-    }
-    for (const fill of svgFills(await response.text())) fills.add(fill)
   }
   if (unreachable.length) {
     throw new FidelityError(
-      `could not read ${unreachable.length} of frame ${frameId}'s exported SVGs.`,
+      `could not read frame ${frameId}'s exported artwork.`,
       `Figma's export URLs expire roughly a week after the pull, so this usually means the dump is not as fresh as its timestamp suggests. Re-run get_design_context for this frame. First failure: ${unreachable[0]}`
     )
   }
-  return [...fills].sort()
+}
+
+/**
+ * How tall the frame is, taken from the nodes it contains.
+ *
+ * The dump gives the frame itself `size-full` rather than a height, so the extent has to
+ * be read off its children. It is the denominator that lets a design Y be compared with a
+ * rendered Y at all — the page is never exactly as tall as the artboard.
+ */
+function frameExtent(nodes) {
+  let bottom = 0
+  // Text nodes only. Deeply nested vector fragments inside a logo come back with
+  // positions the parser cannot resolve to anything sane, and one of those would set the
+  // frame's height to half again what the artboard actually is.
+  for (const node of nodes) {
+    if (node.kind !== 'text') continue
+    const { top, height } = node.geometry ?? {}
+    if (top === undefined) continue
+    bottom = Math.max(bottom, top + (height ?? 0))
+  }
+  return bottom || null
+}
+
+/**
+ * The artwork the frame draws, as nodes rather than as a bag of colours.
+ *
+ * The old artwork check read `fill` off the page's SVG elements and compared it to the
+ * fills inside Figma's exported vectors. Our illustrations ship as WebP, so that check
+ * could not see inside a single one of them: every one of its findings said "this colour
+ * is absent" about a raster it had never opened. Keeping the node — its rect and the
+ * export URL Figma handed us — is what lets the rendered <img> at that position be
+ * fetched and actually compared.
+ */
+const MIN_ARTWORK_SIDE = 48
+
+function artworkNodes(parsed) {
+  const out = []
+  for (const node of parsed.nodes) {
+    if (!node.assetRefs?.length) continue
+    const { left, top, width, height } = node.geometry ?? {}
+    if (left === undefined || top === undefined) continue
+    if (!width || !height) continue
+    // An illustration, not one of the dozens of 3x3 vector fragments a partner logo is
+    // built from. Those are not artwork a reader can see the colour of, and counting them
+    // as unbridged would bury the handful that matter.
+    if (width < MIN_ARTWORK_SIDE || height < MIN_ARTWORK_SIDE) continue
+    const urls = node.assetRefs
+      .map((ref) => parsed.assets[ref])
+      .filter((url) => typeof url === 'string')
+    if (!urls.length) continue
+    out.push({
+      key: node.key,
+      figmaNode: node.figmaNode,
+      name: node.name ?? null,
+      geometry: { left, top, width, height },
+      urls,
+    })
+  }
+  return out
 }
 
 function digest(text) {
@@ -275,7 +323,11 @@ export async function buildInventory({
   const built = []
   for (const frame of frames) {
     const source = read(dumpDir, frame.id)
-    const parsed = parseFigmaDump(source, `${frame.id} dump`)
+    const parsed = parseFigmaDump(
+      source,
+      `${frame.id} dump`,
+      map.viewport.width
+    )
     if (parsed.frameNode !== frame.figmaNode) {
       throw new FidelityError(
         `the dump for "${frame.id}" is Figma node ${parsed.frameNode}, but design/figma/frames.json maps that frame to ${frame.figmaNode}.`,
@@ -283,13 +335,27 @@ export async function buildInventory({
       )
     }
 
+    if (fetchAssets) await assertAssetsFresh(parsed.assets, frame.id)
+
     const textNodes = parsed.nodes.filter((n) => n.kind === 'text')
-    const boxNodes = parsed.nodes
-      .filter((n) => n.kind === 'box')
+    const allBoxes = parsed.nodes.filter((n) => n.kind === 'box')
+    // A layer that draws an image is not a surface: it is a picture, and it is the
+    // artwork check's business. Three out of five "design boxes" are vector fragments
+    // inside an illustration the site ships as one flattened WebP — they have no element
+    // to be bridged TO, and counting them as unreached buried the panels that do.
+    const artworkLayers = allBoxes.filter((n) => n.assetRefs)
+    const boxNodes = allBoxes
       // A named layer with no fill of its own is still a design statement: it says the
       // fill behind it shows through. Dropping those is how "the dark footer is #0d406a
       // where the frame's band is #001A2A" stayed invisible.
-      .filter((n) => Object.keys(n.box).length > 0 || n.assetRefs || n.name)
+      .filter((n) => Object.keys(n.box).length > 0 || n.name)
+      .filter((n) => !n.assetRefs)
+      // The artboard is not a surface. Its fill is the canvas every other box is
+      // composited against, and it is already used as exactly that. Bridged as a box it
+      // lands on <body> — which spans the page, paints nothing, and encloses everything —
+      // and then reports the page as white on all six frames. There is no element that is
+      // the artboard; there is a page, and the boxes on it are what this compares.
+      .filter((n) => n.figmaNode !== parsed.frameNode)
 
     built.push({
       id: frame.id,
@@ -299,9 +365,6 @@ export async function buildInventory({
       route: frame.route,
       theme: frame.theme,
       frameFill: parsed.frameFill ?? null,
-      assetFills: fetchAssets
-        ? await fetchAssetFills(parsed.assets, frame.id)
-        : [],
       textNodes: textNodes.map((n) => ({
         key: n.key,
         figmaNode: n.figmaNode,
@@ -311,6 +374,8 @@ export async function buildInventory({
         lines: n.lines,
         mixedProperties: n.mixedProperties,
         geometry: n.geometry,
+        ancestorKeys: n.ancestorKeys,
+        ancestorNames: n.ancestorNames,
       })),
       boxNodes: boxNodes.map((n) => ({
         key: n.key,
@@ -327,7 +392,13 @@ export async function buildInventory({
         opacity: n.box.opacity ?? 1,
         backdrop: n.parentFill ?? parsed.frameFill ?? null,
         geometry: n.geometry,
+        assetRefs: n.assetRefs ?? null,
+        ancestorKeys: n.ancestorKeys,
+        ancestorNames: n.ancestorNames,
       })),
+      artworkNodes: artworkNodes(parsed),
+      artworkLayerCount: artworkLayers.length,
+      frameHeight: frameExtent(parsed.nodes),
       gaps: computeGaps(textNodes),
     })
   }

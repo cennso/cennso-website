@@ -76,6 +76,24 @@ function arbitrary(cls, prefix) {
 function applyClass(cls, out) {
   if (DEGENERATE.has(cls)) return
 
+  // Which ancestor a node's offsets are measured from.
+  //
+  // Figma's codegen positions a node against the nearest ancestor that establishes a
+  // containing block — and a `contents` group establishes none, so its children are
+  // positioned against ITS parent, not against it. Folding a contents group's own offset
+  // into its children's added 2060px to every stat illustration on the main page and put
+  // them off the bottom of an artboard 2766px tall. The footer's copy was displaced the
+  // same way, through `absolute contents` wrappers the designer never sees.
+  if (cls === 'contents') out.contents = true
+  if (
+    cls === 'relative' ||
+    cls === 'absolute' ||
+    cls === 'fixed' ||
+    cls === 'sticky'
+  ) {
+    out.positioned = true
+  }
+
   // typography
   const font = /^font-\['([^']+)'\]$/.exec(cls)
   if (font) {
@@ -237,7 +255,11 @@ function applyClass(cls, out) {
     ['left', 'left'],
   ]) {
     const value = arbitrary(cls, cl)
-    if (value !== null && value.endsWith('%')) {
+    // Percentages AND pixels. `right-[1083px]` is how the dump pins the hero CTA, and
+    // dropping it left that pill — and the "Book demo" inside it — with no horizontal
+    // position at all, which is precisely the node the header's "Book demo" was then
+    // confused with.
+    if (value !== null && (value.endsWith('%') || value.endsWith('px'))) {
       out.insets = { ...(out.insets ?? {}), [side]: value }
     }
   }
@@ -261,7 +283,7 @@ function resolveInset(value, extent) {
  * Anything it cannot resolve stays absent — a guessed rectangle produces confident
  * nonsense, and this harness would rather say "not reached".
  */
-export function resolveRect(record, parentRect) {
+export function resolveRect(record, parentRect, enclosingRect = parentRect) {
   const rect = {}
   const g = record.geometry ?? {}
   if (g.left !== undefined) rect.left = (parentRect?.left ?? 0) + g.left
@@ -297,6 +319,25 @@ export function resolveRect(record, parentRect) {
     ) {
       rect.width = parentRect.width - left - right
     }
+    // Pinned to the right edge with a width of its own: the left edge follows.
+    if (
+      rect.left === undefined &&
+      right !== null &&
+      rect.width !== undefined &&
+      parentRect.left !== undefined &&
+      parentRect.width !== undefined
+    ) {
+      rect.left = parentRect.left + parentRect.width - right - rect.width
+    }
+    if (
+      rect.top === undefined &&
+      bottom !== null &&
+      rect.height !== undefined &&
+      parentRect.top !== undefined &&
+      parentRect.height !== undefined
+    ) {
+      rect.top = parentRect.top + parentRect.height - bottom - rect.height
+    }
     if (
       rect.height === undefined &&
       top !== null &&
@@ -306,11 +347,39 @@ export function resolveRect(record, parentRect) {
       rect.height = parentRect.height - top - bottom
     }
   }
+
+  // A node the dump positions with neither insets nor absolute offsets is a flow child —
+  // the label inside a flex pill, for instance. It has no position of its own, but it is
+  // certainly inside its parent, and "inside its parent" is the whole of what the matcher
+  // needs. Leaving it with no position at all is what left the header's "Book demo" with
+  // nothing to disambiguate it from the hero's, and the two were then swapped.
+  if (enclosingRect) {
+    if (rect.left === undefined && enclosingRect.left !== undefined) {
+      rect.left = enclosingRect.left
+      rect.inheritedPosition = true
+    }
+    if (rect.top === undefined && enclosingRect.top !== undefined) {
+      rect.top = enclosingRect.top
+      rect.inheritedPosition = true
+    }
+  }
   return rect
 }
 
 function emptyRecord() {
-  return { style: {}, box: {}, geometry: {}, insets: undefined }
+  return {
+    style: {},
+    box: {},
+    geometry: {},
+    insets: undefined,
+    positioned: false,
+    contents: false,
+  }
+}
+
+/** True when absolutely-positioned descendants measure their offsets from this node. */
+export function establishesContainingBlock(record) {
+  return Boolean(record.positioned) && !record.contents
 }
 
 export function classesToRecord(className) {
@@ -586,6 +655,14 @@ function resolveTextStyle(node) {
   return { style, mixed }
 }
 
+/** How far down the next line of a multi-line layer starts. */
+function lineAdvance(style) {
+  const lh = Number(String(style.lineHeight ?? '').replace('px', ''))
+  if (Number.isFinite(lh) && lh > 0) return lh
+  const size = Number(String(style.fontSize ?? '').replace('px', ''))
+  return Number.isFinite(size) && size > 0 ? size * 1.4 : 0
+}
+
 function round(n) {
   return Math.round(n * 100) / 100
 }
@@ -643,7 +720,7 @@ function hasOwnText(node) {
  * Walks the expanded tree and emits one record per node carrying a Figma id.
  * `kind` is "text" when the node owns text, "box" otherwise.
  */
-function flatten(root, components) {
+function flatten(root, components, frameWidth, frameHeight) {
   const nodes = []
   const seen = new Map()
 
@@ -659,7 +736,9 @@ function flatten(root, components) {
       }
     }
 
-    const record = current.nodeId ? buildRecord(current, ancestry, seen) : null
+    const record = current.nodeId
+      ? buildRecord(current, ancestry, seen, frameWidth, frameHeight)
+      : null
     if (record) nodes.push(record)
 
     const nextAncestry = record ? [...ancestry, record] : ancestry
@@ -684,13 +763,28 @@ function flatten(root, components) {
   return nodes
 }
 
-function buildRecord(node, ancestry, seen) {
+function buildRecord(node, ancestry, seen, frameWidth, frameHeight) {
   const record = classesToRecord(node.className)
-  const parentRect = [...ancestry]
-    .reverse()
+  const reversed = [...ancestry].reverse()
+  const usable = (r) =>
+    r && (r.left !== undefined || r.top !== undefined || r.width !== undefined)
+  const parentRect = reversed
+    .filter((a) => a.containingBlock)
     .map((a) => a.rect)
-    .find((r) => r && r.left !== undefined)
-  const rect = resolveRect(record, parentRect)
+    .find(usable)
+  // For a flow child with no offsets of its own, "inside its parent" is the answer, and
+  // the parent there is whichever ancestor has a rect — containing block or not.
+  const enclosingRect = parentRect ?? reversed.map((a) => a.rect).find(usable)
+  const rect = resolveRect(record, parentRect, enclosingRect)
+  // The artboard itself. The dump gives the frame `size-full` rather than a rect, so
+  // without this every percentage inset and every right-edge pin below it resolves
+  // against nothing.
+  if (!ancestry.length) {
+    rect.left = rect.left ?? 0
+    rect.top = rect.top ?? 0
+    rect.width = rect.width ?? frameWidth
+    if (rect.height === undefined && frameHeight) rect.height = frameHeight
+  }
   const text = ownText(node)
   const kind = text ? 'text' : 'box'
   const occurrence = (seen.get(node.nodeId) ?? 0) + 1
@@ -709,10 +803,17 @@ function buildRecord(node, ancestry, seen) {
     occurrence,
     name: node.name ?? undefined,
     kind,
+    // Where this node sits in the frame's own tree, outermost first. Text alone is not a
+    // key — "Book demo" is in the Header AND in the hero, "Documentation" is in the nav
+    // AND in the footer — so the matcher needs to know which container a node came from
+    // before it can decide which element on the page is the right one.
+    ancestorKeys: ancestry.map((a) => a.key),
+    ancestorNames: ancestry.map((a) => a.name ?? null),
     // `geometry` is the frame-absolute rect, resolved through the parent chain where the
     // dump only gave percentage insets.
     geometry: rect,
     rect,
+    containingBlock: establishesContainingBlock(record),
     box: record.box,
     parentFill,
   }
@@ -725,6 +826,11 @@ function buildRecord(node, ancestry, seen) {
     if (mixed.length) out.mixedProperties = mixed
     const lines = textLines(node)
     if (lines.length > 1) {
+      // Each line gets its own top, stacked down from the layer's. A three-link footer
+      // column is ONE Figma layer and three anchors on the page, so without a per-line
+      // position all three lines would claim the layer's own Y and the matcher would have
+      // nothing to tell "Documentation in the footer" from "Documentation in the nav".
+      let offset = 0
       out.lines = lines.map((line, i) => {
         const resolved = { ...line.style }
         if (resolved.lineHeightRatio !== undefined && resolved.fontSize) {
@@ -733,7 +839,15 @@ function buildRecord(node, ancestry, seen) {
         }
         delete resolved.lineHeightRatio
         resolved.textAlign = resolved.textAlign ?? 'left'
-        return { key: `${out.key}:L${i + 1}`, text: line.text, style: resolved }
+        const top =
+          rect.top === undefined ? undefined : round(rect.top + offset)
+        offset += lineAdvance(resolved)
+        return {
+          key: `${out.key}:L${i + 1}`,
+          text: line.text,
+          style: resolved,
+          geometry: { left: rect.left, top, width: rect.width },
+        }
       })
     }
   }
@@ -745,14 +859,29 @@ function buildRecord(node, ancestry, seen) {
  * Throws rather than returning an empty list: a dump that yields no nodes means the
  * parser or the file is broken, and must never read as "nothing to check".
  */
-export function parseFigmaDump(source, where = 'figma dump') {
+export function parseFigmaDump(
+  source,
+  where = 'figma dump',
+  frameWidth = 1360
+) {
   const { components, rootName } = splitComponents(source)
   const root = components.get(rootName)
   // The frame's own component is not a symbol to splice into itself.
   const symbols = new Map(components)
   symbols.delete(rootName)
 
-  const nodes = flatten(root, symbols)
+  // Two passes, because the artboard's own height is not in the dump. The frame is
+  // `size-full`; a Footer pinned with `bottom-[3.98px]` therefore has nothing to resolve
+  // against and lands at the top of the page, which is how a whole footer's worth of
+  // anchors came to claim y=0 and drag the projection with them. So: measure the frame
+  // from what the first pass could place, then place everything again against that.
+  const firstPass = flatten(root, symbols, frameWidth, null)
+  const measured = firstPass.reduce((bottom, node) => {
+    const { top, height } = node.geometry ?? {}
+    if (top === undefined) return bottom
+    return Math.max(bottom, top + (height ?? 0))
+  }, 0)
+  const nodes = flatten(root, symbols, frameWidth, measured || null)
   if (!nodes.length) {
     throw new FidelityError(`${where}: parsed to zero design nodes.`, {
       hint: 'A frame with no nodes would make every coverage number vacuously perfect.',
