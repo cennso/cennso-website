@@ -11,6 +11,8 @@ Use the following tools to set up the project:
 - [Node.js](https://nodejs.org/en/) >= v16
 - [Yarn](https://yarnpkg.com/getting-started/install)
 - [Python](https://www.python.org/) >= 3.8 (for validation scripts)
+- The **Figma MCP connector**, enabled and authenticated — only needed to run
+  the design-fidelity review, not to build or serve the site
 
 ## Usage
 
@@ -71,6 +73,23 @@ To run all quality checks (formatting, linting, accessibility, performance, SEO,
 ```bash
 yarn check:all
 ```
+
+#### Design fidelity review
+
+Checks `/`, `/success-stories` and `/contact` against the Cennso Design 4.0
+Figma file, in both themes. It is **not** part of `yarn check:all` and **not** a
+CI job: it reads the design live, and CI has no Figma access.
+
+```bash
+yarn design:review:where       # where to write the frames fetched from Figma
+yarn design:review             # diff the built site against them
+yarn design:review:selftest    # prove the harness still fails on bad input
+```
+
+**Requires the Figma MCP connector, enabled and authenticated, and an account
+that can open the design file.** Nothing from Figma is committed, so there is no
+cached copy to fall back on — without it the review cannot run at all. See
+[`design/figma/README.md`](./design/figma/README.md).
 
 #### OG Image Generation
 
