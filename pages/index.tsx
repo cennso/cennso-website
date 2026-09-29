@@ -8,7 +8,12 @@ import Link from 'next/link'
 import { Button, Card, Typography } from '@cennso/ui'
 import { ChevronRight } from 'lucide-react'
 
-import { Container, CTA_HERO } from '../components/common'
+import {
+  CARD_ROW_MEASURE,
+  Container,
+  CTA_HERO,
+  PANEL_ROW_MEASURE,
+} from '../components/common'
 import { LogoBand } from '../components/Home/LogoBand'
 import { StatCard } from '../components/Home/StatCard'
 import { SEO } from '../components/SEO'
@@ -230,7 +235,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
         </div>
       </Container>
 
-      <Container>
+      {/* Wider than the type column: the frames draw this row at 1246px, not
+          on the 1200px CONTENT_MEASURE - see CARD_ROW_MEASURE. The heading
+          above the cards is centred in every frame, so it rides the wider row
+          without moving. */}
+      <Container measure={CARD_ROW_MEASURE}>
         {/* 80px between the heading row and the cards: the glyph (Figma 1:13)
             ends at y=1019.65 and the first card (1:11) starts at y=1100. */}
         <div className="flex flex-col gap-20 py-16 md:py-24 w-full">
@@ -262,9 +271,9 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
           </div>
 
           {/* 23px between cards in the frames (1:11 ends at x=461, 1:12 starts
-              at 484), across a 1246px card row; on this 1200px column that is
-              22px. */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[22px]">
+              at 484). On the 1246px row above, three equal columns and a 23px
+              gutter give each card exactly the frames' 400px. */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[23px]">
             {whyCennso.cards.map(
               (card: { title: string; description: string }, index: number) => (
                 <Card
@@ -310,7 +319,11 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
         </div>
       </Container>
 
-      <Container>
+      {/* Wider again, and by a different amount: the frames put the panels on
+          a 1237px row where the cards above sit on 1246px. The design is not
+          internally consistent here and the owner has ruled for the frames -
+          see PANEL_ROW_MEASURE. */}
+      <Container measure={PANEL_ROW_MEASURE}>
         <div className="flex flex-col gap-8 pb-16 md:pb-24 w-full">
           <Typography variant="h2" className="sr-only">
             {stats.heading}
@@ -318,9 +331,10 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
 
           {/* 37px between the stat panels and 43px between the rows in the
               frames (1:20 ends at x=661, 1:21 starts at 698; row 1 ends at
-              y=1981, row 2 starts at 2024), across a 1237px card row; on this
-              1200px column that is 36px and 42px. */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-9 gap-y-[42px]">
+              y=1981, row 2 starts at 2024). On the 1237px row above, two equal
+              columns and a 37px gutter give each panel exactly the frames'
+              600px. */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-[37px] gap-y-[43px]">
             <StatCard
               figure={
                 <StatIllustration

@@ -55,16 +55,17 @@ export const StatCard: FunctionComponent<StatCardProps> = ({
     // so it never wraps - 1:26 is 489px wide inside a 600px card whose left
     // inset is 65, i.e. it overhangs its own right inset. Symmetric padding
     // cannot reproduce that: "Available in over 170 locations" measures 492px
-    // at Poppins Bold 32px (the frame measures 489), so the two insets have to
-    // total under 90px on our 582px card or the title breaks onto a second
-    // line, which no frame shows. 44px is the largest symmetric value that
-    // keeps every title on one line, and it lands the paragraph measure at
-    // 494px - inside the 485-510px the four frames actually use.
+    // at Poppins Bold 32px (the frame measures 489), so 65px either side would
+    // leave 470px and wrap the title onto a second line, which no frame shows.
+    // 44px keeps every title on one line and lands the paragraph measure at
+    // 512px, just above the 485-510px the four frames actually use.
     //
-    // Worth raising with the owner: the 65px inset the frames repeat needs a
-    // wider card than CONTENT_MEASURE gives. The frames set these panels on a
-    // 1237px row (x=61..1298) where the site's column is 1200px, and even at
-    // the frame's own 600px card a symmetric 65px inset would wrap the title.
+    // The card itself is now the frames' 600px: the panel row was widened to
+    // the frames' own 1237px (see PANEL_ROW_MEASURE) after the owner ruled
+    // that the frames win over one shared site-wide measure. The note that
+    // used to sit here - that the 65px inset needs a wider card than
+    // CONTENT_MEASURE gives - is settled: the card is wide enough now, and
+    // 65px symmetric still wraps the title, so the inset stays a fit.
     //
     // It steps 24 -> 44 with the card's own width: below `md` the card is
     // phone-width and a 44px inset either side leaves too little measure for
