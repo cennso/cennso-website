@@ -51,8 +51,8 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
     // 1:7570 contact) over a page plate that is #e1eaf0 - leaving it on
     // `bg-background` alone painted the band that plate colour, which is the
     // only visually obvious mismatch of the set. The dark frames' Header
-    // (1:99 / 1:607-era symbol on 1:9) carries no fill of its own, so there
-    // the band IS the page plate (#001a2a vs the token's #001929) - hence
+    // symbol (1:99 on 1:9) carries no fill of its own, so there the band IS
+    // the page plate (#001a2a vs the token's #001929) - hence
     // `dark:bg-background` rather than a second literal. `dark:` resolves to
     // `:root:not([data-theme="light"])` via the theme preset, so the dark
     // treatment survives a missing attribute, matching `defaultSetting="dark"`.
