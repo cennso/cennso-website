@@ -38,6 +38,37 @@ written down and hoped for:
   review, not a dump left over from last week — which is the committed-copy
   problem again, wearing a temp directory.
 
+## Prerequisite: the Figma MCP, enabled and authenticated
+
+**The review cannot run without it, and there is no fallback.** Nothing from
+Figma is committed, so if the design cannot be fetched there is nothing to
+compare against. That is deliberate — see above — but it means the Figma MCP
+server is a hard requirement for anyone performing this review, not a
+convenience.
+
+What a developer needs, all three:
+
+1. **The Figma MCP server enabled** in their Claude Code session. It appears as
+   `claude.ai Figma`, and provides `get_design_context`, `get_metadata` and
+   `get_screenshot`. Check with `/mcp` in an interactive session; a server that
+   is configured but failed to connect is listed there too, and its tools will
+   not be callable.
+2. **That connector authenticated.** Authorisation happens through the
+   claude.ai connector settings, not from inside a session — a non-interactive
+   session cannot complete the OAuth flow, so authorise it before starting the
+   work.
+3. **Access to the design file itself.** Being authenticated is not the same as
+   being able to open `OqKo0g7Hb85V8YlEVYWUhf`. An account without access to
+   the file gets an error on the first `get_design_context` call.
+
+If any of the three is missing, stop and say so. Do **not** work around it with
+an older dump lying around in the scratch directory: the freshness guard exists
+precisely to stop that, and it will refuse anything over an hour old.
+
+Note the review uses only the read tools above. It does not use Code Connect,
+which needs a Dev or Full seat on an Organization or Enterprise plan — so that
+plan level is _not_ a prerequisite here.
+
 ## Running a review
 
 ```bash

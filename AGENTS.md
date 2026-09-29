@@ -197,6 +197,15 @@ The Cennso Design 4.0 Figma file is ground truth for `/`, `/success-stories` and
 `/contact`. It is checked by a **local review against the live file**, not by CI
 and not by `yarn check:all`.
 
+**The Figma MCP is a hard prerequisite.** Because nothing from Figma is
+committed, a developer without it cannot run the review at all — there is no
+fallback and no cached copy to fall back to. Three things must all hold: the
+`claude.ai Figma` MCP server enabled (check with `/mcp`), that connector
+authenticated through claude.ai connector settings, and the account able to
+open the design file itself. If any is missing, say so and stop; do not reach
+for a stale dump, which the freshness guard refuses anyway. See
+`design/figma/README.md`.
+
 The design is deliberately **not** committed. It was, once — six
 `get_design_context` dumps plus a generated inventory, so CI could compare
 without Figma access — and that was the mistake: a committed copy goes stale
