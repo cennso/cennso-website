@@ -38,5 +38,13 @@
 export const CTA_HERO =
   'h-[52px] min-w-[195px] gap-[17px] pl-[32px] pr-[13px] text-[20px] font-bold text-white'
 
+/**
+ * `text-left` is the frame's own value, not a layout choice: the label inside
+ * 1:606 (and inside the contact form's instance of it, 1:3938 / 1:7550) is a
+ * left-aligned text box, where `buttonVariants` centres it. It renders
+ * identically - the pill is content-sized, so there is no free space for the
+ * alignment to act on - but the computed value now says what the frame says
+ * instead of contradicting it.
+ */
 export const CTA_ACTION =
-  'h-[42px] gap-3 pl-5 pr-4 text-lg font-bold text-white'
+  'h-[42px] gap-3 pl-5 pr-4 text-lg font-bold text-left text-white'
