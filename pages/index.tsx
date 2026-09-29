@@ -185,9 +185,13 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               >
                 {hero.ctaText}
                 {/* Figma 1:68 trails the label with an 11x15 chevron vector,
-                    17px after it. Decorative: the label already names the
-                    action, so it carries no accessible name of its own. */}
-                <ChevronRight className="h-4 w-3" aria-hidden="true" />
+                    17px after it (the gap is on the pill, see CTA_HERO).
+                    Decorative: the label already names the action, so it
+                    carries no accessible name of its own. */}
+                <ChevronRight
+                  className="h-[15px] w-[11px]"
+                  aria-hidden="true"
+                />
               </Button>
             </div>
             <div className="w-full md:w-[48%] flex justify-center">

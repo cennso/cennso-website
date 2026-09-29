@@ -22,8 +22,21 @@
  * `color-contrast` audit both flag this pill, and reverting is a one-token
  * edit here that fixes every call site at once.
  */
+/**
+ * Stated as the frame's own values rather than the nearest Tailwind steps:
+ * `gap-4`/`pl-8`/`pr-3` are 16/32/12 where 1:66 draws 17/32/13, and those
+ * roundings are what made the pill measure 187px against a designed 195.
+ *
+ * The exact insets alone still do not reach 195. The frame budgets
+ * 195 - 32 - 17 - 11 - 13 = 122px for "Book demo" at Poppins Bold 20px; the
+ * font the site actually serves sets the same string ~7px narrower, so the
+ * intrinsic pill is ~188px. `min-w-[195px]` pins the frame's measure without
+ * pinning the copy: the label is CMS text, so a fixed `w-[195px]` would clip a
+ * longer one. The 7px of slack lands after the chevron, before the right
+ * inset.
+ */
 export const CTA_HERO =
-  'h-[52px] gap-4 pl-8 pr-3 text-[20px] font-bold text-white'
+  'h-[52px] min-w-[195px] gap-[17px] pl-[32px] pr-[13px] text-[20px] font-bold text-white'
 
 export const CTA_ACTION =
   'h-[42px] gap-3 pl-5 pr-4 text-lg font-bold text-white'
