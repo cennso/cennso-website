@@ -46,7 +46,19 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
   useClickOutside(menuRef, () => setIsOpen(false))
 
   return (
-    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-background border-none shadow-none px-8 lg:px-4">
+    // The header band is its own surface, not the page plate. All three light
+    // frames paint the Header symbol #ffffff (1:4530 main, 1:1543 use cases,
+    // 1:7570 contact) over a page plate that is #e1eaf0 - leaving it on
+    // `bg-background` alone painted the band that plate colour, which is the
+    // only visually obvious mismatch of the set. The dark frames' Header
+    // (1:99 / 1:607-era symbol on 1:9) carries no fill of its own, so there
+    // the band IS the page plate (#001a2a vs the token's #001929) - hence
+    // `dark:bg-background` rather than a second literal. `dark:` resolves to
+    // `:root:not([data-theme="light"])` via the theme preset, so the dark
+    // treatment survives a missing attribute, matching `defaultSetting="dark"`.
+    // White raises the light-theme nav link and wordmark contrast (both
+    // #185f99) from 5.49:1 to 6.70:1, so nothing loses headroom by this.
+    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white dark:bg-background border-none shadow-none px-8 lg:px-4">
       <nav
         className={`flex flex-row items-center justify-between w-full ${CONTENT_MEASURE} py-2`}
       >
@@ -65,12 +77,17 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
             <MenuToggle toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} />
           </div>
 
+          {/* Below xl this list IS the dropped-down header panel, hanging
+              straight off the band above it, so it takes the band's own
+              surface rather than the page plate - otherwise the light theme
+              shows an #e1eaf0 panel seamed onto a white bar. At xl it is
+              inline in the bar and transparent, as before. */}
           <ul
             className={`absolute top-18 xl:top-0 left-0 right-0 xl:relative transition-all duration-300 ease-in-out ${
               isOpen
                 ? 'opacity-100'
                 : 'opacity-0 -translate-y-[calc(100%+4.5rem)] xl:opacity-100 xl:translate-y-0'
-            } w-full h-auto shadow-none px-8 py-4 xl:p-0 bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
+            } w-full h-auto shadow-none px-8 py-4 xl:p-0 bg-white dark:bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
           >
             {navigation.map((link) => (
               <li
