@@ -8,9 +8,10 @@
  * what nobody listed, which is how card alignment, a dimmed card outline, a footer band
  * and a heading gap all shipped wrong under a green build.
  */
+import { checkFrameArtwork, checkThemePairing } from './artwork.mjs'
 import { FidelityError } from './errors.mjs'
 import { collectDom } from './dom-inventory.mjs'
-import { diffFrame, validateExclusions } from './match.mjs'
+import { diffFrame, exclusionKeysFor, validateExclusions } from './match.mjs'
 import { openPage } from './page.mjs'
 
 /**
@@ -68,6 +69,7 @@ export async function runInventory({
   const findings = []
   const coverage = []
   const notComparable = []
+  const artworkPositions = []
 
   for (const frame of inventory.frames) {
     const themeConfig = inventory.themes[frame.theme]
@@ -85,18 +87,62 @@ export async function runInventory({
       viewport: inventory.viewport,
     })
     let result
+    let artwork
     try {
       const dom = await collectDom(page)
       result = diffFrame({ frame, dom, exclusions })
+      artwork = await checkFrameArtwork({
+        page,
+        frame,
+        images: dom.images.map((image) => ({
+          ...image,
+          resolvedUrl: new URL(image.assetPath, baseUrl).toString(),
+        })),
+        project: result.project,
+        isExcluded: excluderFor(exclusions, frame.id),
+      })
     } finally {
       await page.close()
     }
 
-    coverage.push({ frame, ...result.coverage, findings: result.findings })
+    coverage.push({
+      frame,
+      ...result.coverage,
+      ...artwork.coverage,
+      findings: [...result.findings, ...artwork.findings],
+    })
     for (const note of result.notComparable)
       notComparable.push(`${frame.id}: ${note}`)
-    findings.push(...result.findings)
+    findings.push(...result.findings, ...artwork.findings)
+    artworkPositions.push({ frame, positions: artwork.positions })
+  }
+
+  // Dark and light must resolve to different files wherever the design draws them
+  // differently. It is the only artwork rule that cannot be seen one frame at a time.
+  const paired = checkThemePairing(artworkPositions)
+  findings.push(...paired)
+  for (const finding of paired) {
+    const entry = coverage.find((c) => c.frame.route === finding.route)
+    if (entry) entry.findings.push(finding)
   }
 
   return { findings, coverage, notComparable }
+}
+
+/** The exclusion lookup the artwork check needs, keyed the same way the diff keys it. */
+function excluderFor(exclusions, frameId) {
+  const index = new Map(
+    exclusions.exclusions
+      .filter((e) => e.frame === frameId)
+      .map((e) => [e.node, e])
+  )
+  return (nodeKey, property) => {
+    for (const key of exclusionKeysFor(nodeKey)) {
+      const entry = index.get(key)
+      if (!entry) continue
+      if (entry.properties.includes('*') || entry.properties.includes(property))
+        return true
+    }
+    return false
+  }
 }
