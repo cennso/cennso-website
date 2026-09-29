@@ -38,7 +38,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
     // itself from the light page. Written as a literal for the same reason the
     // "Why Cennso?" outlines are: no theme token carries it (dark --border is
     // #0c446e, a different colour). Decorative, so no contrast floor applies.
-    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-light dark:border-t-2 dark:border-t-[#284467]">
+    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-normal dark:border-t-2 dark:border-t-[#284467]">
       {/* Same content measure as Container/Navigation, so the footer wordmark
           lines up with the header's and with every page heading - the frames
           put both logos on the page's own gutter (1:584 at x=81). */}
@@ -55,7 +55,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
 
         <ul className="grid grid-cols-2 lg:grid-cols-3 xl:flex gap-16 gap-y-0 lg:gap-32 xl:gap-16 2xl:gap-32 mb-8 md:mb-0">
           <li className="col-span-2 lg:col-auto flex flex-col gap-4 lg:mb-0 mb-8">
-            <h2 className="font-bold text-lg text-white border-b pb-1 border-white">
+            <h2 className="font-semibold text-lg text-white border-b pb-1 border-white">
               Company
             </h2>
             <ul className="grid grid-rows-2 grid-flow-col gap-x-12 gap-y-1">
@@ -73,7 +73,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           <li className="flex flex-col gap-4 mb-2 md:mb-0">
-            <h2 className="font-bold text-lg text-white border-b pb-1 border-white">
+            <h2 className="font-semibold text-lg text-white border-b pb-1 border-white">
               Explore
             </h2>
             <ul className="flex flex-col gap-1">
@@ -92,7 +92,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           <li className="flex flex-col gap-4 mb-2 md:mb-0">
-            <h2 className="font-bold text-lg text-white border-b pb-1 border-white">
+            <h2 className="font-semibold text-lg text-white border-b pb-1 border-white">
               AI / LLM
             </h2>
             <ul className="flex flex-col gap-1">
@@ -111,7 +111,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           {/* <li className="flex flex-col gap-4 mb-2 md:mb-0 w-[205px]">
-            <h2 className="font-bold text-lg text-white border-b pb-1 border-transparent">
+            <h2 className="font-semibold text-lg text-white border-b pb-1 border-transparent">
               Social
             </h2>
             <ul className="flex flex-col gap-1">
