@@ -84,7 +84,10 @@ yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
 yarn seo:validate          # Validate SEO metadata (titles 50-60 chars, descriptions 150-160 chars)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
-yarn check:all             # Run all checks (build, format, lint, a11y, perf, seo)
+yarn design:review:where   # Where to write the frames fetched from Figma, and under what names
+yarn design:review         # Diff the built site against those frames, both themes (local, needs Figma MCP)
+yarn design:review:selftest    # Prove the fidelity harness still fails on degenerate input
+yarn check:all             # Run all checks (build, format, lint, a11y, perf, seo, og images)
 ```
 
 ### Pages
@@ -187,6 +190,57 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
   - Descriptions from YAML `page.description` or MDX frontmatter `excerpt`
   - SEO component in `components/SEO.tsx` handles meta tag generation
   - BeautifulSoup4 required for validation (in `scripts/requirements.txt`)
+
+## Design Fidelity
+
+The Cennso Design 4.0 Figma file is ground truth for `/`, `/success-stories` and
+`/contact`. It is checked by a **local review against the live file**, not by CI
+and not by `yarn check:all`.
+
+**The Figma MCP is a hard prerequisite.** Because nothing from Figma is
+committed, a developer without it cannot run the review at all — there is no
+fallback and no cached copy to fall back to. Three things must all hold: the
+`claude.ai Figma` MCP server enabled (check with `/mcp`), that connector
+authenticated through claude.ai connector settings, and the account able to
+open the design file itself. If any is missing, say so and stop; do not reach
+for a stale dump, which the freshness guard refuses anyway. See
+`design/figma/README.md`.
+
+The design is deliberately **not** committed. It was, once — six
+`get_design_context` dumps plus a generated inventory, so CI could compare
+without Figma access — and that was the mistake: a committed copy goes stale
+silently. The designer edits Figma, the comparison keeps measuring the site
+against last month's frames, and it stays green while the site drifts. That is
+the exact failure the harness exists to catch.
+
+So `design/figma/` holds two configuration files and no design values:
+`frames.json` (which route is supposed to look like which Figma node, in which
+theme) and `exclusions.json` (what cannot be compared, each with a written
+reason). The frames themselves are fetched per review into a scratch directory
+outside the repository; the review refuses a dump written where git would track
+it, and refuses one older than an hour.
+
+The `.claude/hooks/design-fidelity-review.sh` Stop hook asks for the review,
+once a session, when the branch changed `pages/`, `components/`, `styles/`,
+`public/assets/` or `tailwind.config.js` and a mapped frame covers it. A hook
+cannot call MCP tools, so it emits the review to perform: call
+`get_design_context` once per affected frame (one call returns the frame with
+its symbols expanded), then `yarn build` and `yarn design:review --frames=…`.
+
+The diff itself is deterministic and lives in `scripts/design-fidelity/`, not in
+anybody's judgement. It matches **every** text node in the frame to the DOM by
+its own text content, diffs every property, bridges boxes through the text they
+enclose, measures gaps, reads artwork colours out of the frame's exported SVGs,
+and prints four numbers per frame: design nodes, matched, mismatched, unreached.
+An unreached design node is a finding, not a silent pass — that is the number
+that answers "what is nobody checking?".
+
+Read `design/figma/README.md` before implementing a frame. In particular: expand
+every Figma symbol, read values with `get_design_context` rather than sampling a
+screenshot, composite element opacity onto fill _and_ border before comparing
+anything, never reuse one theme's artwork in the other, and put anything you
+cannot compare in `design/figma/exclusions.json` with a written reason instead
+of dropping it.
 
 ## Performance Patterns
 

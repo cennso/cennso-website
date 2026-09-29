@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 2,
+  "why": "The route <-> Figma frame mapping, and nothing else. This file is configuration: it says which frame of Cennso Design 4.0 a route is supposed to look like. It deliberately holds NO design values. A committed copy of the design goes stale the moment the designer edits the file, and a comparison against last month's design stays green while the site drifts — which is the exact failure this harness exists to prevent. The values are fetched live, per review, with get_design_context.",
+  "figma": {
+    "fileKey": "OqKo0g7Hb85V8YlEVYWUhf",
+    "designName": "Cennso Design 4.0",
+    "expandTheseSymbols": {
+      "1:99": "Header — the navigation. A frame screenshot renders it as a flat picture; only the expansion carries its typography, logo colour and CTA. Missing this is how the whole nav went unchecked in Phase 4.",
+      "1:575": "Footer — the dark symbol. Note it declares NO fill of its own, so the band a reader sees is the frame fill behind it.",
+      "1:606": "btn_More — the pill used for More and, with the label overridden, Send."
+    }
+  },
+  "viewport": {
+    "width": 1360,
+    "height": 1000
+  },
+  "themes": {
+    "dark": {
+      "storageKey": "cennso-ui-theme",
+      "storageValue": "dark",
+      "documentAttributeValue": "dark"
+    },
+    "light": {
+      "storageKey": "cennso-ui-theme",
+      "storageValue": "light",
+      "documentAttributeValue": "light"
+    }
+  },
+  "sharedImplementation": {
+    "note": "A change to any of these reaches every route, so it affects ALL six frames — not just the page whose file was edited.",
+    "paths": [
+      "components/Navigation.tsx",
+      "components/Footer.tsx",
+      "components/Logo.tsx",
+      "components/common/Container.tsx",
+      "pages/_app.tsx",
+      "pages/_document.tsx",
+      "styles/",
+      "tailwind.config.js"
+    ]
+  },
+  "frames": [
+    {
+      "id": "main-dark",
+      "figmaNode": "1:9",
+      "figmaName": "Main page v.3 (dark)",
+      "route": "/",
+      "theme": "dark",
+      "page": "pages/index.tsx"
+    },
+    {
+      "id": "main-light",
+      "figmaNode": "1:4440",
+      "figmaName": "Main page light blue (light)",
+      "route": "/",
+      "theme": "light",
+      "page": "pages/index.tsx"
+    },
+    {
+      "id": "use-cases-dark",
+      "figmaNode": "1:585",
+      "figmaName": "Use cases (dark)",
+      "route": "/success-stories",
+      "theme": "dark",
+      "page": "pages/success-stories/index.tsx"
+    },
+    {
+      "id": "use-cases-light",
+      "figmaNode": "1:1062",
+      "figmaName": "Use cases (light)",
+      "route": "/success-stories",
+      "theme": "light",
+      "page": "pages/success-stories/index.tsx"
+    },
+    {
+      "id": "contact-dark",
+      "figmaNode": "1:3471",
+      "figmaName": "Contact (dark)",
+      "route": "/contact",
+      "theme": "dark",
+      "page": "pages/contact.tsx",
+      "note": "/contact carries the live Mailjet form. The review only reads computed style; it never types into the form and never submits it."
+    },
+    {
+      "id": "contact-light",
+      "figmaNode": "1:7084",
+      "figmaName": "Contact (light)",
+      "route": "/contact",
+      "theme": "light",
+      "page": "pages/contact.tsx",
+      "note": "Light twin of contact-dark. Same read-only treatment of the form."
+    }
+  ]
+}

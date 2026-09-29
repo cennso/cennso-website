@@ -34,6 +34,7 @@ before any change to this repo. In short:
 ## Harness files
 
 - `.claude/settings.json` — hook wiring
-- `.claude/hooks/` — session-start reminder, branch guard, wrap-up gate
+- `.claude/hooks/` — session-start reminder, branch guard, wrap-up gate,
+  design-fidelity review
 - `.claude/scripts/worktree.sh` — per-topic worktree helper
 - `.claude/skills/` — `dev-workflow`, `github-actions-supply-chain-pinning`

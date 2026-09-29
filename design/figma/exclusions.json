@@ -1,0 +1,144 @@
+{
+  "schemaVersion": 1,
+  "why": "The enumerative diff compares every text node in every frame it fetched. A node it cannot compare has to be written down here, with a reason a reviewer can disagree with. Nothing is ever dropped quietly: when a frame IS fetched for a review, an exclusion naming a node that frame no longer contains is a hard failure, so these entries cannot outlive the design they describe. `properties: [\"*\"]` excludes the node entirely; naming properties excludes only those.",
+  "exclusions": [
+    {
+      "frame": "use-cases-dark",
+      "node": "1:599",
+      "properties": ["*"],
+      "reason": "Placeholder copy. The frame mocks the card list with invented Telekom headlines; the real page renders success-story titles from content/success-stories. The typography is asserted through the sibling cards that do map, so excluding the copy costs no style coverage."
+    },
+    {
+      "frame": "use-cases-dark",
+      "node": "1:600",
+      "properties": ["*"],
+      "reason": "Placeholder copy, same as 1:599 — an invented Telekom headline standing in for a CMS-driven success-story title. Comparing it would assert that the CMS contains the designer's lorem."
+    },
+    {
+      "frame": "use-cases-dark",
+      "node": "1:602",
+      "properties": ["*"],
+      "reason": "Placeholder copy, same as 1:599 — an invented Telekom headline standing in for a CMS-driven success-story title. Comparing it would assert that the CMS contains the designer's lorem."
+    },
+    {
+      "frame": "use-cases-dark",
+      "node": "1:605",
+      "properties": ["*"],
+      "reason": "Placeholder copy, same as 1:599 — an invented Telekom headline standing in for a CMS-driven success-story title. Comparing it would assert that the CMS contains the designer's lorem."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "1:1076",
+      "properties": ["*"],
+      "reason": "Placeholder copy — the light twin of 1:599. Invented Telekom headline standing in for a CMS-driven success-story title."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "1:1077",
+      "properties": ["*"],
+      "reason": "Placeholder copy — the light twin of 1:600. Invented Telekom headline standing in for a CMS-driven success-story title."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "1:1079",
+      "properties": ["*"],
+      "reason": "Placeholder copy — the light twin of 1:602. Invented Telekom headline standing in for a CMS-driven success-story title."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "1:1082",
+      "properties": ["*"],
+      "reason": "Placeholder copy — the light twin of 1:605. Invented Telekom headline standing in for a CMS-driven success-story title."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "1:1533",
+      "properties": ["*"],
+      "reason": "Hidden layer. Two Footer layers occupy the same rect in this frame: 1:1533 is an instance of the dark symbol 1:575 and is fully occluded by the light footer 1:1534 drawn on top of it. Only one of them is visible, so only one can be compared. Its text children are excluded individually below."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "I1:1533;1:577",
+      "properties": ["*"],
+      "reason": "Child of the occluded duplicate footer 1:1533 (see that entry). The visible twin 1:1536 carries the same copy and IS compared, so nothing goes unchecked here."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "I1:1533;1:578",
+      "properties": ["*"],
+      "reason": "Child of the occluded duplicate footer 1:1533 (see that entry). The visible twin 1:1537 carries the same copy and IS compared, so nothing goes unchecked here."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "I1:1533;1:579",
+      "properties": ["*"],
+      "reason": "Child of the occluded duplicate footer 1:1533 (see that entry). The visible twin 1:1538 carries the same copy and IS compared, so nothing goes unchecked here."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "I1:1533;1:580",
+      "properties": ["*"],
+      "reason": "Child of the occluded duplicate footer 1:1533 (see that entry). The visible twin 1:1539 carries the same copy and IS compared, so nothing goes unchecked here."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "I1:1533;1:581",
+      "properties": ["*"],
+      "reason": "Child of the occluded duplicate footer 1:1533 (see that entry). The visible twin 1:1540 carries the same copy and IS compared, so nothing goes unchecked here."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "I1:1533;1:583",
+      "properties": ["*"],
+      "reason": "Child of the occluded duplicate footer 1:1533 (see that entry). The visible twin 1:1541 carries the same copy and IS compared, so nothing goes unchecked here."
+    },
+    {
+      "frame": "main-dark",
+      "node": "1:583",
+      "properties": ["*"],
+      "reason": "Dated copy. The frame freezes 'Copyright (c) 2023 CENNSO'; the site composes the year at render time from content/footer.yaml, so the design string can never match and asserting it would mean pinning the site to 2023."
+    },
+    {
+      "frame": "main-light",
+      "node": "1:5008",
+      "properties": ["*"],
+      "reason": "Dated copy — the light twin of main-dark 1:583. The frame freezes the 2023 copyright line while the site composes the year at render time."
+    },
+    {
+      "frame": "use-cases-dark",
+      "node": "1:583",
+      "properties": ["*"],
+      "reason": "Dated copy — the same frozen 2023 copyright line as main-dark 1:583, reached through the Footer symbol on this frame."
+    },
+    {
+      "frame": "use-cases-light",
+      "node": "1:1541",
+      "properties": ["*"],
+      "reason": "Dated copy — the same frozen 2023 copyright line, in this frame's visible footer."
+    },
+    {
+      "frame": "contact-dark",
+      "node": "1:583",
+      "properties": ["*"],
+      "reason": "Dated copy — the same frozen 2023 copyright line as main-dark 1:583, reached through the Footer symbol on this frame."
+    },
+    {
+      "frame": "contact-light",
+      "node": "1:7586",
+      "properties": ["*"],
+      "reason": "Dated copy — the same frozen 2023 copyright line, in this frame's footer."
+    },
+    {
+      "frame": "contact-dark",
+      "node": "1:3945",
+      "properties": ["text"],
+      "reason": "Person's name. content/contact-page.yaml names the contact person, so the copy is data rather than design. The typography around it is still compared; only the string itself is not."
+    },
+    {
+      "frame": "contact-light",
+      "node": "1:7557",
+      "properties": ["text"],
+      "reason": "Person's name — the light twin of contact-dark 1:3945. The string comes from content/contact-page.yaml; the typography around it is still compared."
+    }
+  ]
+}
