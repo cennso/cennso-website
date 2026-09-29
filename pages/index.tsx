@@ -269,7 +269,15 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                     whyCennsoOutlines[index] ?? ''
                   }`}
                 >
-                  <Card.Header>
+                  {/* `gap-0` is not cosmetic. Card.Header is a
+                      `grid-rows-[auto_auto] gap-2` two-track grid sized for a
+                      title + description pair; with only a title in it the
+                      second track is empty but the 8px row gap between the two
+                      tracks is still laid out, so the header box ran 8px
+                      taller than its text and the frames' 13px title-to-body
+                      step measured 21px. Zeroing the header's own gap leaves
+                      the Card's `gap-[13px]` as the only thing between them. */}
+                  <Card.Header className="gap-0">
                     {/* Figma 1:96-1:98 / 1:4526-1:4528: Poppins Bold 32px,
                         1.4 line height, CENTRED - all six title nodes carry
                         text-align center, and each sits on its card's own
