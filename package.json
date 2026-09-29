@@ -43,12 +43,15 @@
     "design:fidelity": "node scripts/check-design-fidelity.mjs",
     "design:fidelity:selftest": "node scripts/check-design-fidelity.mjs --selftest-only",
     "design:fingerprints": "node scripts/check-design-fidelity.mjs --fingerprints",
+    "design:inventory": "node scripts/check-design-fidelity.mjs --inventory",
+    "design:inventory:check": "node scripts/check-design-fidelity.mjs --inventory --check",
+    "design:inventory:refresh": "node scripts/check-design-fidelity.mjs --inventory --fetch-assets",
     "lighthouse:desktop:ci": "lhci collect --config=.lighthouserc.ci.js && lhci upload --config=.lighthouserc.ci.js --target=filesystem --outputDir=./lighthouse-desktop && node scripts/process-lhci-results.js --manifestDir=lighthouse-desktop --outputJson=lighthouse-results.json --outputHtml=lighthouse-desktop.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=.lighthouserc.ci.js",
     "lighthouse:mobile:ci": "lhci collect --config=lighthouse.mobile.config.ci.js && lhci upload --config=lighthouse.mobile.config.ci.js --target=filesystem --outputDir=./lighthouse-mobile && node scripts/process-lhci-results.js --manifestDir=lighthouse-mobile --outputJson=lighthouse-mobile-results.json --outputHtml=lighthouse-mobile.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=lighthouse.mobile.config.ci.js",
     "lighthouse:desktop": "rm -rf .lighthouse lighthouse-desktop && lhci collect --config=.lighthouserc.js && lhci upload --config=.lighthouserc.js --target=filesystem --outputDir=./lighthouse-desktop && node scripts/process-lhci-results.js --manifestDir=lighthouse-desktop --outputJson=lighthouse-results.json --outputHtml=lighthouse-desktop.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=.lighthouserc.js",
     "lighthouse:mobile": "rm -rf .lighthouse .lighthouse-mobile lighthouse-mobile && lhci collect --config=lighthouse.mobile.config.js && lhci upload --config=lighthouse.mobile.config.js --target=filesystem --outputDir=./lighthouse-mobile && node scripts/process-lhci-results.js --manifestDir=lighthouse-mobile --outputJson=lighthouse-mobile-results.json --outputHtml=lighthouse-mobile.html --targetUrl=${LIGHTHOUSE_URL:-http://localhost:3000/} && lhci assert --config=lighthouse.mobile.config.js",
     "lighthouse": "yarn lighthouse:desktop && yarn lighthouse:mobile",
-    "check:all": "yarn build && yarn format && yarn lint && yarn a11y && yarn perf && yarn seo && yarn validate:ogimages && yarn design:fidelity"
+    "check:all": "yarn build && yarn format && yarn lint && yarn a11y && yarn perf && yarn seo && yarn validate:ogimages && yarn design:inventory:check && yarn design:fidelity"
   },
   "dependencies": {
     "@cennso/theme": "0.2.1",
