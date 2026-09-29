@@ -1,6 +1,5 @@
 /**
- * Parses one committed `get_design_context` dump (design/figma/raw/*.jsx.txt) into a flat
- * list of design nodes.
+ * Parses one freshly fetched `get_design_context` dump into a flat list of design nodes.
  *
  * This is the step that makes the harness enumerative rather than curated: nothing here
  * decides which nodes matter. Every node the dump carries comes out, with the style the
@@ -502,7 +501,7 @@ function splitComponents(source) {
   if (!starts.length) {
     throw new FidelityError(
       'the Figma dump contains no component function.',
-      'design/figma/raw/*.jsx.txt must be the code block `get_design_context` returned, unmodified.'
+      'A dump must be the code block `get_design_context` returned, unmodified. Run `yarn design:review:where` for the file names it expects.'
     )
   }
   for (let k = 0; k < starts.length; k += 1) {

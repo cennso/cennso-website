@@ -105,7 +105,9 @@ to look for, not as advice.
 **1. Expand every symbol before you believe a frame.** `1:99` is a symbol named
 "Header". In a frame screenshot it is a picture of a navigation bar — its
 typography, its logo colour and its CTA simply are not in the image as values.
-Call `get_metadata` on the symbol id, then `get_design_context` on it, and read
+One `get_design_context` call on the **frame** returns its symbols expanded into
+functions, which is the cheapest way to get them; `get_metadata` on the symbol id
+followed by `get_design_context` on it reads one in isolation. Either way, read
 the children (`1:104`–`1:111`). The nav in Phase 4 was rebuilt from the old site
 and restyled by eye because this step was skipped. A change that touches a
 region a symbol covers, with no evidence the symbol was read, is a finding.
@@ -137,11 +139,22 @@ looked plausible was never compared to anything. Open the frame, list what it
 declares, and check the page against that list — including the parts you did not
 change.
 
-## The gate that now enforces this
+## The review that now enforces this
 
-`yarn design:fidelity` (in `yarn check:all`, and its own CI matrix job) renders
-the built site and asserts computed values against `design/figma/snapshot.json`.
-See `.claude/cennso-web/design-fidelity-gate.md` for what it covers and what it
-still does not. A finding it already catches does not need repeating in review;
-a finding in a frame the snapshot marks `not-captured` or `awaiting-implementation`
-absolutely does.
+`yarn design:review` renders the built site and diffs it, node by node, against
+frames fetched from Figma **at review time**. It is a local review, not a CI
+gate: the `.claude/hooks/design-fidelity-review.sh` Stop hook asks for it once a
+session when the branch changed `pages/`, `components/`, `styles/`,
+`public/assets/` or `tailwind.config.js`.
+
+There is deliberately no committed copy of the design any more. There was one —
+six `get_design_context` dumps and a generated inventory — and it made rule 5
+worse rather than better: CI compared the site against a month-old design and
+stayed green while the design moved. `design/figma/` now holds the route ↔ frame
+mapping and the exclusion list, and nothing else.
+
+See `.claude/cennso-web/design-fidelity-gate.md` for what the review covers and
+what it still does not. A finding it already catches does not need repeating in
+review; a finding on a route the mapping does not cover (`/about`, `/blog`,
+anything outside `/`, `/success-stories`, `/contact`), or in a frame nobody
+fetched this time, absolutely does.

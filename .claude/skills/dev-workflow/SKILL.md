@@ -127,9 +127,14 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
 ## The quality gate
 
 - **`yarn check:all` is mandatory before declaring work done** — it runs
-  `build`, `format`, `lint`, `a11y`, `perf`, `seo`, `validate:ogimages`,
-  `design:fidelity`. If any check fails: fix the code, re-run, repeat until
-  clean. Never declare the work complete on the assumption it would pass.
+  `build`, `format`, `lint`, `a11y`, `perf`, `seo`, `validate:ogimages`. If any
+  check fails: fix the code, re-run, repeat until clean. Never declare the work
+  complete on the assumption it would pass.
+- **Design fidelity is NOT in that gate and not in CI.** It is a local review
+  against the live Figma file, asked for by the
+  `.claude/hooks/design-fidelity-review.sh` Stop hook when the branch changed
+  `pages/`, `components/`, `styles/`, `public/assets/` or `tailwind.config.js`.
+  See the Figma red flags below.
 - **Every stage chains with `&&`, so the first failure hides all of them.** "One
   known failure" is never a safe conclusion — it is only ever "one known failure
   and an unknown number behind it". `yarn perf` is `perf:images && perf:mobile`:
@@ -244,8 +249,10 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   rules from memory; the skill is the source of truth.
 - CI installs `yarn install --frozen-lockfile` + `scripts/requirements.txt`, then
   runs `build`, and fans out `format`, `lint`, `a11y`, `perf`, `seo`,
-  `validate:ogimages`, `design:fidelity` as a matrix. Lighthouse runs against the Vercel preview and
-  blocks the merge below 95%.
+  `validate:ogimages` as a matrix. Lighthouse runs against the Vercel preview and
+  blocks the merge below 95%. Design fidelity is deliberately absent: CI has no
+  Figma access, and the only way to give it one was a committed copy of the
+  design, which went stale silently.
 - **A PR from the fork does not deploy a preview until someone authorizes it.**
   The `Vercel` check fails immediately with `Authorization required to deploy.`
   and a `vercel.com/git/authorize` link, and `Wait for Vercel deployment` — and
@@ -302,12 +309,24 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   the YAML files under `content/`.
 - About to implement a Figma frame → STOP and read `design/figma/README.md` plus
   `.claude/cennso-web/ds-fidelity.md` first. Expand every symbol, read node
-  values with `get_design_context` instead of sampling a screenshot, and work
-  from the frame rather than from the page that is already there. `yarn
-  design:fidelity` asserts the result against `design/figma/snapshot.json`.
-- About to widen a `tolerance`, drop an `expect` key, or flip a frame back to
-  `awaiting-implementation` so `yarn design:fidelity` goes green → STOP. That is
-  the same violation as editing a check script.
+  values with `get_design_context` instead of sampling a screenshot, never ship
+  one theme's artwork into the other, and work from the frame rather than from
+  the page that is already there.
+- About to say a page matches the design → STOP unless `yarn design:review`
+  produced that verdict. It fetches the frames from Figma live, diffs every
+  design node against the rendered page in both themes, and prints four numbers:
+  design nodes, matched, mismatched, unreached. Report them. "It matches Figma"
+  with no counts behind it is not an answer, and an unreached node means nobody
+  is checking it.
+- About to commit a `get_design_context` dump, an inventory, or any file of
+  design values under `design/` → STOP. That is exactly what was removed: a
+  committed copy of the design goes stale silently, so the comparison stays
+  green while the site drifts. `design/figma/` holds the route ↔ frame mapping
+  and the exclusion list, nothing else, and the review refuses a dump written
+  anywhere git would track it.
+- About to silence a design finding by adding an exclusion → STOP unless you can
+  write a reason a reviewer would disagree with in writing. That is the same
+  violation as editing a check script.
 - Asked to add an image the user **pasted into the conversation** → you can see it
   but you cannot save it. It arrives as context, not as a file: nothing lands in
   the session directory, and the clipboard is usually already empty by the time
