@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import { Menu, ThemeToggle } from '@cennso/ui'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 
+import metadata from '../siteMetadata'
 import { CONTENT_MEASURE } from './common'
 import { Logo } from './Logo'
 import { MenuToggle } from './MenuToogle'
@@ -104,7 +105,12 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
               <ThemeToggle variant="dropdown" />
             </li>
             <li className="mt-4 xl:mt-0 font-normal">
-              <Link href="/contact" className={NAV_CTA_CLASS}>
+              <Link
+                href={metadata.explore.cloudPortal}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={NAV_CTA_CLASS}
+              >
                 Sign In
                 <ChevronRight
                   className="h-[13px] w-[10px]"
