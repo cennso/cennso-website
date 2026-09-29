@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import NextImage from 'next/image'
 import { Button, Card, cn, Typography } from '@cennso/ui'
+import { ChevronRight } from 'lucide-react'
 
 import { CTA_ACTION } from '../common'
 
@@ -11,15 +12,19 @@ interface SuccessStoryItemProps {
   successStory: SuccessStoryItemType
   index: number
   linkText: string
-  /** Carries a `{title}` placeholder, replaced with this story's title. */
-  linkAccessibleName: string
+  /**
+   * Rendered visually hidden after `linkText`, so the anchor's own text names
+   * the story. Carries a `{title}` placeholder, replaced with this story's
+   * title.
+   */
+  linkContext: string
 }
 
 export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
   successStory,
   index,
   linkText,
-  linkAccessibleName,
+  linkContext,
 }) => {
   const { link, frontmatter } = successStory
   const { title, cover } = frontmatter
@@ -95,11 +100,21 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
                 // click is as warm as before; only the speculative
                 // fetch-everything-on-sight pass is gone.
                 prefetch={false}
-                aria-label={linkAccessibleName.replace('{title}', title)}
               />
             )}
           >
+            {/* Figma 1:606 draws this pill as a "More" label (1:609) plus a
+                separate 13.5x16.8 chevron vector (1:608) 12px after it - not
+                as a ">" typed into the label, which is what the copy carried.
+                The hidden half of the label is what keeps the anchor's text
+                descriptive; see content/success-stories-page.yaml. Decorative,
+                so the chevron carries no accessible name of its own. */}
             {linkText}
+            <span className="sr-only">
+              {' '}
+              {linkContext.replace('{title}', title)}
+            </span>
+            <ChevronRight className="h-[17px] w-[13px]" aria-hidden="true" />
           </Button>
         </div>
       </div>

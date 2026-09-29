@@ -17,18 +17,23 @@ content:
     - In addition, we offer comprehensive professional services like network consultancy, training, workshops, and custom development. From a single product delivery up to turnkey solutions, Cennso is the right partner for you.
   industrySelectLabel: Industries
   industrySelectPlaceholder: All Industries
-  # The trailing chevron is what production shipped, via the old Button's
-  # `useArrow`. It has to stay: without it the visible text is bare "More info",
-  # which is on Lighthouse's non-descriptive link-text blocklist, and the audit
-  # reads visible text rather than the accessible name below. Verified both ways
-  # against production. Genuinely descriptive link copy would be better than a
-  # chevron that only evades the blocklist, but that is a copy decision.
-  storyLinkText: More info >
-  # {title} is replaced with the story's own title. The visible text stays short,
-  # but the accessible name has to name the story: a page of links all reading
-  # "More info" is what Lighthouse's link-text audit flags, and it is genuinely
-  # useless to anyone listing the links with a screen reader.
-  storyLinkAccessibleName: More info about {title}
+  # The visible label, exactly as the frames draw it: the btn_More symbol
+  # (1:606), instanced on every use-case row, sets "More" (1:609) in Poppins
+  # Bold 18px beside a SEPARATE chevron vector (1:608). What shipped typed that
+  # chevron into the copy as a ">" character, so the pill read "More info >".
+  storyLinkText: More
+  # Appended visually hidden, with {title} replaced by the story's own title,
+  # so the link's own text names where it goes. Two things need it, and the
+  # trailing ">" was standing in for both:
+  #   - Lighthouse's `link-text` SEO audit reads the anchor's innerText and
+  #     blocklists bare "more" and "more info" (BLOCKLIST in lighthouse
+  #     10.1.0's core/audits/seo/link-text.js). "More" on its own would fail it
+  #     and take the SEO category under the 95% gate with it.
+  #   - a page of links all reading "More" is useless to anyone listing them
+  #     with a screen reader.
+  # Hidden text rather than an aria-label because the audit above reads the
+  # visible text, not the accessible name - and this way both come out the same.
+  storyLinkContext: about {title}
   pagination:
     previous: Previous page
     next: Next page

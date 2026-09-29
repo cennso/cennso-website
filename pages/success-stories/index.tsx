@@ -193,7 +193,7 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
                     successStory={successStory}
                     index={(currentPage - 1) * PAGE_SIZE + index}
                     linkText={content.content.storyLinkText}
-                    linkAccessibleName={content.content.storyLinkAccessibleName}
+                    linkContext={content.content.storyLinkContext}
                   />
                 </li>
               ))}
