@@ -1,10 +1,11 @@
 /**
- * Proof suite for the ENUMERATIVE pass.
+ * Proof suite for the enumerative diff itself.
  *
- * The curated pass has its own suite in selftest.mjs. This one covers the code paths that
- * pass added: an inventory that enumerates nothing, an inventory nothing on the page
- * matches, a page that renders nothing, and an exclusion written without a reason. Each
- * must abort or fail. The positive control proves the suite is not simply always red.
+ * selftest.mjs covers the inputs — the committed mapping, the freshly fetched dumps, the
+ * parser. This one covers what the diff does with them: an inventory that enumerates
+ * nothing, an inventory nothing on the page matches, a page that renders nothing, a
+ * property that differs, and an exclusion written without a reason. Each must abort or
+ * produce a finding. The positive control proves the suite is not simply always red.
  */
 import { collectDom } from './dom-inventory.mjs'
 import { diffFrame, validateExclusions } from './match.mjs'
@@ -29,7 +30,6 @@ export function baseInventory() {
         figmaName: 'fixture enumerative',
         route: '/frame-enumerative.html',
         theme: 'dark',
-        status: 'enforced',
         frameFill: '#001a2a',
         assetFills: ['#ffb31b'],
         textNodes: [
@@ -174,18 +174,6 @@ export const INVENTORY_CASES = [
     name: 'inventory written against a schema this harness does not understand',
     mutate: (inv) => {
       inv.schemaVersion = 99
-    },
-  },
-  {
-    name: 'a frame whose status is neither enforced nor pending',
-    mutate: (inv) => {
-      inv.frames[0].status = 'probably-fine'
-    },
-  },
-  {
-    name: 'pending frame with no implementation fingerprint to expire it',
-    mutate: (inv) => {
-      inv.frames[0].status = 'awaiting-implementation'
     },
   },
   {
@@ -341,7 +329,9 @@ export const EXCLUSION_CASES = [
 async function outcomeOf(inventory, exclusions, { browser, baseUrl }) {
   try {
     validateInventory(inventory, 'self-test inventory')
-    validateExclusions(exclusions, inventory, 'self-test exclusions')
+    validateExclusions(exclusions, inventory, {
+      where: 'self-test exclusions',
+    })
   } catch (err) {
     return { kind: 'rejected', detail: err.message }
   }

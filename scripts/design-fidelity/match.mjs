@@ -93,10 +93,17 @@ function toleranceFor(property) {
 
 const MIN_REASON_LENGTH = 40
 
+/**
+ * A review may cover a subset of the frames — only the ones a change could have moved —
+ * so an exclusion for a frame that was not fetched this time is not an error. An
+ * exclusion for a frame the MAPPING does not declare still is: nobody would ever see it
+ * apply. `knownFrameIds` is what tells those two apart; without it, every frame in the
+ * inventory is the only frame that exists.
+ */
 export function validateExclusions(
   exclusions,
   inventory,
-  where = 'exclusions'
+  { where = 'exclusions', knownFrameIds = null } = {}
 ) {
   const fail = (msg, hint) => {
     throw new FidelityError(`${where}: ${msg}`, { hint })
@@ -107,12 +114,15 @@ export function validateExclusions(
     fail('needs an `exclusions` array (it may be empty, but it must exist).')
 
   const frames = new Map(inventory.frames.map((f) => [f.id, f]))
+  const declared = knownFrameIds
+    ? new Set(knownFrameIds)
+    : new Set(frames.keys())
   const seen = new Set()
   for (const entry of exclusions.exclusions) {
     const at = `${entry.frame}/${entry.node}`
-    if (typeof entry.frame !== 'string' || !frames.has(entry.frame)) {
+    if (typeof entry.frame !== 'string' || !declared.has(entry.frame)) {
       fail(
-        `entry ${at} names frame "${entry.frame}", which is not in the inventory.`
+        `entry ${at} names frame "${entry.frame}", which design/figma/frames.json does not declare.`
       )
     }
     if (typeof entry.node !== 'string' || !entry.node) {
@@ -133,14 +143,18 @@ export function validateExclusions(
       )
     }
     const frame = frames.get(entry.frame)
-    const known =
-      frame.textNodes.some((n) => n.key === entry.node) ||
-      frame.boxNodes.some((n) => n.key === entry.node)
-    if (!known) {
-      fail(
-        `entry ${at} excludes a node the inventory does not contain.`,
-        'The design moved and this exclusion outlived the node it was written for. Re-pull the frame and revisit the reason.'
-      )
+    // Not fetched for this review — there is nothing to check the node against, and
+    // inventing a verdict either way would be worse than saying nothing.
+    if (frame) {
+      const known =
+        frame.textNodes.some((n) => n.key === entry.node) ||
+        frame.boxNodes.some((n) => n.key === entry.node)
+      if (!known) {
+        fail(
+          `entry ${at} excludes a node this frame no longer contains.`,
+          'The design moved and this exclusion outlived the node it was written for. Read the frame again and revisit the reason — or delete the entry.'
+        )
+      }
     }
     const key = `${entry.frame}::${entry.node}`
     if (seen.has(key)) fail(`duplicate exclusion for ${at}.`)

@@ -1,19 +1,13 @@
 /**
- * Opening a page, and proving it actually rendered before anything is asserted against it.
+ * Opening a page, and proving it actually rendered before anything is compared against it.
  *
  * A page that 404s, throws, comes back blank, or comes back in the wrong theme is a hard
- * failure — never a run with zero findings. Both the curated pass and the enumerative one
- * go through here, so neither can quietly assert against a page that is not there.
+ * failure — never a run with zero findings.
  */
 import { FidelityError } from './errors.mjs'
 
 const NAV_TIMEOUT_MS = 30_000
 
-/**
- * Opens one route in one theme and proves it actually rendered before anything
- * is asserted against it. A page that 404s, throws, comes back blank, or comes
- * back in the wrong theme is a hard failure — never a run with zero findings.
- */
 export async function openPage(
   browser,
   { baseUrl, route, theme, themeConfig, viewport }
@@ -90,8 +84,8 @@ export async function openPage(
   if (state.themeAttr !== themeConfig.documentAttributeValue) {
     await page.close()
     throw new FidelityError(
-      `${route} rendered with data-theme="${state.themeAttr}" but the snapshot asked for "${themeConfig.documentAttributeValue}".`,
-      'Every assertion below would have been measured against the wrong palette.'
+      `${route} rendered with data-theme="${state.themeAttr}" but design/figma/frames.json maps this frame to "${themeConfig.documentAttributeValue}".`,
+      'Every value below would have been measured against the wrong palette.'
     )
   }
   return page

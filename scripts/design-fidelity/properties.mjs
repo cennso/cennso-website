@@ -3,13 +3,12 @@ import { FidelityError } from './errors.mjs'
 /**
  * The property registry.
  *
- * Every key a snapshot may put inside `expect` has to be declared here. A key
- * that is not in this table is a hard error, not a silently ignored line —
- * a typo'd property must never make an assertion vacuously pass.
+ * Every property the enumerative diff compares has to be declared here. A key that is
+ * not in this table is a hard error in `evaluate`, not a silently ignored line — a
+ * typo'd property must never make a comparison vacuously pass.
  *
- * `read` names the field of the observation record (see observeElement below)
- * the value comes from. `compare` decides equality. `kind` drives how the
- * expected value is validated when the snapshot is loaded.
+ * `read` names the field of the DOM record (see dom-inventory.mjs) the rendered value
+ * comes from. `compare` decides equality. `kind` says what sort of value it is.
  */
 const COLOR = 'color'
 const LENGTH = 'length'
@@ -73,17 +72,6 @@ export const PROPERTIES = {
   assetPath: { read: 'assetPath', kind: TEXT, compare: strictEquals },
   assetBasename: { read: 'assetBasename', kind: TEXT, compare: strictEquals },
   assetPathContains: { read: 'assetPath', kind: TEXT, compare: contains },
-}
-
-/** Tolerance is a loophole, so it is capped. */
-export const MAX_TOLERANCE = 4
-
-export function assertKnownProperty(key, where) {
-  if (!Object.prototype.hasOwnProperty.call(PROPERTIES, key)) {
-    throw new FidelityError(`${where}: unknown expected property "${key}".`, {
-      hint: `Known properties: ${Object.keys(PROPERTIES).sort().join(', ')}. Add an extractor in scripts/design-fidelity/properties.mjs if the design really needs a new one.`,
-    })
-  }
 }
 
 /* ------------------------------------------------------------------ */

@@ -58,8 +58,3 @@ helm/charts/cennso-website/README.md
 /lighthouse-mobile
 lighthouse-*.json
 lighthouse-*.html
-
-# Generated, and byte-for-byte significant: `yarn design:inventory:check`
-# rebuilds this file from design/figma/raw/ and fails if a single byte differs.
-# Reformatting it would make that check fail on a clean tree.
-design/figma/inventory.json

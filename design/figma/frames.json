@@ -1,11 +1,10 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
+  "why": "The route <-> Figma frame mapping, and nothing else. This file is configuration: it says which frame of Cennso Design 4.0 a route is supposed to look like. It deliberately holds NO design values. A committed copy of the design goes stale the moment the designer edits the file, and a comparison against last month's design stays green while the site drifts — which is the exact failure this harness exists to prevent. The values are fetched live, per review, with get_design_context.",
   "figma": {
     "fileKey": "OqKo0g7Hb85V8YlEVYWUhf",
     "designName": "Cennso Design 4.0",
-    "pulledAt": "2026-09-29",
-    "pulledWith": "Figma MCP get_design_context, one call per frame, symbols expanded by the tool. The unmodified code block of each call is committed under raw/; inventory.json is generated from those files and from nothing else.",
-    "expandedSymbols": {
+    "expandTheseSymbols": {
       "1:99": "Header — the navigation. A frame screenshot renders it as a flat picture; only the expansion carries its typography, logo colour and CTA. Missing this is how the whole nav went unchecked in Phase 4.",
       "1:575": "Footer — the dark symbol. Note it declares NO fill of its own, so the band a reader sees is the frame fill behind it.",
       "1:606": "btn_More — the pill used for More and, with the label overridden, Send."
@@ -15,114 +14,81 @@
     "width": 1360,
     "height": 1000
   },
+  "themes": {
+    "dark": {
+      "storageKey": "cennso-ui-theme",
+      "storageValue": "dark",
+      "documentAttributeValue": "dark"
+    },
+    "light": {
+      "storageKey": "cennso-ui-theme",
+      "storageValue": "light",
+      "documentAttributeValue": "light"
+    }
+  },
+  "sharedImplementation": {
+    "note": "A change to any of these reaches every route, so it affects ALL six frames — not just the page whose file was edited.",
+    "paths": [
+      "components/Navigation.tsx",
+      "components/Footer.tsx",
+      "components/Logo.tsx",
+      "components/common/Container.tsx",
+      "pages/_app.tsx",
+      "pages/_document.tsx",
+      "styles/",
+      "tailwind.config.js"
+    ]
+  },
   "frames": [
     {
       "id": "main-dark",
       "figmaNode": "1:9",
-      "raw": "main-dark.jsx.txt",
+      "figmaName": "Main page v.3 (dark)",
       "route": "/",
       "theme": "dark",
-      "status": "awaiting-implementation",
-      "statusNote": "Cennso Design 4.0 is not on this branch yet, so the enumerated assertions are held back. The fingerprint below is what stops that being permanent and silent.",
-      "implementationFingerprint": {
-        "files": [
-          "pages/index.tsx",
-          "pages/_document.tsx",
-          "components/Navigation.tsx",
-          "components/Footer.tsx",
-          "components/Logo.tsx",
-          "components/common/Container.tsx"
-        ],
-        "sha256": "3aed5a9db8cd0a641f8367c72a5adbfd11bfaa3c25ac3fb7eeb69754606fe1dc"
-      }
+      "page": "pages/index.tsx"
     },
     {
       "id": "main-light",
       "figmaNode": "1:4440",
-      "raw": "main-light.jsx.txt",
+      "figmaName": "Main page light blue (light)",
       "route": "/",
       "theme": "light",
-      "status": "awaiting-implementation",
-      "statusNote": "Same as main-dark: the light twin of the frame the site does not implement yet.",
-      "implementationFingerprint": {
-        "files": [
-          "pages/index.tsx",
-          "pages/_document.tsx",
-          "components/Navigation.tsx",
-          "components/Footer.tsx",
-          "components/Logo.tsx",
-          "components/common/Container.tsx"
-        ],
-        "sha256": "3aed5a9db8cd0a641f8367c72a5adbfd11bfaa3c25ac3fb7eeb69754606fe1dc"
-      }
+      "page": "pages/index.tsx"
     },
     {
       "id": "use-cases-dark",
       "figmaNode": "1:585",
-      "raw": "use-cases-dark.jsx.txt",
+      "figmaName": "Use cases (dark)",
       "route": "/success-stories",
       "theme": "dark",
-      "status": "awaiting-implementation",
-      "statusNote": "The design's Use cases frame is the card list the site currently ships as /success-stories. Neither the Design 4.0 layout nor the pager exists yet.",
-      "implementationFingerprint": {
-        "files": [
-          "pages/success-stories/index.tsx",
-          "components/Navigation.tsx",
-          "components/Footer.tsx"
-        ],
-        "sha256": "d3262fdba20289868bf5c989414c7f4847f37c38a5c91187630bbf7a2e86b329"
-      }
+      "page": "pages/success-stories/index.tsx"
     },
     {
       "id": "use-cases-light",
       "figmaNode": "1:1062",
-      "raw": "use-cases-light.jsx.txt",
+      "figmaName": "Use cases (light)",
       "route": "/success-stories",
       "theme": "light",
-      "status": "awaiting-implementation",
-      "statusNote": "Light twin of use-cases-dark.",
-      "implementationFingerprint": {
-        "files": [
-          "pages/success-stories/index.tsx",
-          "components/Navigation.tsx",
-          "components/Footer.tsx"
-        ],
-        "sha256": "d3262fdba20289868bf5c989414c7f4847f37c38a5c91187630bbf7a2e86b329"
-      }
+      "page": "pages/success-stories/index.tsx"
     },
     {
       "id": "contact-dark",
       "figmaNode": "1:3471",
-      "raw": "contact-dark.jsx.txt",
+      "figmaName": "Contact (dark)",
       "route": "/contact",
       "theme": "dark",
-      "status": "awaiting-implementation",
-      "statusNote": "/contact carries the live Mailjet form. The harness only reads computed style; it never types into the form and never submits it.",
-      "implementationFingerprint": {
-        "files": [
-          "pages/contact.tsx",
-          "components/Navigation.tsx",
-          "components/Footer.tsx"
-        ],
-        "sha256": "28d7e83e2199a9f5349724ad68ca6a4fa11553b40c4ab868c9c822d7ca836a2b"
-      }
+      "page": "pages/contact.tsx",
+      "note": "/contact carries the live Mailjet form. The review only reads computed style; it never types into the form and never submits it."
     },
     {
       "id": "contact-light",
       "figmaNode": "1:7084",
-      "raw": "contact-light.jsx.txt",
+      "figmaName": "Contact (light)",
       "route": "/contact",
       "theme": "light",
-      "status": "awaiting-implementation",
-      "statusNote": "Light twin of contact-dark.",
-      "implementationFingerprint": {
-        "files": [
-          "pages/contact.tsx",
-          "components/Navigation.tsx",
-          "components/Footer.tsx"
-        ],
-        "sha256": "28d7e83e2199a9f5349724ad68ca6a4fa11553b40c4ab868c9c822d7ca836a2b"
-      }
+      "page": "pages/contact.tsx",
+      "note": "Light twin of contact-dark. Same read-only treatment of the form."
     }
   ]
 }

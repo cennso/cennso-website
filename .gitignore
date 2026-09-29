@@ -75,3 +75,8 @@ next-env.d.ts
 
 # per-user Claude Code settings (may hold credentials); shared config is settings.json
 .claude/settings.local.json
+
+# Figma frames fetched live for the design-fidelity review. They default to a
+# directory under TMPDIR and must never be committed: a checked-in copy of the
+# design goes stale silently, which is the failure the review exists to catch.
+/.design-review
