@@ -137,7 +137,18 @@ rendered exactly as designed.
 Three things decide a pair, in this order:
 
 1. **Unique copy first.** A string that appears once in the frame and once on the
-   page cannot be cross-paired. Those pairs are anchors, and they are trusted.
+   page cannot be cross-paired: there is only one pairing to make. Those pairs are
+   anchors, and they are trusted.
+
+   What that does **not** prove is _place_. Copy the design draws in the footer and
+   the page renders in the header is still unique on both sides, so it still pairs,
+   and the review counts it reached rather than reporting it missing. An anchor
+   cannot be position-checked before it is made — the anchors are what the
+   projection is fitted from — so a moved one is handled by falling outside the
+   fit's longest non-decreasing run and ceasing to steer it, not by becoming a
+   finding. Reaching a node is a statement about its copy and its properties, not
+   about where on the page it ended up.
+
 2. **Position, projected through the anchors.** The artboard and the page are
    never the same height, so a design Y cannot be compared with a rendered Y
    directly. The anchors give a monotone design-Y → rendered-Y map fitted to that

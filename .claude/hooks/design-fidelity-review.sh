@@ -85,7 +85,21 @@ design_changed=$(printf '%s\n' "$changed" | grep -E "$DESIGN" || true)
 # tailwind.config.js is shared across every route, so it reaches all of them. A change
 # under pages/ reaches only the frames whose `page` it is — and a page no frame covers
 # reaches nothing, which is a silent exit rather than a review of nothing.
-shared=$(printf '%s\n' "$design_changed" | grep -E '^(components/|styles/|public/assets/|tailwind\.config\.js$)' || true)
+#
+# The mapping ALSO declares shared implementation paths, and two of them live under
+# pages/ (_app.tsx, _document.tsx). Matched by the pattern below they are shared; missed
+# by it they fall through to the per-page branch, where no frame claims them as its
+# `page` — so a branch that touched only pages/_app.tsx asked for no review at all. Union
+# the mapping's paths in, so it can only widen the shared set and the two cannot diverge.
+shared_extra=$(
+  jq -r '(.sharedImplementation.paths // [])[]' "$map" 2>/dev/null \
+    | sed -e 's/[^A-Za-z0-9_/-]/\\&/g' \
+    | awk 'length { if (substr($0, length($0)) == "/") printf "|^%s", $0; else printf "|^%s$", $0 }'
+)
+shared=$(
+  printf '%s\n' "$design_changed" \
+    | grep -E "^(components/|styles/|public/assets/|tailwind\.config\.js\$)${shared_extra}" || true
+)
 if [ -n "$shared" ]; then
   frames=$(jq -r '.frames[].id' "$map" | paste -sd, -)
   scope="a shared surface changed, so every frame is in scope"

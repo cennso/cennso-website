@@ -31,9 +31,6 @@
 /** How much closer the winner must be than the runner-up, in rendered pixels. */
 export const AMBIGUITY_MARGIN_PX = 24
 
-/** Added to an edge that breaks containment, so such a pair loses but stays reachable. */
-const CONTAINMENT_PENALTY = 1e6
-
 /** Fewest anchors a design container needs before its rendered counterpart is believed. */
 const MIN_ANCHORS_FOR_CONTAINER = 2
 

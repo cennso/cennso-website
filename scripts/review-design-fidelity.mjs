@@ -252,7 +252,8 @@ async function main() {
           `   ${String(c.comparedGaps).padStart(3)} compared\n` +
           `    artwork      ${String(c.designArtworkNodes).padStart(3)} node(s) the frame exports art for` +
           `   ${String(c.bridgedArtworkNodes).padStart(3)} compared against the served image` +
-          `   ${String(c.unbridgedArtworkNodes).padStart(3)} not bridged\n` +
+          `   ${String(c.unbridgedArtworkNodes).padStart(3)} not bridged` +
+          `   ${String(c.excludedArtworkNodes ?? 0).padStart(3)} excluded\n` +
           `    excluded     ${String(c.excluded).padStart(3)} node(s), each with a written reason in design/figma/exclusions.json\n`
       )
     }

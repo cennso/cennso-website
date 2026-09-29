@@ -1,5 +1,3 @@
-import { FidelityError } from './errors.mjs'
-
 /**
  * The property registry.
  *

@@ -875,8 +875,14 @@ export function parseFigmaDump(
   // against and lands at the top of the page, which is how a whole footer's worth of
   // anchors came to claim y=0 and drag the projection with them. So: measure the frame
   // from what the first pass could place, then place everything again against that.
+  // Text nodes only, for the same reason `frameExtent` in build-inventory.mjs uses text
+  // nodes only: the vector fragments nested inside a logo come back with positions the
+  // parser cannot resolve to anything sane, and one of them is enough to put the measured
+  // bottom at about 1.5x the real artboard. Measuring the two heights differently is how
+  // the bottom-pinned Footer came to resolve below where the frame actually ends.
   const firstPass = flatten(root, symbols, frameWidth, null)
   const measured = firstPass.reduce((bottom, node) => {
+    if (node.kind !== 'text') return bottom
     const { top, height } = node.geometry ?? {}
     if (top === undefined) return bottom
     return Math.max(bottom, top + (height ?? 0))

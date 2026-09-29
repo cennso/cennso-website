@@ -209,7 +209,7 @@ export function loadFrameMap(repoRoot) {
 
 export function validateFrameMap(map, where = 'design/figma/frames.json') {
   const fail = (msg, hint) => {
-    throw new FidelityError(`${where}: ${msg}`, { hint })
+    throw new FidelityError(`${where}: ${msg}`, hint)
   }
   if (!map || typeof map !== 'object' || Array.isArray(map))
     fail('must be a JSON object.')

@@ -294,8 +294,16 @@ export async function checkFrameArtwork({
   )
 
   let implausible = 0
+  let excluded = 0
   for (const { node, image } of bridged) {
-    if (isExcluded(node.key, 'artwork')) continue
+    // An excluded node is not compared against anything, so it must not be counted as
+    // though it were. `bridgedArtworkNodes` is printed as "compared against the served
+    // image"; leaving exclusions in it inflates the one number the coverage report exists
+    // to make honest.
+    if (isExcluded(node.key, 'artwork')) {
+      excluded += 1
+      continue
+    }
     const designPalette = await paletteOf(page, node.urls[0])
     const renderedPalette = await paletteOf(page, image.resolvedUrl)
     const concentrationGap = Math.abs(
@@ -338,7 +346,8 @@ export async function checkFrameArtwork({
     positions,
     coverage: {
       designArtworkNodes: (frame.artworkNodes ?? []).length,
-      bridgedArtworkNodes: bridged.length - implausible,
+      bridgedArtworkNodes: bridged.length - implausible - excluded,
+      excludedArtworkNodes: excluded,
       unbridgedArtworkNodes: unbridged.length,
     },
     unbridged,

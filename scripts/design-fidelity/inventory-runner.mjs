@@ -21,7 +21,7 @@ import { openPage } from './page.mjs'
  */
 export function validateInventory(inventory, where = 'inventory') {
   const fail = (msg, hint) => {
-    throw new FidelityError(`${where}: ${msg}`, { hint })
+    throw new FidelityError(`${where}: ${msg}`, hint)
   }
   if (!inventory || typeof inventory !== 'object' || Array.isArray(inventory))
     fail('must be a JSON object.')

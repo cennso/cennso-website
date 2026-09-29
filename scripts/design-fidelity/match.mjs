@@ -120,7 +120,7 @@ export function validateExclusions(
   { where = 'exclusions', knownFrameIds = null } = {}
 ) {
   const fail = (msg, hint) => {
-    throw new FidelityError(`${where}: ${msg}`, { hint })
+    throw new FidelityError(`${where}: ${msg}`, hint)
   }
   if (!exclusions || typeof exclusions !== 'object')
     fail('must be a JSON object.')
