@@ -193,11 +193,18 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                     17px after it (the gap is on the pill, see CTA_HERO).
                     Decorative: the label already names the action, so it
                     carries no accessible name of its own. */}
-                <ChevronRight
-                  className="h-[26px] w-[26px] shrink-0"
-                  strokeWidth={2.5}
-                  aria-hidden="true"
-                />
+                {/* The chevron occupies Figma 1:68's 11x15 slot so the pill
+                    still measures 195px, but draws at 26px: lucide's glyph
+                    fills only part of its box, so matching the box made the
+                    chevron half the size the frame shows. The overflow is
+                    symmetric and lands in the 17px gap and 13px inset. */}
+                <span className="inline-flex h-[15px] w-[11px] shrink-0 items-center justify-center">
+                  <ChevronRight
+                    className="h-[26px] w-[26px] max-w-none overflow-visible"
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                  />
+                </span>
               </Button>
             </div>
             <div className="w-full md:w-[48%] flex justify-center">
