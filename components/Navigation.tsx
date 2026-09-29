@@ -105,7 +105,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
             </li>
             <li className="mt-4 xl:mt-0 font-normal">
               <Link href="/contact" className={NAV_CTA_CLASS}>
-                Book demo
+                Sign In
                 <ChevronRight
                   className="h-[13px] w-[10px]"
                   strokeWidth={2.5}

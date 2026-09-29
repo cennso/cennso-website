@@ -194,7 +194,8 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                     Decorative: the label already names the action, so it
                     carries no accessible name of its own. */}
                 <ChevronRight
-                  className="h-[15px] w-[11px]"
+                  className="h-[26px] w-[26px] shrink-0"
+                  strokeWidth={2.5}
                   aria-hidden="true"
                 />
               </Button>
