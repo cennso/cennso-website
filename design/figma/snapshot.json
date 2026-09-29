@@ -4,7 +4,7 @@
     "fileKey": "OqKo0g7Hb85V8YlEVYWUhf",
     "designName": "Cennso Design 4.0",
     "pulledAt": "2026-09-28",
-    "pulledWith": "Figma MCP — get_metadata (to expand symbols) + get_design_context (for node values). No value in this file was sampled from a screenshot.",
+    "pulledWith": "Figma MCP \u2014 get_metadata (to expand symbols) + get_design_context (for node values). No value in this file was sampled from a screenshot.",
     "nodesPulled": [
       "1:9",
       "1:24",
@@ -31,8 +31,10 @@
       "documentAttributeValue": "light"
     }
   },
-  "viewport": { "width": 1360, "height": 1000 },
-
+  "viewport": {
+    "width": 1360,
+    "height": 1000
+  },
   "designFrames": [
     {
       "figmaNode": "1:9",
@@ -51,31 +53,30 @@
       "name": "Use cases (dark)",
       "theme": "dark",
       "capture": "not-captured",
-      "reason": "Not pulled yet. The confirmed Phase 4 defects were all on the main frame, so that frame was captured first. Pull this one with the procedure in design/figma/README.md before /success-stories is rebuilt."
+      "reason": "Not curated here \u2014 no hand-written assertions for this frame. It is enumerated in full by design/figma/inventory.json (22 text nodes, 32 box nodes), so it is not uncovered; it simply has no sampled subset on top of the enumeration."
     },
     {
       "figmaNode": "1:1062",
       "name": "Use cases (light)",
       "theme": "light",
       "capture": "not-captured",
-      "reason": "Not pulled yet. Same as node 1:585 — the light twin has to be captured in the same pass, so the per-theme artwork pair can be asserted."
+      "reason": "Not curated here \u2014 no hand-written assertions for this frame. Enumerated in full by design/figma/inventory.json (28 text nodes, 33 box nodes), including the duplicate footer layer the designer left occluded."
     },
     {
       "figmaNode": "1:3471",
       "name": "Contact (dark)",
       "theme": "dark",
       "capture": "not-captured",
-      "reason": "Not pulled yet. /contact carries the live Mailjet form, so capturing it needs a pass that reads the frame without ever exercising the submit path."
+      "reason": "Not curated here \u2014 no hand-written assertions for this frame. Enumerated in full by design/figma/inventory.json (23 text nodes, 28 box nodes). The enumeration only reads computed style; it never types into the Mailjet form and never submits it."
     },
     {
       "figmaNode": "1:7084",
       "name": "Contact (light)",
       "theme": "light",
       "capture": "not-captured",
-      "reason": "Not pulled yet. Same as node 1:3471 — the light twin has to be captured in the same pass as the dark one."
+      "reason": "Not curated here \u2014 no hand-written assertions for this frame. Enumerated in full by design/figma/inventory.json (23 text nodes, 24 box nodes), same read-only treatment of the contact form as its dark twin."
     }
   ],
-
   "tokens": [
     {
       "id": "token-primary-dark",
@@ -86,7 +87,7 @@
       "cssExpression": "hsl(var(--primary))",
       "expect": "#ffb31b",
       "tolerance": 2,
-      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --primary in the :root/[data-theme=dark] block",
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css \u2014 --primary in the :root/[data-theme=dark] block",
       "why": "The design's accent is a token, not a one-off hex. An agent that sampled a screenshot here read a composited colour and concluded no token matched; the raw fill matches exactly. Tolerance 2 covers the HSL->sRGB rounding in the token pipeline, nothing else."
     },
     {
@@ -98,18 +99,18 @@
       "cssExpression": "hsl(var(--primary))",
       "expect": "#185f99",
       "tolerance": 2,
-      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --primary in the [data-theme=light] block"
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css \u2014 --primary in the [data-theme=light] block"
     },
     {
       "id": "token-background-dark",
       "figmaNode": "1:107",
-      "figmaEvidence": "nav CTA fill bg-[#001a2a] — the pill is painted in the page colour it sits on, so this is the dark frame's flat background",
+      "figmaEvidence": "nav CTA fill bg-[#001a2a] \u2014 the pill is painted in the page colour it sits on, so this is the dark frame's flat background",
       "theme": "dark",
       "route": "/",
       "cssExpression": "hsl(var(--background))",
       "expect": "#001a2a",
       "tolerance": 2,
-      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --background in the :root/[data-theme=dark] block"
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css \u2014 --background in the :root/[data-theme=dark] block"
     },
     {
       "id": "token-background-light",
@@ -120,7 +121,7 @@
       "cssExpression": "hsl(var(--background))",
       "expect": "#ffffff",
       "tolerance": 2,
-      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --background in the [data-theme=light] block"
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css \u2014 --background in the [data-theme=light] block"
     },
     {
       "id": "token-cta-dark",
@@ -131,10 +132,9 @@
       "cssExpression": "hsl(var(--cta))",
       "expect": "#ff6d12",
       "tolerance": 2,
-      "implementedIn": "node_modules/@cennso/theme/dist/theme.css — --cta in the :root/[data-theme=dark] block"
+      "implementedIn": "node_modules/@cennso/theme/dist/theme.css \u2014 --cta in the :root/[data-theme=dark] block"
     }
   ],
-
   "frames": [
     {
       "id": "main-dark",
@@ -143,7 +143,7 @@
       "route": "/",
       "theme": "dark",
       "status": "awaiting-implementation",
-      "statusNote": "Cennso Design 4.0 is not on this branch yet. These assertions are held back until the page implements the frame; the fingerprint below is what stops that state from being permanent and silent — the moment any of these files changes, the check fails and asks for the frame to be enforced.",
+      "statusNote": "Cennso Design 4.0 is not on this branch yet. These assertions are held back until the page implements the frame; the fingerprint below is what stops that state from being permanent and silent \u2014 the moment any of these files changes, the check fails and asks for the frame to be enforced.",
       "implementationFingerprint": {
         "files": [
           "pages/index.tsx",
@@ -158,10 +158,12 @@
         {
           "id": "main-dark-page-background",
           "figmaNode": "1:9",
-          "figmaName": "frame fill — one flat colour, no band",
+          "figmaName": "frame fill \u2014 one flat colour, no band",
           "selector": "body",
           "implementedIn": "pages/_document.tsx, components/common/Container.tsx",
-          "expect": { "backgroundColor": "#001a2a" }
+          "expect": {
+            "backgroundColor": "#001a2a"
+          }
         },
         {
           "id": "main-dark-hero-section",
@@ -169,7 +171,9 @@
           "figmaName": "hero area of the frame",
           "selector": "[data-figma-node=\"1:9\"]",
           "implementedIn": "pages/index.tsx",
-          "expect": { "backgroundColor": "#001a2a" },
+          "expect": {
+            "backgroundColor": "#001a2a"
+          },
           "why": "The frame has no lighter hero band. A Container painting bg-secondary behind the hero is exactly the drift this catches."
         },
         {
@@ -190,7 +194,7 @@
         {
           "id": "main-dark-hero-cta",
           "figmaNode": "1:66",
-          "figmaName": "Frame 2 — hero Book demo button",
+          "figmaName": "Frame 2 \u2014 hero Book demo button",
           "selector": "[data-figma-node=\"1:66\"]",
           "implementedIn": "pages/index.tsx",
           "expect": {
@@ -218,7 +222,7 @@
         {
           "id": "main-dark-nav-cta",
           "figmaNode": "1:107",
-          "figmaName": "Frame 3 — nav Book demo pill (inside symbol 1:99 \"Header\")",
+          "figmaName": "Frame 3 \u2014 nav Book demo pill (inside symbol 1:99 \"Header\")",
           "selector": "[data-figma-node=\"1:107\"]",
           "implementedIn": "components/Navigation.tsx",
           "expect": {
@@ -309,13 +313,15 @@
           "figmaName": "Cennso logo",
           "selector": "[data-figma-node=\"1:111\"]",
           "implementedIn": "components/Logo.tsx, components/Navigation.tsx",
-          "expect": { "fill": "#ffffff" },
+          "expect": {
+            "fill": "#ffffff"
+          },
           "why": "White in the dark frame. Not the brand yellow, and not the light frame's blue."
         },
         {
           "id": "main-dark-hero-illustration",
           "figmaNode": "1:561",
-          "figmaName": "hero_section_y 2 — dark artwork",
+          "figmaName": "hero_section_y 2 \u2014 dark artwork",
           "selector": "[data-figma-node=\"1:561\"]",
           "implementedIn": "pages/index.tsx",
           "expect": {
@@ -332,7 +338,7 @@
       "route": "/",
       "theme": "light",
       "status": "awaiting-implementation",
-      "statusNote": "Same as main-dark — held back until the page implements the frame, and fingerprinted so it cannot stay held back quietly.",
+      "statusNote": "Same as main-dark \u2014 held back until the page implements the frame, and fingerprinted so it cannot stay held back quietly.",
       "implementationFingerprint": {
         "files": [
           "pages/index.tsx",
@@ -350,7 +356,9 @@
           "figmaName": "frame fill",
           "selector": "body",
           "implementedIn": "pages/_document.tsx",
-          "expect": { "backgroundColor": "#ffffff" }
+          "expect": {
+            "backgroundColor": "#ffffff"
+          }
         },
         {
           "id": "main-light-header",
@@ -358,7 +366,9 @@
           "figmaName": "Header",
           "selector": "[data-figma-node=\"1:4530\"]",
           "implementedIn": "components/Navigation.tsx",
-          "expect": { "backgroundColor": "#ffffff" }
+          "expect": {
+            "backgroundColor": "#ffffff"
+          }
         },
         {
           "id": "main-light-hero-h1",
@@ -467,12 +477,14 @@
           "figmaName": "Cennso logo",
           "selector": "[data-figma-node=\"1:4538\"]",
           "implementedIn": "components/Logo.tsx, components/Navigation.tsx",
-          "expect": { "fill": "#185f99" }
+          "expect": {
+            "fill": "#185f99"
+          }
         },
         {
           "id": "main-light-hero-illustration",
           "figmaNode": "1:4987",
-          "figmaName": "hero_section_y 2 — light artwork",
+          "figmaName": "hero_section_y 2 \u2014 light artwork",
           "selector": "[data-figma-node=\"1:4987\"]",
           "implementedIn": "pages/index.tsx",
           "expect": {
@@ -482,16 +494,24 @@
       ]
     }
   ],
-
   "themePairedAssets": [
     {
       "id": "hero-illustration-pair",
-      "description": "The hero illustration is drawn twice in Figma — node 1:561 on the dark frame, node 1:4987 on the light one — and the two exports are different bitmaps. Shipping one file for both themes puts a bright slab on a dark page.",
-      "figmaNodes": { "dark": "1:561", "light": "1:4987" },
+      "description": "The hero illustration is drawn twice in Figma \u2014 node 1:561 on the dark frame, node 1:4987 on the light one \u2014 and the two exports are different bitmaps. Shipping one file for both themes puts a bright slab on a dark page.",
+      "figmaNodes": {
+        "dark": "1:561",
+        "light": "1:4987"
+      },
       "implementedIn": "pages/index.tsx",
       "refs": [
-        { "frame": "main-dark", "element": "main-dark-hero-illustration" },
-        { "frame": "main-light", "element": "main-light-hero-illustration" }
+        {
+          "frame": "main-dark",
+          "element": "main-dark-hero-illustration"
+        },
+        {
+          "frame": "main-light",
+          "element": "main-light-hero-illustration"
+        }
       ]
     }
   ]

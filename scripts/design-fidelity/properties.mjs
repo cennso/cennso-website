@@ -30,6 +30,7 @@ export const PROPERTIES = {
     compare: strictEquals,
   },
   text: { read: 'text', kind: TEXT, compare: strictEquals },
+  textAlign: { read: 'textAlign', kind: TEXT, compare: alignEquals },
 
   // colour
   color: { read: 'color', kind: COLOR, compare: colorEquals },
@@ -40,6 +41,19 @@ export const PROPERTIES = {
   },
   borderColor: { read: 'borderColor', kind: COLOR, compare: colorEquals },
   fill: { read: 'fill', kind: COLOR, compare: colorEquals },
+  // Element opacity composited onto the fill/border before comparison. Figma's
+  // `opacity-41` dims BOTH; comparing the raw values makes a dimmed outline read as
+  // correct, which is exactly how a fully opaque card outline shipped.
+  compositedBackgroundColor: {
+    read: 'compositedBackgroundColor',
+    kind: COLOR,
+    compare: colorEquals,
+  },
+  compositedBorderColor: {
+    read: 'compositedBorderColor',
+    kind: COLOR,
+    compare: colorEquals,
+  },
 
   // box
   borderWidth: { read: 'borderWidth', kind: LENGTH, compare: lengthEquals },
@@ -49,6 +63,8 @@ export const PROPERTIES = {
   paddingBottom: { read: 'paddingBottom', kind: LENGTH, compare: lengthEquals },
   paddingLeft: { read: 'paddingLeft', kind: LENGTH, compare: lengthEquals },
   gap: { read: 'gap', kind: LENGTH, compare: lengthEquals },
+  gapBetween: { read: 'gapBetween', kind: LENGTH, compare: lengthEquals },
+  opacity: { read: 'opacity', kind: TEXT, compare: strictEquals },
   width: { read: 'width', kind: LENGTH, compare: lengthEquals },
   height: { read: 'height', kind: LENGTH, compare: lengthEquals },
 
@@ -86,6 +102,24 @@ function containsFold(expected, actual) {
   return String(actual ?? '')
     .toLowerCase()
     .includes(String(expected).toLowerCase())
+}
+
+/**
+ * CSS computes an unset `text-align` to `start`, which is `left` in this document's
+ * direction. Figma only names an alignment when it is not the default. Folding the two
+ * together is what lets "the design centres this heading, the page left-aligns it" be a
+ * finding instead of a vocabulary difference.
+ */
+function alignEquals(expected, actual) {
+  const fold = (v) => {
+    const s = String(v ?? '')
+      .trim()
+      .toLowerCase()
+    if (s === 'start') return 'left'
+    if (s === 'end') return 'right'
+    return s
+  }
+  return fold(expected) === fold(actual)
 }
 
 const NAMED_WEIGHTS = { normal: '400', bold: '700' }
