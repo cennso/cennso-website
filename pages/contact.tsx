@@ -131,9 +131,18 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                         </div>
                       ) : null}
                     </div>
-                    <div className="flex flex-col gap-2 w-full xl:w-[calc(50%-1rem)]">
+                    {/* Both contact frames pitch this block off the address
+                        lines above it, not off the stack's own rhythm: the
+                        phone line (1:3929, bottom 906) sits 69px above the
+                        name (1:3945, top 975), where the 32px stack gap alone
+                        measured 75px. The -6px is taken here rather than off
+                        `gap-8` so only the gap the frames pin actually moves -
+                        the three gaps above it are not design values. */}
+                    <div className="-mt-1.5 flex flex-col gap-[17px] w-full xl:w-[calc(50%-1rem)]">
                       {/* Figma 1:3945 / 1:3946: Bold 24px in --primary over
-                          Regular 20px in --foreground, both centred. */}
+                          Regular 20px in --foreground, both centred, with 17px
+                          between them (1:3945 bottom 1000 -> 1:3946 top 1017);
+                          `gap-2` put 8px there. */}
                       <header className="flex flex-row justify-center">
                         <h4 className="font-bold text-2xl text-primary text-center">
                           {section.person.name}
