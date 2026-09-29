@@ -205,7 +205,7 @@ There are two passes, and the difference matters:
 - **Curated** (`design/figma/snapshot.json`) — named tokens and named elements.
   Precise, and only ever as complete as the list.
 - **Enumerative** (`design/figma/inventory.json`, generated from the committed
-  `design/figma/raw/*.jsx` dumps) — **every** text node in all six frames,
+  `design/figma/raw/*.jsx.txt` dumps) — **every** text node in all six frames,
   matched to the DOM by its own text content, with every property diffed. It
   reports its own coverage, and an unreached design node is a finding rather
   than a silent pass. That is the pass that answers "what is nobody checking?".

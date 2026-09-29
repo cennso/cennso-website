@@ -59,8 +59,7 @@ helm/charts/cennso-website/README.md
 lighthouse-*.json
 lighthouse-*.html
 
-# Captured Figma output, committed verbatim as the provenance of
-# design/figma/inventory.json. Reformatting it would mean the committed bytes
-# are no longer what the Figma MCP tool returned, and the refresh diff would
-# stop being readable as a design change.
-/design/figma/raw
+# Generated, and byte-for-byte significant: `yarn design:inventory:check`
+# rebuilds this file from design/figma/raw/ and fails if a single byte differs.
+# Reformatting it would make that check fail on a clean tree.
+design/figma/inventory.json

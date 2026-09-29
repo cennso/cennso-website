@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "generatedBy": "scripts/design-fidelity/build-inventory.mjs",
-  "doNotEdit": "Generated from design/figma/raw/*.jsx. `yarn design:inventory --check` fails if this file and those dumps disagree, so editing it by hand cannot stick.",
+  "doNotEdit": "Generated from design/figma/raw/*.jsx.txt. `yarn design:inventory --check` fails if this file and those dumps disagree, so editing it by hand cannot stick.",
   "figma": {
     "fileKey": "OqKo0g7Hb85V8YlEVYWUhf",
     "designName": "Cennso Design 4.0",
@@ -22,7 +22,7 @@
       "id": "main-dark",
       "figmaNode": "1:9",
       "figmaName": "Main page v.3",
-      "raw": "main-dark.jsx",
+      "raw": "main-dark.jsx.txt",
       "rawSha256": "780df5411264fbb6ba4253cc96a534ee292072be19955feec441febeced6accb",
       "route": "/",
       "theme": "dark",
@@ -615,7 +615,9 @@
               }
             }
           ],
-          "mixedProperties": ["lineHeight"],
+          "mixedProperties": [
+            "lineHeight"
+          ],
           "geometry": {
             "left": 789.6194816,
             "top": 2655.74565889264,
@@ -1663,7 +1665,7 @@
       "id": "main-light",
       "figmaNode": "1:4440",
       "figmaName": "Main page light blue",
-      "raw": "main-light.jsx",
+      "raw": "main-light.jsx.txt",
       "rawSha256": "48753dc7d05f3568567c81951c846218f6588e580376851d8949e90ad137d978",
       "route": "/",
       "theme": "light",
@@ -1681,7 +1683,12 @@
         "sha256": "3aed5a9db8cd0a641f8367c72a5adbfd11bfaa3c25ac3fb7eeb69754606fe1dc"
       },
       "frameFill": "#e1eaf0",
-      "assetFills": ["#000000", "#185f99", "#ff6d12", "#ffffff"],
+      "assetFills": [
+        "#000000",
+        "#185f99",
+        "#ff6d12",
+        "#ffffff"
+      ],
       "textNodes": [
         {
           "key": "1:4451",
@@ -2248,7 +2255,9 @@
               }
             }
           ],
-          "mixedProperties": ["lineHeight"],
+          "mixedProperties": [
+            "lineHeight"
+          ],
           "geometry": {
             "left": 789.6194816,
             "top": 2664.74565889264,
@@ -3223,7 +3232,7 @@
       "id": "use-cases-dark",
       "figmaNode": "1:585",
       "figmaName": "Use cases page",
-      "raw": "use-cases-dark.jsx",
+      "raw": "use-cases-dark.jsx.txt",
       "rawSha256": "6dad4798d702b4a782336876d179437171d5f9342e973ca5ca95212e7ec434ac",
       "route": "/success-stories",
       "theme": "dark",
@@ -3238,7 +3247,11 @@
         "sha256": "d3262fdba20289868bf5c989414c7f4847f37c38a5c91187630bbf7a2e86b329"
       },
       "frameFill": "#001a2a",
-      "assetFills": ["#779ab6", "#ffb31b", "#ffffff"],
+      "assetFills": [
+        "#779ab6",
+        "#ffb31b",
+        "#ffffff"
+      ],
       "textNodes": [
         {
           "key": "1:589",
@@ -3587,7 +3600,9 @@
               }
             }
           ],
-          "mixedProperties": ["lineHeight"],
+          "mixedProperties": [
+            "lineHeight"
+          ],
           "geometry": {
             "left": 789.6194816,
             "top": 2569.74565889264,
@@ -4418,7 +4433,7 @@
       "id": "use-cases-light",
       "figmaNode": "1:1062",
       "figmaName": "Use cases page light",
-      "raw": "use-cases-light.jsx",
+      "raw": "use-cases-light.jsx.txt",
       "rawSha256": "1813e0068468cd4672b90bac080d45d5477fad62c1f320b378deeea83f83b321",
       "route": "/success-stories",
       "theme": "light",
@@ -4433,7 +4448,10 @@
         "sha256": "d3262fdba20289868bf5c989414c7f4847f37c38a5c91187630bbf7a2e86b329"
       },
       "frameFill": "#e1eaf0",
-      "assetFills": ["#185f99", "#ffffff"],
+      "assetFills": [
+        "#185f99",
+        "#ffffff"
+      ],
       "textNodes": [
         {
           "key": "1:1066",
@@ -4782,7 +4800,9 @@
               }
             }
           ],
-          "mixedProperties": ["lineHeight"],
+          "mixedProperties": [
+            "lineHeight"
+          ],
           "geometry": {
             "left": 789.6194816,
             "top": 2569.74565889264,
@@ -5026,7 +5046,9 @@
               }
             }
           ],
-          "mixedProperties": ["lineHeight"],
+          "mixedProperties": [
+            "lineHeight"
+          ],
           "geometry": {
             "left": 789.6194816,
             "top": 2569.74565889264,
@@ -5887,7 +5909,7 @@
       "id": "contact-dark",
       "figmaNode": "1:3471",
       "figmaName": "Contact page",
-      "raw": "contact-dark.jsx",
+      "raw": "contact-dark.jsx.txt",
       "rawSha256": "7c53cfd7d9f6a8cefdbe651bf2994e55e84e8260f6196908af9c4675636e7cfc",
       "route": "/contact",
       "theme": "dark",
@@ -5902,7 +5924,12 @@
         "sha256": "28d7e83e2199a9f5349724ad68ca6a4fa11553b40c4ab868c9c822d7ca836a2b"
       },
       "frameFill": "#001a2a",
-      "assetFills": ["#779ab6", "#d9d9d9", "#ffb31b", "#ffffff"],
+      "assetFills": [
+        "#779ab6",
+        "#d9d9d9",
+        "#ffb31b",
+        "#ffffff"
+      ],
       "textNodes": [
         {
           "key": "1:3475",
@@ -6248,7 +6275,9 @@
               }
             }
           ],
-          "mixedProperties": ["lineHeight"],
+          "mixedProperties": [
+            "lineHeight"
+          ],
           "geometry": {}
         },
         {
@@ -7015,7 +7044,7 @@
       "id": "contact-light",
       "figmaNode": "1:7084",
       "figmaName": "Contact page light",
-      "raw": "contact-light.jsx",
+      "raw": "contact-light.jsx.txt",
       "rawSha256": "1691c8d1944a8204118110f3e8e8681cf5b7ea4fcc61f2e242bbfd2b1c0b9b8e",
       "route": "/contact",
       "theme": "light",
@@ -7030,7 +7059,11 @@
         "sha256": "28d7e83e2199a9f5349724ad68ca6a4fa11553b40c4ab868c9c822d7ca836a2b"
       },
       "frameFill": "#e1eaf0",
-      "assetFills": ["#185f99", "#d9d9d9", "#ffffff"],
+      "assetFills": [
+        "#185f99",
+        "#d9d9d9",
+        "#ffffff"
+      ],
       "textNodes": [
         {
           "key": "1:7088",
@@ -7482,7 +7515,9 @@
               }
             }
           ],
-          "mixedProperties": ["lineHeight"],
+          "mixedProperties": [
+            "lineHeight"
+          ],
           "geometry": {
             "left": 789.6194816,
             "top": 1246.72565889264,

@@ -1,5 +1,5 @@
 /**
- * Parses one committed `get_design_context` dump (design/figma/raw/*.jsx) into a flat
+ * Parses one committed `get_design_context` dump (design/figma/raw/*.jsx.txt) into a flat
  * list of design nodes.
  *
  * This is the step that makes the harness enumerative rather than curated: nothing here
@@ -502,7 +502,7 @@ function splitComponents(source) {
   if (!starts.length) {
     throw new FidelityError(
       'the Figma dump contains no component function.',
-      'design/figma/raw/*.jsx must be the code block `get_design_context` returned, unmodified.'
+      'design/figma/raw/*.jsx.txt must be the code block `get_design_context` returned, unmodified.'
     )
   }
   for (let k = 0; k < starts.length; k += 1) {

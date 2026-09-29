@@ -19,7 +19,7 @@
     {
       "id": "main-dark",
       "figmaNode": "1:9",
-      "raw": "main-dark.jsx",
+      "raw": "main-dark.jsx.txt",
       "route": "/",
       "theme": "dark",
       "status": "awaiting-implementation",
@@ -39,7 +39,7 @@
     {
       "id": "main-light",
       "figmaNode": "1:4440",
-      "raw": "main-light.jsx",
+      "raw": "main-light.jsx.txt",
       "route": "/",
       "theme": "light",
       "status": "awaiting-implementation",
@@ -59,7 +59,7 @@
     {
       "id": "use-cases-dark",
       "figmaNode": "1:585",
-      "raw": "use-cases-dark.jsx",
+      "raw": "use-cases-dark.jsx.txt",
       "route": "/success-stories",
       "theme": "dark",
       "status": "awaiting-implementation",
@@ -76,7 +76,7 @@
     {
       "id": "use-cases-light",
       "figmaNode": "1:1062",
-      "raw": "use-cases-light.jsx",
+      "raw": "use-cases-light.jsx.txt",
       "route": "/success-stories",
       "theme": "light",
       "status": "awaiting-implementation",
@@ -93,7 +93,7 @@
     {
       "id": "contact-dark",
       "figmaNode": "1:3471",
-      "raw": "contact-dark.jsx",
+      "raw": "contact-dark.jsx.txt",
       "route": "/contact",
       "theme": "dark",
       "status": "awaiting-implementation",
@@ -110,7 +110,7 @@
     {
       "id": "contact-light",
       "figmaNode": "1:7084",
-      "raw": "contact-light.jsx",
+      "raw": "contact-light.jsx.txt",
       "route": "/contact",
       "theme": "light",
       "status": "awaiting-implementation",

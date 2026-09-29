@@ -7,7 +7,7 @@ asserts the live computed values against both.
 | File              | What it is                                                                                                            | Written by                            |
 | ----------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
 | `snapshot.json`   | A **curated sample**: named tokens, named elements, named assertions. Precise, and only ever as complete as the list. | a human                               |
-| `raw/*.jsx`       | The **unmodified** `get_design_context` code block for each of the six frames, symbols expanded.                      | the Figma MCP tool                    |
+| `raw/*.jsx.txt`   | The **unmodified** `get_design_context` code block for each of the six frames, symbols expanded.                      | the Figma MCP tool                    |
 | `frames.json`     | Which raw dump is which frame, on which route, in which theme, and whether it is enforced yet.                        | a human                               |
 | `inventory.json`  | An **enumeration** of every text node, box node and measured gap in those six frames.                                 | `build-inventory.mjs` — never by hand |
 | `exclusions.json` | Every node the enumeration cannot compare, each with a written reason.                                                | a human, reviewably                   |
@@ -182,7 +182,7 @@ Run this locally, in a session that has the Figma MCP tool. Never from CI.
    `1:7084` — call `get_design_context`. Symbols (`1:99` Header, `1:575` Footer,
    `1:606` btn_More) come back expanded into functions; that expansion is the
    whole point, because an unexpanded symbol is a picture of a navigation.
-2. Save each call's code block **unmodified** to `raw/<frame>.jsx`, including the
+2. Save each call's code block **unmodified** to `raw/<frame>.jsx.txt`, including the
    `const img… = "https://…"` block at the top.
 3. `yarn design:inventory:refresh` — regenerates `inventory.json` and re-reads the
    colours inside the exported artwork. Those export URLs expire about a week

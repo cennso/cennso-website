@@ -213,7 +213,7 @@ export async function buildInventory({
     schemaVersion: INVENTORY_SCHEMA_VERSION,
     generatedBy: 'scripts/design-fidelity/build-inventory.mjs',
     doNotEdit:
-      'Generated from design/figma/raw/*.jsx. `yarn design:inventory --check` fails if this file and those dumps disagree, so editing it by hand cannot stick.',
+      'Generated from design/figma/raw/*.jsx.txt. `yarn design:inventory --check` fails if this file and those dumps disagree, so editing it by hand cannot stick.',
     figma: config.figma,
     viewport: config.viewport,
     frames,
