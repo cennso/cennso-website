@@ -46,10 +46,23 @@ const whyCennsoTints = [
 // as literals here the same way the tints above name their token. Dark only:
 // the light frames (1:4442 / 1:4443 / 1:4441) draw the cards as plain white
 // with no outline at all. Decorative, so no non-text contrast floor applies.
+//
+// The alpha is NOT decoration: each rectangle carries `opacity-41` on the
+// ELEMENT in Figma, so the 41% dims the stroke exactly as much as it dims the
+// fill - the outline the frames actually draw is #3fabff at 41% over the page
+// plate, not #3fabff. Rendering it opaque is what made the three frames read
+// as bright. Carried here as the same 0.4 the tints above use, so fill and
+// stroke stay locked to one alpha the way a single element opacity does.
+//
+// Spelled as an 8-digit hex (66 = 102/255 = 0.4) rather than the `/40` opacity
+// modifier for the reason the tints give: Tailwind 4 compiles `/40` to
+// color-mix(in oklab, ...), which Lighthouse's bundled axe-core cannot parse,
+// and it nulls the whole accessibility category. A literal hex needs no
+// color-mix and is the same colour.
 const whyCennsoOutlines = [
-  'dark:border-[#3fabff]',
-  'dark:border-[#41d2ff]',
-  'dark:border-[#00ffe4]',
+  'dark:border-[#3fabff66]',
+  'dark:border-[#41d2ff66]',
+  'dark:border-[#00ffe466]',
 ] as const
 
 // 24px corner, 32px horizontal inset - Figma 1:11 (400x338, r24) with its body
@@ -68,8 +81,17 @@ const whyCennsoOutlines = [
 // (1:4442 is `bg-white rounded-[24px]` with no stroke), so the border box is
 // kept for layout and its colour cleared; the dark frames' per-card outlines
 // are reinstated by whyCennsoOutlines below.
+// `dark:bg-clip-padding` is what lets the translucent outline above land on
+// the frames' colour instead of a brighter one. CSS paints an element's
+// background under its border box by default, so a 40% stroke would composite
+// over the card's own 40% tint and come out ~rgb(31,100,154) where 1:11 draws
+// ~rgb(26,85,129). In Figma the fill and the stroke are one node dimmed once,
+// so the stroke sits on the page plate, not on the fill; clipping the
+// background to the padding box reproduces exactly that. Dark only - in light
+// the border is transparent and the fill IS wanted underneath it, otherwise a
+// 1px ring of page plate would cut around every white card.
 const CARD_SHELL =
-  'rounded-3xl gap-[13px] pt-[19px] pb-[55px] border-transparent dark:border-border [--card-spacing:--spacing(8)]'
+  'rounded-3xl gap-[13px] pt-[19px] pb-[55px] border-transparent dark:border-border dark:bg-clip-padding [--card-spacing:--spacing(8)]'
 
 /**
  * The three stat-card illustrations, one file per theme.
