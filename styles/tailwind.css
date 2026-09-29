@@ -26,20 +26,43 @@
   }
 }
 
-/* The footer band is drawn as one fixed dark surface in both palettes, not a
-   surface that switches per theme, so --footer is pinned here to a single
-   triplet rather than left to flip with the light/dark blocks that
-   @cennso/theme's own theme.css declares for it (imported in _app.tsx before
-   this file). A bare :root selector, with no [data-theme] qualifier, matches
-   the document root regardless of which theme attribute is present, and this
-   file loads after theme.css, so this declaration wins the cascade over both
-   of the preset's own :root/[data-theme="dark"] and [data-theme="light"]
-   blocks for that one custom property - bg-footer keeps working as an
-   ordinary token, it just no longer varies. HSL triplet computed exactly from
-   the Design 4.0 footer frame's colour (Figma node 1:7579, hex #0d406a); the
-   preset's own dark footer value is close (roughly the same hex family) but
-   not equal, so it was not reusable as-is. */
-:root {
+/* The footer band is a different surface per palette, and the two Design 4.0
+   frames disagree about it on purpose:
+
+   - LIGHT (1:7579) is a Footer frame with its own fill, `bg-[#0d406a]` - a
+     dark navy plate deliberately set against the light page.
+   - DARK (1:575) is a Footer symbol with NO fill at all. Nothing is painted
+     behind its content, so what shows through is the dark frame's own plate
+     (#001a2a on 1:9) - i.e. in dark mode the footer is not a band, it is the
+     page continuing to the bottom edge. What separates it there is the 2px
+     rule the symbol draws across its top (1:582, #284467), reinstated on
+     <Footer> rather than here because it is a border, not a surface.
+
+   This was previously pinned to the light value for both palettes, citing
+   1:7579 - but 1:7579 is a light-frame node, so the dark footer was being
+   painted in the light frame's navy. Hence two blocks, not one.
+
+   Dark resolves to `var(--background)` rather than a copied triplet so the two
+   cannot drift: the frames make them the same colour because they are the same
+   surface, and `main` already paints that plate with `bg-background`.
+
+   Cascade: @cennso/theme's theme.css (imported in _app.tsx before this file)
+   declares --footer in a `:root, [data-theme="dark"]` block and again in a
+   `[data-theme="light"]` block. Both of those selectors and both of ours score
+   (0,1,0), so it is source order that decides, and this file loads last -
+   which is also why the light block below must come after the dark one here,
+   exactly as theme.css orders its own. bg-footer keeps working as an ordinary
+   token; it just resolves per theme again.
+
+   Light triplet computed exactly from 1:7579's #0d406a. Text stays white in
+   both frames (every string in 1:575 and 1:7579 is #ffffff), and white gains
+   contrast on the darker dark band, so no text colour moves with it. */
+:root,
+[data-theme='dark'] {
+  --footer: var(--background);
+}
+
+[data-theme='light'] {
   --footer: 207.1 78.2% 23.3%;
 }
 

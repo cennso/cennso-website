@@ -29,7 +29,16 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
     footerData || defaultFooterData
 
   return (
-    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-light">
+    // The 2px top rule is dark-only, and it is what makes the footer a footer
+    // there: the dark frame's Footer symbol (1:575) carries no fill, so the
+    // band is the page's own plate continuing to the bottom edge, and the only
+    // thing dividing the two is the rule the symbol draws across its own top
+    // (1:582, 1360x2, #284467). The light frame's footer (1:7579) has no such
+    // node - it does not need one, because its #0d406a plate already separates
+    // itself from the light page. Written as a literal for the same reason the
+    // "Why Cennso?" outlines are: no theme token carries it (dark --border is
+    // #0c446e, a different colour). Decorative, so no contrast floor applies.
+    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-light dark:border-t-2 dark:border-t-[#284467]">
       {/* Same content measure as Container/Navigation, so the footer wordmark
           lines up with the header's and with every page heading - the frames
           put both logos on the page's own gutter (1:584 at x=81). */}
