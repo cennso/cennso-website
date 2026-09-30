@@ -107,6 +107,18 @@
   --card: 0 0% 100%;
 }
 
+/* Light placeholders: a lighter step of the primary blue, so a hint reads as
+   blue like the rest of the light page but is plainly not entered text (which
+   is --foreground, i.e. primary itself). 85% alpha is the lightest step that
+   keeps the 4.5:1 WCAG AA text floor on the white form panel (#3a76a7,
+   4.85:1). Spelled hsl(var(--x) / a), not the /85 opacity modifier, which
+   Tailwind 4 compiles to color-mix(in oklab) - a value Lighthouse's axe-core
+   cannot parse. Beats the design system's `placeholder:text-muted-foreground`
+   on specificity; dark keeps that default. */
+[data-theme='light'] :is(input, textarea)::placeholder {
+  color: hsl(var(--primary) / 0.85);
+}
+
 ::-moz-selection {
   color: white;
   background: #448dc8;
