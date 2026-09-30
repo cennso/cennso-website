@@ -23,6 +23,9 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
     'none' | 'sending' | 'success' | 'error'
   >('none')
   const [privacyPolicy, setPrivacyPolicy] = useState(false)
+  // Checked by hand: a `required` Switch puts aria-required on role="switch",
+  // which ARIA does not allow.
+  const [consentInvalid, setConsentInvalid] = useState(false)
   // Label ids for aria-labelledby; unique per instance.
   const uid = useId()
   // PhoneInput reports an E.164 string, not an event, so it is controlled.
@@ -33,6 +36,11 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault()
+      if (!privacyPolicy) {
+        setConsentInvalid(true)
+        e.currentTarget.querySelector<HTMLElement>('[role="switch"]')?.focus()
+        return
+      }
       setAction('sending')
       const inputs = (e.target as any).elements as Record<
         string,
@@ -84,6 +92,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
       setAction('error')
     },
     [
+      privacyPolicy,
       setPrivacyPolicy,
       setPdfCV,
       pdfCV,
@@ -181,11 +190,17 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
               required
             />
           </Field>
-          <Field className="sm:col-span-2">
-            <Field.Label className="text-white">
+          {/* A plain <label>, not a Field: PhoneInput is two controls and a
+              Field would hand both the same id. */}
+          <div className="sm:col-span-2 flex flex-col gap-2">
+            <label
+              htmlFor={`${uid}-phone`}
+              className="w-fit text-sm font-medium leading-snug text-white"
+            >
               Phone number (optional):
-            </Field.Label>
+            </label>
             <PhoneInput
+              id={`${uid}-phone`}
               name="phone"
               value={phone}
               onChange={setPhone}
@@ -199,7 +214,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
                 content?.form?.phone?.countryEmptyContent || 'No country found.'
               }
             />
-          </Field>
+          </div>
           <Field className="sm:col-span-2">
             <Field.Label id={`${uid}-message-label`} className="text-white">
               Message
@@ -262,12 +277,18 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
               />
             </label>
           </div>
-          <Field orientation="horizontal" className="sm:col-span-2">
+          <Field
+            orientation="horizontal"
+            className="sm:col-span-2 flex-wrap"
+            invalid={consentInvalid}
+          >
             <Switch
               name="privacy-policy"
               checked={privacyPolicy}
-              onCheckedChange={setPrivacyPolicy}
-              required
+              onCheckedChange={(next) => {
+                setPrivacyPolicy(next)
+                setConsentInvalid(false)
+              }}
             />
             <Field.Label className="text-sm leading-6 font-normal text-gray-600">
               <span>
@@ -282,6 +303,10 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
                 .
               </span>
             </Field.Label>
+            <Field.Error match={consentInvalid} className="w-full">
+              {content?.form?.validation?.privacyPolicy ||
+                'Please accept the privacy policy to send the form.'}
+            </Field.Error>
           </Field>
           <div className="sm:col-span-2 flex justify-end">
             <Button variant="action" useArrow={false} className="text-sm">

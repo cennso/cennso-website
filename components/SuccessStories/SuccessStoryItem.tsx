@@ -82,8 +82,11 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
           half its own height. Stacked on mobile, both stay in flow. */}
       <div className="relative flex w-full flex-col gap-8 p-8 md:w-2/5 md:justify-center lg:p-12">
         <div>
+          {/* An h2 in the document outline - the page's h1 is the only
+              heading above it - drawn at the h3 step. */}
           <Typography
             variant="h3"
+            render={<h2 />}
             className="text-2xl font-bold text-foreground lg:text-[32px] lg:leading-[1.3]"
           >
             {title}

@@ -64,10 +64,14 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
   // PhoneInput reports an E.164 string ("+4939166098560"), not an event, so it
   // is controlled rather than read off form.elements like the rest.
   const [phone, setPhone] = useState('')
-  // Checked by hand on submit, not through Field's `validate`: PhoneInput puts
-  // two controls in its Field (the country picker and the number), and Base
-  // UI's Form does not run that Field's validator.
+  // Checked by hand on submit. PhoneInput is two controls (the country picker
+  // and the number), so it cannot sit in a Field: Field hands its one control
+  // id to both, which duplicates the id, and Base UI's Form skips its
+  // validator. It gets a plain <label> and its own error line instead.
   const [phoneInvalid, setPhoneInvalid] = useState(false)
+  // The consent switch is also checked by hand: a `required` Switch puts
+  // aria-required on role="switch", which ARIA does not allow (axe fails it).
+  const [consentInvalid, setConsentInvalid] = useState(false)
   const [formTimestamp] = useState(Date.now()) // Track when form was loaded
 
   // This form is rendered once per contact section, so element ids must be
@@ -129,6 +133,12 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         return
       }
 
+      if (!privacyPolicy) {
+        setConsentInvalid(true)
+        e.currentTarget.querySelector<HTMLElement>('[role="switch"]')?.focus()
+        return
+      }
+
       setAction('sending')
       const inputs = (e.target as any).elements as Record<
         string,
@@ -187,7 +197,14 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
 
       setAction('error')
     },
-    [setPrivacyPolicy, setAction, receiverEmail, formTimestamp, phone]
+    [
+      setPrivacyPolicy,
+      setAction,
+      receiverEmail,
+      formTimestamp,
+      phone,
+      privacyPolicy,
+    ]
   )
 
   return (
@@ -227,10 +244,12 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         className={`mx-auto ${controlsClassName}`}
         onSubmit={onSubmit}
         // Runs before Form validates the other fields, so a bad phone number
-        // is flagged in the same pass as everything else, not on the retry.
-        onSubmitCapture={() =>
+        // and a missing consent are flagged in the same pass as everything
+        // else, not on the retry.
+        onSubmitCapture={() => {
           setPhoneInvalid(Boolean(phone) && !isValidPhoneNumber(phone))
-        }
+          setConsentInvalid(!privacyPolicy)
+        }}
         autoComplete="on"
       >
         {/* Screen reader region for form status updates */}
@@ -332,20 +351,23 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             <Field.Error match="customError" />
             <Field.Error match="tooLong">{msg.tooLong(MAX.email)}</Field.Error>
           </Field>
-          <Field
-            className={`sm:col-span-2 ${fieldClassName}`}
-            invalid={phoneInvalid}
-          >
-            <Field.Label className={labelClassName}>
+          <div className={`sm:col-span-2 flex flex-col ${fieldClassName}`}>
+            <label
+              htmlFor={`${uid}-phone`}
+              className={`w-fit leading-snug ${labelClassName}`}
+            >
               Phone number (optional):
-            </Field.Label>
+            </label>
             <PhoneInput
+              id={`${uid}-phone`}
               name="phone"
               value={phone}
               onChange={(next) => {
                 setPhone(next)
                 setPhoneInvalid(false)
               }}
+              aria-invalid={phoneInvalid || undefined}
+              aria-describedby={phoneInvalid ? `${uid}-phone-error` : undefined}
               placeholder="Enter phone number"
               autoComplete="tel"
               countrySearchPlaceholder={
@@ -356,8 +378,16 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
                 content?.form?.phone?.countryEmptyContent || 'No country found.'
               }
             />
-            <Field.Error match={phoneInvalid}>{msg.phone}</Field.Error>
-          </Field>
+            {/* Field.Error's own look: text-sm, --destructive-strong. */}
+            {phoneInvalid ? (
+              <p
+                id={`${uid}-phone-error`}
+                className="text-sm font-normal text-destructive-strong"
+              >
+                {msg.phone}
+              </p>
+            ) : null}
+          </div>
           <Field
             className={`sm:col-span-2 ${fieldClassName}`}
             validate={(value) => {
@@ -394,13 +424,15 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               aria-hidden="true"
             />
           </div>
-          <Field className="sm:col-span-2 gap-1">
+          <Field className="sm:col-span-2 gap-1" invalid={consentInvalid}>
             <div className="flex items-center gap-2">
               <Switch
                 name="privacy-policy"
                 checked={privacyPolicy}
-                onCheckedChange={setPrivacyPolicy}
-                required
+                onCheckedChange={(next) => {
+                  setPrivacyPolicy(next)
+                  setConsentInvalid(false)
+                }}
               />
               <Field.Label className="text-sm leading-6 font-normal text-foreground">
                 <span>
@@ -416,7 +448,9 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
                 </span>
               </Field.Label>
             </div>
-            <Field.Error match="valueMissing">{msg.privacyPolicy}</Field.Error>
+            <Field.Error match={consentInvalid}>
+              {msg.privacyPolicy}
+            </Field.Error>
           </Field>
           {/* The frames put Send at x=775 - flush with the left edge of the
               fields above it (1:3938 / 1:7550), not against the panel's right
