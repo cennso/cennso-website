@@ -1,19 +1,39 @@
 import { useState, useRef } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Menu } from '@cennso/ui'
+import { NavigationMenu, ThemeToggle } from '@cennso/ui'
 import { ChevronDown } from 'lucide-react'
 
-import { Button } from './common'
+import metadata from '../siteMetadata'
+import { ButtonChevron, CONTENT_MEASURE } from './common'
 import { Logo } from './Logo'
 import { MenuToggle } from './MenuToogle'
 import { useClickOutside } from '../lib/hooks'
 
-import metadata from '../siteMetadata'
-
 import type { FunctionComponent, ReactNode } from 'react'
 import type { NavigationLink } from '../contexts'
+
+/**
+ * The header's own call to action, as drawn in the Design 4.0 Header symbol
+ * (Figma 1:107 dark / 1:4534 light - the symbol nobody expanded, which is how
+ * a "Sign in" pill ended up here instead). The two palettes draw it
+ * differently, so this is not one of `@cennso/ui`'s Button variants:
+ *
+ * - dark  (1:107): page-coloured fill, 1px `#ffb31b` border, `#ffb31b` label
+ * - light (1:4534): solid `#185f99` fill, white label, no border
+ *
+ * Every literal below is the frame's: 37px radius (`rounded-btn`), 16px
+ * horizontal padding, 9px gap, Poppins Medium 18px, 36px tall. `dark:` resolves
+ * to `:root:not([data-theme="light"])` via the theme preset, so the dark
+ * treatment is the one that survives if the attribute is ever missing - which
+ * matches `defaultSetting="dark"`.
+ */
+const NAV_CTA_CLASS = [
+  'inline-flex h-9 items-center gap-[9px] rounded-btn border px-4',
+  'text-lg font-medium transition-colors',
+  'border-primary bg-primary text-primary-foreground hover:bg-primary/90',
+  'dark:bg-background dark:text-primary dark:hover:bg-primary/10',
+].join(' ')
 
 interface NavigationProps {
   navigation: NavigationLink[]
@@ -27,11 +47,35 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
   useClickOutside(menuRef, () => setIsOpen(false))
 
   return (
-    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white border-none shadow-lg px-8 lg:px-4">
-      <nav className="flex flex-row items-center justify-between w-full max-w-screen-2xl py-2">
+    // The header band is its own surface, not the page plate. All three light
+    // frames paint the Header symbol #ffffff (1:4530 main, 1:1543 use cases,
+    // 1:7570 contact) over a page plate that is #e1eaf0 - leaving it on
+    // `bg-background` alone painted the band that plate colour, which is the
+    // only visually obvious mismatch of the set. The dark frames' Header
+    // symbol (1:99 on 1:9) carries no fill of its own, so there the band IS
+    // the page plate (#001a2a vs the token's #001929) - hence
+    // `dark:bg-background` rather than a second literal. `dark:` resolves to
+    // `:root:not([data-theme="light"])` via the theme preset, so the dark
+    // treatment survives a missing attribute, matching `defaultSetting="dark"`.
+    // White raises the light-theme nav link and wordmark contrast (both
+    // #185f99) from 5.49:1 to 6.70:1, so nothing loses headroom by this.
+    //
+    // Dark glow: copied 1:1 from cennso/cloud's TOPBAR_SURFACE (cloud-portal
+    // and docs-portal chrome-surfaces.ts) - the same border-border/50 rule
+    // under the bar and an ::after hung off its lower edge, one radial
+    // gradient of --glow-blue sourced at the middle of that edge. `relative`
+    // makes this div the ::after's containing block.
+    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white dark:bg-background shadow-none px-8 lg:px-4 dark:border-border/50 dark:border-b dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:top-full dark:after:h-8 dark:after:bg-[image:radial-gradient(50%_100%_at_50%_0%,hsl(var(--glow-blue)/0.30)_0%,transparent_70%)]">
+      <nav
+        className={`flex flex-row items-center justify-between w-full ${CONTENT_MEASURE} py-2`}
+      >
         <div className="flex-none flex flex-row mr-12">
           <Link title="Home page" href="/">
-            <Logo className="w-44 fill-[#185f99]" />
+            {/* Figma 1:111 renders the wordmark white on the dark frame and
+                `#185f99` (= --primary in the light palette) on the light one.
+                `fill-primary` alone painted it gold in dark, because --primary
+                is the amber accent there. */}
+            <Logo className="w-44 fill-primary dark:fill-white" />
           </Link>
         </div>
 
@@ -40,12 +84,17 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
             <MenuToggle toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} />
           </div>
 
+          {/* Below xl this list IS the dropped-down header panel, hanging
+              straight off the band above it, so it takes the band's own
+              surface rather than the page plate - otherwise the light theme
+              shows an #e1eaf0 panel seamed onto a white bar. At xl it is
+              inline in the bar and transparent, as before. */}
           <ul
-            className={`absolute top-[4.5rem] xl:top-0 left-0 right-0 xl:relative transition-all duration-300 ease-in-out ${
+            className={`absolute top-18 xl:top-0 left-0 right-0 xl:relative transition-all duration-300 ease-in-out ${
               isOpen
                 ? 'opacity-100'
                 : 'opacity-0 -translate-y-[calc(100%+4.5rem)] xl:opacity-100 xl:translate-y-0'
-            } w-full h-auto shadow-2xl xl:shadow-none shadow-primary-400 px-8 py-4 xl:p-0 bg-white xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
+            } w-full h-auto shadow-none px-8 py-4 xl:p-0 bg-white dark:bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
           >
             {navigation.map((link) => (
               <li
@@ -58,30 +107,45 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
                 />
               </li>
             ))}
+            {/* The Contact link before it carries 16px of its own padding, so
+                the list's 4px gap already makes 20px to the pill. */}
             <li className="mt-4 xl:mt-0 font-normal">
-              <Link href={metadata.explore.cloudPortal} target="_blank">
-                <Button
-                  variant="primary"
-                  className="flex flex-row items-center gap-2"
-                >
-                  <Image
-                    src="/assets/common/cloud.svg"
-                    alt="Cloud icon"
-                    title="Cloud icon"
-                    width={24}
-                    height={24}
-                    className="w-6 h-6"
-                    sizes="24px"
-                  />
-                  Sign in
-                </Button>
+              <Link
+                href={metadata.explore.cloudPortal}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={NAV_CTA_CLASS}
+              >
+                Sign In
+                <ButtonChevron />
               </Link>
+            </li>
+            {/* Last in the bar. xl:ml-4 matches the 20px on the pill's other
+                side. icon-lg is control-height-lg, the same 36px the Sign In
+                pill stands, so the hover wash is the pill's height rather than
+                a smaller square next to it. */}
+            <li className="mt-4 xl:mt-0 xl:ml-4 font-normal">
+              <ThemeToggle
+                variant="dropdown"
+                size="icon-lg"
+                className="rounded-full"
+              />
             </li>
           </ul>
         </div>
       </nav>
     </div>
   )
+}
+
+/** The top-level nav entry's look, shared by the plain link, the dropdown
+ * trigger and the mobile accordion header so the three stay identical. */
+function topLevelClass(active: boolean): string {
+  return `block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-border xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
+    active
+      ? 'text-primary underline underline-offset-4'
+      : 'text-foreground hover:text-primary hover:text-shadow-primary'
+  } xl:rounded-full text-lg font-medium font-sans`
 }
 
 interface NavigationItemProps {
@@ -96,11 +160,8 @@ interface NavigationItemProps {
  * a menu-item role inside an anchor and leave navigation and menu focus owned by
  * two different nodes.
  *
- * The desktop dropdown (inside `<Menu>`) uses `Menu.LinkItem`, which renders as
- * the link itself. The mobile accordion is a plain, always-in-flow `<ul>` with no
- * `Menu.Root` ancestor, so it uses a plain `Link`: anything `Menu.*` requires a
- * root it never has, and a disclosure list of links wants link semantics anyway.
- * `renderLeaf` keeps the `className` strings byte-identical across both.
+ * Used by the mobile accordion only; the desktop dropdown is a
+ * `NavigationMenu` with the design system's own styling.
  */
 function buildChildItems(
   link: NavigationLink,
@@ -117,9 +178,9 @@ function buildChildItems(
   const items = (link.children ?? []).map((child) => (
     <li key={child.link}>
       {renderLeaf({
-        className: `flex items-center gap-3 text-[#185F99] lg:text-white hover:text-secondary-200 hover:!bg-[#185F99] lg:hover:!text-secondary-200 rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
+        className: `flex items-center gap-3 text-foreground hover:text-primary-foreground! hover:bg-primary! rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
           asPath.startsWith(child.link)
-            ? 'text-secondary-200 !bg-[#185F99] lg:!text-secondary-200 lg:rounded-[32px]'
+            ? 'text-primary-foreground! bg-primary! lg:rounded-[32px]'
             : ''
         }`,
         href: child.link,
@@ -131,9 +192,9 @@ function buildChildItems(
   ))
 
   items.push(
-    <li key="show-all" className="block lg:hidden">
+    <li key="show-all">
       {renderLeaf({
-        className: `flex items-center gap-3 text-[#185F99] hover:text-secondary-200 hover:!bg-[#185F99] rounded-none font-normal`,
+        className: `flex items-center gap-3 text-foreground hover:text-primary-foreground! hover:bg-primary! rounded-none font-normal`,
         href: link.link,
         onClick: () => toggleOpen(),
         target: link.target,
@@ -150,53 +211,21 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
   toggleOpen,
 }) => {
   const { asPath } = useRouter()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const isActive = asPath.startsWith(link.link)
 
   const content = (
     <Link
       href={link.link}
-      className={`block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-primary-400 xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
-        asPath.startsWith(link.link)
-          ? 'bg-[#185F99] text-white'
-          : 'hover:bg-[#185F99] hover:text-shadow-primary text-[#185F99] hover:text-white'
-      } xl:rounded-full text-lg font-medium font-sans`}
+      className={topLevelClass(isActive)}
       onClick={() => toggleOpen()}
       target={link.target}
     >
       {link.title}
-      {link.children ? (
-        <ChevronDown
-          strokeWidth={2.5}
-          className={`h-6 w-6 transition-transform ${
-            isMenuOpen ? 'rotate-180' : ''
-          }`}
-        />
-      ) : null}
     </Link>
   )
 
   if (link.children) {
-    // Menu.LinkItem renders AS the link, so one element owns both navigation and
-    // menu semantics. It also needs a Menu.Root ancestor, which the desktop
-    // dropdown has and the mobile accordion below never has (and must not get) —
-    // hence the leaf is built twice. closeOnClick is explicit because
-    // Menu.LinkItem defaults it to false, and a nav menu that stays open after
-    // you pick a destination is a bug.
-    const desktopItems = buildChildItems(
-      link,
-      asPath,
-      toggleOpen,
-      ({ className, href, onClick, target, children }) => (
-        <Menu.LinkItem
-          closeOnClick
-          className={className}
-          render={<Link href={href} onClick={onClick} target={target} />}
-        >
-          {children}
-        </Menu.LinkItem>
-      )
-    )
     const mobileItems = buildChildItems(
       link,
       asPath,
@@ -215,45 +244,46 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
 
     return (
       <>
-        <div className="hidden lg:block">
-          <Menu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <Menu.Trigger
-              openOnHover
-              render={
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      setIsMenuOpen(!isMenuOpen)
-                    }
-                  }}
-                  className="p-0 bg-transparent hover:bg-transparent active:bg-transparent cursor-pointer"
-                >
-                  {content}
-                </div>
-              }
-              nativeButton={false}
-            />
-            <Menu.Content
-              side="bottom"
-              sideOffset={10}
-              className="hidden max-w-screen-xl rounded-[32px] lg:block bg-[#185F99] shadow-none border-[#185F99] filter drop-shadow-[0px_3px_5px_rgba(68,141,200,0.35)] p-2"
-            >
-              <ul className="flex flex-col gap-0 outline-none outline-0">
-                {desktopItems}
-              </ul>
-            </Menu.Content>
-          </Menu>
-        </div>
+        {/* Root renders a <nav> by default; this already sits inside the
+            header's <nav>, so it is a <div> here to avoid nesting landmarks. */}
+        <NavigationMenu render={<div />} className="hidden lg:flex">
+          <NavigationMenu.List>
+            <NavigationMenu.Item>
+              <NavigationMenu.Trigger
+                className={`${topLevelClass(isActive)} rounded-none hover:bg-transparent data-popup-open:bg-transparent data-popup-open:text-primary cursor-pointer`}
+                icon={<ChevronDown strokeWidth={2.5} className="h-6 w-6" />}
+              >
+                {link.title}
+              </NavigationMenu.Trigger>
+              <NavigationMenu.Content>
+                {/* closeOnClick is explicit because it defaults to false, and
+                    a nav menu that stays open after you pick a destination is
+                    a bug. The trigger is a button, so "Show all..." is the
+                    desktop path to the index page. */}
+                <ul className="flex w-max flex-col">
+                  {[
+                    ...(link.children ?? []),
+                    { title: 'Show all...', link: link.link },
+                  ].map((child) => (
+                    <li key={child.link}>
+                      <NavigationMenu.Link
+                        closeOnClick
+                        active={asPath === child.link}
+                        render={<Link href={child.link} />}
+                      >
+                        {child.title}
+                      </NavigationMenu.Link>
+                    </li>
+                  ))}
+                </ul>
+              </NavigationMenu.Content>
+            </NavigationMenu.Item>
+          </NavigationMenu.List>
+          <NavigationMenu.Panel />
+        </NavigationMenu>
         <div className="block lg:hidden">
           <div
-            className={`block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-primary-400 xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
-              asPath.startsWith(link.link)
-                ? 'bg-[#185F99] text-secondary-200'
-                : 'hover:bg-[#185F99] hover:text-shadow-primary hover:text-secondary-200'
-            } xl:rounded-full text-[#185F99] text-base text-lg font-medium cursor-pointer`}
+            className={`${topLevelClass(isActive)} cursor-pointer`}
             onClick={() => setIsMobileMenuOpen((cur) => !cur)}
           >
             {link.title}
@@ -267,7 +297,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
             ) : null}
           </div>
           <ul
-            className={`${isMobileMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 outline-none outline-0 ml-6 mt-1`}
+            className={`${isMobileMenuOpen ? 'flex' : 'hidden'} flex-col gap-1 outline-hidden outline-0 ml-6 mt-1`}
           >
             {mobileItems}
           </ul>

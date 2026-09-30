@@ -1,4 +1,5 @@
 import { Poppins } from 'next/font/google'
+import { ThemeProvider } from '@cennso/ui'
 
 import { Layout } from '../components/Layout'
 
@@ -7,8 +8,19 @@ import type { AppProps } from 'next/app'
 import '@cennso/theme/theme.css'
 import '../styles/tailwind.css'
 
+// Only the weights the site actually renders. next/font emits a `<link
+// rel="preload">` for every declared weight x style, so the previous
+// 9 weights x 2 styles meant 18 high-priority font preloads (~157KB) on every
+// page, competing with the LCP element for bandwidth. 100/200/800/900 are
+// rendered nowhere: no `font-thin`/`font-extralight`/`font-extrabold`/
+// `font-black` in this repo, in `@cennso/ui`'s dist or in `@cennso/theme`, and
+// none appear in the rendered HTML of any route. Probing `document.fonts` with
+// headless Chrome across every route confirms the faces the browser actually
+// loads are 300/400/500/600/700 normal plus 300 italic (`Quote.tsx`'s
+// `font-light italic`), so this drops 8 preloads without changing a single
+// rendered glyph.
 const poppinsFont = Poppins({
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['300', '400', '500', '600', '700'],
   style: ['normal', 'italic'],
   subsets: ['latin'],
 })
@@ -45,6 +57,27 @@ const poppinsFont = Poppins({
  * mobile-only JavaScript bundle, improving Lighthouse performance scores (≥95% target) and
  * page load times across all routes and devices.
  */
+/**
+ * The parent domain the theme choice is written for, so the site, the cloud
+ * portal and the documentation portal share one choice - the same cookie on
+ * the same domain as cennso/cloud's THEME_COOKIE_DOMAIN.
+ *
+ * Applied only when the page is actually served under cennso.com: a browser
+ * drops a cookie whose domain the page is not under, so on localhost or a
+ * *.vercel.app preview it would silently lose every choice. There the cookie
+ * stays host-only and still works. Undefined on the server, where nothing is
+ * written.
+ */
+const THEME_COOKIE_DOMAIN = '.cennso.com'
+
+function themeCookieDomain(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  const host = window.location.hostname
+  return host === 'cennso.com' || host.endsWith('.cennso.com')
+    ? THEME_COOKIE_DOMAIN
+    : undefined
+}
+
 export default function App({ Component, pageProps }: AppProps) {
   const { $$app, ...rest } = pageProps
   const { navigation, footerData } = $$app || {}
@@ -57,25 +90,17 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
 
-      {/*
-        No ThemeProvider. It supplies a React context for reading and changing the
-        theme, and this site has neither a toggle nor any component that reads it:
-        the palette arrives as CSS variables from @cennso/theme/theme.css, scoped by
-        the data-theme="light" that _document.tsx pins on <Html>, and themeScript
-        keeps that attribute correct before first paint.
-
-        Mounting it cost 234KB of JavaScript on EVERY route — First Load JS shared
-        goes 433KB -> 199KB without it, below even the 275KB pre-@cennso/ui baseline.
-        Computed styles were compared with and without: button backgrounds and
-        foregrounds, card surface and heading colour are byte-identical.
-
-        Add it back the moment this site grows a theme toggle, or renders a
-        @cennso/ui component that calls the theme hook. Pair it with a matching
-        `defaultSetting` and the themeScript in _document.tsx, which must agree.
-      */}
-      <Layout navigation={navigation} footerData={footerData}>
-        <Component {...rest} />
-      </Layout>
+      {/* Only the provider takes the cookie's domain: the inline themeScript in
+          _document.tsx reads the cookie by name, and a browser sends a
+          parent-domain cookie to every host under it. */}
+      <ThemeProvider
+        defaultSetting="dark"
+        cookie={{ domain: themeCookieDomain() }}
+      >
+        <Layout navigation={navigation} footerData={footerData}>
+          <Component {...rest} />
+        </Layout>
+      </ThemeProvider>
     </>
   )
 }

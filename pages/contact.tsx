@@ -2,15 +2,10 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { parse as YamlParse } from 'yaml'
 
-import { Mail, Phone, ExternalLink } from 'lucide-react'
+import { Phone } from 'lucide-react'
 
 import { ContactForm } from '../components/Contact/ContactForm'
-import {
-  CircleAvatar,
-  Container,
-  GradientHeader,
-  HexagonDouble,
-} from '../components/common'
+import { CircleAvatar, Container, PENCIL_BANNER } from '../components/common'
 import { PageHeader } from '../components/PageHeader'
 import { SEO } from '../components/SEO'
 import {
@@ -21,12 +16,45 @@ import {
 import { createNavigation } from '../lib/navigation'
 import { loadFooterData } from '../lib/footer'
 
+import type { FunctionComponent } from 'react'
 import type { NextPage, GetStaticProps } from 'next'
 import type { Author } from '../contexts'
 
 type ContactPageProps = {
   content: Record<string, any>
 }
+
+/**
+ * lucide's `mail` glyph, solid: the envelope filled in primary with the flap
+ * cut out in the page plate's colour, as the contact frames draw it. Same
+ * geometry as lucide's, but not lucide's `Mail` with a fill - that one paints
+ * the flap first and the envelope over it, so filling it hides the flap.
+ */
+const MailSolid: FunctionComponent<{ className?: string }> = ({
+  className = '',
+}) => (
+  <svg
+    viewBox="0 0 24 24"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <rect
+      x="2"
+      y="4"
+      width="20"
+      height="16"
+      rx="2"
+      className="fill-primary stroke-primary"
+    />
+    <path
+      d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"
+      className="fill-none stroke-page"
+    />
+  </svg>
+)
 
 const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
   const { page, sections, localBusiness } = content
@@ -45,43 +73,36 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
       />
 
       <PageHeader
-        title={page.title}
-        description={page.description}
+        title={page.heading}
+        description={page.subheading}
         breadcrumbs={[
           {
             title: page.title,
             link: '/contact',
           },
         ]}
-        background={{
-          src: '/assets/backgrounds/bg-header-contact-3.webp',
-          title: 'Contact page background',
-          alt: 'Contact page background',
-          width: 180,
-          height: 150,
-          className: 'mr-64',
-        }}
+        background={PENCIL_BANNER}
       />
 
-      <Container className="pt-12 md:pt-24 pb-24 bg-secondary-400">
+      {/* Both contact frames (1:3471 / 1:7084) sit on one flat plate; there is
+          no band behind the form column. */}
+      <Container className="pt-12 md:pt-0 pb-24">
         <div className="flex flex-col gap-24">
-          {Object.entries(sections).map(([, section]: [string, any]) => {
+          {Object.entries(sections).map(([, section]: [string, any], index) => {
             return (
               <div className="w-full flex flex-col gap-2" key={section.company}>
                 <header className="flex flex-row">
-                  <GradientHeader
-                    as="h2"
-                    className="text-4xl font-bold text-left"
-                    variant="primary"
-                  >
+                  <h2 className="text-4xl font-bold text-left text-primary">
                     {section.title}
-                  </GradientHeader>
+                  </h2>
                 </header>
 
-                <div className="flex flex-col xl:flex-row gap-12 text-white">
+                <div className="flex flex-col xl:flex-row gap-12 text-foreground">
                   <div className="flex flex-col gap-8 w-full xl:w-1/2">
-                    <h3 className="text-3xl">{section.company}</h3>
-                    <div className="flex flex-col gap-4">
+                    <h3 className="text-3xl text-primary">{section.company}</h3>
+                    {/* Figma 1:3924 / 1:7420: the body copy beside the form is
+                        Regular 20px, not the inherited 16px. */}
+                    <div className="flex flex-col gap-4 text-xl">
                       {section.description.map(
                         (text: string, index: number) => (
                           <p key={index}>{text}</p>
@@ -90,73 +111,69 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                     </div>
                     <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
                       <div className="flex items-end xl:items-center flex-col gap-6 md:w-1/2">
-                        <div className="filter drop-shadow-[0px_10px_15px_rgba(68,141,200,0.35)]">
-                          <CircleAvatar
-                            src={section.person.avatar}
-                            author={section.person}
-                            className="w-64 h-64"
-                          />
-                        </div>
+                        <CircleAvatar
+                          src={section.person.avatar}
+                          author={section.person}
+                          className="w-64 h-64"
+                          priority={index === 0}
+                        />
                       </div>
                       {section.contact ? (
                         <div className="flex flex-col sm:flex-row md:flex-col items-center justify-center md:items-start gap-3 sm:gap-12 w-full md:w-1/2">
+                          {/* Figma 1:3936 / 1:3929: the address lines are
+                              Regular 22px next to 58px icon discs (1:3958 /
+                              1:3959); they were 16px next to 48px discs. */}
                           {section.contact.email ? (
-                            <div className="flex flex-row gap-6 items-center">
-                              <HexagonDouble
-                                gradient={true}
-                                className="p-1"
-                                subClassName="bg-secondary-400"
-                              >
-                                <Mail className="w-12 p-2 text-white" />
-                              </HexagonDouble>
-                              <div className="flex flex-col">
-                                <a
-                                  href={`mailto:${section.contact.email}`}
-                                  rel="noopener"
-                                  className="flex flex-row gap-1 items-center text-secondary-200 hover:text-white transition duration-300 ease-in-out"
-                                >
-                                  <span>Email</span>
-                                  <ExternalLink className="w-4" />
-                                </a>
-                                <span className="text-sm text-white">
-                                  {section.contact.email}
-                                </span>
-                              </div>
-                            </div>
+                            <a
+                              href={`mailto:${section.contact.email}`}
+                              rel="noopener"
+                              className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
+                            >
+                              <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">
+                                <MailSolid className="w-7 h-7" />
+                              </span>
+                              <span className="whitespace-nowrap">
+                                {section.contact.email}
+                              </span>
+                            </a>
                           ) : null}
                           {section.contact.phone ? (
-                            <div className="flex flex-row gap-6 items-center">
-                              <HexagonDouble
-                                gradient={true}
-                                className="p-1"
-                                subClassName="bg-secondary-400"
-                              >
-                                <Phone className="w-12 p-2 text-white" />
-                              </HexagonDouble>
-                              <div className="flex flex-col">
-                                <a
-                                  href={`tel:${section.contact.phone.replace(' ', '')}`}
-                                  className="flex flex-row gap-1 items-center text-secondary-200 hover:text-white transition duration-300 ease-in-out"
-                                >
-                                  <span>Phone</span>
-                                  <ExternalLink className="w-4" />
-                                </a>
-                                <span className="text-sm text-white">
-                                  {section.contact.phone}
-                                </span>
-                              </div>
-                            </div>
+                            <a
+                              href={`tel:${section.contact.phone.replace(' ', '')}`}
+                              className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
+                            >
+                              <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">
+                                <Phone
+                                  className="w-6 h-6 fill-primary stroke-primary"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                              <span className="whitespace-nowrap">
+                                {section.contact.phone}
+                              </span>
+                            </a>
                           ) : null}
                         </div>
                       ) : null}
                     </div>
-                    <div className="flex flex-col gap-2 w-full xl:w-[calc(50%-1rem)]">
+                    {/* Both contact frames pitch this block off the address
+                        lines above it, not off the stack's own rhythm: the
+                        phone line (1:3929, bottom 906) sits 69px above the
+                        name (1:3945, top 975), where the 32px stack gap alone
+                        measured 75px. The -6px is taken here rather than off
+                        `gap-8` so only the gap the frames pin actually moves -
+                        the three gaps above it are not design values. */}
+                    <div className="-mt-1.5 flex flex-col gap-[17px] w-full xl:w-[calc(50%-1rem)]">
+                      {/* Figma 1:3945 / 1:3946: Bold 24px in --primary over
+                          Regular 20px in --foreground, both centred, with 17px
+                          between them (1:3945 bottom 1000 -> 1:3946 top 1017);
+                          `gap-2` put 8px there. */}
                       <header className="flex flex-row justify-center">
-                        <h4 className="font-bold text-xl text-secondary-200 text-center">
+                        <h4 className="font-bold text-2xl text-primary text-center">
                           {section.person.name}
                         </h4>
                       </header>
-                      <p className="text-center text-white">
+                      <p className="text-center text-xl text-foreground">
                         {section.person.position}
                       </p>
                     </div>

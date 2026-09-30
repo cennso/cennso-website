@@ -1,7 +1,5 @@
 import Image from 'next/image'
 
-import { FeatureCard } from '../../common'
-
 import type { FunctionComponent, PropsWithChildren } from 'react'
 
 interface QuoteProps extends PropsWithChildren {
@@ -25,10 +23,7 @@ export const Quote: FunctionComponent<QuoteProps> = ({
     (authorCompany ? ` at ${authorCompany}` : '')
 
   return (
-    <FeatureCard
-      className="flex flex-row items-center rounded-[32px] w-full"
-      dropShadow={false}
-    >
+    <div className="flex flex-row items-center w-full">
       <div className="flex flex-col gap-6 w-full">
         <figure className="flex flex-col">
           <div className="relative z-0">
@@ -40,9 +35,9 @@ export const Quote: FunctionComponent<QuoteProps> = ({
               // Matches the w-24 (96px) it actually renders at, rather than the
               // 150px intrinsic width.
               sizes="96px"
-              className="absolute -top-[8px] left-0 z-[-1] w-24 h-auto"
+              className="absolute top-[-8px] left-0 z-[-1] w-24 h-auto"
             />
-            <blockquote className="relative z-10 font-sans font-[300] leading-[1.5] italic text-[28px] text-white border-none">
+            <blockquote className="relative z-10 font-sans font-light leading-normal italic text-[28px] text-foreground border-none">
               {children}
             </blockquote>
           </div>
@@ -58,7 +53,7 @@ export const Quote: FunctionComponent<QuoteProps> = ({
                 sizes="92px"
               />
             ) : null}
-            <cite className="not-italic text-white text-[16px]">
+            <cite className="not-italic text-foreground text-[16px]">
               <span className="block font-bold">
                 {authorSocialLink ? (
                   <a
@@ -83,6 +78,6 @@ export const Quote: FunctionComponent<QuoteProps> = ({
           </figcaption>
         </figure>
       </div>
-    </FeatureCard>
+    </div>
   )
 }

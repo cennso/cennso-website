@@ -3,9 +3,57 @@
 ## Stack this repository is on (judge against this, not against defaults)
 
 Next.js 15.5.25, Pages Router (not App Router), React 19.3.0, TypeScript
-strict mode, Tailwind 3 with `@cennso/theme/tailwind-preset`
-(`tailwind.config.js:2,38`), `@cennso/ui@0.2.1` + `@cennso/theme@0.2.1`
-(`package.json`), `lucide-react` as the only icon set.
+strict mode, **Tailwind 4** (`tailwindcss@^4.3.3`) with
+`@cennso/theme/tailwind-preset` still loaded, now through
+`@config '../tailwind.config.js'` in `styles/tailwind.css:3`
+(`tailwind.config.js:2,37`), `@cennso/ui@1.0.0` + `@cennso/theme@1.0.0`
+(`package.json:51-52`, bumped from `0.2.1` over phase 4's design-4-theme
+branch — `@cennso/ui@1.0.0` is what *requires* Tailwind 4),
+`lucide-react` as the only icon set. Tailwind 3-era advice is therefore
+obsolete on this branch: `bg-linear-to-r/srgb` (not `bg-gradient-to-r`),
+`shrink-0` (not `flex-shrink-0`), `@import 'tailwindcss'` (not the three
+`@tailwind` directives) and `bg-size-[...]` are correct v4 syntax, not
+typos, and a utility that looks redundant next to a v3 default may be
+load-bearing precisely because v4 dropped that default (see the Preflight
+`cursor: pointer` restore at `styles/tailwind.css:22-27`).
+
+The site has a light/dark theme
+(`ThemeProvider` in `_app.tsx`, `default dark` — see `a11y-gate.md`); judge
+colour usage against theme tokens (`hsl(var(--foreground))`, `bg-card`,
+`border-border`, etc.), not against a single fixed palette.
+
+## Colour comes from tokens, not literals
+
+A hardcoded hex (`#185f99`, `bg-[#36AADD]`, `text-[#185F99]`, and similar
+arbitrary-value classes) in shell/page/component markup is a defect on this
+branch, not a style nit: with two themes, a literal colour is either wrong
+in one palette or coincidentally right in both, and there's no way to tell
+which from source. `grep -rnE "#[0-9a-fA-F]{3,6}" components/Layout.tsx
+components/Navigation.tsx components/Footer.tsx` must return nothing — this
+is one of phase 4's own acceptance checks. The fix is always a token
+(`text-primary`, `bg-secondary`, `hsl(var(--foreground))`, …), never a new
+arbitrary-value hex, even one that looks close to a token's current colour.
+
+**`--footer` is the one deliberate, disclosed exception.** `styles/tailwind.css`
+pins `--footer` to a fixed HSL triplet in a bare `:root` selector (no
+`[data-theme]` qualifier), overriding `@cennso/theme`'s own light/dark
+`--footer` values. This is intentional — the footer band is drawn as one
+fixed dark surface in both palettes in the Design 4.0 frames, not a surface
+that should flip with the theme — and it's still token-driven (`bg-footer`
+keeps working as an ordinary Tailwind token consumer); it just doesn't vary.
+Do not flag this as "the token isn't actually themed" — that's the point.
+
+**Known, disclosed, deferred hex holders — do not re-flag these as new.**
+`components/common/CircleAvatar.tsx` (`from-[#1D75BC] to-[#04D3D6]`
+gradient) and `components/common/Button.tsx` (the four gradient variants at
+`Button.tsx:27,32,37,42`) still carry hardcoded hex values. Both predate and
+are untouched by phase 4's page conversions so far and are knowingly
+deferred, not missed — only flag one of them if a diff actually touches that
+file's colour classes without removing the hex, or if `unverifiable` is more
+honest than silence because the diff is adjacent enough to raise the
+question. `components/MenuToogle.tsx` was on this list and is off it: its
+three bar spans now use `bg-foreground`, so the file holds no literal colour
+at all — treat a new hex there as an ordinary defect, not a deferred one.
 
 ## Deliberately removed — must not come back
 
@@ -59,7 +107,33 @@ finds fine inside a template literal. `@cennso/ui` has no hexagon-frame
 primitive; this is not a gap to report, and these files are not candidates
 for replacement by a library component.
 
-## Two lessons from converting the first page (`success-stories`)
+## A locally-composed component is not automatically a finding
+
+`registry.json` alone can only tell you the library has no matching
+component; it can't tell you whether the author knew that and composed
+deliberately, or just didn't look. Before raising a finding against a new
+local component (e.g. `components/Home/StatCard.tsx`,
+`components/Home/LogoBand.tsx`), check `.claude/upstream-gaps.md` in the
+repository root for a matching entry. If the diff itself adds one — both of
+the two named above are logged there, dated the same day they were added —
+treat the composition as accepted and documented, not a hand-rolled/
+unexplained control. Reserve a finding for a locally-composed component that
+duplicates registry-owned styling concerns (see the `SuccessStoryItem`
+lesson below) or that has no corresponding log entry at all.
+
+## Three lessons from converting the first three pages (`success-stories`, `contact`, `home`)
+
+**0. Dropping a registry component the file used to import is a finding on
+its own, even mid-redesign.** `components/SuccessStories/SuccessStoryItem.tsx`
+replaced `@cennso/ui`'s `Card` (`size="md"`, `Card.Header`/`Card.Content`)
+with a hand-rolled `<div className="... rounded-[32px] border border-border
+bg-card md:flex-row ...">` — carrying exactly the border/radius/surface
+styling `Card` owns — with no comment explaining why. A new split
+image/content layout may genuinely not fit `Card`'s slot model, but that has
+to be said, not assumed from the fact that the visual design changed. Ask
+whether `Card`'s current slots (`Card.Content`, `Card.Header`, `Card.Title
+render={<h3 />}`, `Card.Description`) could express the new layout before
+accepting the hand-roll.
 
 **1. Check every render site of a shared element array when converting to a
 compound component.** `components/Navigation.tsx` originally built one array

@@ -1,14 +1,11 @@
-import { useState, useCallback, FormEvent } from 'react'
+import { useState, useCallback, FormEvent, useId } from 'react'
 import Link from 'next/link'
 
+import { Field, Input, Switch, Textarea } from '@cennso/ui'
+
 import { StatusModal } from '../common/StatusModal'
-import {
-  FormLabel,
-  FormInput,
-  FormTextarea,
-  FormSwitch,
-  Button,
-} from '../common'
+import { PhoneInput } from '../common/PhoneInput'
+import { Button } from '../common'
 
 import type { FunctionComponent, ChangeEvent } from 'react'
 import type { JobFormBody } from '../../pages/api/job-submission-form'
@@ -26,12 +23,24 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
     'none' | 'sending' | 'success' | 'error'
   >('none')
   const [privacyPolicy, setPrivacyPolicy] = useState(false)
+  // Checked by hand: a `required` Switch puts aria-required on role="switch",
+  // which ARIA does not allow.
+  const [consentInvalid, setConsentInvalid] = useState(false)
+  // Label ids for aria-labelledby; unique per instance.
+  const uid = useId()
+  // PhoneInput reports an E.164 string, not an event, so it is controlled.
+  const [phone, setPhone] = useState('')
   const [fileData, setFileData] = useState<File | undefined>(undefined)
   const [pdfCV, setPdfCV] = useState<Promise<string> | string>('')
 
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault()
+      if (!privacyPolicy) {
+        setConsentInvalid(true)
+        e.currentTarget.querySelector<HTMLElement>('[role="switch"]')?.focus()
+        return
+      }
       setAction('sending')
       const inputs = (e.target as any).elements as Record<
         string,
@@ -44,7 +53,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
         firstName: inputs['first-name'].value,
         lastName: inputs['last-name'].value,
         email: inputs['email'].value,
-        phone: inputs['phone'].value,
+        phone,
         message: inputs['message'].value,
         position,
         cvData,
@@ -72,7 +81,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
         inputs['first-name'].value = ''
         inputs['last-name'].value = ''
         inputs['email'].value = ''
-        inputs['phone'].value = ''
+        setPhone('')
         inputs['message'].value = ''
         setPrivacyPolicy(false)
         setFileData(undefined)
@@ -82,7 +91,16 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
 
       setAction('error')
     },
-    [setPrivacyPolicy, setPdfCV, pdfCV, setAction, position, fileData?.name]
+    [
+      privacyPolicy,
+      setPrivacyPolicy,
+      setPdfCV,
+      pdfCV,
+      setAction,
+      position,
+      fileData?.name,
+      phone,
+    ]
   )
 
   const onLoadCV = useCallback(
@@ -112,7 +130,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
   )
 
   return (
-    <div className="isolate bg-gradient-to-b from-secondary-400 to-secondary-600 p-6 rounded-[32px]">
+    <div className="isolate bg-linear-to-b/srgb from-secondary-400 to-secondary-600 p-6 rounded-[32px]">
       <StatusModal
         action={action}
         setAction={setAction}
@@ -133,59 +151,82 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
               'An error occurred while sending your submission.')}
         </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-          <div>
-            <FormLabel htmlFor="first-name">First name:</FormLabel>
-            <FormInput
+          <Field>
+            <Field.Label id={`${uid}-first-name-label`} className="text-white">
+              First name:
+            </Field.Label>
+            <Input
+              aria-labelledby={`${uid}-first-name-label`}
               type="text"
               name="first-name"
-              id="first-name"
               placeholder="Enter your first name"
               autoComplete="given-name"
               required
             />
-          </div>
-          <div>
-            <FormLabel htmlFor="last-name">Last name:</FormLabel>
-            <FormInput
+          </Field>
+          <Field>
+            <Field.Label id={`${uid}-last-name-label`} className="text-white">
+              Last name:
+            </Field.Label>
+            <Input
+              aria-labelledby={`${uid}-last-name-label`}
               type="text"
               name="last-name"
-              id="last-name"
               placeholder="Enter your last name"
               autoComplete="family-name"
               required
             />
-          </div>
-          <div className="sm:col-span-2">
-            <FormLabel htmlFor="email">E-mail:</FormLabel>
-            <FormInput
+          </Field>
+          <Field className="sm:col-span-2">
+            <Field.Label id={`${uid}-email-label`} className="text-white">
+              E-mail:
+            </Field.Label>
+            <Input
+              aria-labelledby={`${uid}-email-label`}
               type="email"
               name="email"
-              id="email"
               placeholder="Enter the email to which the reply will be sent"
               autoComplete="email"
               required
             />
-          </div>
-          <div className="sm:col-span-2">
-            <FormLabel htmlFor="phone">Phone number (optional):</FormLabel>
-            <FormInput
-              type="tel"
+          </Field>
+          {/* A plain <label>, not a Field: PhoneInput is two controls and a
+              Field would hand both the same id. */}
+          <div className="sm:col-span-2 flex flex-col gap-2">
+            <label
+              htmlFor={`${uid}-phone`}
+              className="w-fit text-sm font-medium leading-snug text-white"
+            >
+              Phone number (optional):
+            </label>
+            <PhoneInput
+              id={`${uid}-phone`}
               name="phone"
-              id="phone"
+              value={phone}
+              onChange={setPhone}
               placeholder="Enter the phone number to which we will call you back"
               autoComplete="tel"
+              countrySearchPlaceholder={
+                content?.form?.phone?.countrySearchPlaceholder ||
+                'Search country'
+              }
+              countryEmptyContent={
+                content?.form?.phone?.countryEmptyContent || 'No country found.'
+              }
             />
           </div>
-          <div className="sm:col-span-2">
-            <FormLabel htmlFor="message">Message</FormLabel>
-            <FormTextarea
+          <Field className="sm:col-span-2">
+            <Field.Label id={`${uid}-message-label`} className="text-white">
+              Message
+            </Field.Label>
+            <Textarea
+              aria-labelledby={`${uid}-message-label`}
               name="message"
-              id="message"
               rows={4}
               placeholder="Briefly about yourself..."
               required
             />
-          </div>
+          </Field>
           <div className="sm:col-span-2 flex items-center justify-center w-full">
             <label
               htmlFor="pdf-cv"
@@ -236,33 +277,37 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
               />
             </label>
           </div>
-          <div className="flex gap-x-4 sm:col-span-2">
-            <div className="flex h-6 items-center">
-              <FormSwitch
-                onChange={() => setPrivacyPolicy((old) => !old)}
-                checked={privacyPolicy}
-                name="privacy-policy"
-                id="privacy-policy"
-                required
-              >
-                <span className="sr-only">Agree to policies</span>
-              </FormSwitch>
-            </div>
-            <label
-              className="text-sm leading-6 text-gray-600"
-              id="privacy-policy"
-            >
-              By selecting this, you agree to our{' '}
-              <Link
-                href="/privacy-policy"
-                target="_blank"
-                className="font-semibold text-secondary-200 underline hover:decoration-2"
-              >
-                privacy policy
-              </Link>
-              .
-            </label>
-          </div>
+          <Field
+            orientation="horizontal"
+            className="sm:col-span-2 flex-wrap"
+            invalid={consentInvalid}
+          >
+            <Switch
+              name="privacy-policy"
+              checked={privacyPolicy}
+              onCheckedChange={(next) => {
+                setPrivacyPolicy(next)
+                setConsentInvalid(false)
+              }}
+            />
+            <Field.Label className="text-sm leading-6 font-normal text-gray-600">
+              <span>
+                By selecting this, you agree to our{' '}
+                <Link
+                  href="/privacy-policy"
+                  target="_blank"
+                  className="font-semibold text-secondary-200 underline hover:decoration-2"
+                >
+                  privacy policy
+                </Link>
+                .
+              </span>
+            </Field.Label>
+            <Field.Error match={consentInvalid} className="w-full">
+              {content?.form?.validation?.privacyPolicy ||
+                'Please accept the privacy policy to send the form.'}
+            </Field.Error>
+          </Field>
           <div className="sm:col-span-2 flex justify-end">
             <Button variant="action" useArrow={false} className="text-sm">
               Send submission

@@ -1,6 +1,123 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
+
+/* Tailwind 4 dropped Preflight's `button, [role="button"] { cursor: pointer }`
+   so that buttons match the browser default. Every button on this site is a
+   real control, none of them restate the cursor, and neither does @cennso/ui's
+   Button - so without this the pointer disappears sitewide (nav triggers, the
+   theme toggle, the contact form's submit, the cookie banner). Restored here
+   verbatim from the v4 upgrade guide's own compatibility snippet, with the
+   `:not(:disabled)` guard v4 recommends so a disabled control still shows the
+   default arrow.
+
+   The v4 codemod's other compatibility shim - re-pinning the default border
+   colour to gray-200 - is deliberately NOT kept. It emitted
+   `border-color: var(--color-gray-200, currentcolor)`, and v4 only materialises
+   a `--color-*` variable that some utility actually references, so with nothing
+   using gray-200 the variable never existed and the rule resolved to
+   `currentcolor` anyway: dead code that read as if it did something. The one
+   element on this site that relied on the v3 default (the /blog industry
+   filter's Select button) now names `border-gray-200` explicitly instead. */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* The footer band is a different surface per palette, and the two Design 4.0
+   frames disagree about it on purpose:
+
+   - LIGHT (1:7579) is a Footer frame with its own fill, `bg-[#0d406a]` - a
+     dark navy plate deliberately set against the light page.
+   - DARK (1:575) is a Footer symbol with NO fill at all. Nothing is painted
+     behind its content, so what shows through is the dark frame's own plate
+     (#001a2a on 1:9) - i.e. in dark mode the footer is not a band, it is the
+     page continuing to the bottom edge. What separates it there is the 2px
+     rule the symbol draws across its top (1:582, #284467), reinstated on
+     <Footer> rather than here because it is a border, not a surface.
+
+   This was previously pinned to the light value for both palettes, citing
+   1:7579 - but 1:7579 is a light-frame node, so the dark footer was being
+   painted in the light frame's navy. Hence two blocks, not one.
+
+   Dark resolves to `var(--background)` rather than a copied triplet so the two
+   cannot drift: the frames make them the same colour because they are the same
+   surface, and `main` already paints that plate with `bg-background`.
+
+   Cascade: @cennso/theme's theme.css (imported in _app.tsx before this file)
+   declares --footer in a `:root, [data-theme="dark"]` block and again in a
+   `[data-theme="light"]` block. Both of those selectors and both of ours score
+   (0,1,0), so it is source order that decides, and this file loads last -
+   which is also why the light block below must come after the dark one here,
+   exactly as theme.css orders its own. bg-footer keeps working as an ordinary
+   token; it just resolves per theme again.
+
+   Light triplet computed exactly from 1:7579's #0d406a. Text stays white in
+   both frames (every string in 1:575 and 1:7579 is #ffffff), and white gains
+   contrast on the darker dark band, so no text colour moves with it. */
+:root,
+[data-theme='dark'] {
+  --footer: var(--background);
+}
+
+[data-theme='light'] {
+  --footer: 207.1 78.2% 23.3%;
+}
+
+/* The light palette's page plate. @cennso/theme sets light --background to pure
+   white; every Design 4.0 light frame paints a flat #E1EAF0 instead (sampled
+   from 1:4440, 1:1062 and 1:7084 - all three agree), and every surface those
+   frames draw ON that plate is white: the "Why Cennso?" cards (1:4442), the
+   stat panels (1:4447), the use-case rows (1:1069) and the contact form
+   (1:7433). With the plate also white those white cards have nothing to sit
+   against - the previous build hid the problem behind a `bg-secondary` band
+   the frames do not draw, and removing that band (which they asked for) is
+   what exposes it.
+
+   This is its own --page token, painted by <main> (`bg-page`), NOT an override
+   of --background. @cennso/ui paints its popups, menus and fields with
+   `bg-background`, so overriding that token turned every one of them #E1EAF0
+   too, where the design system draws them white. Dark has no separate plate,
+   so there --page is just --background.
+
+   Contrast re-checked at this value, not assumed: --foreground (#185f99) on
+   #E1EAF0 is 5.54:1, still clear of the 4.5:1 floor WCAG 2.1 AA sets for body
+   text (it was 6.75:1 on white). */
+:root,
+[data-theme='dark'] {
+  --page: var(--background);
+}
+
+[data-theme='light'] {
+  --page: 204 33.3% 91.2%;
+}
+
+/* Light text is the primary blue in every Design 4.0 light frame. @cennso/theme
+   0.2.x moved light --foreground and --card-foreground to a slate grey, so both
+   are pointed back at --primary here (1.0.0 shipped them as that same value).
+   Dark is untouched: its --foreground stays white. */
+[data-theme='light'] {
+  --foreground: var(--primary);
+  --card-foreground: var(--primary);
+  /* Every card on the light page is pure white, as the light frames draw
+     them; the theme's own light --card is an off-white that barely lifts off
+     the #E1EAF0 page plate. */
+  --card: 0 0% 100%;
+}
+
+/* Light placeholders: a lighter step of the primary blue, so a hint reads as
+   blue like the rest of the light page but is plainly not entered text (which
+   is --foreground, i.e. primary itself). 85% alpha is the lightest step that
+   keeps the 4.5:1 WCAG AA text floor on the white form panel (#3a76a7,
+   4.85:1). Spelled hsl(var(--x) / a), not the /85 opacity modifier, which
+   Tailwind 4 compiles to color-mix(in oklab) - a value Lighthouse's axe-core
+   cannot parse. Beats the design system's `placeholder:text-muted-foreground`
+   on specificity; dark keeps that default. */
+[data-theme='light'] :is(input, textarea)::placeholder {
+  color: hsl(var(--primary) / 0.85);
+}
 
 ::-moz-selection {
   color: white;
@@ -14,7 +131,16 @@
 
 html,
 body {
-  color: #003b6b;
+  /* Was a hardcoded #003b6b (a light-mode navy). Every piece of text that
+     doesn't set its own colour inherits from here, and this stylesheet is
+     imported after @cennso/theme/theme.css so it wins the cascade - in dark
+     mode that hardcoded navy was being inherited verbatim, producing
+     near-invisible text against dark surfaces (e.g. the success-stories
+     industry filter's placeholder). @cennso/theme's own stylesheet defines
+     --foreground but never applies it to html/body, so this has to be the
+     one place that does. Token-driven: resolves to the same family of slate
+     in light mode and white in dark. */
+  color: hsl(var(--foreground));
   font-family:
     inherit,
     'Poppins',
@@ -91,300 +217,4 @@ a {
 
 .feature-card-shiny:hover::after {
   opacity: 0.4;
-}
-
-/* Landing page */
-.landing-page-feature-top-gradient {
-  z-index: 0;
-}
-
-.landing-page-feature-top-gradient:after {
-  position: absolute;
-  content: '';
-  top: -15%;
-  right: -24%;
-  background: radial-gradient(ellipse at top, #ffffff, transparent);
-  background-color: #0b3956;
-  background-blend-mode: overlay;
-  border-radius: 50%;
-  font-size: 250px;
-  height: 28%;
-  width: 95%;
-  filter: blur(20px);
-}
-
-.landing-page-feature-corner-hex:before {
-  position: absolute;
-  content: '';
-  bottom: 0px;
-  right: -178px;
-  width: 330px;
-  height: 50%;
-  background-color: #0b3956;
-  background-image: url(/assets/landing-page/corner.svg);
-  background-blend-mode: overlay;
-  background-repeat: no-repeat;
-  background-size: 90%;
-  opacity: 0.35;
-  z-index: -1;
-}
-
-.landing-page-feature-sessions:before {
-  position: absolute;
-  bottom: -23%;
-  content: '24.943.765.128';
-  font-size: 155px;
-  font-weight: bold;
-  color: #0b3956;
-  text-shadow: 0 0 38px #00466f;
-  z-index: -1;
-}
-
-.trusted-partners:before {
-  position: absolute;
-  content: '';
-  top: 135%;
-  left: 28%;
-  right: 0;
-  width: 100%;
-  height: 100px;
-  background: url(/assets/common/quotes.svg) no-repeat;
-}
-
-/* Landing page partners */
-@media (max-width: 959px) {
-  .partners-orbits {
-    display: none;
-  }
-}
-.partners-orbits-container {
-  position: relative;
-  margin: 0 auto;
-  width: 100%;
-  height: 100%;
-}
-
-.partners-orbit {
-  position: absolute;
-  border-radius: 100%;
-  border: solid 3px #2d86d6;
-  transition: 0.2s;
-}
-
-#partners-orbits-first {
-  --n: 6; /* number of item */
-  --d: 70s; /* duration */
-  width: 600px;
-  height: 600px;
-  top: 165px;
-  left: calc(50% - 300px);
-  position: relative;
-  display: grid;
-  grid-template-columns: 35px;
-  grid-template-rows: 35px;
-  place-content: center;
-}
-
-#partners-orbits-second {
-  --no: 8; /* number of item */
-  --de: 80s; /* duration */
-  width: 900px;
-  height: 900px;
-  top: 25px;
-  left: calc(50% - 450px);
-  display: grid;
-  grid-template-columns: 35px;
-  grid-template-rows: 35px;
-  place-content: center;
-}
-
-#partners-orbits-third {
-  --ni: 9; /* number of item */
-  --ds: 80s; /* duration */
-  width: 1200px;
-  height: 1200px;
-  top: -100px;
-  left: calc(50% - 600px);
-  display: grid;
-  grid-template-columns: 35px;
-  grid-template-rows: 35px;
-  place-content: center;
-}
-
-.partners-orbit-item-1,
-.partners-orbit-item-2,
-.partners-orbit-item-3 {
-  grid-area: 1/1;
-  line-height: 30px;
-  text-align: center;
-  border-radius: 50%;
-}
-
-.partners-orbit-item-1 {
-  animation: partners-orbits-spin var(--d) linear infinite;
-  transform: rotate(0) translate(300px) rotate(0);
-}
-
-.partners-orbit-item-2 {
-  animation: partners-orbits-spin2 var(--de) linear infinite;
-  transform: rotate(-0) translate(450px) rotate(-0);
-}
-
-.partners-orbit-item-3 {
-  animation: partners-orbits-spin3 var(--ds) linear infinite;
-  transform: rotate(0) translate(600px) rotate(0);
-}
-@keyframes partners-orbits-spin {
-  100% {
-    transform: rotate(1turn) translate(300px) rotate(-1turn);
-  }
-}
-
-.partners-orbit-item-1:nth-child(1) {
-  animation-delay: calc(-0 * var(--d) / var(--n));
-}
-.partners-orbit-item-1:nth-child(2) {
-  animation-delay: calc(-1 * var(--d) / var(--n));
-}
-.partners-orbit-item-1:nth-child(3) {
-  animation-delay: calc(-2 * var(--d) / var(--n));
-}
-.partners-orbit-item-1:nth-child(4) {
-  animation-delay: calc(-3 * var(--d) / var(--n));
-}
-.partners-orbit-item-1:nth-child(5) {
-  animation-delay: calc(-4 * var(--d) / var(--n));
-}
-.partners-orbit-item-1:nth-child(6) {
-  animation-delay: calc(-5 * var(--d) / var(--n));
-}
-
-@keyframes partners-orbits-spin2 {
-  100% {
-    transform: rotate(-1turn) translate(450px) rotate(1turn);
-  }
-}
-
-.partners-orbit-item-2:nth-child(1) {
-  animation-delay: calc(-0 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(2) {
-  animation-delay: calc(-1 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(3) {
-  animation-delay: calc(-2 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(4) {
-  animation-delay: calc(-3 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(5) {
-  animation-delay: calc(-4 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(6) {
-  animation-delay: calc(-5 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(7) {
-  animation-delay: calc(-6 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(8) {
-  animation-delay: calc(-7 * var(--de) / var(--no));
-}
-.partners-orbit-item-2:nth-child(9) {
-  animation-delay: calc(-8 * var(--de) / var(--no));
-}
-
-@keyframes partners-orbits-spin3 {
-  100% {
-    transform: rotate(1turn) translate(600px) rotate(-1turn);
-  }
-}
-
-.partners-orbit-item-3:nth-child(1) {
-  animation-delay: calc(-0 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(2) {
-  animation-delay: calc(-1 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(3) {
-  animation-delay: calc(-2 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(4) {
-  animation-delay: calc(-3 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(5) {
-  animation-delay: calc(-4 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(6) {
-  animation-delay: calc(-5 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(7) {
-  animation-delay: calc(-6 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(8) {
-  animation-delay: calc(-7 * var(--ds) / var(--ni));
-}
-.partners-orbit-item-3:nth-child(9) {
-  animation-delay: calc(-8 * var(--ds) / var(--ni));
-}
-
-.partners-logos {
-  overflow: hidden;
-  white-space: nowrap;
-  position: relative;
-}
-
-.partners-logos:before,
-.partners-logos:after {
-  position: absolute;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  content: '';
-  z-index: 2;
-}
-
-.partners-logos:hover .partners-logos-slide {
-  animation-play-state: paused;
-}
-
-.partners-logos-slide {
-  display: inline-block;
-  animation: 300s partners-slide infinite linear;
-}
-
-.partners-logos-slide img {
-  height: 50px;
-  margin: 0 40px;
-}
-
-@keyframes partners-slide {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-100%);
-  }
-}
-
-/* Respect user's motion preferences - disable animations for users with vestibular disorders */
-@media (prefers-reduced-motion: reduce) {
-  .partners-orbit-item-1,
-  .partners-orbit-item-2,
-  .partners-orbit-item-3,
-  .partners-logos-slide {
-    animation: none;
-  }
-
-  /* Keep static positioning for orbit items */
-  .partners-orbit-item-1 {
-    transform: rotate(0) translate(300px) rotate(0);
-  }
-
-  .partners-orbit-item-2 {
-    transform: rotate(0) translate(450px) rotate(0);
-  }
-
-  .partners-orbit-item-3 {
-    transform: rotate(0) translate(600px) rotate(0);
-  }
 }

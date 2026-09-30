@@ -7,6 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ExternalLink, Hash } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote'
+import { Prose } from '@cennso/ui'
 
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus as SyntaxHighlighterTheme } from 'react-syntax-highlighter/dist/cjs/styles/prism'
@@ -46,28 +47,28 @@ export function serializeHeading(
   let className: string
   switch (level) {
     case 1: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     case 2: {
-      className = 'text-primary-600 font-bold text-[2em]'
+      className = 'text-primary font-bold text-[2em]'
       break
     }
     case 3: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     case 4: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     case 5: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     // 6 level
     default: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
     }
   }
 
@@ -123,14 +124,14 @@ const Heading: FunctionComponent<
     <Component
       {...rest}
       id={id}
-      className={`${className} group flex flex-row items-center whitespace-pre-wrap -ml-4 pl-4 text-secondary-200`}
+      className={`${className} group flex flex-row items-center whitespace-pre-wrap -ml-4 pl-4`}
     >
       <Link
         href={`#${id}`}
         className={`mask mask-hexagon-2 flex flex-row items-center justify-center font-mono absolute -ml-8 flex items-center ${
           isActive
-            ? 'opacity-100 text-gray-100 bg-gradient-to-r from-primary-600 to-[#04D3D6]'
-            : 'text-gray-100 opacity-0 bg-gradient-to-r from-primary-600 to-[#04D3D6]'
+            ? 'opacity-100 text-gray-100 bg-linear-to-r/srgb from-primary-600 to-[#04D3D6]'
+            : 'text-gray-100 opacity-0 bg-linear-to-r/srgb from-primary-600 to-[#04D3D6]'
         } hover:text-gray-100 border-0 group-hover:opacity-100 no-underline text-lg w-6 h-6 rounded-md shadow transition duration-300 ease-in-out`}
         aria-label="Anchor"
       >
@@ -174,7 +175,7 @@ export const Components: MDXRemoteProps['components'] = {
           target="_blank"
           rel="noopener"
           {...rest}
-          className="text-secondary-200 hover:decoration-2 my-0"
+          className="text-primary hover:decoration-2 my-0"
         >
           {children}
           <ExternalLink className="inline-block ml-0.5 h-3 w-3" />
@@ -186,7 +187,7 @@ export const Components: MDXRemoteProps['components'] = {
       <Link
         {...(rest as any)}
         href={href as string}
-        className="text-secondary-200 hover:decoration-2"
+        className="text-primary hover:decoration-2"
       >
         {children}
       </Link>
@@ -210,7 +211,7 @@ export const Components: MDXRemoteProps['components'] = {
       return (
         <code
           {...rest}
-          className="before:content-none after:content-none text-secondary-200 bg-secondary-600 py-[0.2rem] px-1.5 rounded-full font-code font-normal break-words"
+          className="before:content-none after:content-none text-secondary-200 bg-secondary-600 py-[0.2rem] px-1.5 rounded-full font-code font-normal wrap-break-word"
         >
           {children}
         </code>
@@ -240,7 +241,7 @@ export const Components: MDXRemoteProps['components'] = {
           codeTagProps={{
             className: 'text-xs',
           }}
-          className={`!bg-secondary-600 !border-secondary-600 !mt-3 !font-code shadow scrollbar scrollbar-thumb-secondary-200 scrollbar-track-secondary-200/30 scrollbar-thin scrollbar-track-rounded-[32px] scrollbar-thumb-rounded-[32px] overflow-x-auto overflow-y-hidden`}
+          className={`bg-secondary-600! border-secondary-600! mt-3! font-code! shadow scrollbar scrollbar-thumb-secondary-200 scrollbar-track-secondary-200/30 scrollbar-thin scrollbar-track-rounded-[32px] scrollbar-thumb-rounded-[32px] overflow-x-auto overflow-y-hidden`}
           style={SyntaxHighlighterTheme}
         >
           {code}
@@ -296,20 +297,14 @@ export const Components: MDXRemoteProps['components'] = {
   },
   ol({ children, ...rest }) {
     return (
-      <ol
-        className={`marker:text-secondary-200 ${rest.className || ''}`}
-        {...rest}
-      >
+      <ol className={`marker:text-primary ${rest.className || ''}`} {...rest}>
         {children}
       </ol>
     )
   },
   ul({ children, ...rest }) {
     return (
-      <ul
-        {...rest}
-        className={`marker:text-secondary-200 ${rest.className || ''}`}
-      >
+      <ul {...rest} className={`marker:text-primary ${rest.className || ''}`}>
         {children}
       </ul>
     )
@@ -349,7 +344,7 @@ export const Components: MDXRemoteProps['components'] = {
   },
   td({ children, style, ...rest }) {
     return (
-      <td {...rest} className={'text-white font-normal py-1.5 px-4'}>
+      <td {...rest} className={'text-foreground font-normal py-1.5 px-4'}>
         {children}
       </td>
     )
@@ -378,7 +373,7 @@ export const Components: MDXRemoteProps['components'] = {
     return (
       <strong
         {...rest}
-        className={`text-secondary-200 font-bold ${rest.className || ''}`}
+        className={`text-foreground font-bold ${rest.className || ''}`}
       >
         {children}
       </strong>
@@ -397,7 +392,19 @@ export const Components: MDXRemoteProps['components'] = {
   Stats: Stats as any,
   Stat: Stat as any,
   CennsoButton: CennsoButton as any,
-  Image: Image as any,
+  // Content images - a story's photos, maps and diagrams - get the same
+  // 24px corner as the cards around them, whatever the author passes. `sizes`
+  // defaults to the story card's body column (~830px wide on desktop) so an
+  // image the author gave no sizes to still picks a sensible srcset
+  // candidate; one written in the MDX wins.
+  Image: ({ className, alt, sizes, ...props }: any) => (
+    <Image
+      alt={alt ?? ''}
+      sizes={sizes ?? '(max-width: 768px) 100vw, 850px'}
+      {...props}
+      className={`rounded-2xl ${className ?? ''}`}
+    />
+  ),
 }
 
 interface MarkdownProps {
@@ -406,11 +413,17 @@ interface MarkdownProps {
 
 export const Markdown: FunctionComponent<MarkdownProps> = ({ mdxSource }) => {
   return (
-    <div
-      className="prose prose-quoteless max-w-full prose-p:text-white prose-span:text-white prose-li:text-white"
+    // `@cennso/ui`'s Prose, as docs-portal renders its markdown: body text and
+    // bold in --foreground, links in --primary, all from the theme tokens, so
+    // both themes read correctly (the old wrapper forced white text, which
+    // vanished on the light page). Two deliberate departures from Prose's own
+    // defaults: headings and list markers are --primary here rather than
+    // --foreground and --border.
+    <Prose
+      className="prose-quoteless [--tw-prose-headings:hsl(var(--primary))] [--tw-prose-bullets:hsl(var(--primary))] [--tw-prose-counters:hsl(var(--primary))]"
       id="article-content"
     >
       <MDXRemote {...mdxSource} components={Components} />
-    </div>
+    </Prose>
   )
 }

@@ -10,18 +10,6 @@ excerpt: Cennso Technologies GmbH built the Global Mobile Connectivity Platform 
 layout: new
 ---
 
-## Racing to keep pace with a borderless world
-
-<Image
-  src="/assets/success-stories/cennso-on-ibm-cloud/global-connectivity-map.webp"
-  title="Global mobile connectivity across IBM Cloud locations"
-  alt="World map showing mobile connectivity routes between IBM Cloud locations, with icons for automotive, IoT, industrial and telecommunications workloads"
-  width="2400"
-  height="1420"
-  sizes="(max-width: 1024px) 100vw, 1200px"
-  priority
-/>
-
 <ContentBlock title='Business Challenge'>
 As connected vehicles, IoT devices and next-generation mobile services expand globally, mobile network operators and technology providers face growing pressure to deliver secure, low-latency connectivity across borders while meeting increasingly complex regulatory requirements.
 
@@ -55,6 +43,15 @@ To support the growing demands of connected vehicles and IoT services, Cennso Te
 Built on [IBM Cloud®](https://www.ibm.com/cloud), GMCP enables mobile data to move efficiently across borders while helping organizations address regulatory and data sovereignty requirements, including GDPR compliance. The platform supports real-time connectivity for vehicles, devices and applications without relying on extensive physical infrastructure.
 
 To accelerate global deployment and simplify operations, Cennso Technologies adopted an Infrastructure Code approach using [IBM Cloud Schematics®](https://www.ibm.com/products/schematics). This standardized how environments are provisioned and managed, reducing operational complexity while allowing the platform to scale consistently across more than 50 IBM Cloud locations worldwide.
+
+<Image
+  src="/assets/success-stories/cennso-on-ibm-cloud/global-connectivity-map.webp"
+  title="Global mobile connectivity across IBM Cloud locations"
+  alt="World map showing mobile connectivity routes between IBM Cloud locations, with icons for automotive, IoT, industrial and telecommunications workloads"
+  width="2400"
+  height="1420"
+  sizes="(max-width: 768px) 100vw, 850px"
+/>
 
 Working together, Cennso Technologies and IBM have successfully validated the platform through an end-to-end Remote Packet Gateway Service demonstration using live GRX connectivity and eSIM services, proving that a carrier-grade mobile connectivity platform could operate reliably on IBM Cloud and support global expansion.
 </ContentBlock>

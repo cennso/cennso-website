@@ -3,7 +3,7 @@ import path from 'path'
 
 import { PageHeader } from '../components/PageHeader'
 import { Markdown } from '../components/Markdown/Markdown'
-import { Container } from '../components/common'
+import { Container, PENCIL_BANNER } from '../components/common'
 import { SEO } from '../components/SEO'
 
 import { parseMDX } from '../lib/mdx'
@@ -36,17 +36,10 @@ const ImprintPage: NextPage<ImprintPageProps> = ({ mdxSource }) => {
             link: '/imprint',
           },
         ]}
-        background={{
-          src: '/assets/backgrounds/bg-header-contact-3.webp',
-          title: 'Imprint page background',
-          alt: 'Imprint page background',
-          width: 180,
-          height: 150,
-          className: 'mr-64',
-        }}
+        background={PENCIL_BANNER}
       />
 
-      <Container className="mt-12 mb-24">
+      <Container className="mt-12 md:mt-0 mb-24">
         <div className="flex flex-row h-full w-full">
           <article className="flex-1 max-w-full w-full">
             <div className="flex flex-col gap-12">
