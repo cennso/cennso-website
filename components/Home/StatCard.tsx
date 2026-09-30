@@ -60,12 +60,10 @@ export const StatCard: FunctionComponent<StatCardProps> = ({
     // 44px keeps every title on one line and lands the paragraph measure at
     // 512px, just above the 485-510px the four frames actually use.
     //
-    // The card itself is now the frames' 600px: the panel row was widened to
-    // the frames' own 1237px (see PANEL_ROW_MEASURE) after the owner ruled
-    // that the frames win over one shared site-wide measure. The note that
-    // used to sit here - that the 65px inset needs a wider card than
-    // CONTENT_MEASURE gives - is settled: the card is wide enough now, and
-    // 65px symmetric still wraps the title, so the inset stays a fit.
+    // The card sits on the site-wide 1200px column (the owner ruled for one
+    // straight edge down the page over the frames' 1237px row), so it is a
+    // few pixels under the frames' 600px; 44px still keeps every title on one
+    // line there, and 65px symmetric would still wrap it.
     //
     // It steps 24 -> 44 with the card's own width: below `md` the card is
     // phone-width and a 44px inset either side leaves too little measure for
@@ -81,7 +79,7 @@ export const StatCard: FunctionComponent<StatCardProps> = ({
     // --border resolves to there, to within 2/255 per channel). The border
     // box is kept and only the colour cleared, so nothing shifts by a pixel.
     <Card
-      className={`rounded-3xl gap-0 pt-0 pb-9 md:min-h-[447px] border-transparent dark:border-border [--card-spacing:--spacing(6)] md:[--card-spacing:--spacing(11)] ${className}`}
+      className={`rounded-3xl gap-0 pt-0 pb-9 shadow-none md:min-h-[447px] border-transparent dark:border-border [--card-spacing:--spacing(6)] md:[--card-spacing:--spacing(11)] ${className}`}
     >
       <Card.Content
         className={`flex items-center justify-center ${FIGURE_BAND}`}
@@ -93,7 +91,7 @@ export const StatCard: FunctionComponent<StatCardProps> = ({
             for Poppins, giving the 48px box the frame measures. */}
         <Card.Title
           render={<h3 />}
-          className="text-[32px] font-bold leading-[1.5]"
+          className="text-[32px] font-bold leading-[1.5] text-center"
         >
           {title}
         </Card.Title>

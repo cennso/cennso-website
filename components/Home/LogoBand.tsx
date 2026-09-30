@@ -1,6 +1,6 @@
 import NextImage from 'next/image'
 
-import type { FunctionComponent } from 'react'
+import type { CSSProperties, FunctionComponent } from 'react'
 
 export interface LogoBandLogo {
   name: string
@@ -30,67 +30,67 @@ const LOGO_TONE =
   'opacity-[.37] dark:opacity-100 dark:filter-[brightness(0)_invert(68%)_sepia(49%)_saturate(398%)_hue-rotate(173deg)_brightness(78%)_contrast(83%)]'
 
 /**
- * Responsive row of customer logos that wraps rather than scrolls. Not in
- * the `@cennso/ui` registry as a dedicated logo-wall/marquee component -
- * composed locally, see `.claude/upstream-gaps.md`. A real `<ul>` of `<li>`
- * images (not one flattened band image) so each logo keeps its own
- * accessible name and can size independently.
+ * Optical sizing: one shared height makes a wide wordmark (Hochbahn, 6.5:1)
+ * look huge and a square mark (Telna) tiny, so the height shrinks as the
+ * aspect ratio grows - 56px for a square mark, ~40px for the widest.
+ */
+const OPTICAL_HEIGHT = 56
+const OPTICAL_FALLOFF = 0.18
+
+function logoHeight(logo: LogoBandLogo): number {
+  return Math.round(
+    OPTICAL_HEIGHT * Math.pow(logo.width / logo.height, -OPTICAL_FALLOFF)
+  )
+}
+
+/**
+ * Customer logos as two staggered rows. Not in the `@cennso/ui` registry as a
+ * dedicated logo-wall/marquee component - composed locally, see
+ * `.claude/upstream-gaps.md`. Real `<ul>`s of `<li>` images (not one flattened
+ * band image) so each logo keeps its own accessible name.
+ *
+ * From `md:` up each row spreads its marks edge to edge (`justify-between`),
+ * so the band spans the same measure as the card row it sits above. Because
+ * the two rows hold marks of different widths, their gaps differ and the
+ * second row reads offset from the first rather than as a rigid grid. Below
+ * `md:` the rows wrap and centre.
  */
 export const LogoBand: FunctionComponent<LogoBandProps> = ({
   logos,
   className = '',
-}) => (
-  // Figma 1:564 / 1:4990 lay the ten marks out as two rows of five across a
-  // 1170px band. A `flex-wrap` row packs by measured width instead, which put
-  // seven on the first row and three on the second - the same ten logos, the
-  // wrong shape. An explicit 5-column grid from `sm:` up reproduces the band;
-  // below that it steps down to 3 and then 2 columns, which the design has no
-  // artboard for (there are no mobile frames in the file at all).
-  //
-  // The band is its own measure, narrower than the page column: both frames
-  // draw it at x=95..1265, a 1170px row with a 95px gutter where the type
-  // column keeps 81. Centred inside the 1200px column (which on a 1360px
-  // viewport runs 80..1280), `max-w-[1170px]` lands it at exactly 95..1265.
-  <ul
-    className={`mx-auto grid w-full max-w-[1170px] grid-cols-2 place-items-center gap-x-10 gap-y-6 sm:grid-cols-3 md:grid-cols-5 ${className}`}
-  >
-    {logos.map((logo) => {
-      // `sizes` describes the rendered *width*, but this component caps the
-      // *height* and lets width follow each logo's own aspect ratio - so no
-      // single literal width is right for all of them. The widest mark
-      // (hochbahn, 801x123) wants ~260 CSS px at the 40px cap, more than twice
-      // the 120px that used to be declared, so next/image picked a srcset
-      // candidate far below the needed resolution and the browser upscaled it.
-      //
-      // The grid column is the other constraint, and the one that used to be
-      // missing: on the frames' 1170px band a 5-column row with a 40px gutter
-      // gives each cell 202px, which is narrower than hochbahn and travelping
-      // want.
-      // With a *fixed* height those two were squeezed sideways by the cell's
-      // max-width and rendered out of proportion (Lighthouse
-      // `image-aspect-ratio`). Capping BOTH axes instead - `max-h-*` with
-      // `h-auto`/`w-auto` - lets the browser fit the mark inside the cell with
-      // its ratio intact, and the same cap is what `sizes` declares, so the
-      // srcset candidate matches what is actually painted.
-      const aspectRatio = logo.width / logo.height
-      const fit = (capHeight: number, cellWidth: number) =>
-        Math.ceil(Math.min(capHeight * aspectRatio, cellWidth))
+}) => {
+  const half = Math.ceil(logos.length / 2)
+  const rows = [logos.slice(0, half), logos.slice(half)]
 
-      return (
-        <li key={logo.name} className="flex items-center justify-center">
-          <NextImage
-            src={logo.src}
-            alt={logo.name}
-            width={logo.width}
-            height={logo.height}
-            sizes={`(min-width: 768px) ${fit(40, 202)}px, (min-width: 640px) ${fit(
-              40,
-              165
-            )}px, ${fit(32, 130)}px`}
-            className={`h-auto max-h-8 w-auto max-w-full sm:max-h-10 ${LOGO_TONE}`}
-          />
-        </li>
-      )
-    })}
-  </ul>
-)
+  return (
+    <div className={`flex w-full flex-col gap-8 md:gap-10 ${className}`}>
+      {rows.map((row, index) => (
+        <ul
+          key={index}
+          className={`flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:flex-nowrap md:justify-between ${
+            index === 1 ? 'md:px-4' : 'md:px-10'
+          }`}
+        >
+          {row.map((logo) => {
+            const height = logoHeight(logo)
+            const width = Math.ceil((height * logo.width) / logo.height)
+
+            return (
+              <li key={logo.name} className="flex items-center justify-center">
+                <NextImage
+                  src={logo.src}
+                  alt={logo.name}
+                  width={logo.width}
+                  height={logo.height}
+                  sizes={`(min-width: 768px) ${width}px, ${Math.ceil(width * 0.75)}px`}
+                  style={{ '--logo-h': `${height}px` } as CSSProperties}
+                  className={`h-[calc(var(--logo-h)*0.75)] w-auto md:h-(--logo-h) ${LOGO_TONE}`}
+                />
+              </li>
+            )
+          })}
+        </ul>
+      ))}
+    </div>
+  )
+}

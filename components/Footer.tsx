@@ -11,11 +11,12 @@ import type { FooterData } from '../lib/footer'
  * 1:580 / 1:581, light 1:7583 / 1:7584 / 1:7585) is Poppins Regular 15px on a
  * 24px line box in white - one step under the 16px these links inherited from
  * the body. The 18px SemiBold column headings and the 14px copyright below are
- * already the frames' own and do not move with it. `py-3` stays: at 15/24 the
- * hit area is still 48px tall, clear of the 44px target-size floor.
+ * already the frames' own and do not move with it. No vertical padding: the
+ * frames stack the links 24px line on 24px line with a small step between,
+ * and a 24px-tall link still meets the 24px target-size floor WCAG 2.2 sets.
  */
 const LINK_CLASS =
-  'flex flex-row items-center text-[15px] leading-6 text-white hover:text-secondary-200 transition-colors duration-300 ease-in-out py-3'
+  'flex flex-row items-center text-[15px] leading-6 text-white underline-offset-4 hover:underline'
 
 interface FooterProps {
   footerData?: FooterData
@@ -40,16 +41,13 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
     footerData || defaultFooterData
 
   return (
-    // The 2px top rule is dark-only, and it is what makes the footer a footer
-    // there: the dark frame's Footer symbol (1:575) carries no fill, so the
-    // band is the page's own plate continuing to the bottom edge, and the only
-    // thing dividing the two is the rule the symbol draws across its own top
-    // (1:582, 1360x2, #284467). The light frame's footer (1:7579) has no such
-    // node - it does not need one, because its #0d406a plate already separates
-    // itself from the light page. Written as a literal for the same reason the
-    // "Why Cennso?" outlines are: no theme token carries it (dark --border is
-    // #0c446e, a different colour). Decorative, so no contrast floor applies.
-    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-normal dark:border-t-2 dark:border-t-[#284467]">
+    // The top rule is dark-only, and it is what makes the footer a footer
+    // there: the dark footer carries no fill, so the band is the page's own
+    // plate continuing to the bottom edge, and the only thing dividing the two
+    // is this rule. It is the same 1px `border-border/50` the header draws
+    // under itself (see Navigation), minus the header's glow. The light footer
+    // needs none: its #0d406a plate already separates itself from the page.
+    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-normal dark:border-t dark:border-border/50">
       {/* Same content measure as Container/Navigation, so the footer wordmark
           lines up with the header's and with every page heading - the frames
           put both logos on the page's own gutter (1:584 at x=81). */}
@@ -65,11 +63,11 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
         </div>
 
         <ul className="grid grid-cols-2 lg:grid-cols-3 xl:flex gap-16 gap-y-0 lg:gap-32 xl:gap-16 2xl:gap-32 mb-8 md:mb-0">
-          <li className="col-span-2 lg:col-auto flex flex-col gap-4 lg:mb-0 mb-8">
-            <h2 className="font-semibold text-lg text-white border-b pb-1 border-white">
+          <li className="col-span-2 lg:col-auto flex flex-col gap-3 lg:mb-0 mb-8">
+            <h2 className="font-semibold text-lg text-white">
               Company
             </h2>
-            <ul className="grid grid-rows-2 grid-flow-col gap-x-12 gap-y-1">
+            <ul className="grid grid-rows-2 grid-flow-col gap-x-12 gap-y-0.5">
               {footerLinks.map((link) => (
                 <li key={link.title}>
                   <Link
@@ -83,18 +81,19 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
               ))}
             </ul>
           </li>
-          <li className="flex flex-col gap-4 mb-2 md:mb-0">
-            <h2 className="font-semibold text-lg text-white border-b pb-1 border-white">
+          <li className="flex flex-col gap-3 mb-2 md:mb-0">
+            <h2 className="font-semibold text-lg text-white">
               Explore
             </h2>
-            <ul className="flex flex-col gap-1">
+            <ul className="flex flex-col gap-0.5">
               {exploreLinks.map((link) => (
                 <li key={link.title}>
                   <Link
                     title={link.title}
                     href={link.link}
                     className={LINK_CLASS + ' gap-2'}
-                    target={link.target}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <span>{link.title}</span>
                   </Link>
@@ -102,11 +101,11 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
               ))}
             </ul>
           </li>
-          <li className="flex flex-col gap-4 mb-2 md:mb-0">
-            <h2 className="font-semibold text-lg text-white border-b pb-1 border-white">
+          <li className="flex flex-col gap-3 mb-2 md:mb-0">
+            <h2 className="font-semibold text-lg text-white">
               AI / LLM
             </h2>
-            <ul className="flex flex-col gap-1">
+            <ul className="flex flex-col gap-0.5">
               {llmLinks.map((link) => (
                 <li key={link.title}>
                   <Link
@@ -114,6 +113,8 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
                     href={link.link}
                     aria-label={link.ariaLabel}
                     className={LINK_CLASS + ' gap-2'}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <span>{link.title}</span>
                   </Link>
@@ -125,7 +126,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             <h2 className="font-semibold text-lg text-white border-b pb-1 border-transparent">
               Social
             </h2>
-            <ul className="flex flex-col gap-1">
+            <ul className="flex flex-col gap-0.5">
               {socialLinks.map((link) => (
                 <li key={link.title}>
                   <Link

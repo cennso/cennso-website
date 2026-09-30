@@ -6,13 +6,13 @@ import NextImage from 'next/image'
 import Link from 'next/link'
 
 import { Button, Card, Typography } from '@cennso/ui'
-import { ChevronRight } from 'lucide-react'
 
 import {
-  CARD_ROW_MEASURE,
+  ButtonChevron,
+  GLOW_OUTLINES,
+  GLOW_TINTS,
   Container,
   CTA_HERO,
-  PANEL_ROW_MEASURE,
 } from '../components/common'
 import { LogoBand } from '../components/Home/LogoBand'
 import { StatCard } from '../components/Home/StatCard'
@@ -33,43 +33,6 @@ type LandingPageProps = {
 // The light frames (1:4442 / 1:4443 / 1:4441) leave all three plain white,
 // which is what Card's own bg-card already gives, so the tint is dark-only.
 // Written as whole static class names so Tailwind's scanner finds them.
-// Spelled hsl(var(--x)/0.4) rather than the /40 opacity modifier: Tailwind 4
-// compiles a `/40` opacity modifier to color-mix(in oklab, ...), which the browser
-// computes as oklab(...). Lighthouse's bundled axe-core cannot parse that and
-// nulls the whole accessibility category, failing the CI gate. This spelling
-// computes to plain rgba() and is the same colour.
-const whyCennsoTints = [
-  'dark:bg-[hsl(var(--glow-blue)/0.4)]',
-  'dark:bg-[hsl(var(--glow-cyan)/0.4)]',
-  'dark:bg-[hsl(var(--glow-teal)/0.4)]',
-] as const
-
-// Each tinted card is outlined in the bright end of its own glow family in the
-// dark frames - #3fabff on 1:11, #41d2ff on 1:12, #00ffe4 on 1:10 - not in the
-// theme's flat --border. There is no token for these: --glow-* is the fill
-// (35%/33% lightness), and the outlines sit far above it, so they are written
-// as literals here the same way the tints above name their token. Dark only:
-// the light frames (1:4442 / 1:4443 / 1:4441) draw the cards as plain white
-// with no outline at all. Decorative, so no non-text contrast floor applies.
-//
-// The alpha is NOT decoration: each rectangle carries `opacity-41` on the
-// ELEMENT in Figma, so the 41% dims the stroke exactly as much as it dims the
-// fill - the outline the frames actually draw is #3fabff at 41% over the page
-// plate, not #3fabff. Rendering it opaque is what made the three frames read
-// as bright. Carried here as the same 0.4 the tints above use, so fill and
-// stroke stay locked to one alpha the way a single element opacity does.
-//
-// Spelled as an 8-digit hex (66 = 102/255 = 0.4) rather than the `/40` opacity
-// modifier for the reason the tints give: Tailwind 4 compiles `/40` to
-// color-mix(in oklab, ...), which Lighthouse's bundled axe-core cannot parse,
-// and it nulls the whole accessibility category. A literal hex needs no
-// color-mix and is the same colour.
-const whyCennsoOutlines = [
-  'dark:border-[#3fabff66]',
-  'dark:border-[#41d2ff66]',
-  'dark:border-[#00ffe466]',
-] as const
-
 // 24px corner, 32px horizontal inset - Figma 1:11 (400x338, r24) with its body
 // at x+33 (1:94 and 1:95 are hand-placed at +43 and +38, so 32 is the round
 // value closest to what the frames repeat). Card ships an 8px corner and a
@@ -85,7 +48,7 @@ const whyCennsoOutlines = [
 // The light frames draw these cards as a plain white rounded rectangle
 // (1:4442 is `bg-white rounded-[24px]` with no stroke), so the border box is
 // kept for layout and its colour cleared; the dark frames' per-card outlines
-// are reinstated by whyCennsoOutlines below.
+// are reinstated by GLOW_OUTLINES.
 // `dark:bg-clip-padding` is what lets the translucent outline above land on
 // the frames' colour instead of a brighter one. CSS paints an element's
 // background under its border box by default, so a 40% stroke would composite
@@ -96,7 +59,7 @@ const whyCennsoOutlines = [
 // the border is transparent and the fill IS wanted underneath it, otherwise a
 // 1px ring of page plate would cut around every white card.
 const CARD_SHELL =
-  'rounded-3xl gap-[13px] pt-[19px] pb-[55px] border-transparent dark:border-border dark:bg-clip-padding [--card-spacing:--spacing(8)]'
+  'rounded-3xl gap-[13px] pt-[19px] pb-[19px] shadow-none border-transparent dark:border-border dark:bg-clip-padding [--card-spacing:--spacing(8)]'
 
 /**
  * The three stat-card illustrations, one file per theme.
@@ -158,6 +121,9 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
       {/* No `bg-secondary` band: both 4.0 main-page frames paint one flat
           plate edge to edge (#001a2a dark / #e1eaf0 light) and draw no
           separate hero surface on top of it. */}
+      {/* The page's own 1200px column, the one the header wordmark and every
+          other page heading sit on (Figma: headline and logo both at x=81).
+          Only the logo band and the cards below are drawn wider. */}
       <Container>
         <div className="flex w-full flex-col">
           {/* The frames put the copy in a 601px column (1:24 x=81 -> 1:25
@@ -167,7 +133,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               its own first line and broke "Build Network Solutions." across
               two, which the design sets on one. */}
           <div className="flex flex-col md:flex-row items-center gap-10 md:gap-6 pt-10 pb-16 md:pt-16 md:pb-24 w-full">
-            <div className="flex flex-col gap-6 w-full md:w-[52%] items-center md:items-start text-center md:text-left">
+            <div className="flex flex-col gap-6 w-full md:w-[56%] items-center md:items-start text-center md:text-left">
               {/* Figma 1:24 / 1:4451: Poppins Bold 48/64, no tracking. The
                   library's `h1` variant is the theme's 36/40 step with
                   -0.025em tracking, which is the app-UI heading, not this
@@ -175,12 +141,15 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               <Typography
                 variant="h1"
                 render={<h1 />}
-                className="whitespace-pre-line text-primary md:text-5xl md:leading-[64px] md:tracking-normal"
+                className="whitespace-pre-line text-primary md:text-5xl md:leading-[64px] md:tracking-normal lg:whitespace-pre lg:text-[54px] lg:leading-[1.25]"
               >
                 {hero.headline}
               </Typography>
               {/* Figma 1:25 / 1:4452: Regular 26px. `lead` is 18/28. */}
-              <Typography variant="lead" className="md:text-[26px]">
+              <Typography
+                variant="lead"
+                className="md:text-[26px] md:leading-[1.4]"
+              >
                 {hero.description}
               </Typography>
               <Button
@@ -189,25 +158,12 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                 render={(props) => <Link {...props} href="/contact" />}
               >
                 {hero.ctaText}
-                {/* Figma 1:68 trails the label with an 11x15 chevron vector,
-                    17px after it (the gap is on the pill, see CTA_HERO).
-                    Decorative: the label already names the action, so it
-                    carries no accessible name of its own. */}
-                {/* The chevron occupies Figma 1:68's 11x15 slot so the pill
-                    still measures 195px, but draws at 26px: lucide's glyph
-                    fills only part of its box, so matching the box made the
-                    chevron half the size the frame shows. The overflow is
-                    symmetric and lands in the 17px gap and 13px inset. */}
-                <span className="inline-flex h-[15px] w-[11px] shrink-0 items-center justify-center">
-                  <ChevronRight
-                    className="h-[26px] w-[26px] max-w-none overflow-visible"
-                    strokeWidth={2.5}
-                    aria-hidden="true"
-                  />
-                </span>
+                {/* Figma 1:68 trails the label with a chevron 17px after it
+                    (the gap is on the pill, see CTA_HERO). */}
+                <ButtonChevron />
               </Button>
             </div>
-            <div className="w-full md:w-[48%] flex justify-center">
+            <div className="w-full md:w-[44%] flex justify-center">
               {/* Two exports, not one. The dark and light frames draw the slab
                   in different colours (dark navy vs. bright blue) over
                   different plates, and the single artwork shipped before was
@@ -221,76 +177,77 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                 alt={hero.illustrationAlt}
                 width={1000}
                 height={715}
-                sizes="(max-width: 768px) 80vw, 40vw"
+                sizes="(max-width: 768px) 80vw, 50vw"
                 priority
-                className="hidden w-full max-w-md md:max-w-none pointer-events-none dark:block"
+                className="hidden w-full max-w-md md:max-w-none md:scale-[1.2] pointer-events-none dark:block"
               />
               <NextImage
                 src="/assets/landing-page/hero-illustration-light.webp"
                 alt={hero.illustrationAlt}
                 width={1000}
                 height={715}
-                sizes="(max-width: 768px) 80vw, 40vw"
+                sizes="(max-width: 768px) 80vw, 50vw"
                 priority
-                className="w-full max-w-md md:max-w-none pointer-events-none dark:hidden"
+                className="w-full max-w-md md:max-w-none md:scale-[1.2] pointer-events-none dark:hidden"
               />
             </div>
-          </div>
-
-          <div className="pb-16 md:pb-20 w-full">
-            <LogoBand logos={customerLogos} />
           </div>
         </div>
       </Container>
 
-      {/* Wider than the type column: the frames draw this row at 1246px, not
-          on the 1200px CONTENT_MEASURE - see CARD_ROW_MEASURE. The heading
-          above the cards is centred in every frame, so it rides the wider row
-          without moving. */}
-      <Container measure={CARD_ROW_MEASURE}>
-        {/* 80px between the heading row and the cards: the glyph (Figma 1:13)
+      {/* The same 1200px column as the header wordmark, the hero and every
+          page heading, so the logo band and the cards line up with them. The
+          frames draw this row at 1246px; the owner ruled for one straight
+          edge down the page instead. */}
+      <Container>
+        <div className="flex flex-col pb-16 md:pb-24 w-full">
+          <LogoBand logos={customerLogos} />
+          {/* 80px between the heading row and the cards: the glyph (Figma 1:13)
             ends at y=1019.65 and the first card (1:11) starts at y=1100. */}
-        <div className="flex flex-col gap-20 py-16 md:py-24 w-full">
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 text-center sm:text-left">
-              <NextImage
-                src="/assets/landing-page/why-cennso-glyph.webp"
-                alt=""
-                aria-hidden="true"
-                width={640}
-                height={643}
-                sizes="160px"
-                className="h-40 w-auto"
-              />
-              {/* Figma 1:16 / 1:4529: Poppins Bold 64px on a 42px line box
+          <div className="flex flex-col gap-20 pt-12 md:pt-24 w-full">
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-10 text-center sm:text-left">
+                <NextImage
+                  src="/assets/landing-page/why-cennso-glyph.webp"
+                  alt=""
+                  aria-hidden="true"
+                  width={640}
+                  height={643}
+                  sizes="160px"
+                  className="h-40 w-auto"
+                />
+                {/* Figma 1:16 / 1:4529: Poppins Bold 64px on a 42px line box
                   and no tracking. The `display` variant is the right size but
                   carries `tracking-tight` (-0.025em, i.e. -1.6px here) and
                   inherits the body's 1.5 line height, which set the heading
                   96px tall - more than twice the frame's box, and what pushed
                   the glyph row apart from the cards under it. */}
-              <Typography
-                variant="display"
-                render={<h2 />}
-                className="text-foreground leading-[42px] tracking-normal"
-              >
-                {whyCennso.heading}
-              </Typography>
-            </div>
-          </div>
-
-          {/* 23px between cards in the frames (1:11 ends at x=461, 1:12 starts
-              at 484). On the 1246px row above, three equal columns and a 23px
-              gutter give each card exactly the frames' 400px. */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-[23px]">
-            {whyCennso.cards.map(
-              (card: { title: string; description: string }, index: number) => (
-                <Card
-                  key={card.title}
-                  className={`${CARD_SHELL} ${whyCennsoTints[index] ?? ''} ${
-                    whyCennsoOutlines[index] ?? ''
-                  }`}
+                <Typography
+                  variant="display"
+                  render={<h2 />}
+                  className="text-foreground leading-[42px] tracking-normal"
                 >
-                  {/* `gap-0` is not cosmetic. Card.Header is a
+                  {whyCennso.heading}
+                </Typography>
+              </div>
+            </div>
+
+            {/* 23px between cards in the frames (1:11 ends at x=461, 1:12 starts
+              at 484). On the 1200px column, three equal columns and a 23px
+              gutter give each card ~385px, a little under the frames' 400px. */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-[23px]">
+              {whyCennso.cards.map(
+                (
+                  card: { title: string; description: string },
+                  index: number
+                ) => (
+                  <Card
+                    key={card.title}
+                    className={`${CARD_SHELL} ${GLOW_TINTS[index] ?? ''} ${
+                      GLOW_OUTLINES[index] ?? ''
+                    }`}
+                  >
+                    {/* `gap-0` is not cosmetic. Card.Header is a
                       `grid-rows-[auto_auto] gap-2` two-track grid sized for a
                       title + description pair; with only a title in it the
                       second track is empty but the 8px row gap between the two
@@ -298,40 +255,39 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                       taller than its text and the frames' 13px title-to-body
                       step measured 21px. Zeroing the header's own gap leaves
                       the Card's `gap-[13px]` as the only thing between them. */}
-                  <Card.Header className="gap-0">
-                    {/* Figma 1:96-1:98 / 1:4526-1:4528: Poppins Bold 32px,
+                    <Card.Header className="gap-0">
+                      {/* Figma 1:96-1:98 / 1:4526-1:4528: Poppins Bold 32px,
                         1.4 line height, CENTRED - all six title nodes carry
                         text-align center, and each sits on its card's own
                         centre line (1:98 spans x=1022..1192 in a card centred
                         at 1107). This was left-aligned, which is the defect
                         the owner reported. */}
-                    <Card.Title
-                      render={<h3 />}
-                      className="text-[32px] font-bold leading-[1.4] text-center"
-                    >
-                      {card.title}
-                    </Card.Title>
-                  </Card.Header>
-                  <Card.Content>
-                    {/* Figma 1:93-1:95: Regular 16px, 1.6 line height, in the
+                      <Card.Title
+                        render={<h3 />}
+                        className="text-[32px] font-bold leading-[1.4] text-center"
+                      >
+                        {card.title}
+                      </Card.Title>
+                    </Card.Header>
+                    <Card.Content>
+                      {/* Figma 1:93-1:95: Regular 16px, 1.6 line height, in the
                         page's own foreground - not the muted 14px the library
                         gives a Card.Description by default. */}
-                    <Card.Description className="text-base leading-[1.6] text-foreground">
-                      {card.description}
-                    </Card.Description>
-                  </Card.Content>
-                </Card>
-              )
-            )}
+                      <Card.Description className="text-base leading-[1.6] text-foreground">
+                        {card.description}
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                )
+              )}
+            </div>
           </div>
         </div>
       </Container>
 
-      {/* Wider again, and by a different amount: the frames put the panels on
-          a 1237px row where the cards above sit on 1246px. The design is not
-          internally consistent here and the owner has ruled for the frames -
-          see PANEL_ROW_MEASURE. */}
-      <Container measure={PANEL_ROW_MEASURE}>
+      {/* The same 1200px column again. The frames put these panels on a
+          1237px row; one straight edge down the page wins over that. */}
+      <Container>
         <div className="flex flex-col gap-8 pb-16 md:pb-24 w-full">
           <Typography variant="h2" className="sr-only">
             {stats.heading}
