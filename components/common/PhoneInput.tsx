@@ -36,12 +36,10 @@ function useCountryFlags(): Flags | undefined {
     }
 
     let live = true
-    pendingFlags ??= import('react-phone-number-input/flags').then(
-      (module) => {
-        cachedFlags = module.default
-        return module.default
-      }
-    )
+    pendingFlags ??= import('react-phone-number-input/flags').then((module) => {
+      cachedFlags = module.default
+      return module.default
+    })
     pendingFlags.then((loaded) => {
       if (live) {
         setFlags(loaded)

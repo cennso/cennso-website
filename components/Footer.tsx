@@ -64,9 +64,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
 
         <ul className="grid grid-cols-2 lg:grid-cols-3 xl:flex gap-16 gap-y-0 lg:gap-32 xl:gap-16 2xl:gap-32 mb-8 md:mb-0">
           <li className="col-span-2 lg:col-auto flex flex-col gap-3 lg:mb-0 mb-8">
-            <h2 className="font-semibold text-lg text-white">
-              Company
-            </h2>
+            <h2 className="font-semibold text-lg text-white">Company</h2>
             <ul className="grid grid-rows-2 grid-flow-col gap-x-12 gap-y-0.5">
               {footerLinks.map((link) => (
                 <li key={link.title}>
@@ -82,9 +80,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           <li className="flex flex-col gap-3 mb-2 md:mb-0">
-            <h2 className="font-semibold text-lg text-white">
-              Explore
-            </h2>
+            <h2 className="font-semibold text-lg text-white">Explore</h2>
             <ul className="flex flex-col gap-0.5">
               {exploreLinks.map((link) => (
                 <li key={link.title}>
@@ -102,9 +98,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
             </ul>
           </li>
           <li className="flex flex-col gap-3 mb-2 md:mb-0">
-            <h2 className="font-semibold text-lg text-white">
-              AI / LLM
-            </h2>
+            <h2 className="font-semibold text-lg text-white">AI / LLM</h2>
             <ul className="flex flex-col gap-0.5">
               {llmLinks.map((link) => (
                 <li key={link.title}>
