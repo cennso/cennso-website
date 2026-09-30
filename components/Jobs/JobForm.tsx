@@ -1,14 +1,11 @@
 import { useState, useCallback, FormEvent } from 'react'
 import Link from 'next/link'
 
+import { Field, Input, Switch, Textarea } from '@cennso/ui'
+
 import { StatusModal } from '../common/StatusModal'
-import {
-  FormLabel,
-  FormInput,
-  FormTextarea,
-  FormSwitch,
-  Button,
-} from '../common'
+import { PhoneInput } from '../common/PhoneInput'
+import { Button } from '../common'
 
 import type { FunctionComponent, ChangeEvent } from 'react'
 import type { JobFormBody } from '../../pages/api/job-submission-form'
@@ -26,6 +23,8 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
     'none' | 'sending' | 'success' | 'error'
   >('none')
   const [privacyPolicy, setPrivacyPolicy] = useState(false)
+  // PhoneInput reports an E.164 string, not an event, so it is controlled.
+  const [phone, setPhone] = useState('')
   const [fileData, setFileData] = useState<File | undefined>(undefined)
   const [pdfCV, setPdfCV] = useState<Promise<string> | string>('')
 
@@ -44,7 +43,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
         firstName: inputs['first-name'].value,
         lastName: inputs['last-name'].value,
         email: inputs['email'].value,
-        phone: inputs['phone'].value,
+        phone,
         message: inputs['message'].value,
         position,
         cvData,
@@ -72,7 +71,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
         inputs['first-name'].value = ''
         inputs['last-name'].value = ''
         inputs['email'].value = ''
-        inputs['phone'].value = ''
+        setPhone('')
         inputs['message'].value = ''
         setPrivacyPolicy(false)
         setFileData(undefined)
@@ -82,7 +81,15 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
 
       setAction('error')
     },
-    [setPrivacyPolicy, setPdfCV, pdfCV, setAction, position, fileData?.name]
+    [
+      setPrivacyPolicy,
+      setPdfCV,
+      pdfCV,
+      setAction,
+      position,
+      fileData?.name,
+      phone,
+    ]
   )
 
   const onLoadCV = useCallback(
@@ -133,59 +140,64 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
               'An error occurred while sending your submission.')}
         </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-          <div>
-            <FormLabel htmlFor="first-name">First name:</FormLabel>
-            <FormInput
+          <Field>
+            <Field.Label className="text-white">First name:</Field.Label>
+            <Input
               type="text"
               name="first-name"
-              id="first-name"
               placeholder="Enter your first name"
               autoComplete="given-name"
               required
             />
-          </div>
-          <div>
-            <FormLabel htmlFor="last-name">Last name:</FormLabel>
-            <FormInput
+          </Field>
+          <Field>
+            <Field.Label className="text-white">Last name:</Field.Label>
+            <Input
               type="text"
               name="last-name"
-              id="last-name"
               placeholder="Enter your last name"
               autoComplete="family-name"
               required
             />
-          </div>
-          <div className="sm:col-span-2">
-            <FormLabel htmlFor="email">E-mail:</FormLabel>
-            <FormInput
+          </Field>
+          <Field className="sm:col-span-2">
+            <Field.Label className="text-white">E-mail:</Field.Label>
+            <Input
               type="email"
               name="email"
-              id="email"
               placeholder="Enter the email to which the reply will be sent"
               autoComplete="email"
               required
             />
-          </div>
-          <div className="sm:col-span-2">
-            <FormLabel htmlFor="phone">Phone number (optional):</FormLabel>
-            <FormInput
-              type="tel"
+          </Field>
+          <Field className="sm:col-span-2">
+            <Field.Label className="text-white">
+              Phone number (optional):
+            </Field.Label>
+            <PhoneInput
               name="phone"
-              id="phone"
+              value={phone}
+              onChange={setPhone}
               placeholder="Enter the phone number to which we will call you back"
               autoComplete="tel"
+              countrySearchPlaceholder={
+                content?.form?.phone?.countrySearchPlaceholder ||
+                'Search country'
+              }
+              countryEmptyContent={
+                content?.form?.phone?.countryEmptyContent || 'No country found.'
+              }
             />
-          </div>
-          <div className="sm:col-span-2">
-            <FormLabel htmlFor="message">Message</FormLabel>
-            <FormTextarea
+          </Field>
+          <Field className="sm:col-span-2">
+            <Field.Label className="text-white">Message</Field.Label>
+            <Textarea
               name="message"
-              id="message"
               rows={4}
               placeholder="Briefly about yourself..."
               required
             />
-          </div>
+          </Field>
           <div className="sm:col-span-2 flex items-center justify-center w-full">
             <label
               htmlFor="pdf-cv"
@@ -236,33 +248,27 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
               />
             </label>
           </div>
-          <div className="flex gap-x-4 sm:col-span-2">
-            <div className="flex h-6 items-center">
-              <FormSwitch
-                onChange={() => setPrivacyPolicy((old) => !old)}
-                checked={privacyPolicy}
-                name="privacy-policy"
-                id="privacy-policy"
-                required
-              >
-                <span className="sr-only">Agree to policies</span>
-              </FormSwitch>
-            </div>
-            <label
-              className="text-sm leading-6 text-gray-600"
-              id="privacy-policy"
-            >
-              By selecting this, you agree to our{' '}
-              <Link
-                href="/privacy-policy"
-                target="_blank"
-                className="font-semibold text-secondary-200 underline hover:decoration-2"
-              >
-                privacy policy
-              </Link>
-              .
-            </label>
-          </div>
+          <Field orientation="horizontal" className="sm:col-span-2">
+            <Switch
+              name="privacy-policy"
+              checked={privacyPolicy}
+              onCheckedChange={setPrivacyPolicy}
+              required
+            />
+            <Field.Label className="text-sm leading-6 font-normal text-gray-600">
+              <span>
+                By selecting this, you agree to our{' '}
+                <Link
+                  href="/privacy-policy"
+                  target="_blank"
+                  className="font-semibold text-secondary-200 underline hover:decoration-2"
+                >
+                  privacy policy
+                </Link>
+                .
+              </span>
+            </Field.Label>
+          </Field>
           <div className="sm:col-span-2 flex justify-end">
             <Button variant="action" useArrow={false} className="text-sm">
               Send submission

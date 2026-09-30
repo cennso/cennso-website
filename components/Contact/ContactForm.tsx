@@ -1,15 +1,12 @@
 import { useState, useCallback, FormEvent, useId } from 'react'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 
-import { Button } from '@cennso/ui'
-import {
-  StatusModal,
-  FormInput,
-  FormTextarea,
-  FormSwitch,
-  CTA_ACTION,
-} from '../common'
+import { Button, Field, Input, Switch, Textarea } from '@cennso/ui'
+import { Form } from '@base-ui/react/form'
+import { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input'
+
+import { StatusModal, CTA_ACTION, ButtonChevron } from '../common'
+import { PhoneInput } from '../common/PhoneInput'
 
 import type { FunctionComponent } from 'react'
 import type { ContactFormBody } from '../../pages/api/contact-form'
@@ -19,51 +16,42 @@ interface ContactFormProps {
   content?: Record<string, any>
 }
 
-// The visible label text is written here as a plain <label>, not the shared
-// FormLabel from components/common/Form.tsx: FormLabel hardcodes white text,
-// which disappears against a light-theme form panel.
-//
-// Figma 1:3949 / 1:7561 etc. draw the field labels as Regular 20px boxes
-// exactly 32px tall, so the line box is `leading-8` rather than the 28px
-// `leading-7` that was here. Their colour is white in the dark frames and
-// #185f99 in the light ones, which is what `--foreground` already resolves to
-// in each palette - no override needed.
-//
-// The label box then sits straight on top of its control: 1:3949 ends at 473
-// and 1:3953 starts at 474, 1:3948 ends at 572 and 1:3951 starts at 573. One
-// pixel, not the 4 that `mb-1` put there. The legend below matches.
-const labelClassName = 'block text-xl leading-8 text-foreground mb-px'
+// Every control is `@cennso/ui`'s own (Field, Input, Textarea, PhoneInput,
+// Switch), drawn with the design system's defaults. Labels are Regular 18px in
+// `--foreground` (white in dark, #185f99 in light).
+const labelClassName = 'text-lg leading-7 font-normal text-foreground'
 
-// Every control in the frames is the same box: 489x42 at the frame's width,
-// 8px radius, white fill (1:3951/1:3953/1:3954 dark, 1:7563/1:7565/1:7566
-// light), and the message box is the same again at 180px tall (1:3955 /
-// 1:7567). The height is pinned rather than left to the padding because the
-// border below only exists in one palette, and a border-box height keeps both
-// at the frame's 42px.
-//
-// `rounded-md` is the frames' 8px: @cennso/theme's radius scale is 2/4/8/12/16,
-// not Tailwind's own, so `rounded-lg` would read like the right step and draw
-// 12px.
-//
-// The outline is the one place the two frames disagree. Light outlines all
-// four boxes with 1px #185f99 - `--primary` in that palette. Dark draws no
-// outline on three of the four and a stray 1px black on the fourth (1:3953),
-// so dark follows the three: transparent, matching the
-// `border-transparent dark:border-border` idiom the Design 4.0 cards already
-// use for the inverse case.
-//
-// Nothing here draws a shadow, so the jobs form's `shadow-sm` is simply not
-// carried over: this is FormInput's `surface`, which replaces the default box
-// rather than trying to override it.
-const fieldSurface =
-  'rounded-md border border-primary dark:border-transparent bg-white'
+// Upper bounds on what a field accepts. Generous for a real answer, and they
+// stop a pasted wall of text from reaching the e-mail it becomes.
+const MAX = { name: 100, company: 150, email: 254, message: 5000 } as const
+const MESSAGE_MIN = 10
 
-// The height rides on `className`, which is appended after the surface, so the
-// two never compete.
-const fieldClassName = 'h-[42px]'
+// One @, something on both sides, and a dot in the domain - so "name@company"
+// fails as well as "df". Deliberately loose past that: the reply is what
+// proves an address, not a regex.
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
-// 1:3955 / 1:7567 - the message box, same treatment at the frames' 180px.
-const textareaClassName = 'h-[180px]'
+// 4px between a label and its control rather than Field's own 8px.
+const fieldClassName = 'gap-1'
+
+// The controls' own box, set once on the <form> by their data-slot rather than
+// on each control: PhoneInput's outlined box is react-phone-number-input's
+// container, which a className on PhoneInput does not reliably reach. Light
+// outlines every box in --primary; dark keeps the design system's border and
+// fills the box with the page plate. A box in its invalid state is left out,
+// so the design system's red outline still shows.
+// Written out in full, not assembled from a shared selector string: Tailwind
+// only generates classes it finds as literals in the source.
+const controlsClassName = [
+  '[&_:is(:is([data-slot=input],[data-slot=textarea]):not([data-invalid]),[data-slot=phone-input]:not(:has([data-invalid])))]:border-primary',
+  'dark:[&_:is(:is([data-slot=input],[data-slot=textarea]):not([data-invalid]),[data-slot=phone-input]:not(:has([data-invalid])))]:border-input',
+  'dark:[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input])]:bg-page',
+  // Text inputs match the phone field's height. PhoneInput's group is its
+  // number box (control-height-lg) plus the group's own 1px border top and
+  // bottom, where a plain Input is control-height-md, border included - 38px
+  // against 32px side by side.
+  '[&_[data-slot=input]]:h-[calc(var(--control-height-lg)+2px)]',
+].join(' ')
 
 export const ContactForm: FunctionComponent<ContactFormProps> = ({
   receiverEmail,
@@ -73,6 +61,13 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
     'none' | 'sending' | 'success' | 'error'
   >('none')
   const [privacyPolicy, setPrivacyPolicy] = useState(false)
+  // PhoneInput reports an E.164 string ("+4939166098560"), not an event, so it
+  // is controlled rather than read off form.elements like the rest.
+  const [phone, setPhone] = useState('')
+  // Checked by hand on submit, not through Field's `validate`: PhoneInput puts
+  // two controls in its Field (the country picker and the number), and Base
+  // UI's Form does not run that Field's validator.
+  const [phoneInvalid, setPhoneInvalid] = useState(false)
   const [formTimestamp] = useState(Date.now()) // Track when form was loaded
 
   // This form is rendered once per contact section, so element ids must be
@@ -80,14 +75,69 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
   // form.elements by name.
   const uid = useId()
 
+  const v = content?.form?.validation ?? {}
+  const msg = {
+    required: v.required || 'This field is required.',
+    tooLong: (max: number) =>
+      (v.tooLong || 'Please use at most {max} characters.').replace(
+        '{max}',
+        String(max)
+      ),
+    email:
+      v.email || 'Please enter a valid e-mail address, e.g. name@company.com.',
+    phone:
+      v.phone || 'Please enter a valid phone number for the selected country.',
+    messageTooShort: (
+      v.messageTooShort || 'Please write at least {min} characters.'
+    ).replace('{min}', String(MESSAGE_MIN)),
+    privacyPolicy:
+      v.privacyPolicy || 'Please accept the privacy policy to send the form.',
+  }
+
+  // `required` alone lets a value of only spaces through; this closes that.
+  // An empty field is left to `required` itself, so the message is not shown
+  // twice.
+  const notBlank = (value: unknown) => {
+    const text = String(value ?? '')
+    return text && !text.trim() ? msg.required : null
+  }
+
+  // Required text fields share one set of messages: empty, spaces only, or
+  // over the length cap.
+  const textErrors = (max: number) => (
+    <>
+      <Field.Error match="valueMissing">{msg.required}</Field.Error>
+      <Field.Error match="tooLong">{msg.tooLong(max)}</Field.Error>
+      <Field.Error match="customError" />
+    </>
+  )
+
+  // Only ever called with every field valid: Base UI's Form validates each
+  // Field on submit, focuses the first invalid one and stops the submission
+  // before this runs, so nothing incomplete reaches the API.
   const onSubmit = useCallback(
     async (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault()
+
+      // Optional, but when something is typed it has to be a number that can
+      // exist in the selected country.
+      if (phone && !isValidPhoneNumber(phone)) {
+        setPhoneInvalid(true)
+        e.currentTarget
+          .querySelector<HTMLInputElement>('[data-slot="phone-input-number"]')
+          ?.focus()
+        return
+      }
+
       setAction('sending')
       const inputs = (e.target as any).elements as Record<
         string,
         HTMLInputElement
       >
+
+      // The API (and the e-mail it sends) keeps the dialling code and the
+      // number apart, as the old two-box field did.
+      const parsedPhone = phone ? parsePhoneNumber(phone) : undefined
 
       // collect data
       const data: ContactFormBody = {
@@ -95,8 +145,10 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         lastName: inputs['last-name'].value,
         company: inputs['company'].value,
         email: inputs['email'].value,
-        phoneCountryCode: inputs['country-code']?.value || '',
-        phoneNumber: inputs['phone-number']?.value || '',
+        phoneCountryCode: parsedPhone
+          ? `+${parsedPhone.countryCallingCode}`
+          : '',
+        phoneNumber: parsedPhone?.nationalNumber ?? '',
         message: inputs['message'].value,
         receiver: receiverEmail,
         // Anti-spam fields
@@ -127,8 +179,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         inputs['last-name'].value = ''
         inputs['company'].value = ''
         inputs['email'].value = ''
-        inputs['country-code'].value = ''
-        inputs['phone-number'].value = ''
+        setPhone('')
         inputs['message'].value = ''
         setPrivacyPolicy(false)
         return
@@ -136,7 +187,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
 
       setAction('error')
     },
-    [setPrivacyPolicy, setAction, receiverEmail, formTimestamp]
+    [setPrivacyPolicy, setAction, receiverEmail, formTimestamp, phone]
   )
 
   return (
@@ -153,11 +204,15 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
     // at all, so light keeps the border box and drops its colour - the same
     // `border-transparent dark:border-border` the 4.0 cards use.
     //
+    // Light fills it white rather than `bg-card`: the theme's light --card is
+    // an off-white that barely separates from the #E1EAF0 page plate, and the
+    // light frame draws this panel pure white.
+    //
     // 1:3937's `backdrop-blur-[7px]` is deliberately not carried over: it
     // exists because the frame fills the panel at 82% alpha, and `bg-card` is
     // opaque here, so a blur behind it would cost a compositing layer and
     // render nothing.
-    <div className="isolate bg-card border border-transparent dark:border-border px-8 pt-[26px] pb-9 rounded-3xl">
+    <div className="isolate bg-white dark:bg-card border border-transparent dark:border-border px-8 pt-[26px] pb-9 rounded-3xl">
       <StatusModal
         action={action}
         setAction={setAction}
@@ -165,7 +220,19 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         content={content}
       />
 
-      <form className="mx-auto" onSubmit={onSubmit}>
+      {/* autoComplete="on" plus the per-field autocomplete tokens below let
+          the browser offer what the visitor has entered before - name,
+          company, e-mail, phone. */}
+      <Form
+        className={`mx-auto ${controlsClassName}`}
+        onSubmit={onSubmit}
+        // Runs before Form validates the other fields, so a bad phone number
+        // is flagged in the same pass as everything else, not on the retry.
+        onSubmitCapture={() =>
+          setPhoneInvalid(Boolean(phone) && !isValidPhoneNumber(phone))
+        }
+        autoComplete="on"
+      >
         {/* Screen reader region for form status updates */}
         <div aria-live="polite" aria-atomic="true" className="sr-only">
           {action === 'sending' &&
@@ -177,121 +244,126 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             (content?.form?.statusMessages?.error ||
               'An error occurred while sending message.')}
         </div>
-        {/* 24px between a control and the label under it, measured on the
-            frames: 1:3953 ends at 516 and 1:3948 starts at 540, 1:3951 ends at
-            615 and 1:3950 starts at 639, 1:3955 ends at 949 and the Send pill
-            starts at 973. `gap-y-4` was 16. */}
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-          <div>
-            <label className={labelClassName} htmlFor={`${uid}-first-name`}>
-              First name:
-            </label>
-            <FormInput
+          <Field className={fieldClassName} validate={notBlank}>
+            <Field.Label className={labelClassName}>First name:</Field.Label>
+            <Input
               type="text"
               name="first-name"
-              surface={fieldSurface}
-              className={fieldClassName}
-              id={`${uid}-first-name`}
               placeholder="Enter your first name"
               autoComplete="given-name"
+              autoCapitalize="words"
+              maxLength={MAX.name}
               required
             />
-          </div>
-          <div>
-            <label className={labelClassName} htmlFor={`${uid}-last-name`}>
-              Last name:
-            </label>
-            <FormInput
+            {textErrors(MAX.name)}
+          </Field>
+          <Field className={fieldClassName} validate={notBlank}>
+            <Field.Label className={labelClassName}>Last name:</Field.Label>
+            <Input
               type="text"
               name="last-name"
-              surface={fieldSurface}
-              className={fieldClassName}
-              id={`${uid}-last-name`}
               placeholder="Enter your last name"
               autoComplete="family-name"
+              autoCapitalize="words"
+              maxLength={MAX.name}
               required
             />
-          </div>
-          <div className="sm:col-span-2">
-            <label className={labelClassName} htmlFor={`${uid}-company`}>
-              Company:
-            </label>
-            <FormInput
+            {textErrors(MAX.name)}
+          </Field>
+          <Field
+            className={`sm:col-span-2 ${fieldClassName}`}
+            validate={notBlank}
+          >
+            <Field.Label className={labelClassName}>Company:</Field.Label>
+            <Input
               type="text"
               name="company"
-              surface={fieldSurface}
-              className={fieldClassName}
-              id={`${uid}-company`}
               placeholder="Enter your company name"
               autoComplete="organization"
+              maxLength={MAX.company}
               required
             />
-          </div>
-          <div className="sm:col-span-2">
-            <label className={labelClassName} htmlFor={`${uid}-email`}>
-              E-mail:
-            </label>
-            <FormInput
-              type="email"
+            {textErrors(MAX.company)}
+          </Field>
+          <Field
+            className={`sm:col-span-2 ${fieldClassName}`}
+            validate={(value) => {
+              const text = String(value ?? '').trim()
+              // Empty is left to `required`, so only one message shows.
+              return text && !EMAIL.test(text) ? msg.email : null
+            }}
+          >
+            <Field.Label className={labelClassName}>E-mail:</Field.Label>
+            {/* type="text", not "email": the browser's own address check and
+                this one would both fail an address like "df" and show the same
+                message twice. `autoComplete` and `inputMode` still give the
+                saved-address suggestions and the e-mail keyboard. */}
+            <Input
+              type="text"
               name="email"
-              surface={fieldSurface}
-              className={fieldClassName}
-              id={`${uid}-email`}
               placeholder="Enter the email to which the reply will be sent"
               autoComplete="email"
+              inputMode="email"
+              autoCapitalize="none"
+              spellCheck={false}
+              maxLength={MAX.email}
               required
             />
-          </div>
-          <fieldset className="sm:col-span-2">
-            <legend className={labelClassName}>Phone number (optional):</legend>
-            <div className="flex gap-4">
-              <div className="w-24">
-                <label className="sr-only" htmlFor={`${uid}-country-code`}>
-                  Country code
-                </label>
-                <FormInput
-                  type="text"
-                  name="country-code"
-                  surface={fieldSurface}
-                  className={fieldClassName}
-                  id={`${uid}-country-code`}
-                  placeholder="+49"
-                  autoComplete="tel-country-code"
-                />
-              </div>
-              <div className="flex-1">
-                <label className="sr-only" htmlFor={`${uid}-phone-number`}>
-                  Phone number
-                </label>
-                <FormInput
-                  type="tel"
-                  name="phone-number"
-                  surface={fieldSurface}
-                  className={fieldClassName}
-                  id={`${uid}-phone-number`}
-                  placeholder="Enter phone number"
-                  autoComplete="tel-national"
-                />
-              </div>
-            </div>
-          </fieldset>
-          <div className="sm:col-span-2">
-            <label className={labelClassName} htmlFor={`${uid}-message`}>
-              Message:
-            </label>
-            <FormTextarea
+            <Field.Error match="valueMissing">{msg.required}</Field.Error>
+            <Field.Error match="customError" />
+            <Field.Error match="tooLong">{msg.tooLong(MAX.email)}</Field.Error>
+          </Field>
+          <Field
+            className={`sm:col-span-2 ${fieldClassName}`}
+            invalid={phoneInvalid}
+          >
+            <Field.Label className={labelClassName}>
+              Phone number (optional):
+            </Field.Label>
+            <PhoneInput
+              name="phone"
+              value={phone}
+              onChange={(next) => {
+                setPhone(next)
+                setPhoneInvalid(false)
+              }}
+              placeholder="Enter phone number"
+              autoComplete="tel"
+              countrySearchPlaceholder={
+                content?.form?.phone?.countrySearchPlaceholder ||
+                'Search country'
+              }
+              countryEmptyContent={
+                content?.form?.phone?.countryEmptyContent || 'No country found.'
+              }
+            />
+            <Field.Error match={phoneInvalid}>{msg.phone}</Field.Error>
+          </Field>
+          <Field
+            className={`sm:col-span-2 ${fieldClassName}`}
+            validate={(value) => {
+              const text = String(value ?? '')
+              if (!text) return null // left to `required`
+              if (!text.trim()) return msg.required
+              return text.trim().length < MESSAGE_MIN
+                ? msg.messageTooShort
+                : null
+            }}
+          >
+            <Field.Label className={labelClassName}>Message:</Field.Label>
+            <Textarea
               name="message"
-              surface={fieldSurface}
-              className={textareaClassName}
-              id={`${uid}-message`}
-              rows={4}
+              rows={6}
               placeholder="Enter message content..."
+              maxLength={MAX.message}
               required
             />
-          </div>
+            {textErrors(MAX.message)}
+          </Field>
           {/* Honeypot field - completely hidden from all users and bots */}
           <div className="absolute -left-full -top-full opacity-0 pointer-events-none overflow-hidden h-0 w-0">
-            <FormInput
+            <input
               type="text"
               name="website"
               id={`${uid}-website`}
@@ -300,44 +372,41 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               aria-hidden="true"
             />
           </div>
-          <div className="flex gap-x-4 sm:col-span-2">
-            <div className="flex h-6 items-center">
-              <FormSwitch
-                onChange={() => setPrivacyPolicy((old) => !old)}
-                checked={privacyPolicy}
+          <Field className="sm:col-span-2 gap-1">
+            <div className="flex items-center gap-2">
+              <Switch
                 name="privacy-policy"
-                id={`${uid}-privacy-policy`}
+                checked={privacyPolicy}
+                onCheckedChange={setPrivacyPolicy}
                 required
-              >
-                <span className="sr-only">Agree to policies</span>
-              </FormSwitch>
+              />
+              <Field.Label className="text-sm leading-6 font-normal text-foreground">
+                <span>
+                  By selecting this, you agree to our{' '}
+                  <Link
+                    href="/privacy-policy"
+                    target="_blank"
+                    className="font-semibold text-primary underline hover:decoration-2"
+                  >
+                    privacy policy
+                  </Link>
+                  .
+                </span>
+              </Field.Label>
             </div>
-            <label
-              className="text-sm leading-6 text-foreground"
-              htmlFor={`${uid}-privacy-policy`}
-            >
-              By selecting this, you agree to our{' '}
-              <Link
-                href="/privacy-policy"
-                target="_blank"
-                className="font-semibold text-primary underline hover:decoration-2"
-              >
-                privacy policy
-              </Link>
-              .
-            </label>
-          </div>
+            <Field.Error match="valueMissing">{msg.privacyPolicy}</Field.Error>
+          </Field>
           {/* The frames put Send at x=775 - flush with the left edge of the
               fields above it (1:3938 / 1:7550), not against the panel's right
               edge, which is where `justify-end` had it. */}
           <div className="sm:col-span-2 flex">
             <Button type="submit" variant="cta" className={CTA_ACTION}>
               {content?.form?.sendLabel || 'Send'}
-              <ArrowRight className="w-5 h-5" aria-hidden="true" />
+              <ButtonChevron />
             </Button>
           </div>
         </div>
-      </form>
+      </Form>
     </div>
   )
 }

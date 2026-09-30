@@ -43,6 +43,18 @@ form:
     sending: Sending...
     success: Message sent successfully.
     error: An error occurred while sending message.
+  phone:
+    countrySearchPlaceholder: Search country
+    countryEmptyContent: No country found.
+  # Shown under a field when it fails validation. The form is not sent until
+  # every field passes.
+  validation:
+    required: This field is required.
+    tooLong: Please use at most {max} characters.
+    email: Please enter a valid e-mail address, e.g. name@company.com.
+    phone: Please enter a valid phone number for the selected country.
+    messageTooShort: Please write at least {min} characters.
+    privacyPolicy: Please accept the privacy policy to send the form.
 
 sections:
   travelping:

@@ -2,10 +2,10 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { parse as YamlParse } from 'yaml'
 
-import { Mail, Phone } from 'lucide-react'
+import { Phone } from 'lucide-react'
 
 import { ContactForm } from '../components/Contact/ContactForm'
-import { CircleAvatar, Container } from '../components/common'
+import { CircleAvatar, Container, PENCIL_BANNER } from '../components/common'
 import { PageHeader } from '../components/PageHeader'
 import { SEO } from '../components/SEO'
 import {
@@ -16,12 +16,45 @@ import {
 import { createNavigation } from '../lib/navigation'
 import { loadFooterData } from '../lib/footer'
 
+import type { FunctionComponent } from 'react'
 import type { NextPage, GetStaticProps } from 'next'
 import type { Author } from '../contexts'
 
 type ContactPageProps = {
   content: Record<string, any>
 }
+
+/**
+ * lucide's `mail` glyph, solid: the envelope filled in primary with the flap
+ * cut out in the page plate's colour, as the contact frames draw it. Same
+ * geometry as lucide's, but not lucide's `Mail` with a fill - that one paints
+ * the flap first and the envelope over it, so filling it hides the flap.
+ */
+const MailSolid: FunctionComponent<{ className?: string }> = ({
+  className = '',
+}) => (
+  <svg
+    viewBox="0 0 24 24"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <rect
+      x="2"
+      y="4"
+      width="20"
+      height="16"
+      rx="2"
+      className="fill-primary stroke-primary"
+    />
+    <path
+      d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"
+      className="fill-none stroke-page"
+    />
+  </svg>
+)
 
 const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
   const { page, sections, localBusiness } = content
@@ -48,19 +81,12 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
             link: '/contact',
           },
         ]}
-        background={{
-          src: '/assets/backgrounds/pencil-illustration.webp',
-          alt: '',
-          'aria-hidden': 'true',
-          width: 286,
-          height: 128,
-          className: 'mr-64',
-        }}
+        background={PENCIL_BANNER}
       />
 
       {/* Both contact frames (1:3471 / 1:7084) sit on one flat plate; there is
           no band behind the form column. */}
-      <Container className="pt-12 md:pt-24 pb-24">
+      <Container className="pt-12 md:pt-0 pb-24">
         <div className="flex flex-col gap-24">
           {Object.entries(sections).map(([, section]: [string, any], index) => {
             return (
@@ -85,14 +111,12 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                     </div>
                     <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
                       <div className="flex items-end xl:items-center flex-col gap-6 md:w-1/2">
-                        <div className="filter drop-shadow-[0px_10px_15px_rgba(68,141,200,0.35)]">
-                          <CircleAvatar
-                            src={section.person.avatar}
-                            author={section.person}
-                            className="w-64 h-64"
-                            priority={index === 0}
-                          />
-                        </div>
+                        <CircleAvatar
+                          src={section.person.avatar}
+                          author={section.person}
+                          className="w-64 h-64"
+                          priority={index === 0}
+                        />
                       </div>
                       {section.contact ? (
                         <div className="flex flex-col sm:flex-row md:flex-col items-center justify-center md:items-start gap-3 sm:gap-12 w-full md:w-1/2">
@@ -105,13 +129,12 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                               rel="noopener"
                               className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
-                              <span className="flex items-center justify-center w-14 h-14 rounded-full border border-border shrink-0">
-                                <Mail
-                                  className="w-6 h-6 text-primary"
-                                  aria-hidden="true"
-                                />
+                              <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">
+                                <MailSolid className="w-7 h-7" />
                               </span>
-                              <span>{section.contact.email}</span>
+                              <span className="whitespace-nowrap">
+                                {section.contact.email}
+                              </span>
                             </a>
                           ) : null}
                           {section.contact.phone ? (
@@ -119,13 +142,15 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                               href={`tel:${section.contact.phone.replace(' ', '')}`}
                               className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
-                              <span className="flex items-center justify-center w-14 h-14 rounded-full border border-border shrink-0">
+                              <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">
                                 <Phone
-                                  className="w-6 h-6 text-primary"
+                                  className="w-6 h-6 fill-primary stroke-primary"
                                   aria-hidden="true"
                                 />
                               </span>
-                              <span>{section.contact.phone}</span>
+                              <span className="whitespace-nowrap">
+                                {section.contact.phone}
+                              </span>
                             </a>
                           ) : null}
                         </div>
