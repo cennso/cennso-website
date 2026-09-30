@@ -57,6 +57,27 @@ const poppinsFont = Poppins({
  * mobile-only JavaScript bundle, improving Lighthouse performance scores (≥95% target) and
  * page load times across all routes and devices.
  */
+/**
+ * The parent domain the theme choice is written for, so the site, the cloud
+ * portal and the documentation portal share one choice - the same cookie on
+ * the same domain as cennso/cloud's THEME_COOKIE_DOMAIN.
+ *
+ * Applied only when the page is actually served under cennso.com: a browser
+ * drops a cookie whose domain the page is not under, so on localhost or a
+ * *.vercel.app preview it would silently lose every choice. There the cookie
+ * stays host-only and still works. Undefined on the server, where nothing is
+ * written.
+ */
+const THEME_COOKIE_DOMAIN = '.cennso.com'
+
+function themeCookieDomain(): string | undefined {
+  if (typeof window === 'undefined') return undefined
+  const host = window.location.hostname
+  return host === 'cennso.com' || host.endsWith('.cennso.com')
+    ? THEME_COOKIE_DOMAIN
+    : undefined
+}
+
 export default function App({ Component, pageProps }: AppProps) {
   const { $$app, ...rest } = pageProps
   const { navigation, footerData } = $$app || {}
@@ -69,7 +90,13 @@ export default function App({ Component, pageProps }: AppProps) {
         }
       `}</style>
 
-      <ThemeProvider defaultSetting="dark">
+      {/* Only the provider takes the cookie's domain: the inline themeScript in
+          _document.tsx reads the cookie by name, and a browser sends a
+          parent-domain cookie to every host under it. */}
+      <ThemeProvider
+        defaultSetting="dark"
+        cookie={{ domain: themeCookieDomain() }}
+      >
         <Layout navigation={navigation} footerData={footerData}>
           <Component {...rest} />
         </Layout>
