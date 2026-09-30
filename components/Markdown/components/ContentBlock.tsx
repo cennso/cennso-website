@@ -1,3 +1,5 @@
+import { STORY_CARD } from './storyCard'
+
 import type { FunctionComponent, PropsWithChildren } from 'react'
 
 interface ContentBlockProps extends PropsWithChildren {
@@ -13,14 +15,22 @@ export const ContentBlock: FunctionComponent<ContentBlockProps> = ({
   const Title = as
 
   return (
-    <section className="flex flex-col md:flex-row gap-8 bg-linear-to-r/srgb from-secondary-600 to-secondary-400 p-8 rounded-[32px] w-full mb-6">
+    <section
+      className={`flex flex-col md:flex-row gap-8 px-8 py-10 w-full mb-6 ${STORY_CARD}`}
+    >
+      {/* The title reads into the body beside it: right-aligned from md up,
+          where the two sit side by side; stacked on mobile it stays left. */}
       <header className="flex flex-row w-full md:w-1/4">
-        <Title className="bg-clip-text text-transparent bg-linear-to-b/srgb from-primary-600 to-[#04D3D6] my-0 md:my-6 text-3xl">
+        <Title className="w-full text-primary text-2xl font-bold mt-0! mb-0! md:text-right">
           {title}
         </Title>
       </header>
 
-      <div className="w-full md:w-3/4">{children}</div>
+      {/* The body's first block drops its prose top margin, so the card's own
+          padding is the only space above it and the title lines up with it. */}
+      <div className="w-full md:w-3/4 [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+        {children}
+      </div>
     </section>
   )
 }

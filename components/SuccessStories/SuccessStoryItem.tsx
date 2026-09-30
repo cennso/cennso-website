@@ -1,12 +1,17 @@
 import Link from 'next/link'
 import NextImage from 'next/image'
 import { Button, Card, cn, Typography } from '@cennso/ui'
-import { ChevronRight } from 'lucide-react'
 
-import { CTA_ACTION } from '../common'
+import { ButtonChevron, CTA_ACTION, GLOW_OUTLINES, GLOW_TINTS } from '../common'
 
 import type { FunctionComponent } from 'react'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
+
+// Dark rows cycle the landing page's three "Why Cennso?" cards in this
+// order: 5G Anywhere (blue), Private 5G (teal), blue again, then Agile MVNO
+// (cyan). Each row takes that card's fill AND its outline, so the pair stays
+// matched the way it is on the landing page.
+const ROW_SURFACES = [0, 2, 0, 1] as const
 
 interface SuccessStoryItemProps {
   successStory: SuccessStoryItemType
@@ -32,28 +37,26 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
   // Wide alternating row: image on one side, text on the other, sides
   // swapping by index (design frames 1:1062 / 1:585).
   const even = index % 2 === 0
+  const surface = ROW_SURFACES[index % ROW_SURFACES.length]
 
   return (
-    // Card, not a hand-rolled div: bg-card/border-border are Card's own
-    // tokens - this row gets that for free. No shadow-none override any
-    // more: @cennso/ui 1.0.0 dropped Card's own shadow-sm (design-system
-    // #29), so the Design 4.0 frames' shadowless row is what Card already
-    // renders. Card's own layout is a vertical stack (flex-col,
-    // gap-(--card-spacing), py-(--card-spacing)) sized for
-    // Header/Content/Footer children, which this row doesn't use, so gap
-    // and py are zeroed here to avoid doubling up with the text panel's own
-    // padding below. The 32px radius has no match in the theme's scale
-    // (tops out at --radius-xl: 16px), so it's overridden the same way the
-    // pre-4.0 SuccessStoryItem already overrode it on Card. Measured again
-    // against the frames: the rows are r24 (1:592-1:595 / 1:1069-1:1072), not
-    // r32, so the override is now the theme's own --radius2xl step.
+    // Card, not a hand-rolled div: bg-card and the border box come from it.
+    // Its vertical-stack layout (gap/py from --card-spacing) is zeroed because
+    // this row is image + text side by side. `w-full` because the list is the
+    // section's full width. r24 is the theme's --radius-3xl step.
+    //
+    // Light: no visible edge, the card sits on the page plate by its own fill.
+    // Dark: fill and outline from ROW_SURFACES, with the fill clipped to the
+    // padding box exactly as the landing page's cards do (see GLOW_OUTLINES).
     <Card
       className={cn(
-        'gap-0 overflow-hidden rounded-3xl py-0 md:flex-row',
+        'w-full gap-0 overflow-hidden rounded-3xl py-0 border-transparent shadow-none dark:bg-clip-padding md:h-[422px] md:flex-row',
+        GLOW_TINTS[surface],
+        GLOW_OUTLINES[surface],
         !even && 'md:flex-row-reverse'
       )}
     >
-      <div className="relative aspect-16/10 w-full shrink-0 md:aspect-auto md:w-3/5">
+      <div className="relative aspect-16/10 w-full shrink-0 md:aspect-auto md:h-full md:w-3/5">
         <NextImage
           src={cover}
           alt={`${title} cover image`}
@@ -72,19 +75,27 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
         />
       </div>
 
-      <div className="flex w-full flex-col justify-between gap-8 p-8 md:w-2/5 lg:p-12">
-        {/* Figma 1:600 / 1:1077: Bold 32px in the page's own foreground -
-            white on the dark frames, #185f99 on the light ones. It was
-            --primary, which paints these headlines amber in dark mode; the
-            frames reserve amber for the page H1 and the "21" figure. */}
-        <Typography
-          variant="h3"
-          className="text-2xl font-bold text-foreground lg:text-[32px] lg:leading-[1.3]"
-        >
-          {title}
-        </Typography>
-
+      {/* From md up the title is centred on the row's FULL height, and the
+          button is taken out of flow and pinned to the panel's bottom corner
+          on its outer side (right when the image is on the left, left when it
+          is on the right) - in flow it would push the title's centre up by
+          half its own height. Stacked on mobile, both stay in flow. */}
+      <div className="relative flex w-full flex-col gap-8 p-8 md:w-2/5 md:justify-center lg:p-12">
         <div>
+          <Typography
+            variant="h3"
+            className="text-2xl font-bold text-foreground lg:text-[32px] lg:leading-[1.3]"
+          >
+            {title}
+          </Typography>
+        </div>
+
+        <div
+          className={cn(
+            'flex md:absolute md:bottom-8 lg:bottom-12',
+            even ? 'md:right-8 lg:right-12' : 'md:left-8 lg:left-12'
+          )}
+        >
           <Button
             variant="cta"
             className={CTA_ACTION}
@@ -114,7 +125,7 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
               {' '}
               {linkContext.replace('{title}', title)}
             </span>
-            <ChevronRight className="h-[17px] w-[13px]" aria-hidden="true" />
+            <ButtonChevron />
           </Button>
         </div>
       </div>

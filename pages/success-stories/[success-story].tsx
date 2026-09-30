@@ -1,5 +1,6 @@
 import { promises as fsPromises } from 'fs'
 import path from 'path'
+import { parse as YamlParse } from 'yaml'
 import { Link as LinkIcon } from 'lucide-react'
 
 import Image from 'next/image'
@@ -28,10 +29,12 @@ type SuccessStoryPageProps = {
   mdxSource: MDXRemoteProps
   currentPath: string
   successStoryQuery: string
+  backLinkLabel: string
 }
 
 const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
   successStoryQuery,
+  backLinkLabel,
   ...props
 }) => {
   const { frontmatter, toc, mdxSource, currentPath } = props
@@ -54,14 +57,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
             link: `/success-stories/${successStoryQuery}`,
           },
         ]}
-        background={{
-          src: '/assets/backgrounds/bg-header-success-story.webp',
-          title: 'Success story page background',
-          alt: 'Success story page background',
-          width: 425,
-          height: 200,
-          className: 'relative md:right-16 top-2',
-        }}
+        backLink={{ href: '/success-stories', label: backLinkLabel }}
       />
 
       {layout === 'old' ? (
@@ -217,6 +213,15 @@ export const getStaticProps: GetStaticProps<SuccessStoryPageProps> =
 
     const mdxSource = await parseMDX(mdContent)
     const toc = generateToc(mdContent)
+
+    // The back link's label lives with the listing page's own copy.
+    const listingContent = YamlParse(
+      (
+        await fsPromises.readFile(
+          path.join(process.cwd(), 'content', 'success-stories-page.yaml')
+        )
+      ).toString()
+    )
     const frontmatter = mdxSource.frontmatter as unknown as SuccessStoryMetadata
 
     return {
@@ -228,6 +233,8 @@ export const getStaticProps: GetStaticProps<SuccessStoryPageProps> =
         toc,
         mdxSource,
         successStoryQuery: successStory,
+        backLinkLabel:
+          listingContent?.content?.backLinkLabel || 'Success stories',
         currentPath: `https://www.cennso.com/success-stories/${successStory}`,
         $$app: {
           navigation: await createNavigation(),

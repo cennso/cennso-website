@@ -2,10 +2,9 @@ import { promises as fsPromises } from 'fs'
 import path from 'path'
 import { parse as YamlParse } from 'yaml'
 
-import { useCallback, useMemo, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useMemo, useState } from 'react'
 
-import { Field, Pagination, Select } from '@cennso/ui'
+import { Pagination } from '@cennso/ui'
 
 import { PageHeader } from '../../components/PageHeader'
 import { SuccessStoryItem } from '../../components/SuccessStories/SuccessStoryItem'
@@ -13,8 +12,6 @@ import { SEO } from '../../components/SEO'
 import { Container } from '../../components/common'
 
 import { mdRegex } from '../../lib/markdown'
-import { kebabCase } from '../../lib/casing'
-import { getQueryParam } from '../../lib/getQueryParam'
 import { parseMDX } from '../../lib/mdx'
 import { createNavigation } from '../../lib/navigation'
 import { loadFooterData } from '../../lib/footer'
@@ -22,24 +19,9 @@ import { loadFooterData } from '../../lib/footer'
 import type { NextPage, GetStaticProps } from 'next'
 import type { SuccessStoryItem as SuccessStoryItemType } from '../../contexts'
 
-// `@cennso/ui`'s `Select` types `items` as
-// `Record<string, ReactNode> | readonly { label: ReactNode; value: any }[] | readonly Group<any>[]`
-// (verified against node_modules/@cennso/ui/dist/index.d.ts and
-// node_modules/@base-ui/react/select/root/SelectRoot.d.ts). `value` is the
-// identifier Select compares and reports back through `onValueChange`;
-// `label` is what's rendered. The old `SelectOption` had this inverted
-// (`id` was the identifier, `value` was the display text), so both
-// `getStaticProps`'s array construction and this page's lookups swap
-// accordingly.
-type IndustryOption = {
-  label: string
-  value: string
-}
-
 type SuccessStoriesPageProps = {
   content: Record<string, any>
   successStories: Array<SuccessStoryItemType>
-  industries: Array<IndustryOption>
 }
 
 // Matches the design's 4-rows-per-page layout (frames 1:1062 / 1:585).
@@ -48,68 +30,18 @@ const PAGE_SIZE = 4
 const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
   content,
   successStories,
-  industries,
 }) => {
   const { page } = content
-
-  const router = useRouter()
-  const [filteredStories, setFilteredStories] = useState<
-    Array<SuccessStoryItemType>
-  >(() => {
-    const industry = getQueryParam(router.asPath, 'industry')
-    if (!industry) {
-      return successStories
-    }
-
-    const industryLabel = industries.find((i) => i.value === industry)?.label
-    return successStories.filter(
-      (s) => s.frontmatter.company?.industry === industryLabel
-    )
-  })
   const [currentPage, setCurrentPage] = useState(1)
 
-  const filterStories = useCallback(
-    (option: IndustryOption) => {
-      setCurrentPage(1)
-
-      if (option.value === '') {
-        setFilteredStories(successStories)
-        delete router.query.industry
-        router.replace(
-          {
-            query: { ...router.query },
-          },
-          undefined,
-          { shallow: false }
-        )
-        return
-      }
-
-      router.replace(
-        {
-          query: { ...router.query, industry: option.value },
-        },
-        undefined,
-        { shallow: false }
-      )
-      setFilteredStories(
-        successStories.filter(
-          (s) => s.frontmatter.company?.industry === option.label
-        )
-      )
-    },
-    //
-    [setFilteredStories, successStories, router]
-  )
-
-  const totalPages = Math.ceil(filteredStories.length / PAGE_SIZE)
+  const totalPages = Math.ceil(successStories.length / PAGE_SIZE)
   const pagedStories = useMemo(
     () =>
-      filteredStories.slice(
+      successStories.slice(
         (currentPage - 1) * PAGE_SIZE,
         currentPage * PAGE_SIZE
       ),
-    [filteredStories, currentPage]
+    [successStories, currentPage]
   )
 
   return (
@@ -132,58 +64,22 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
           src: '/assets/backgrounds/success-stories-illustration.webp',
           alt: '',
           'aria-hidden': 'true',
-          width: 339,
-          height: 263,
+          // The file is Figma's "Mask group" 1:614 at 2x: 586x362, drawn at
+          // x=731..1317 - 37px past the 1280px column edge. Stepped down below
+          // lg so it does not squeeze the heading on a tablet-width row.
+          width: 586,
+          height: 362,
+          sizes: '(max-width: 767px) 0px, (max-width: 1023px) 320px, 586px',
+          className:
+            'block h-auto w-80 lg:w-[586px] lg:max-w-none lg:-mr-[37px]',
         }}
       />
 
       {/* The 4.0 use-cases frames (1:585 / 1:1062) paint one flat plate behind
           the whole page and draw no separate band behind the list. */}
-      <Container className="pt-12 pb-24 px-8 lg:px-4">
-        <div className="flex flex-col gap-12">
+      <Container className="pt-12 md:pt-4 pb-24 px-8 lg:px-4">
+        <div className="flex w-full flex-col gap-12">
           <div>
-            <div className="mb-4 w-72">
-              <Field>
-                <Field.Label className="sr-only">
-                  {content.content.industrySelectLabel}
-                </Field.Label>
-                <Select
-                  items={industries}
-                  value={getQueryParam(router.asPath, 'industry') ?? ''}
-                  onValueChange={(value) => {
-                    const option = industries.find((i) => i.value === value)
-                    if (option) {
-                      filterStories(option)
-                    }
-                  }}
-                >
-                  {/* No explicit `id` here: Base UI's Field/Select association is
-                  registered client-side (see `useLabelableId` in
-                  `@base-ui/react/internals/labelable-provider`), and an
-                  explicit `id` prop is used verbatim on first render while the
-                  Field.Label's `for`/aria-labelledby still point at the
-                  Field's own generated id — the pair is unassociated in
-                  server-rendered HTML until hydration reconciles them.
-                  Leaving `id` unset lets Select.Trigger and Field.Label read
-                  the same generated id from the shared context on the very
-                  first render, so the label is correctly associated even in
-                  the pre-hydration markup. Verified in the built HTML: with an
-                  explicit id, the trigger's `id` and the label's `for`
-                  diverged; without it, they match. */}
-                  <Select.Trigger
-                    placeholder={content.content.industrySelectPlaceholder}
-                  />
-                  <Select.Content>
-                    {industries.map((industry) => (
-                      <Select.Item key={industry.value} value={industry.value}>
-                        {industry.label}
-                      </Select.Item>
-                    ))}
-                  </Select.Content>
-                </Select>
-              </Field>
-            </div>
-
             {/* Rows are pitched 481px apart on a 422px card in the frames
                 (1:592 -> 1:594 -> 1:593), i.e. a ~59px gutter, not 32. */}
             <ul className="flex w-full flex-col gap-14">
@@ -267,12 +163,6 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
       withFileTypes: true,
     })
 
-    let industries: Array<IndustryOption> = [
-      {
-        label: 'All Industries',
-        value: '',
-      },
-    ]
     const successStories: SuccessStoryItemType[] = (
       await Promise.all(
         dirents.map(async (dirent) => {
@@ -290,16 +180,6 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
               return null as any
             }
 
-            const industry = (
-              mdxSource.frontmatter as unknown as SuccessStoryItemType['frontmatter']
-            ).company?.industry
-            if (industry && !industries.some((i) => i.label === industry)) {
-              industries.push({
-                label: industry,
-                value: kebabCase(industry),
-              })
-            }
-
             return {
               link: `/success-stories/${dirent.name.replace(mdRegex, '')}`,
               frontmatter: {
@@ -313,17 +193,6 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
       )
     ).filter(Boolean)
 
-    // sorting industries
-    industries = industries.sort((a, b) => {
-      if (a.value < b.value) {
-        return -1
-      }
-      if (a.value > b.value) {
-        return 1
-      }
-      return 0
-    })
-
     const contentPath = path.join(
       process.cwd(),
       'content',
@@ -336,7 +205,6 @@ export const getStaticProps: GetStaticProps<SuccessStoriesPageProps> =
       props: {
         content: parsedContent,
         successStories,
-        industries,
         $$app: {
           navigation: await createNavigation(),
           footerData: await loadFooterData(),

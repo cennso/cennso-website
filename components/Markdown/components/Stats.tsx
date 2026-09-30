@@ -1,4 +1,4 @@
-import { FeatureCard } from '../../common'
+import { STORY_CARD } from './storyCard'
 
 import type { FunctionComponent, PropsWithChildren } from 'react'
 
@@ -14,17 +14,14 @@ interface StatProps {
 export const Stat: FunctionComponent<StatProps> = ({ value, label }) => {
   return (
     <li className="m-0">
-      <FeatureCard
-        className="flex flex-col items-center justify-center gap-2 h-full rounded-[32px] bg-secondary-600 px-6 py-8 text-center"
-        useGlow={true}
-        dropShadow={false}
-        stroke={true}
+      <div
+        className={`flex flex-col items-center justify-center gap-2 h-full px-6 py-8 text-center ${STORY_CARD}`}
       >
-        <span className="bg-clip-text text-transparent bg-linear-to-r/srgb from-secondary-200 to-[#A855F7] text-[72px] font-bold leading-tight">
+        <span className="text-primary text-[72px] font-bold leading-tight">
           {value}
         </span>
-        <span className="text-white font-bold text-base">{label}</span>
-      </FeatureCard>
+        <span className="text-foreground font-bold text-base">{label}</span>
+      </div>
     </li>
   )
 }

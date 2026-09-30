@@ -4,10 +4,9 @@ page:
   # Friendly on-page H1/lede from the Design 4.0 frames, decoupled from the
   # SEO-tuned `title`/`description` above (same split Task 3 made for
   # /contact): those keep feeding <SEO> and the breadcrumb, these feed
-  # PageHeader's on-page copy. The route, nav label and URL stay
-  # "success stories" - only the on-page heading reads "Use cases", matching
-  # the design.
-  heading: Use cases
+  # PageHeader's on-page copy. Reads "Success Stories", the same as the nav
+  # label, the route and each story's back link.
+  heading: Success Stories
   subheading: Practical use cases in technology, connectivity, and digital solutions, drawing on the experience and expertise of the Cennso expert team.
 
 content:
@@ -15,12 +14,12 @@ content:
     - Cennso delivers products and services to our customers that enable them to take full advantage of the benefits of the latest networking technologies.
     - Our products and solutions are based on our industry-proven physical and virtual appliance platforms. We deliver purpose-built systems that follow industry-standard reference architectures and ensure best-in-class performance, scalability and reliability combined with consistent end-to-end management capabilities.
     - In addition, we offer comprehensive professional services like network consultancy, training, workshops, and custom development. From a single product delivery up to turnkey solutions, Cennso is the right partner for you.
-  industrySelectLabel: Industries
-  industrySelectPlaceholder: All Industries
   # The visible label, exactly as the frames draw it: the btn_More symbol
   # (1:606), instanced on every use-case row, sets "More" (1:609) in Poppins
   # Bold 18px beside a SEPARATE chevron vector (1:608). What shipped typed that
   # chevron into the copy as a ">" character, so the pill read "More info >".
+  # The "< Success stories" link above each story page's title.
+  backLinkLabel: Success stories
   storyLinkText: More
   # Appended visually hidden, with {title} replaced by the story's own title,
   # so the link's own text names where it goes. Two things need it, and the
