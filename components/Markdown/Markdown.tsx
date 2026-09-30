@@ -393,10 +393,14 @@ export const Components: MDXRemoteProps['components'] = {
   Stat: Stat as any,
   CennsoButton: CennsoButton as any,
   // Content images - a story's photos, maps and diagrams - get the same
-  // 24px corner as the cards around them, whatever the author passes.
-  Image: ({ className, alt, ...props }: any) => (
+  // 24px corner as the cards around them, whatever the author passes. `sizes`
+  // defaults to the story card's body column (~830px wide on desktop) so an
+  // image the author gave no sizes to still picks a sensible srcset
+  // candidate; one written in the MDX wins.
+  Image: ({ className, alt, sizes, ...props }: any) => (
     <Image
       alt={alt ?? ''}
+      sizes={sizes ?? '(max-width: 768px) 100vw, 850px'}
       {...props}
       className={`rounded-2xl ${className ?? ''}`}
     />

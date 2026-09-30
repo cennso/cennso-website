@@ -1,4 +1,4 @@
-import { useState, useCallback, FormEvent } from 'react'
+import { useState, useCallback, FormEvent, useId } from 'react'
 import Link from 'next/link'
 
 import { Field, Input, Switch, Textarea } from '@cennso/ui'
@@ -23,6 +23,8 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
     'none' | 'sending' | 'success' | 'error'
   >('none')
   const [privacyPolicy, setPrivacyPolicy] = useState(false)
+  // Label ids for aria-labelledby; unique per instance.
+  const uid = useId()
   // PhoneInput reports an E.164 string, not an event, so it is controlled.
   const [phone, setPhone] = useState('')
   const [fileData, setFileData] = useState<File | undefined>(undefined)
@@ -141,8 +143,11 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
         </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
           <Field>
-            <Field.Label className="text-white">First name:</Field.Label>
+            <Field.Label id={`${uid}-first-name-label`} className="text-white">
+              First name:
+            </Field.Label>
             <Input
+              aria-labelledby={`${uid}-first-name-label`}
               type="text"
               name="first-name"
               placeholder="Enter your first name"
@@ -151,8 +156,11 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
             />
           </Field>
           <Field>
-            <Field.Label className="text-white">Last name:</Field.Label>
+            <Field.Label id={`${uid}-last-name-label`} className="text-white">
+              Last name:
+            </Field.Label>
             <Input
+              aria-labelledby={`${uid}-last-name-label`}
               type="text"
               name="last-name"
               placeholder="Enter your last name"
@@ -161,8 +169,11 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
             />
           </Field>
           <Field className="sm:col-span-2">
-            <Field.Label className="text-white">E-mail:</Field.Label>
+            <Field.Label id={`${uid}-email-label`} className="text-white">
+              E-mail:
+            </Field.Label>
             <Input
+              aria-labelledby={`${uid}-email-label`}
               type="email"
               name="email"
               placeholder="Enter the email to which the reply will be sent"
@@ -190,8 +201,11 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
             />
           </Field>
           <Field className="sm:col-span-2">
-            <Field.Label className="text-white">Message</Field.Label>
+            <Field.Label id={`${uid}-message-label`} className="text-white">
+              Message
+            </Field.Label>
             <Textarea
+              aria-labelledby={`${uid}-message-label`}
               name="message"
               rows={4}
               placeholder="Briefly about yourself..."

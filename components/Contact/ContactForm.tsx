@@ -246,8 +246,14 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
         </div>
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           <Field className={fieldClassName} validate={notBlank}>
-            <Field.Label className={labelClassName}>First name:</Field.Label>
+            <Field.Label
+              id={`${uid}-first-name-label`}
+              className={labelClassName}
+            >
+              First name:
+            </Field.Label>
             <Input
+              aria-labelledby={`${uid}-first-name-label`}
               type="text"
               name="first-name"
               placeholder="Enter your first name"
@@ -259,8 +265,14 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             {textErrors(MAX.name)}
           </Field>
           <Field className={fieldClassName} validate={notBlank}>
-            <Field.Label className={labelClassName}>Last name:</Field.Label>
+            <Field.Label
+              id={`${uid}-last-name-label`}
+              className={labelClassName}
+            >
+              Last name:
+            </Field.Label>
             <Input
+              aria-labelledby={`${uid}-last-name-label`}
               type="text"
               name="last-name"
               placeholder="Enter your last name"
@@ -275,8 +287,11 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             className={`sm:col-span-2 ${fieldClassName}`}
             validate={notBlank}
           >
-            <Field.Label className={labelClassName}>Company:</Field.Label>
+            <Field.Label id={`${uid}-company-label`} className={labelClassName}>
+              Company:
+            </Field.Label>
             <Input
+              aria-labelledby={`${uid}-company-label`}
               type="text"
               name="company"
               placeholder="Enter your company name"
@@ -294,12 +309,15 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               return text && !EMAIL.test(text) ? msg.email : null
             }}
           >
-            <Field.Label className={labelClassName}>E-mail:</Field.Label>
+            <Field.Label id={`${uid}-email-label`} className={labelClassName}>
+              E-mail:
+            </Field.Label>
             {/* type="text", not "email": the browser's own address check and
                 this one would both fail an address like "df" and show the same
                 message twice. `autoComplete` and `inputMode` still give the
                 saved-address suggestions and the e-mail keyboard. */}
             <Input
+              aria-labelledby={`${uid}-email-label`}
               type="text"
               name="email"
               placeholder="Enter the email to which the reply will be sent"
@@ -351,8 +369,11 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
                 : null
             }}
           >
-            <Field.Label className={labelClassName}>Message:</Field.Label>
+            <Field.Label id={`${uid}-message-label`} className={labelClassName}>
+              Message:
+            </Field.Label>
             <Textarea
+              aria-labelledby={`${uid}-message-label`}
               name="message"
               rows={6}
               placeholder="Enter message content..."
@@ -364,6 +385,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
           {/* Honeypot field - completely hidden from all users and bots */}
           <div className="absolute -left-full -top-full opacity-0 pointer-events-none overflow-hidden h-0 w-0">
             <input
+              aria-label="Website"
               type="text"
               name="website"
               id={`${uid}-website`}
