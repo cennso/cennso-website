@@ -7,6 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ExternalLink, Hash } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote'
+import { Prose } from '@cennso/ui'
 
 import { PrismLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus as SyntaxHighlighterTheme } from 'react-syntax-highlighter/dist/cjs/styles/prism'
@@ -46,28 +47,28 @@ export function serializeHeading(
   let className: string
   switch (level) {
     case 1: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     case 2: {
-      className = 'text-primary-600 font-bold text-[2em]'
+      className = 'text-primary font-bold text-[2em]'
       break
     }
     case 3: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     case 4: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     case 5: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
       break
     }
     // 6 level
     default: {
-      className = 'text-primary-600 font-bold'
+      className = 'text-primary font-bold'
     }
   }
 
@@ -123,7 +124,7 @@ const Heading: FunctionComponent<
     <Component
       {...rest}
       id={id}
-      className={`${className} group flex flex-row items-center whitespace-pre-wrap -ml-4 pl-4 text-secondary-200`}
+      className={`${className} group flex flex-row items-center whitespace-pre-wrap -ml-4 pl-4`}
     >
       <Link
         href={`#${id}`}
@@ -174,7 +175,7 @@ export const Components: MDXRemoteProps['components'] = {
           target="_blank"
           rel="noopener"
           {...rest}
-          className="text-secondary-200 hover:decoration-2 my-0"
+          className="text-primary hover:decoration-2 my-0"
         >
           {children}
           <ExternalLink className="inline-block ml-0.5 h-3 w-3" />
@@ -186,7 +187,7 @@ export const Components: MDXRemoteProps['components'] = {
       <Link
         {...(rest as any)}
         href={href as string}
-        className="text-secondary-200 hover:decoration-2"
+        className="text-primary hover:decoration-2"
       >
         {children}
       </Link>
@@ -296,20 +297,14 @@ export const Components: MDXRemoteProps['components'] = {
   },
   ol({ children, ...rest }) {
     return (
-      <ol
-        className={`marker:text-secondary-200 ${rest.className || ''}`}
-        {...rest}
-      >
+      <ol className={`marker:text-primary ${rest.className || ''}`} {...rest}>
         {children}
       </ol>
     )
   },
   ul({ children, ...rest }) {
     return (
-      <ul
-        {...rest}
-        className={`marker:text-secondary-200 ${rest.className || ''}`}
-      >
+      <ul {...rest} className={`marker:text-primary ${rest.className || ''}`}>
         {children}
       </ul>
     )
@@ -349,7 +344,7 @@ export const Components: MDXRemoteProps['components'] = {
   },
   td({ children, style, ...rest }) {
     return (
-      <td {...rest} className={'text-white font-normal py-1.5 px-4'}>
+      <td {...rest} className={'text-foreground font-normal py-1.5 px-4'}>
         {children}
       </td>
     )
@@ -378,7 +373,7 @@ export const Components: MDXRemoteProps['components'] = {
     return (
       <strong
         {...rest}
-        className={`text-secondary-200 font-bold ${rest.className || ''}`}
+        className={`text-foreground font-bold ${rest.className || ''}`}
       >
         {children}
       </strong>
@@ -397,7 +392,15 @@ export const Components: MDXRemoteProps['components'] = {
   Stats: Stats as any,
   Stat: Stat as any,
   CennsoButton: CennsoButton as any,
-  Image: Image as any,
+  // Content images - a story's photos, maps and diagrams - get the same
+  // 24px corner as the cards around them, whatever the author passes.
+  Image: ({ className, alt, ...props }: any) => (
+    <Image
+      alt={alt ?? ''}
+      {...props}
+      className={`rounded-2xl ${className ?? ''}`}
+    />
+  ),
 }
 
 interface MarkdownProps {
@@ -406,11 +409,17 @@ interface MarkdownProps {
 
 export const Markdown: FunctionComponent<MarkdownProps> = ({ mdxSource }) => {
   return (
-    <div
-      className="prose prose-quoteless max-w-full prose-p:text-white prose-span:text-white prose-li:text-white"
+    // `@cennso/ui`'s Prose, as docs-portal renders its markdown: body text and
+    // bold in --foreground, links in --primary, all from the theme tokens, so
+    // both themes read correctly (the old wrapper forced white text, which
+    // vanished on the light page). Two deliberate departures from Prose's own
+    // defaults: headings and list markers are --primary here rather than
+    // --foreground and --border.
+    <Prose
+      className="prose-quoteless [--tw-prose-headings:hsl(var(--primary))] [--tw-prose-bullets:hsl(var(--primary))] [--tw-prose-counters:hsl(var(--primary))]"
       id="article-content"
     >
       <MDXRemote {...mdxSource} components={Components} />
-    </div>
+    </Prose>
   )
 }

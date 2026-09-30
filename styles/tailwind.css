@@ -76,16 +76,35 @@
    the frames do not draw, and removing that band (which they asked for) is
    what exposes it.
 
-   Scoped here rather than changed in @cennso/theme, and written as one
-   declaration so it is a one-line revert: whether the design system's own
-   light --background should move is the owner's call, not this branch's. Same
-   mechanism and same cascade position as --footer above.
+   This is its own --page token, painted by <main> (`bg-page`), NOT an override
+   of --background. @cennso/ui paints its popups, menus and fields with
+   `bg-background`, so overriding that token turned every one of them #E1EAF0
+   too, where the design system draws them white. Dark has no separate plate,
+   so there --page is just --background.
 
    Contrast re-checked at this value, not assumed: --foreground (#185f99) on
    #E1EAF0 is 5.54:1, still clear of the 4.5:1 floor WCAG 2.1 AA sets for body
    text (it was 6.75:1 on white). */
+:root,
+[data-theme='dark'] {
+  --page: var(--background);
+}
+
 [data-theme='light'] {
-  --background: 204 33.3% 91.2%;
+  --page: 204 33.3% 91.2%;
+}
+
+/* Light text is the primary blue in every Design 4.0 light frame. @cennso/theme
+   0.2.x moved light --foreground and --card-foreground to a slate grey, so both
+   are pointed back at --primary here (1.0.0 shipped them as that same value).
+   Dark is untouched: its --foreground stays white. */
+[data-theme='light'] {
+  --foreground: var(--primary);
+  --card-foreground: var(--primary);
+  /* Every card on the light page is pure white, as the light frames draw
+     them; the theme's own light --card is an off-white that barely lifts off
+     the #E1EAF0 page plate. */
+  --card: 0 0% 100%;
 }
 
 ::-moz-selection {
