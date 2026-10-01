@@ -35,8 +35,12 @@
  * longer one. The 7px of slack lands after the chevron, before the right
  * inset.
  */
+/**
+ * Hover matches the header's Sign In pill: amber #FFB31B fill, dark navy
+ * #081927 label; the chevron follows via currentColor.
+ */
 export const CTA_HERO =
-  'h-[52px] min-w-[195px] gap-[17px] pl-[32px] pr-[13px] text-[20px] font-bold text-white'
+  'h-[52px] min-w-[195px] gap-[17px] pl-[32px] pr-[13px] text-[20px] font-bold text-white transition-colors hover:bg-[#ffb31b] hover:text-[#081927]'
 
 /**
  * `text-left` is the frame's own value, not a layout choice: the label inside

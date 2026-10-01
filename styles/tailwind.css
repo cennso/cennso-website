@@ -218,3 +218,39 @@ a {
 .feature-card-shiny:hover::after {
   opacity: 0.4;
 }
+
+/* Customer logo marquee (components/Home/LogoBand.tsx). The track holds two
+   identical copies of the logo row, so translating by -50% loops seamlessly. The
+   edges fade out via a mask so logos glide in and out rather than being cut. */
+.logo-marquee {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+.logo-marquee-track {
+  animation: logo-marquee 35s linear infinite;
+}
+
+.logo-marquee:hover .logo-marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes logo-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee-track {
+    animation: none;
+  }
+}

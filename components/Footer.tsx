@@ -13,12 +13,13 @@ import type { FooterData } from '../lib/footer'
  * the body. The 18px SemiBold column headings and the 14px copyright below are
  * already the frames' own and do not move with it. From lg up there is no
  * vertical padding: the frames stack the links 24px line on 24px line with a
- * small step between. Below lg each link keeps 12px above and below, a 48px
- * tap target - packed at 24px they sat too close for a finger, and
- * Lighthouse's mobile tap-targets audit failed them.
+ * small step between. Below lg each link keeps 6px above and below, a 36px
+ * tap target (halved from 12px at the owner's request). Packed at 24px they
+ * sat too close for a finger and Lighthouse's mobile tap-targets audit failed
+ * them; 36px clears WCAG 2.2's 24px minimum but is under the audit's 48px.
  */
 const LINK_CLASS =
-  'flex flex-row items-center text-[15px] leading-6 text-white underline-offset-4 hover:underline py-3 lg:py-0'
+  'flex flex-row items-center text-[15px] leading-6 text-white underline-offset-4 hover:underline py-1.5 lg:py-0'
 
 interface FooterProps {
   footerData?: FooterData

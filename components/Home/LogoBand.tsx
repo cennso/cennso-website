@@ -34,7 +34,8 @@ const LOGO_TONE =
  * look huge and a square mark (Telna) tiny, so the height shrinks as the
  * aspect ratio grows - 56px for a square mark, ~40px for the widest.
  */
-const OPTICAL_HEIGHT = 56
+const LOGO_SCALE = 0.8
+const OPTICAL_HEIGHT = 56 * LOGO_SCALE
 const OPTICAL_FALLOFF = 0.18
 
 function logoHeight(logo: LogoBandLogo): number {
@@ -44,53 +45,53 @@ function logoHeight(logo: LogoBandLogo): number {
 }
 
 /**
- * Customer logos as two staggered rows. Not in the `@cennso/ui` registry as a
- * dedicated logo-wall/marquee component - composed locally, see
- * `.claude/upstream-gaps.md`. Real `<ul>`s of `<li>` images (not one flattened
- * band image) so each logo keeps its own accessible name.
+ * Customer logos as one slowly scrolling row (a marquee). Not in the
+ * `@cennso/ui` registry as a dedicated logo-wall/marquee component - composed
+ * locally, see `.claude/upstream-gaps.md`. Real `<ul>`s of `<li>` images so
+ * each logo keeps its own accessible name.
  *
- * From `md:` up each row spreads its marks edge to edge (`justify-between`),
- * so the band spans the same measure as the card row it sits above. Because
- * the two rows hold marks of different widths, their gaps differ and the
- * second row reads offset from the first rather than as a rigid grid. Below
- * `md:` the rows wrap and centre.
+ * The row renders its logos twice and translates by -50%, so the loop is
+ * seamless. The second copy is `aria-hidden` so screen readers hear each logo
+ * once. The row pauses on hover and stands still
+ * under `prefers-reduced-motion` (see `.logo-marquee` in styles/tailwind.css).
  */
 export const LogoBand: FunctionComponent<LogoBandProps> = ({
   logos,
   className = '',
 }) => {
-  const half = Math.ceil(logos.length / 2)
-  const rows = [logos.slice(0, half), logos.slice(half)]
-
   return (
-    <div className={`flex w-full flex-col gap-8 md:gap-10 ${className}`}>
-      {rows.map((row, index) => (
-        <ul
-          key={index}
-          className={`flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:flex-nowrap md:justify-between ${
-            index === 1 ? 'md:px-4' : 'md:px-10'
-          }`}
-        >
-          {row.map((logo) => {
-            const height = logoHeight(logo)
-            const width = Math.ceil((height * logo.width) / logo.height)
+    <div className={`logo-marquee flex w-full overflow-hidden ${className}`}>
+      <div className="logo-marquee-track flex w-max">
+        {[0, 1].map((copy) => (
+          <ul
+            key={copy}
+            aria-hidden={copy === 1 ? true : undefined}
+            className="flex shrink-0 items-center gap-x-[54px] pr-[54px] md:gap-x-[82px] md:pr-[82px]"
+          >
+            {logos.map((logo) => {
+              const height = logoHeight(logo)
+              const width = Math.ceil((height * logo.width) / logo.height)
 
-            return (
-              <li key={logo.name} className="flex items-center justify-center">
-                <NextImage
-                  src={logo.src}
-                  alt={logo.name}
-                  width={logo.width}
-                  height={logo.height}
-                  sizes={`(min-width: 768px) ${width}px, ${Math.ceil(width * 0.75)}px`}
-                  style={{ '--logo-h': `${height}px` } as CSSProperties}
-                  className={`h-[calc(var(--logo-h)*0.75)] w-auto md:h-(--logo-h) ${LOGO_TONE}`}
-                />
-              </li>
-            )
-          })}
-        </ul>
-      ))}
+              return (
+                <li
+                  key={logo.name}
+                  className="flex shrink-0 items-center justify-center"
+                >
+                  <NextImage
+                    src={logo.src}
+                    alt={copy === 1 ? '' : logo.name}
+                    width={logo.width}
+                    height={logo.height}
+                    sizes={`(min-width: 768px) ${width}px, ${Math.ceil(width * 0.75)}px`}
+                    style={{ '--logo-h': `${height}px` } as CSSProperties}
+                    className={`h-[calc(var(--logo-h)*0.75)] w-auto md:h-(--logo-h) ${LOGO_TONE}`}
+                  />
+                </li>
+              )
+            })}
+          </ul>
+        ))}
+      </div>
     </div>
   )
 }

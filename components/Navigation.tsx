@@ -31,8 +31,13 @@ import type { NavigationLink } from '../contexts'
 const NAV_CTA_CLASS = [
   'inline-flex h-9 items-center gap-[9px] rounded-btn border px-4',
   'text-lg font-medium transition-colors',
-  'border-primary bg-primary text-primary-foreground hover:bg-primary/90',
-  'dark:bg-background dark:text-primary dark:hover:bg-primary/10',
+  'border-primary bg-primary text-primary-foreground',
+  'dark:bg-background dark:text-primary',
+  // Hover, both palettes: amber #FFB31B (the dark frame's own #ffb31b)
+  // fill and border, dark navy #081927 label; the chevron follows via
+  // currentColor.
+  'hover:border-[#ffb31b] hover:bg-[#ffb31b] hover:text-[#081927]',
+  'dark:hover:border-[#ffb31b] dark:hover:bg-[#ffb31b] dark:hover:text-[#081927]',
 ].join(' ')
 
 interface NavigationProps {

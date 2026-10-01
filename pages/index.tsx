@@ -132,7 +132,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               column with a 64px gutter left the 48px headline too narrow for
               its own first line and broke "Build Network Solutions." across
               two, which the design sets on one. */}
-          <div className="flex flex-col md:flex-row items-center gap-10 md:gap-6 pt-10 pb-16 md:pt-16 md:pb-24 w-full">
+          <div className="flex flex-col md:flex-row items-center gap-5 md:gap-6 pt-10 pb-16 md:pt-16 md:pb-24 w-full">
             <div className="flex flex-col gap-6 w-full md:w-[56%] items-center md:items-start text-center md:text-left">
               {/* Figma 1:24 / 1:4451: Poppins Bold 48/64, no tracking. The
                   library's `h1` variant is the theme's 36/40 step with
@@ -163,7 +163,9 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                 <ButtonChevron />
               </Button>
             </div>
-            <div className="w-full md:w-[44%] flex justify-center">
+            {/* Mobile stacks the artwork above the copy (order-first); from
+                md: up it returns to the right of the copy in source order. */}
+            <div className="order-first md:order-none w-full md:w-[44%] flex justify-center">
               {/* Two exports, not one. The dark and light frames draw the slab
                   in different colours (dark navy vs. bright blue) over
                   different plates, and the single artwork shipped before was
@@ -221,11 +223,13 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
                   carries `tracking-tight` (-0.025em, i.e. -1.6px here) and
                   inherits the body's 1.5 line height, which set the heading
                   96px tall - more than twice the frame's box, and what pushed
-                  the glyph row apart from the cards under it. */}
+                  the glyph row apart from the cards under it. The frame's 42px
+                  box made the two lines overlap once the heading wraps on
+                  mobile, so it is line-height: 1 (leading-none) instead. */}
                 <Typography
                   variant="display"
                   render={<h2 />}
-                  className="text-foreground leading-[42px] tracking-normal"
+                  className="text-foreground leading-none tracking-normal"
                 >
                   {whyCennso.heading}
                 </Typography>
