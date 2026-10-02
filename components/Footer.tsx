@@ -50,7 +50,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
     // is this rule. It is the same 1px `border-border/50` the header draws
     // under itself (see Navigation), minus the header's glow. The light footer
     // needs none: its #0d406a plate already separates itself from the page.
-    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-8 lg:px-4 font-normal dark:border-t dark:border-border/50">
+    <div className="flex flex-row justify-center w-full max-w-screen py-6 bg-footer px-6 lg:px-4 font-normal dark:border-t dark:border-border/50">
       {/* Same content measure as Container/Navigation, so the footer wordmark
           lines up with the header's and with every page heading - the frames
           put both logos on the page's own gutter (1:584 at x=81). */}

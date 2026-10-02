@@ -31,13 +31,17 @@ import type { NavigationLink } from '../contexts'
 const NAV_CTA_CLASS = [
   'inline-flex h-9 items-center gap-[9px] rounded-btn border px-4',
   'text-lg font-medium transition-colors',
-  'border-primary bg-primary text-primary-foreground',
-  'dark:bg-background dark:text-primary',
-  // Hover, both palettes: amber #FFB31B (the dark frame's own #ffb31b)
-  // fill and border, dark navy #081927 label; the chevron follows via
-  // currentColor.
-  'hover:border-[#ffb31b] hover:bg-[#ffb31b] hover:text-[#081927]',
-  'dark:hover:border-[#ffb31b] dark:hover:bg-[#ffb31b] dark:hover:text-[#081927]',
+  // Light: #185F99 fill and border, white label; #FF6D12 on hover (owner's
+  // call). The label and chevron stay white on both.
+  'border-[#185f99] bg-[#185f99] text-white',
+  'hover:border-[#ff6d12] hover:bg-[#ff6d12] hover:text-white',
+  // Dark keeps the frame's outline pill. Marked important (`!`): each dark
+  // rule has the same specificity as its light twin (the dark variant's
+  // :where() adds none), so without it build order picked the winner.
+  'dark:border-primary! dark:bg-background! dark:text-primary!',
+  // Dark hover: amber #FFB31B (the dark frame's own #ffb31b) fill and
+  // border, dark navy #081927 label; the chevron follows via currentColor.
+  'dark:hover:border-[#ffb31b]! dark:hover:bg-[#ffb31b]! dark:hover:text-[#081927]!',
 ].join(' ')
 
 interface NavigationProps {
@@ -70,7 +74,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
     // under the bar and an ::after hung off its lower edge, one radial
     // gradient of --glow-blue sourced at the middle of that edge. `relative`
     // makes this div the ::after's containing block.
-    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white dark:bg-background shadow-none px-8 lg:px-4 dark:border-border/50 dark:border-b dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:top-full dark:after:h-8 dark:after:bg-[image:radial-gradient(50%_100%_at_50%_0%,hsl(var(--glow-blue)/0.30)_0%,transparent_70%)]">
+    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white dark:bg-background shadow-none px-6 lg:px-4 dark:border-border/50 dark:border-b dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:top-full dark:after:h-8 dark:after:bg-[image:radial-gradient(50%_100%_at_50%_0%,hsl(var(--glow-blue)/0.30)_0%,transparent_70%)]">
       <nav
         className={`flex flex-row items-center justify-between w-full ${CONTENT_MEASURE} py-2`}
       >
@@ -99,7 +103,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
               isOpen
                 ? 'opacity-100'
                 : 'opacity-0 -translate-y-[calc(100%+4.5rem)] xl:opacity-100 xl:translate-y-0'
-            } w-full h-auto shadow-none px-8 py-4 xl:p-0 bg-white dark:bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
+            } w-full h-auto shadow-none px-6 py-4 xl:p-0 bg-white dark:bg-background xl:bg-transparent flex flex-col xl:flex-row items-center xl:gap-1 z-20`}
           >
             {navigation.map((link) => (
               <li
@@ -130,9 +134,13 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
                 pill stands, so the hover wash is the pill's height rather than
                 a smaller square next to it. */}
             <li className="mt-4 xl:mt-0 xl:ml-4 font-normal">
+              {/* align="center" centres the menu under the moon icon; the
+                  library default ("end") lines its right edge up with the
+                  button's instead. */}
               <ThemeToggle
                 variant="dropdown"
                 size="icon-lg"
+                align="center"
                 className="rounded-full"
               />
             </li>
@@ -145,11 +153,26 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
 
 /** The top-level nav entry's look, shared by the plain link, the dropdown
  * trigger and the mobile accordion header so the three stay identical. */
+/**
+ * Active page, desktop bar (xl+): no underline; instead a 5px rectangle as wide
+ * as the item's text (inset-x-4 cancels its px-4), sitting flush on the header band's bottom edge - #185F99 light,
+ * #FFB31B dark. It hangs off the item (`relative` + `::after`), so it needs the
+ * distance from the item's bottom to the band's: the band's py-3 plus the
+ * nav's py-2 is 20px, and the dark band adds its 1px
+ * `border-b`, which the bar covers. The mobile accordion keeps the underline,
+ * since its items are stacked rows with no bar edge to sit on.
+ */
+const ACTIVE_BAR =
+  'xl:no-underline xl:relative xl:after:absolute xl:after:inset-x-4 xl:after:-bottom-5 xl:after:h-[5px] xl:after:bg-[#185f99] dark:xl:after:-bottom-[21px] dark:xl:after:bg-[#ffb31b]'
+
 function topLevelClass(active: boolean): string {
   return `block flex flex-row items-center justify-between gap-1 px-4 py-1.5 border-b border-border xl:border-b-0 w-full xl:w-auto transition-colors duration-300 ease-in-out ${
     active
-      ? 'text-primary underline underline-offset-4'
-      : 'text-foreground hover:text-primary hover:text-shadow-primary'
+      ? `text-primary underline underline-offset-4 ${ACTIVE_BAR}`
+      : // Hover: #FF6D12 in light (owner's call), the theme's --primary
+        // (amber) in dark, as before. The 1px #1D75BC text-shadow glow is
+        // dark-only: on the light bar it read as a blue outline.
+        'text-foreground hover:text-[#ff6d12] dark:hover:text-primary! dark:hover:text-shadow-primary'
   } xl:rounded-full text-lg font-medium font-sans`
 }
 
@@ -255,7 +278,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
           <NavigationMenu.List>
             <NavigationMenu.Item>
               <NavigationMenu.Trigger
-                className={`${topLevelClass(isActive)} rounded-none hover:bg-transparent data-popup-open:bg-transparent data-popup-open:text-primary cursor-pointer`}
+                className={`${topLevelClass(isActive)} rounded-none hover:bg-transparent data-popup-open:bg-transparent data-popup-open:text-[#ff6d12] dark:data-popup-open:text-primary! cursor-pointer`}
                 icon={<ChevronDown strokeWidth={2.5} className="h-6 w-6" />}
               >
                 {link.title}

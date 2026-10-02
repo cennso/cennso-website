@@ -5,7 +5,7 @@ import { Field, Input, Switch, Textarea } from '@cennso/ui'
 
 import { StatusModal } from '../common/StatusModal'
 import { PhoneInput } from '../common/PhoneInput'
-import { Button } from '../common'
+import { Button, FORM_SWITCH } from '../common'
 
 import type { FunctionComponent, ChangeEvent } from 'react'
 import type { JobFormBody } from '../../pages/api/job-submission-form'
@@ -283,6 +283,7 @@ export const JobForm: FunctionComponent<JobFormProps> = ({
             invalid={consentInvalid}
           >
             <Switch
+              className={FORM_SWITCH}
               name="privacy-policy"
               checked={privacyPolicy}
               onCheckedChange={(next) => {

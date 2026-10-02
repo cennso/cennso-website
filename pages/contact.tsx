@@ -99,18 +99,23 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
 
                 <div className="flex flex-col xl:flex-row gap-12 text-foreground">
                   <div className="flex flex-col gap-8 w-full xl:w-1/2">
-                    <h3 className="text-3xl text-primary">{section.company}</h3>
-                    {/* Figma 1:3924 / 1:7420: the body copy beside the form is
-                        Regular 20px, not the inherited 16px. */}
-                    <div className="flex flex-col gap-4 text-xl">
+                    <h3 className="text-3xl text-primary dark:text-white">{section.company}</h3>
+                    {/* Figma 1:3924 / 1:7420 draw the body copy beside the form
+                        at Regular 20px; the owner set it to 18px (text-lg). */}
+                    <div className="flex flex-col gap-4 text-lg">
                       {section.description.map(
                         (text: string, index: number) => (
                           <p key={index}>{text}</p>
                         )
                       )}
                     </div>
-                    <div className="flex flex-col md:flex-row items-center gap-6 md:gap-12">
-                      <div className="flex items-end xl:items-center flex-col gap-6 md:w-1/2">
+                    {/* Below md this row dissolves (max-md:contents) so the
+                        avatar and the contacts join the column as siblings of
+                        the name block, and the contacts move last: avatar,
+                        name, title, then e-mail and phone. From md up it is
+                        the avatar | contacts row again, name below. */}
+                    <div className="max-md:contents flex flex-col md:flex-row items-center gap-6 md:gap-12">
+                      <div className="flex items-center md:items-end xl:items-center flex-col gap-6 md:w-1/2">
                         <CircleAvatar
                           src={section.person.avatar}
                           author={section.person}
@@ -119,15 +124,16 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                         />
                       </div>
                       {section.contact ? (
-                        <div className="flex flex-col sm:flex-row md:flex-col items-center justify-center md:items-start gap-3 sm:gap-12 w-full md:w-1/2">
-                          {/* Figma 1:3936 / 1:3929: the address lines are
+                        <div className="max-md:order-last flex flex-col sm:flex-row md:flex-col items-start sm:items-center justify-center md:items-start gap-3 sm:gap-6 w-full max-sm:w-fit max-sm:mx-auto md:w-1/2">
+                          {/* Figma 1:3936 / 1:3929 draw the address lines at
                               Regular 22px next to 58px icon discs (1:3958 /
-                              1:3959); they were 16px next to 48px discs. */}
+                              1:3959); the owner set them to 20px, with a 24px
+                              gap (sm:gap-6) between e-mail and phone. */}
                           {section.contact.email ? (
                             <a
                               href={`mailto:${section.contact.email}`}
                               rel="noopener"
-                              className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
+                              className="flex flex-row gap-4 items-center text-[20px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
                               <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">
                                 <MailSolid className="w-7 h-7" />
@@ -140,7 +146,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                           {section.contact.phone ? (
                             <a
                               href={`tel:${section.contact.phone.replace(' ', '')}`}
-                              className="flex flex-row gap-4 items-center text-[22px] text-foreground hover:text-primary transition duration-300 ease-in-out"
+                              className="flex flex-row gap-4 items-center text-[20px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
                               <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">
                                 <Phone
@@ -173,7 +179,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                           {section.person.name}
                         </h4>
                       </header>
-                      <p className="text-center text-xl text-foreground">
+                      <p className="text-center text-lg text-foreground">
                         {section.person.position}
                       </p>
                     </div>

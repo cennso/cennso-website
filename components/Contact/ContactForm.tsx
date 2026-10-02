@@ -5,7 +5,12 @@ import { Button, Field, Input, Switch, Textarea } from '@cennso/ui'
 import { Form } from '@base-ui/react/form'
 import { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input'
 
-import { StatusModal, CTA_ACTION, ButtonChevron } from '../common'
+import {
+  StatusModal,
+  CTA_ACTION,
+  ButtonChevron,
+  FORM_SWITCH,
+} from '../common'
 import { PhoneInput } from '../common/PhoneInput'
 
 import type { FunctionComponent } from 'react'
@@ -19,7 +24,9 @@ interface ContactFormProps {
 // Every control is `@cennso/ui`'s own (Field, Input, Textarea, PhoneInput,
 // Switch), drawn with the design system's defaults. Labels are Regular 18px in
 // `--foreground` (white in dark, #185f99 in light).
-const labelClassName = 'text-lg leading-7 font-normal text-foreground'
+// 16px on mobile (2px under the frames' 18px, owner's call), 18px from sm up.
+const labelClassName =
+  'text-base sm:text-lg leading-7 font-normal text-foreground'
 
 // Upper bounds on what a field accepts. Generous for a real answer, and they
 // stop a pasted wall of text from reaching the e-mail it becomes.
@@ -45,7 +52,16 @@ const fieldClassName = 'gap-1'
 const controlsClassName = [
   '[&_:is(:is([data-slot=input],[data-slot=textarea]):not([data-invalid]),[data-slot=phone-input]:not(:has([data-invalid])))]:border-primary',
   'dark:[&_:is(:is([data-slot=input],[data-slot=textarea]):not([data-invalid]),[data-slot=phone-input]:not(:has([data-invalid])))]:border-input',
-  'dark:[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input])]:bg-page',
+  // Fill: light is the "Contact page light" frame's #F7FAFC (Figma 1:7563-
+  // 1:7567, with the #185F99 border above); dark is #E5F4FF (owner's call).
+  // Text is #001A2A in both. The phone field's inner number input and country
+  // button inherit the text colour and sit transparent on the fill.
+  // Placeholders use the same navy at 60% so they stay legible on either fill.
+  '[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input])]:bg-[#f7fafc]',
+  'dark:[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input])]:bg-[#e5f4ff]',
+  '[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input],[data-slot=phone-input]_*)]:text-[#001a2a]',
+  '[&_[data-slot=phone-input]_:is(input,button)]:bg-transparent',
+  '[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input]_input)]:placeholder:text-[#001a2a]/60',
   // Text inputs match the phone field's height. PhoneInput's group is its
   // number box (control-height-lg) plus the group's own 1px border top and
   // bottom, where a plain Input is control-height-md, border included - 38px
@@ -263,7 +279,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
             (content?.form?.statusMessages?.error ||
               'An error occurred while sending message.')}
         </div>
-        <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
           <Field className={fieldClassName} validate={notBlank}>
             <Field.Label
               id={`${uid}-first-name-label`}
@@ -427,6 +443,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
           <Field className="sm:col-span-2 gap-1" invalid={consentInvalid}>
             <div className="flex items-center gap-2">
               <Switch
+                className={FORM_SWITCH}
                 name="privacy-policy"
                 checked={privacyPolicy}
                 onCheckedChange={(next) => {
@@ -456,7 +473,13 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               fields above it (1:3938 / 1:7550), not against the panel's right
               edge, which is where `justify-end` had it. */}
           <div className="sm:col-span-2 flex">
-            <Button type="submit" variant="cta" className={CTA_ACTION}>
+            {/* Hover matches the hero's "Book demo" pill (CTA_HERO): amber
+                #FFB31B fill, dark navy #081927 label and chevron. */}
+            <Button
+              type="submit"
+              variant="cta"
+              className={`${CTA_ACTION} transition-colors hover:bg-[#ffb31b] hover:text-[#081927]`}
+            >
               {content?.form?.sendLabel || 'Send'}
               <ButtonChevron />
             </Button>

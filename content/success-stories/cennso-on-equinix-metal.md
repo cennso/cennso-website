@@ -5,13 +5,12 @@ company:
   website: https://www.equinix.com/
   logo: /assets/success-stories/cennso-on-equinix-metal/equinix-logo.webp
   industry: Cloud infrastructure
-cover: /assets/blog-posts/ssg-ssr/cover.webp
+cover: /assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp
 excerpt: German automaker deploys Cennso on Equinix Metal for faster in-car connectivity, real-time data, over-the-air updates, and full data sovereignty compliance.
 layout: new
 ---
 
-<ContentBlock title='The Challenge'>
-A leading German automaker had to overcome critical challenges around network latency and data sovereignty to improve its connected-car services. Delivering fast, reliable, and compliant mobile core packet gateway services for connected vehicles required a powerful solution that could be deployed close to users in South Korea. Cennso’s solution provider, Travelping, was looking for an infrastructure partner that could provide high-performance, cloud-native services in-region.
+# Localized traffic and data sovereignty with Cennso and Equinix Metal
 
 <Image
   src="/assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp"
@@ -21,10 +20,16 @@ A leading German automaker had to overcome critical challenges around network la
   height="1408"
   unoptimized
 />
+
+<ContentBlock title='The Challenge'>
+A leading German automaker had to overcome critical challenges around network latency and data sovereignty to improve its connected-car services. Delivering fast, reliable, and compliant mobile core packet gateway services for connected vehicles required a powerful solution that could be deployed close to users in South Korea. Cennso’s solution provider, Travelping, was looking for an infrastructure partner that could provide high-performance, cloud-native services in-region.
 </ContentBlock>
 
 <ContentBlock title='The Solution'>
 Travelping delivered a tailored Cennso Network Solution on the Equinix Metal platform, providing the automaker with automated, scalable packet gateway services designed to adapt to dynamic traffic demands. This setup ensured the solution could handle varying network loads while remaining flexible and secure.
+
+Thanks to Cennso’s seamless integration with cloud and edge environments, the automaker achieved a significant boost in service performance and reliability. Real-time services—such as telemetry, infotainment, and over-the-air software updates—became faster and more reliable, directly enhancing the connected-car experience for users.
+</ContentBlock>
 
 <Image
   src="/assets/success-stories/cennso-on-equinix-metal/equinix-cennso-diagram.webp"
@@ -34,9 +39,6 @@ Travelping delivered a tailored Cennso Network Solution on the Equinix Metal pla
   height="917"
   unoptimized
 />
-
-Thanks to Cennso’s seamless integration with cloud and edge environments, the automaker achieved a significant boost in service performance and reliability. Real-time services—such as telemetry, infotainment, and over-the-air software updates—became faster and more reliable, directly enhancing the connected-car experience for users.
-</ContentBlock>
 
 <ContentBlock title='The Results'>
 The combined solution from Cennso and Equinix Metal brought immediate improvements to the automaker’s connected-car services, including faster in-car Wi-Fi, real-time data exchange, and smoother over-the-air updates. The high-performing, scalable architecture empowered the automaker to meet global connectivity goals while maintaining compliance with South Korean data regulations.

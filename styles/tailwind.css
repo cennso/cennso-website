@@ -254,3 +254,13 @@ a {
     animation: none;
   }
 }
+
+/* Story artwork shipped white for the dark theme (e.g. the IBM logo on the IBM
+   Cloud story) is marked data-tone="brand-light" and recoloured to #185F99 in
+   the light theme. A flat-colour image can only be retinted via filter:
+   brightness(0) zeroes it to black, and the chain after it was solved
+   numerically to land on rgb(24,95,154) - within 1 unit of #185F99. */
+[data-theme='light'] img[data-tone='brand-light'] {
+  filter: brightness(0) saturate(100%) invert(53%) sepia(29%) saturate(1406%)
+    hue-rotate(170deg) brightness(60%) contrast(104%);
+}

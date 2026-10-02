@@ -18,7 +18,9 @@ interface LogoBandProps {
  * The exported artwork is one colour set (navy, full opacity) shared by both
  * themes - the light and dark renderings in the frames are the same geometry
  * at two different opacity/colour treatments, not two different exports (see
- * `.claude/upstream-gaps.md`). Light theme dims the mark to 37% opacity, no
+ * `.claude/upstream-gaps.md`). Light theme dims the mark to 54% opacity (the
+ * frames' 37% gave 1.72:1 against the #E1EAF0 plate; the owner asked for 35%
+ * more contrast, 2.33:1), no
  * recolour needed. Dark theme needs full opacity and a colour shift from the
  * shipped navy to a lighter blue; `invert/sepia/saturate/hue-rotate/
  * brightness/contrast` is a standard technique for retinting a flat-colour
@@ -27,7 +29,7 @@ interface LogoBandProps {
  * - no hex literal needed in this component).
  */
 const LOGO_TONE =
-  'opacity-[.37] dark:opacity-100 dark:filter-[brightness(0)_invert(68%)_sepia(49%)_saturate(398%)_hue-rotate(173deg)_brightness(78%)_contrast(83%)]'
+  'opacity-[.54] dark:opacity-100 dark:filter-[brightness(0)_invert(68%)_sepia(49%)_saturate(398%)_hue-rotate(173deg)_brightness(78%)_contrast(83%)]'
 
 /**
  * Optical sizing: one shared height makes a wide wordmark (Hochbahn, 6.5:1)

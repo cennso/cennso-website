@@ -46,7 +46,7 @@ const JobsPage: NextPage<JobsPageProps> = ({ content, jobs }) => {
         }}
       />
 
-      <Container className="pt-12 pb-24 px-8 lg:px-4 bg-secondary-400">
+      <Container className="pt-12 pb-24 px-6 lg:px-4 bg-secondary-400">
         <div className="flex flex-col gap-12 text-white">
           <p>{mainContent.description}</p>
 

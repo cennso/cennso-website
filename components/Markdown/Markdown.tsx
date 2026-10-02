@@ -5,7 +5,7 @@ import type { JSX } from 'react'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ExternalLink, Hash } from 'lucide-react'
+import { Hash } from 'lucide-react'
 import { MDXRemote } from 'next-mdx-remote'
 import { Prose } from '@cennso/ui'
 
@@ -178,7 +178,6 @@ export const Components: MDXRemoteProps['components'] = {
           className="text-primary hover:decoration-2 my-0"
         >
           {children}
-          <ExternalLink className="inline-block ml-0.5 h-3 w-3" />
         </a>
       )
     }
@@ -402,7 +401,9 @@ export const Components: MDXRemoteProps['components'] = {
       alt={alt ?? ''}
       sizes={sizes ?? '(max-width: 768px) 100vw, 850px'}
       {...props}
-      className={`rounded-2xl ${className ?? ''}`}
+      // `data-flat` opts an image out of the rounded corner - for logos and
+      // other artwork that should keep its own square edges.
+      className={`${props['data-flat'] ? '' : 'rounded-2xl'} ${className ?? ''}`}
     />
   ),
 }

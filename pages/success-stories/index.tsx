@@ -77,7 +77,7 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
 
       {/* The 4.0 use-cases frames (1:585 / 1:1062) paint one flat plate behind
           the whole page and draw no separate band behind the list. */}
-      <Container className="pt-12 md:pt-4 pb-24 px-8 lg:px-4">
+      <Container className="pt-12 md:pt-4 pb-24 px-6 lg:px-4">
         <div className="flex w-full flex-col gap-12">
           <div>
             {/* Rows are pitched 481px apart on a 422px card in the frames

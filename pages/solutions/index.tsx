@@ -57,7 +57,7 @@ const SolutionsPage: NextPage<SolutionsPageProps> = ({
         }}
       />
 
-      <Container className="mt-12 mb-24 px-8 lg:px-4">
+      <Container className="mt-12 mb-24 px-6 lg:px-4">
         <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full h-full">
           {solutions.map((solution, index) => (
             <li key={solution.frontmatter.title} className="rounded-[32px]">

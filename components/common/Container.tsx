@@ -79,7 +79,7 @@ export const Container: FunctionComponent<ContainerProps> = ({
 }) => {
   return (
     <section
-      className={`${className} flex flex-row justify-center w-full max-w-screen border-none px-8 lg:px-4`}
+      className={`${className} flex flex-row justify-center w-full max-w-screen border-none px-6 lg:px-4`}
     >
       <div
         className={`${subClassName} relative flex flex-row items-center justify-between w-full ${measure}`}
