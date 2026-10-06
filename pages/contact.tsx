@@ -98,33 +98,45 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                 </header>
 
                 <div className="flex flex-col xl:flex-row gap-12 text-foreground">
-                  <div className="flex flex-col gap-8 w-full xl:w-1/2">
-                    <h3 className="text-3xl text-primary dark:text-white">{section.company}</h3>
+                  {/* 640-1279px (tablet:): a two-column grid - the heading and copy span both
+                      columns, then the photo sits left across two rows with
+                      name + title above the contacts on its right. Below
+                      640px the column stays stacked; from xl up the
+                      original row layout takes over. */}
+                  <div className="flex flex-col gap-8 w-full xl:w-1/2 tablet:grid tablet:grid-cols-[auto_1fr] tablet:gap-x-10 tablet:gap-y-6">
+                    <h3 className="text-3xl text-primary dark:text-white tablet:col-span-2">{section.company}</h3>
                     {/* Figma 1:3924 / 1:7420 draw the body copy beside the form
                         at Regular 20px; the owner set it to 18px (text-lg). */}
-                    <div className="flex flex-col gap-4 text-lg">
+                    <div className="flex flex-col gap-4 text-lg tablet:col-span-2">
                       {section.description.map(
                         (text: string, index: number) => (
                           <p key={index}>{text}</p>
                         )
                       )}
                     </div>
-                    {/* Below md this row dissolves (max-md:contents) so the
-                        avatar and the contacts join the column as siblings of
-                        the name block, and the contacts move last: avatar,
-                        name, title, then e-mail and phone. From md up it is
-                        the avatar | contacts row again, name below. */}
-                    <div className="max-md:contents flex flex-col md:flex-row items-center gap-6 md:gap-12">
-                      <div className="flex items-center md:items-end xl:items-center flex-col gap-6 md:w-1/2">
+                    {/* Below xl (1280px) this row dissolves (max-xl:contents) so
+                        the avatar and the contacts join the column as siblings
+                        of the name block, and the contacts move last: avatar,
+                        name, title, then e-mail and phone as a centred column
+                        with their icons aligned (pulled up so the title-to-
+                        contacts gap is 22px on mobile, 17px on tablet: 30%
+                        under the column/grid gap). From xl up it is the
+                        avatar | contacts row again, name below. */}
+                    <div className="max-xl:contents flex flex-col xl:flex-row items-center gap-6 xl:gap-12">
+                      <div className="flex items-center flex-col gap-6 xl:w-1/2 tablet:row-span-2 tablet:self-center">
                         <CircleAvatar
                           src={section.person.avatar}
                           author={section.person}
-                          className="w-64 h-64"
+                          // White disc behind the photo in light (owner's
+                          // call); dark keeps the amber --primary ring. The
+                          // [data-theme=light] ancestor selector outranks the
+                          // component's own bg-primary.
+                          className="w-64 h-64 [[data-theme=light]_&]:bg-white"
                           priority={index === 0}
                         />
                       </div>
                       {section.contact ? (
-                        <div className="max-md:order-last flex flex-col sm:flex-row md:flex-col items-start sm:items-center justify-center md:items-start gap-3 sm:gap-6 w-full max-sm:w-fit max-sm:mx-auto md:w-1/2">
+                        <div className="max-xl:order-last flex flex-col items-start justify-center gap-3 sm:gap-6 w-fit mx-auto xl:mx-0 xl:w-1/2 tablet:mx-0 tablet:self-start max-sm:-mt-[10px] tablet:-mt-[7px]">
                           {/* Figma 1:3936 / 1:3929 draw the address lines at
                               Regular 22px next to 58px icon discs (1:3958 /
                               1:3959); the owner set them to 20px, with a 24px
@@ -169,17 +181,17 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                         measured 75px. The -6px is taken here rather than off
                         `gap-8` so only the gap the frames pin actually moves -
                         the three gaps above it are not design values. */}
-                    <div className="-mt-1.5 flex flex-col gap-[17px] w-full xl:w-[calc(50%-1rem)]">
+                    <div className="-mt-1.5 flex flex-col gap-[17px] max-xl:gap-[12px] w-full xl:w-[calc(50%-1rem)] tablet:mt-0 tablet:self-end">
                       {/* Figma 1:3945 / 1:3946: Bold 24px in --primary over
                           Regular 20px in --foreground, both centred, with 17px
                           between them (1:3945 bottom 1000 -> 1:3946 top 1017);
                           `gap-2` put 8px there. */}
-                      <header className="flex flex-row justify-center">
-                        <h4 className="font-bold text-2xl text-primary text-center">
+                      <header className="flex flex-row justify-center tablet:justify-start">
+                        <h4 className="font-bold text-2xl text-primary text-center tablet:text-left">
                           {section.person.name}
                         </h4>
                       </header>
-                      <p className="text-center text-lg text-foreground">
+                      <p className="text-center text-lg text-foreground tablet:text-left">
                         {section.person.position}
                       </p>
                     </div>

@@ -101,7 +101,9 @@ export const SuccessStoryItem: FunctionComponent<SuccessStoryItemProps> = ({
         >
           <Button
             variant="cta"
-            className={CTA_ACTION}
+            // Hover matches the hero's "Book demo" pill (CTA_HERO): amber
+            // #FFB31B fill, dark navy #081927 label and chevron.
+            className={`${CTA_ACTION} transition-colors hover:bg-[#ffb31b] hover:text-[#081927]`}
             render={(props) => (
               <Link
                 {...props}

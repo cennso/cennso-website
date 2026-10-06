@@ -2,6 +2,11 @@
 
 @config '../tailwind.config.js';
 
+/* 640px <= width < 1280px (sm up to, not including, xl). The stacked
+   `sm:max-xl:` form generated no CSS in this build, so the range is named
+   once here and used as `tablet:` (e.g. the contact page person block). */
+@custom-variant tablet (@media (width >= 640px) and (width < 1280px));
+
 /* Tailwind 4 dropped Preflight's `button, [role="button"] { cursor: pointer }`
    so that buttons match the browser default. Every button on this site is a
    real control, none of them restate the cursor, and neither does @cennso/ui's
