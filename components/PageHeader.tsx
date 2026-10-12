@@ -18,6 +18,14 @@ interface PageHeaderProps extends PropsWithChildren {
   breadcrumbs: Breadcrumb[]
   /** A small "< label" link above the title, back to the parent listing. */
   backLink?: { href: string; label: string }
+  /** Beside a banner, centre the text and the image on each other vertically
+   *  instead of pinning both to the top of the row. */
+  alignCenter?: boolean
+  /** Replaces the heading's default size/line-height classes
+   *  (`text-4xl lg:text-5xl lg:leading-[64px]`). */
+  titleClassName?: string
+  /** Space between the heading and the description (default `mt-2`). */
+  descriptionSpacing?: string
 }
 
 export const PageHeader: FunctionComponent<PageHeaderProps> = ({
@@ -26,8 +34,13 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
   background,
   breadcrumbs,
   backLink,
+  alignCenter = false,
+  titleClassName = 'text-4xl lg:text-5xl lg:leading-[64px]',
+  descriptionSpacing = 'mt-2',
   children,
 }) => {
+  const bannerSelf = alignCenter ? 'md:self-center' : 'md:self-start'
+
   return (
     <>
       <BreadcrumbJsonLd
@@ -64,7 +77,9 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
             height, which pushed it 20-35px lower. */}
         <header
           className={`flex flex-col justify-center w-full min-w-0 min-h-[250px] relative z-20 mt-0 py-16 ${
-            background ? 'md:justify-start md:self-start' : ''
+            background
+              ? `${alignCenter ? 'md:justify-center' : 'md:justify-start'} ${bannerSelf}`
+              : ''
           }`}
         >
           {/* {breadcrumbs.length > 1 ? (
@@ -86,14 +101,14 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
               {backLink.label}
             </Link>
           ) : null}
-          <h1 className="font-bold text-4xl lg:text-5xl lg:leading-[64px] text-primary">
+          <h1 className={`font-bold text-primary ${titleClassName}`}>
             {title}
           </h1>
           {description ? (
             <p
               // Capped only beside a banner, where it shares the row; with no
               // banner the lede runs the full column like the title above it.
-              className={`text-base md:text-xl lg:text-[26px] mt-2 text-foreground ${
+              className={`text-base md:text-xl lg:text-[26px] ${descriptionSpacing} text-foreground ${
                 background ? 'max-w-[800px]' : ''
               }`}
             >
@@ -107,7 +122,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
           // the image (max-width: 100% from preflight) shrank with it, so a
           // banner never reached the width its page asked for. self-start
           // keeps it level with the heading when the text is the taller side.
-          <div className="hidden md:block md:self-start shrink-0 mt-8 -mb-24 md:mt-0 md:mb-0">
+          <div className={`hidden md:block ${bannerSelf} shrink-0 mt-8 -mb-24 md:mt-0 md:mb-0`}>
             <Image
               {...background}
               alt={background.alt}

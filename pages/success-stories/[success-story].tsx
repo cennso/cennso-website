@@ -58,6 +58,26 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
           },
         ]}
         backLink={{ href: '/success-stories', label: backLinkLabel }}
+        alignCenter
+        // 20% smaller than the default heading (36/48px -> 29/38px) with 10%
+        // less line height (1.11/1.33 -> 1.0/1.2 of the font size).
+        titleClassName="text-[29px] leading-[1] lg:text-[38px] lg:leading-[46px]"
+        // Visible gap title -> summary ~32px: 22px margin plus ~10px of the two
+        // lines' own leading (was ~21px with mt-3).
+        descriptionSpacing="mt-[22px]"
+        // Same banner illustration as the /success-stories index header
+        // (pages/success-stories/index.tsx), drawn 20% narrower (586 -> 469px)
+        // so the story's longer title and summary get a ~20% wider column.
+        background={{
+          src: '/assets/backgrounds/success-stories-illustration.webp',
+          alt: '',
+          'aria-hidden': 'true',
+          width: 586,
+          height: 362,
+          sizes: '(max-width: 767px) 0px, (max-width: 1023px) 256px, 469px',
+          className:
+            'block h-auto w-64 lg:w-[469px] lg:max-w-none lg:-mr-[37px]',
+        }}
       />
 
       {layout === 'old' ? (
@@ -117,7 +137,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
           <Container className="mt-12 mb-24">
             <SuccessStoryContext.Provider value={props}>
               <div className="flex flex-row gap-16 h-full w-full">
-                <article className="flex-1 max-w-full lg:max-w-[calc(100%-20rem)] w-full">
+                <article className="flex-1 max-w-full [&_a[aria-label=Anchor]]:hidden lg:max-w-[calc(100%-20rem)] w-full">
                   <div className="flex flex-col gap-12">
                     <Markdown mdxSource={mdxSource} />
 
@@ -158,7 +178,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
           <Container className="mt-12 mb-24">
             <SuccessStoryContext.Provider value={props}>
               <div className="flex flex-row gap-16 h-full w-full">
-                <article className="flex-1 max-w-full w-full">
+                <article className="flex-1 max-w-full [&_a[aria-label=Anchor]]:hidden w-full">
                   <div className="flex flex-col gap-12">
                     <Markdown mdxSource={mdxSource} />
 

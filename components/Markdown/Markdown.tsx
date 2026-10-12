@@ -138,7 +138,7 @@ const Heading: FunctionComponent<
         <Hash className="p-[0.3rem] stroke-2" />
       </Link>
       <div
-        className="hover:underline cursor-pointer"
+        className="cursor-pointer"
         onClick={() => router.push(`#${id}`)}
       >
         {children}

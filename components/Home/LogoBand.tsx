@@ -54,7 +54,10 @@ function logoHeight(logo: LogoBandLogo): number {
  *
  * The row renders its logos twice and translates by -50%, so the loop is
  * seamless. The second copy is `aria-hidden` so screen readers hear each logo
- * once. The row pauses on hover and stands still
+ * once. Every logo loads eagerly and has a fixed box (height and width
+ * from its aspect ratio), so the duplicate copy never pops in mid-scroll and
+ * both copies are exactly the same width - otherwise the -50% loop jumps.
+ * The row pauses on hover and stands still
  * under `prefers-reduced-motion` (see `.logo-marquee` in styles/tailwind.css).
  */
 export const LogoBand: FunctionComponent<LogoBandProps> = ({
@@ -63,7 +66,7 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
 }) => {
   return (
     <div className={`logo-marquee flex w-full overflow-hidden ${className}`}>
-      <div className="logo-marquee-track flex w-max">
+      <div className="logo-marquee-track flex w-max shrink-0">
         {[0, 1].map((copy) => (
           <ul
             key={copy}
@@ -84,9 +87,15 @@ export const LogoBand: FunctionComponent<LogoBandProps> = ({
                     alt={copy === 1 ? '' : logo.name}
                     width={logo.width}
                     height={logo.height}
+                    loading="eager"
                     sizes={`(min-width: 768px) ${width}px, ${Math.ceil(width * 0.75)}px`}
-                    style={{ '--logo-h': `${height}px` } as CSSProperties}
-                    className={`h-[calc(var(--logo-h)*0.75)] w-auto md:h-(--logo-h) ${LOGO_TONE}`}
+                    style={
+                      {
+                        '--logo-h': `${height}px`,
+                        '--logo-w': `${(height * logo.width) / logo.height}px`,
+                      } as CSSProperties
+                    }
+                    className={`h-[calc(var(--logo-h)*0.75)] w-[calc(var(--logo-w)*0.75)] md:h-(--logo-h) md:w-(--logo-w) ${LOGO_TONE}`}
                   />
                 </li>
               )

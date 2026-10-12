@@ -30,7 +30,7 @@ import type { NavigationLink } from '../contexts'
  */
 const NAV_CTA_CLASS = [
   'inline-flex h-9 items-center gap-[9px] rounded-btn border px-4',
-  'text-lg font-medium transition-colors',
+  'text-lg font-normal transition-colors',
   // Light: #185F99 fill and border, white label; #FF6D12 on hover (owner's
   // call). The label and chevron stay white on both.
   'border-[#185f99] bg-[#185f99] text-white',
@@ -72,9 +72,12 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
     // Dark glow: copied 1:1 from cennso/cloud's TOPBAR_SURFACE (cloud-portal
     // and docs-portal chrome-surfaces.ts) - the same border-border/50 rule
     // under the bar and an ::after hung off its lower edge, one radial
-    // gradient of --glow-blue sourced at the middle of that edge. `relative`
+    // gradient of --glow-blue sourced at the middle of that edge. Light uses
+    // the same glow in #185F99 at 6% (owner's call: 10%, then 7%, then 15%
+    // lighter again). Over the #E1EAF0 page plate it peaks at ~#D6E3ED
+    // under the bar's centre. `relative`
     // makes this div the ::after's containing block.
-    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white dark:bg-background shadow-none px-6 lg:px-4 dark:border-border/50 dark:border-b dark:after:pointer-events-none dark:after:absolute dark:after:inset-x-0 dark:after:top-full dark:after:h-8 dark:after:bg-[image:radial-gradient(50%_100%_at_50%_0%,hsl(var(--glow-blue)/0.30)_0%,transparent_70%)]">
+    <div className="relative flex flex-row justify-center w-full max-w-screen py-3 bg-white dark:bg-background shadow-none px-6 lg:px-4 dark:border-border/50 dark:border-b after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-8 after:bg-[image:radial-gradient(50%_100%_at_50%_0%,rgb(24_95_153/0.06)_0%,transparent_70%)] dark:after:bg-[image:radial-gradient(50%_100%_at_50%_0%,hsl(var(--glow-blue)/0.30)_0%,transparent_70%)]!">
       <nav
         className={`flex flex-row items-center justify-between w-full ${CONTENT_MEASURE} py-2`}
       >
@@ -173,7 +176,7 @@ function topLevelClass(active: boolean): string {
         // (amber) in dark, as before. The 1px #1D75BC text-shadow glow is
         // dark-only: on the light bar it read as a blue outline.
         'text-foreground hover:text-[#ff6d12] dark:hover:text-primary! dark:hover:text-shadow-primary'
-  } xl:rounded-full text-lg font-medium font-sans`
+  } xl:rounded-full text-lg font-normal font-sans`
 }
 
 interface NavigationItemProps {
@@ -206,7 +209,7 @@ function buildChildItems(
   const items = (link.children ?? []).map((child) => (
     <li key={child.link}>
       {renderLeaf({
-        className: `flex items-center gap-3 text-foreground hover:text-primary-foreground! hover:bg-primary! rounded-none lg:rounded-[32px] font-normal lg:font-light text-lg py-1 ${
+        className: `flex items-center gap-3 text-foreground hover:text-primary-foreground! hover:bg-primary! rounded-none lg:rounded-[32px] font-normal text-lg py-1 ${
           asPath.startsWith(child.link)
             ? 'text-primary-foreground! bg-primary! lg:rounded-[32px]'
             : ''
@@ -296,6 +299,7 @@ const NavigationItem: FunctionComponent<NavigationItemProps> = ({
                     <li key={child.link}>
                       <NavigationMenu.Link
                         closeOnClick
+                        className="font-normal"
                         active={asPath === child.link}
                         render={<Link href={child.link} />}
                       >

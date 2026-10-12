@@ -238,7 +238,12 @@ a {
 }
 
 .logo-marquee-track {
-  animation: logo-marquee 35s linear infinite;
+  /* full width of both copies, never shrunk by the flex parent - otherwise
+     -50% is less than one copy and the loop jumps */
+  flex-shrink: 0;
+  width: max-content;
+  animation: logo-marquee 90s linear infinite;
+  will-change: transform;
 }
 
 .logo-marquee:hover .logo-marquee-track {
