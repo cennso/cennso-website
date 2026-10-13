@@ -42,12 +42,16 @@ export const Layout: FunctionComponent<LayoutProps> = ({
   footerData,
 }) => {
   return (
-    <div className="w-screen min-h-screen flex flex-col justify-between overflow-x-clip">
+    // w-full, not w-screen: 100vw includes the vertical scrollbar, so with
+    // always-visible scrollbars a w-screen root is one scrollbar wider than
+    // the viewport and the whole page scrolls sideways. overflow-x-clip only
+    // clips this div's children, never its own width.
+    <div className="w-full min-h-screen flex flex-col justify-between overflow-x-clip">
       <div className="top-0 sticky flex-none z-50">
         <Navigation navigation={navigation} />
       </div>
 
-      <main className="flex-1 flex flex-col z-10 bg-secondary-400">
+      <main className="flex-1 flex flex-col z-10 bg-page">
         {children}
         <Analytics />
       </main>

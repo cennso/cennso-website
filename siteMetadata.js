@@ -30,8 +30,8 @@ const siteMetadata = {
     },
   },
   explore: {
-    cloudPortal: 'https://cloud.cennso.com',
-    documentationPortal: 'https://docs.cennso.com',
+    cloudPortal: 'https://preview.cloud.cennso.com',
+    documentationPortal: 'https://dev.docs.cennso.com',
   },
 }
 

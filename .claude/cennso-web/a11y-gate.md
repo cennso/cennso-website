@@ -39,35 +39,41 @@ against a throwaway probe component built from `Card`, `Typography variant="h2"`
 >   entire markup is `@cennso/ui` components — the file is skipped outright by
 >   the lowercase-tag guard at line 482.
 >
-> - **`check-input-assistance.py`** newly fails (exit 1) on the probe, and this
->   is a genuine false positive on markup that WCAG does not require to change,
->   not a real defect the checker happened to stumble onto. Its
->   `<(input|select|textarea)[^>]*>` pattern (`check-input-assistance.py:72`,
->   case-insensitive) matches any tag whose name *starts with* `select`
->   followed by any non-`>` characters, so it coincidentally also matches
->   `Select.Trigger`, `Select.Content`, and `Select.Item` — none of which are
->   form controls in their own right. Verified directly: re-running the same
->   `find_labelled_inputs` logic against the probe markup with a correct
->   `aria-label` added to both `<Select>` and `<Select.Trigger>` still reports
->   `<Select.Content>` and `<Select.Item>` as "missing associated label" — the
->   false positive survives the fix. This checker also already carries a
->   hand-written workaround for its own unreliability: line 60 hard-codes
->   `if str(p).endswith('components/common/Select.tsx'): continue`, skipping
->   this repository's own pre-existing `Select` primitive outright.
+> - **`check-input-assistance.py`** — **fixed upstream, see status below.** It
+>   used to newly fail (exit 1) on `Select`-shaped markup: its
+>   `<(input|select|textarea)[^>]*>` pattern (`check-input-assistance.py:72`)
+>   was case-insensitive, so it coincidentally also matched `Select.Trigger`,
+>   `Select.Content`, and `Select.Item` — none of which are form controls in
+>   their own right.
+
+**Status, corrected against this repository's actual `scripts/check-input-assistance.py`
+at phase 4 (verified 2026-09-22, commit range `b833cf7..c0d7430`):** the false
+positive above is **gone**. `re.IGNORECASE` was removed from the three
+element-name patterns (confirmed by reading `check-input-assistance.py:64-77`
+directly — the comment there now reads "NO re.IGNORECASE on element names...
+case IS the distinction"), and the hand-written `components/common/Select.tsx`
+skip that only ever worked around the bug was removed with it. Do not report
+a `check-input-assistance.py` failure on `Select`/`Select.Trigger`/
+`Select.Content`/`Select.Item` as expected noise any more — if it fires on
+those today, that is new information, not the old known issue.
 
 **Consequence for review:** on a page built from `@cennso/ui`, a green
-`yarn a11y` is **not** evidence about heading hierarchy, form labelling, or
-ARIA roles. Any finding in those three areas belongs in `unverifiable`, not
-waved through because the script passed. And a `check-input-assistance.py`
-failure on `Select`/`Select.Trigger`/`Select.Content`/`Select.Item` is expected
-noise, tracked in `docs/accessibility-checkers-and-cennso-ui.md`, not a new
-defect to report per-page.
+`yarn a11y` is still **not** evidence about heading hierarchy, alt text, form
+labelling, or ARIA roles — those four checkers (`check-text-alternatives`,
+`check-semantic-structure`, `check-navigable`, `check-compatible`) are still
+blind, for the reasons above. Any finding in those areas belongs in
+`unverifiable`, not waved through because the script passed.
 
-The full verdict table (all fifteen checkers, ten `unchanged`) lives in
-`docs/accessibility-checkers-and-cennso-ui.md`; that document's own conclusion
-is the **named fallback** (re-point the five affected checkers at rendered
-`.next/server/pages/**/*.html`), not "proceed" — phase 4 does not start until
-that re-pointing work ships.
+The full verdict table (all fifteen checkers) lives in
+`docs/accessibility-checkers-and-cennso-ui.md`. **That document's conclusion
+is "proceed," not the named fallback** — its own "Decision" section is marked
+"Superseded" and states plainly that the `check-input-assistance.py` false
+positive was fixed and merged before phase 4 started, so phase 4 does **not**
+wait on the four-checker re-pointing work. (An earlier version of this
+profile said phase 4 does not start until that re-pointing ships; that was
+true when written and is stale now — confirmed by reading the doc's own
+"Superseded" banner, not assumed.) Re-pointing the four blind checkers at
+rendered HTML is still worth doing, just no longer blocking.
 
 ## The three source-level contracts that fail a build
 
@@ -88,6 +94,33 @@ Renaming or restructuring any of `Layout.tsx`, `Navigation.tsx`, `Footer.tsx`,
 `Avatar.tsx`, or a `MenuT*.tsx` file is a critical finding — it fails the
 build via a hard-coded filename/substring match, independent of whether the
 resulting markup is actually accessible.
+
+## Reading `Typography variant="hN"` yourself, not just what the scripts see
+
+The scripts are blind to `Typography variant="hN"` (above), but an agent
+reading the diff's source text is not — it can often do better than
+`unverifiable` if it looks. `Typography` supports a `render={<h2 />}` (etc.)
+prop that puts the literal heading tag in the JSX source: `<Typography
+variant="h2" render={<h2 />}>` is as verifiable as a bare `<h2>`, because the
+tag name is right there in the diff. Treat `variant="hN"` **with** a matching
+`render={<hN />}` as verified, the same as a literal tag. Only
+`variant="hN"` **without** a `render` prop is the genuinely unverifiable
+case — its rendered tag depends on `@cennso/ui`'s default mapping, which
+isn't visible from source. This is not hypothetical: it's the shape of the
+one heading in the 4.0 home page (`pages/index.tsx`) that has no `render`
+prop — a visually-hidden `<Typography variant="h2" className="sr-only">`
+landmark heading for the stats grid — sitting next to three sibling headings
+in the same diff that all do pass `render={<hN />}` and are verifiable.
+
+## Default theme is dark; check both, not just the one you're used to
+
+Since `27fe485`, the site ships a light/dark theme (`ThemeProvider`
+`defaultSetting="dark"` in `_app.tsx`, `themeScript({ defaultSetting: 'dark'
+})` in `_document.tsx`) — a first-time visitor with no stored preference
+sees **dark**, not light, regardless of OS setting. Any contrast or
+"looks right" claim needs to hold in both palettes, and dark is the one a
+first visit actually renders — don't default your own mental check to light
+just because that was this site's only palette before phase 4.
 
 ## `yarn a11y:contrast` proves nothing
 

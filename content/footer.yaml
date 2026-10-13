@@ -11,10 +11,10 @@ footer:
   
   explore_links:
     - title: Cloud Portal
-      link: https://cloud.cennso.com
+      link: https://preview.cloud.cennso.com
       target: _blank
     - title: Documentation
-      link: https://docs.cennso.com
+      link: https://dev.docs.cennso.com
       target: _blank
   
   llm_links:

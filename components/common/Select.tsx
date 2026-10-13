@@ -47,7 +47,7 @@ export const Select: FunctionComponent<SelectProps> = ({
             id={id}
             aria-labelledby={ariaLabelledBy}
             aria-label={placeholder}
-            className="relative w-full cursor-pointer rounded-[32px] bg-primary-100/70 py-2 pl-3 pr-10 text-left border-[1px] focus:outline-none focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-300 sm:text-sm"
+            className="relative w-full cursor-pointer rounded-[32px] bg-primary-100/70 py-2 pl-3 pr-10 text-left border border-gray-200 focus:outline-hidden focus-visible:border-primary-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-primary-300 sm:text-sm"
           >
             <span className="block truncate">
               {selectedValue || placeholder}
@@ -65,7 +65,7 @@ export const Select: FunctionComponent<SelectProps> = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-50">
+            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-hidden sm:text-sm z-50">
               {options.map((option) => (
                 <Listbox.Option
                   key={option.id}

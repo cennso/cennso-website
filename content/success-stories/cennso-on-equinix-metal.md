@@ -5,7 +5,7 @@ company:
   website: https://www.equinix.com/
   logo: /assets/success-stories/cennso-on-equinix-metal/equinix-logo.webp
   industry: Cloud infrastructure
-cover: /assets/blog-posts/ssg-ssr/cover.webp
+cover: /assets/success-stories/cennso-on-equinix-metal/equinix-story-pic.webp
 excerpt: German automaker deploys Cennso on Equinix Metal for faster in-car connectivity, real-time data, over-the-air updates, and full data sovereignty compliance.
 layout: new
 ---

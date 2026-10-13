@@ -16,17 +16,17 @@ export const MenuToggle: FunctionComponent<MenuToggleProps> = ({
     className="w-8 h-8 flex flex-col justify-center items-center gap-[5px]"
   >
     <span
-      className={`block w-6 h-[3px] bg-[#185f99] rounded transition-all duration-300 ${
+      className={`block w-6 h-[3px] bg-foreground rounded transition-all duration-300 ${
         isOpen ? 'rotate-45 translate-y-2' : ''
       }`}
     />
     <span
-      className={`block w-6 h-[3px] bg-[#185f99] rounded transition-all duration-300 ${
+      className={`block w-6 h-[3px] bg-foreground rounded transition-all duration-300 ${
         isOpen ? 'opacity-0' : 'opacity-100'
       }`}
     />
     <span
-      className={`block w-6 h-[3px] bg-[#185f99] rounded transition-all duration-300 ${
+      className={`block w-6 h-[3px] bg-foreground rounded transition-all duration-300 ${
         isOpen ? '-rotate-45 -translate-y-2' : ''
       }`}
     />

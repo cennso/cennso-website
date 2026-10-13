@@ -87,14 +87,18 @@ def check_image_sizes_prop(filepath):
         return {'file': filepath, 'total': 0, 'with_sizes': 0, 'missing': 0}
 
 def check_viewport_meta():
-    """Check if viewport meta tag is present in _document.tsx."""
-    document_path = 'pages/_document.tsx'
+    """Check if viewport meta tag is present in _app.tsx.
+
+    It lives in _app's next/head, not _document: Next warns against a viewport
+    meta in _document's <Head> (no-document-viewport-meta).
+    """
+    app_path = 'pages/_app.tsx'
     
-    if not os.path.exists(document_path):
-        return False, "pages/_document.tsx not found"
+    if not os.path.exists(app_path):
+        return False, "pages/_app.tsx not found"
     
     try:
-        with open(document_path, 'r', encoding='utf-8') as f:
+        with open(app_path, 'r', encoding='utf-8') as f:
             content = f.read()
         
         # Check for viewport meta tag
@@ -104,7 +108,7 @@ def check_viewport_meta():
             return False, "Viewport meta tag missing or incomplete"
     
     except Exception as e:
-        return False, f"Error reading _document.tsx: {e}"
+        return False, f"Error reading _app.tsx: {e}"
 
 def check_font_size():
     """Verify base font size is 16px (Tailwind default)."""
@@ -177,7 +181,7 @@ def main():
     viewport_ok, viewport_error = check_viewport_meta()
     
     if viewport_ok:
-        print(f"{GREEN}✅ Viewport meta tag present in pages/_document.tsx{RESET}")
+        print(f"{GREEN}✅ Viewport meta tag present in pages/_app.tsx{RESET}")
     else:
         print(f"{RED}❌ {viewport_error}{RESET}")
     print()
@@ -229,8 +233,8 @@ def main():
             print()
         
         if not viewport_ok:
-            print(f"{YELLOW}📝 Add viewport meta tag to pages/_document.tsx:{RESET}")
-            print(f'{YELLOW}   <meta name="viewport" content="width=device-width, initial-scale=1" />{RESET}')
+            print(f"{YELLOW}📝 Add viewport meta tag to pages/_app.tsx (in next/head):{RESET}")
+            print(f'{YELLOW}   <meta key="viewport" name="viewport" content="width=device-width, initial-scale=1" />{RESET}')
             print()
     
     print("=" * 85)
