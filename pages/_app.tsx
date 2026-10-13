@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { Poppins } from 'next/font/google'
 import { ThemeProvider } from '@cennso/ui'
 
@@ -84,6 +85,16 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
+      {/* Here rather than in _document.tsx, where Next warns against it
+          (no-document-viewport-meta); the key replaces Next's default tag. */}
+      <Head>
+        <meta
+          key="viewport"
+          name="viewport"
+          content="width=device-width, initial-scale=1"
+        />
+      </Head>
+
       <style jsx global>{`
         html {
           font-family: ${poppinsFont.style.fontFamily};
