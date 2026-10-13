@@ -137,12 +137,8 @@ const Heading: FunctionComponent<
       >
         <Hash className="p-[0.3rem] stroke-2" />
       </Link>
-      <div
-        className="cursor-pointer"
-        onClick={() => router.push(`#${id}`)}
-      >
-        {children}
-      </div>
+      {/* The anchor link above is the way to this heading's hash, by mouse or keyboard alike. */}
+      <div>{children}</div>
     </Component>
   )
 }
