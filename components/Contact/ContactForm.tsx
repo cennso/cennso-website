@@ -474,13 +474,7 @@ export const ContactForm: FunctionComponent<ContactFormProps> = ({
               fields above it (1:3938 / 1:7550), not against the panel's right
               edge, which is where `justify-end` had it. */}
           <div className="sm:col-span-2 flex">
-            {/* Hover matches the hero's "Book demo" pill (CTA_HERO): amber
-                #FFB31B fill, dark navy #081927 label and chevron. */}
-            <Button
-              type="submit"
-              variant="cta"
-              className={`${CTA_ACTION} transition-colors hover:bg-[#ffb31b] hover:text-[#081927]`}
-            >
+            <Button type="submit" variant="cta" className={CTA_ACTION}>
               {content?.form?.sendLabel || 'Send'}
               <ButtonChevron />
             </Button>

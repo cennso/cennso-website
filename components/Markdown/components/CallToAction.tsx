@@ -42,7 +42,7 @@ export const CallToAction: FunctionComponent<CallToActionProps> = ({
       ) : null}
       <Button
         variant="cta"
-        className={`${CTA_ACTION} transition-colors hover:bg-[#ffb31b] hover:text-[#081927]`}
+        className={CTA_ACTION}
         render={(props) => (
           <Link
             {...props}
