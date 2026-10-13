@@ -62,6 +62,12 @@ const controlsClassName = [
   '[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input],[data-slot=phone-input]_*)]:text-[#001a2a]',
   '[&_[data-slot=phone-input]_:is(input,button)]:bg-transparent',
   '[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input]_input)]:placeholder:text-[#001a2a]/60',
+  // A browser-autofilled value paints in -webkit-text-fill-color, not color,
+  // and @cennso/theme sets that to --foreground for :-webkit-autofill - white
+  // in dark, on the #E5F4FF fill above. The same navy here, important because
+  // theme.css is unlayered and so outranks any utility that is not.
+  '[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input]_input):-webkit-autofill]:[-webkit-text-fill-color:#001a2a]!',
+  '[&_:is([data-slot=input],[data-slot=textarea],[data-slot=phone-input]_input):-webkit-autofill]:[caret-color:#001a2a]!',
   // Text inputs match the phone field's height. PhoneInput's group is its
   // number box (control-height-lg) plus the group's own 1px border top and
   // bottom, where a plain Input is control-height-md, border included - 38px
