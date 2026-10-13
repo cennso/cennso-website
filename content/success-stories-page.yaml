@@ -1,6 +1,8 @@
 page:
   title: Customer Success Stories - Cennso Mobile Core Deployments
   description: Discover how organizations worldwide deploy Cennso mobile core. Real-world case studies of automated infrastructure and accelerated network innovation.
+  og:
+    title: Customer Success Stories
   # Friendly on-page H1/lede from the Design 4.0 frames, decoupled from the
   # SEO-tuned `title`/`description` above (same split Task 3 made for
   # /contact): those keep feeding <SEO> and the breadcrumb, these feed

@@ -1,6 +1,8 @@
 page:
   title: Contact Cennso - Mobile Core Network Solutions & Support
   description: Get in touch with Cennso's Solution and Channel Partners. Learn how we can help you build custom mobile core network solutions for your business needs.
+  og:
+    title: Let's Talk About Your Project
   # Visible hero heading/paragraph shown on the page itself. Kept separate from
   # title/description above, which stay tuned for the <title> tag and meta
   # description - the two audiences want different copy.

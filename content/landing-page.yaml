@@ -4,6 +4,8 @@ page:
     Cennso lets you deploy 5G anywhere - build MVNOs, travel SIM solutions, or
     private networks with seamless interoperability and centralized control
     today.
+  og:
+    title: Build Network Solutions. Anywhere.
 
 sections:
   # Hero: headline, supporting paragraph, and the design's one "cta" button
