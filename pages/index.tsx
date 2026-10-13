@@ -177,8 +177,8 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               <NextImage
                 src="/assets/landing-page/hero-illustration-dark.webp"
                 alt={hero.illustrationAlt}
-                width={1000}
-                height={715}
+                width={986}
+                height={768}
                 sizes="(max-width: 768px) 80vw, 50vw"
                 priority
                 className="hidden w-full max-w-md md:max-w-none md:scale-[1.2] pointer-events-none dark:block"
@@ -186,8 +186,8 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
               <NextImage
                 src="/assets/landing-page/hero-illustration-light.webp"
                 alt={hero.illustrationAlt}
-                width={1000}
-                height={715}
+                width={986}
+                height={768}
                 sizes="(max-width: 768px) 80vw, 50vw"
                 priority
                 className="w-full max-w-md md:max-w-none md:scale-[1.2] pointer-events-none dark:hidden"
