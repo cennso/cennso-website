@@ -5,12 +5,7 @@ import { Button, Field, Input, Switch, Textarea } from '@cennso/ui'
 import { Form } from '@base-ui/react/form'
 import { isValidPhoneNumber, parsePhoneNumber } from 'react-phone-number-input'
 
-import {
-  StatusModal,
-  CTA_ACTION,
-  ButtonChevron,
-  FORM_SWITCH,
-} from '../common'
+import { StatusModal, CTA_ACTION, ButtonChevron, FORM_SWITCH } from '../common'
 import { PhoneInput } from '../common/PhoneInput'
 
 import type { FunctionComponent } from 'react'

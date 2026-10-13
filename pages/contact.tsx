@@ -104,7 +104,9 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                       640px the column stays stacked; from xl up the
                       original row layout takes over. */}
                   <div className="flex flex-col gap-8 w-full xl:w-1/2 tablet:grid tablet:grid-cols-[auto_1fr] tablet:gap-x-10 tablet:gap-y-6">
-                    <h3 className="text-3xl text-primary dark:text-white tablet:col-span-2">{section.company}</h3>
+                    <h3 className="text-3xl text-primary dark:text-white tablet:col-span-2">
+                      {section.company}
+                    </h3>
                     {/* Figma 1:3924 / 1:7420 draw the body copy beside the form
                         at Regular 20px; the owner set it to 18px (text-lg). */}
                     <div className="flex flex-col gap-4 text-lg tablet:col-span-2">
