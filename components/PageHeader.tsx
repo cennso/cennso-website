@@ -21,6 +21,10 @@ interface PageHeaderProps extends PropsWithChildren {
   /** Beside a banner, centre the text and the image on each other vertically
    *  instead of pinning both to the top of the row. */
   alignCenter?: boolean
+  /** Pins the banner this far below the top of the row (margin classes, e.g.
+   *  `md:mt-24`) instead of aligning it with the text, so it stays put across
+   *  pages whose text runs to different heights. */
+  bannerOffset?: string
   /** Replaces the heading's default size/line-height classes
    *  (`text-4xl lg:text-5xl lg:leading-[64px]`). */
   titleClassName?: string
@@ -35,6 +39,7 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
   breadcrumbs,
   backLink,
   alignCenter = false,
+  bannerOffset,
   titleClassName = 'text-4xl lg:text-5xl lg:leading-[64px]',
   descriptionSpacing = 'mt-2',
   children,
@@ -122,7 +127,13 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
           // the image (max-width: 100% from preflight) shrank with it, so a
           // banner never reached the width its page asked for. self-start
           // keeps it level with the heading when the text is the taller side.
-          <div className={`hidden md:block ${bannerSelf} shrink-0 mt-8 -mb-24 md:mt-0 md:mb-0`}>
+          <div
+            className={`hidden md:block shrink-0 mt-8 -mb-24 md:mb-0 ${
+              bannerOffset
+                ? `md:self-start ${bannerOffset}`
+                : `${bannerSelf} md:mt-0`
+            }`}
+          >
             <Image
               {...background}
               alt={background.alt}

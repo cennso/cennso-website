@@ -59,6 +59,11 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
         ]}
         backLink={{ href: '/success-stories', label: backLinkLabel }}
         alignCenter
+        // The banner at one height on every story, not centred on text whose
+        // length differs from story to story - which made it jump vertically
+        // when moving between them. Where the published stories centred it:
+        // level with the heading below lg, 47px into the row from lg up.
+        bannerOffset="md:mt-24 lg:mt-[47px]"
         // 20% smaller than the default heading (36/48px -> 29/38px) with 10%
         // less line height (1.11/1.33 -> 1.0/1.2 of the font size).
         titleClassName="text-[29px] leading-[1] lg:text-[38px] lg:leading-[46px]"
