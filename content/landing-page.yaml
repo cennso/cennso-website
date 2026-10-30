@@ -17,9 +17,9 @@ sections:
       Build Network Solutions.
       Anywhere.
     description: >-
-      Cennso lets you deploy 5G anywhere: build MVNOs, travel SIM solutions,
-      or private networks with seamless interoperability and centralized
-      control.
+      Cennso lets you launch borderless mobile connectivity in hours: scale
+      MVNOs, travel eSIM platforms, or 5G-ready enterprise breakout. All from a
+      single, centralized control plane.
     ctaText: Book demo
     # One string for both theme cuts of the hero artwork - the two files draw
     # the same scene, only the palette differs.
@@ -75,29 +75,30 @@ sections:
   whyCennso:
     heading: Why Cennso?
     cards:
-      - title: 5G Anywhere
+      - title: 5G-Ready Edge
         description: >-
-          Cennso enables you to run 5G networks in any location—from
-          industrial sites to specialized facilities—with centralized
-          management. Manage all distributed sites from one control plane,
-          deploy high-performance configurations for low-latency
-          applications, and automatically verify hardware compatibility
-          remotely, without engineers onsite.
+          Cennso enables you to deploy carrier-grade mobile core and packet
+          gateway services in any location. From central clouds to regional
+          edge sites. Manage distributed environments from a single control
+          plane, deliver ultra-low-latency routing for critical IoT and mobility
+          workloads, and provision remote infrastructure without dispatching
+          telecom engineers onsite.
       - title: Agile MVNO
         description: >-
-          Cennso gives you the agility to expand virtual network services
-          rapidly. Maintain stable subscriber sessions across regions and
-          cloud providers, deploy high-performance core network functions or
-          integrate your own through standard interfaces, and update
-          configurations or launch new data plans with automated GitOps
-          workflows.
-      - title: Private 5G
+          Cennso gives you the agility to launch and scale virtual network
+          services rapidly. Maintain reliable subscriber sessions across
+          regions and clouds, run high-performance packet gateway functions,
+          and seamlessly integrate HSS and roaming breakout. Providing the
+          robust 4G LTE foundation needed to scale into next-generation 5G
+          services.
+      - title: Private 5G Core
         description: >-
-          Cennso delivers secure, dedicated 5G networks for factories, ports,
-          and large campuses. Integrate with existing enterprise security and
-          credential providers, deploy only the network functions your
-          facility needs, and use Crossplane to unify on-site infrastructure
-          with cloud services through a single workflow.
+          Cennso delivers dedicated, high-performance packet core and local
+          breakout solutions for mission-critical enterprise environments.
+          Connect seamlessly with your existing radio infrastructure and
+          enterprise security, deploy only the specific gateway functions your
+          facility requires, and unify multi-site operations under a single
+          automated control plane.
 
   # Visually-hidden landmark heading for the 4-card stat grid - the design
   # has no on-canvas label for this section, so this exists only for
