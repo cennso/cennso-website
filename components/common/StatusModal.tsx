@@ -1,7 +1,8 @@
 import { Fragment, useState, useCallback, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
-import { Button } from '../common'
+import { Button } from '@cennso/ui'
+
 import { LoadingIndicator } from './LoadingIndicator'
 
 import siteMetadata from '../../siteMetadata'
@@ -64,10 +65,13 @@ export const StatusModal: FunctionComponent<StatusModalProps> = ({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-[32px] bg-white p-6 text-left align-middle shadow-xl transition-all">
+                {/* The cookie banner's surface: card fill, the theme's border and
+                    foreground, 24px corner and the shadow overlays float on -
+                    so the modal follows the theme instead of staying white. */}
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-3xl bg-card text-foreground border border-border p-6 text-left align-middle shadow-lg transition-all">
                   {action === 'sending' ? (
                     <div className="w-full h-full flex flex-row items-center justify-center">
-                      <LoadingIndicator className="text-primary-600" />
+                      <LoadingIndicator className="text-primary" />
                     </div>
                   ) : (
                     <>
@@ -82,16 +86,16 @@ export const StatusModal: FunctionComponent<StatusModalProps> = ({
                       </div>
                       <Dialog.Title
                         as="h3"
-                        className="text-lg font-medium leading-6 text-gray-900"
+                        className="text-lg font-semibold leading-6"
                       >
                         Sending {kind}{' '}
                         {action === 'success' ? 'successfully' : 'error'}
                       </Dialog.Title>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-muted-foreground">
                           {action === 'success' ? (
                             <span>
-                              Your {kind} has been successfully send. Please
+                              Your {kind} has been successfully sent. Please
                               wait for the feedback message.
                             </span>
                           ) : (
@@ -102,7 +106,7 @@ export const StatusModal: FunctionComponent<StatusModalProps> = ({
                               <a
                                 href={`mailto:${contact.email}`}
                                 rel="noopener"
-                                className="text-primary-600 hover:text-primary-700 transition duration-300 ease-in-out"
+                                className="font-semibold text-primary underline hover:decoration-2"
                               >
                                 {' '}
                                 {contact.email}{' '}
@@ -114,12 +118,7 @@ export const StatusModal: FunctionComponent<StatusModalProps> = ({
                       </div>
 
                       <div className="mt-4 flex flex-row w-full justify-end">
-                        <Button
-                          type="button"
-                          variant="primary"
-                          onClick={onClose}
-                          className="text-sm"
-                        >
+                        <Button type="button" variant="cta" onClick={onClose}>
                           Got it, thanks!
                         </Button>
                       </div>

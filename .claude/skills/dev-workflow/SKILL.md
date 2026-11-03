@@ -227,6 +227,13 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   confirmation.**
 - Python validation scripts need `scripts/.venv` (`pip install -r
   scripts/requirements.txt`). The worktree helper sets this up; CI does it too.
+- **`validate:ogimages` fails in a worktree** with `OG images directory not
+  found: .next/standalone/public/assets/og-images`. Next.js traces the
+  standalone output from the main checkout's root, so it lands under
+  `.next/standalone/.worktrees/<name>/public`. The images are fine and CI is
+  unaffected. To check them locally, symlink that `public/assets` to
+  `.next/standalone/public/assets`, re-run the script, then delete the symlink.
+  Don't edit the script.
 - **`.eslintrc.json` must keep `"root": true`.** Worktrees live under
   `.worktrees/` *inside* the repo, so without it ESLint walks up into the main
   checkout's config and `yarn lint` dies with `Plugin "@next/next" was conflicted
