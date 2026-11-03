@@ -62,6 +62,8 @@ const tailwindConfig = {
     extend: {
       colors: {
         ...colors,
+        // The page plate, separate from --background (see styles/tailwind.css).
+        page: 'hsl(var(--page) / <alpha-value>)',
       },
       fontFamily: {
         sans: [

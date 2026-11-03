@@ -7,8 +7,9 @@ import readFrontMatter from 'front-matter'
 import { __dirname } from './common'
 
 export type DataItem = {
+  /** The page kind in the amber badge above the title, e.g. "Success story". */
+  badge?: string
   title: string
-  subTitle?: string
   description: string
   path: string[]
   generate?: boolean
@@ -21,26 +22,26 @@ export async function prepareData(): Promise<DataItem[]> {
   const successStoriesPages = await preparePages({
     folderName: 'success-stories',
     pagePath: 'success-stories',
-    title: 'Success story',
+    badge: 'Success story',
   })
   const solutionsPages = await preparePages({
     folderName: 'solutions',
     pagePath: 'solutions',
     descriptionField: 'description',
-    title: 'Solution',
+    badge: 'Solution',
     generate: false,
   })
   const blogPostsPages = await preparePages({
     folderName: 'blog-posts',
     pagePath: 'blog',
-    title: 'Blog post',
+    badge: 'Blog post',
     generate: false,
   })
   const jobsPages = await preparePages({
     folderName: 'jobs',
     pagePath: 'jobs',
     titleField: 'position',
-    title: 'Job offer',
+    badge: 'Job offer',
     generate: false,
   })
 
@@ -68,73 +69,73 @@ async function prepareMainPages(): Promise<DataItem[]> {
 
   return [
     {
-      title: landingPage.page.title,
-      description: landingPage.page.description,
+      title: cardTitle(landingPage.page),
+      description: cardDescription(landingPage.page),
       path: ['landing-page'],
     },
     {
-      title: aboutPage.page.title,
-      description: aboutPage.page.description,
+      title: cardTitle(aboutPage.page),
+      description: cardDescription(aboutPage.page),
       path: ['about'],
       // TODO: Enable OG image generation when about page content is finalized
       // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
-      title: contactPage.page.title,
-      description: contactPage.page.description,
+      title: cardTitle(contactPage.page),
+      description: cardDescription(contactPage.page),
       path: ['contact'],
     },
     {
-      title: successStoriesPage.page.title,
-      description: successStoriesPage.page.description,
+      title: cardTitle(successStoriesPage.page),
+      description: cardDescription(successStoriesPage.page),
       path: ['success-stories'],
     },
     {
-      title: solutionsPage.page.title,
-      description: solutionsPage.page.description,
+      title: cardTitle(solutionsPage.page),
+      description: cardDescription(solutionsPage.page),
       path: ['solutions'],
       // TODO: Enable OG image generation when solutions page content is finalized
       // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
-      title: blogPage.page.title,
-      description: blogPage.page.description,
+      title: cardTitle(blogPage.page),
+      description: cardDescription(blogPage.page),
       path: ['blog'],
       // TODO: Enable OG image generation when blog page content is finalized
       // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
-      title: jobsPage.page.title,
-      description: jobsPage.page.description,
+      title: cardTitle(jobsPage.page),
+      description: cardDescription(jobsPage.page),
       path: ['jobs'],
       // TODO: Enable OG image generation when jobs page content is finalized
       // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
-      title: partnersPage.page.title,
-      description: partnersPage.page.description,
+      title: cardTitle(partnersPage.page),
+      description: cardDescription(partnersPage.page),
       path: ['partners'],
       // TODO: Enable OG image generation when partners page content is finalized
       // Currently disabled because page is not fully populated with real data
       generate: false,
     },
     {
-      title: privacyPolicyPage.page.title,
-      description: privacyPolicyPage.page.description,
+      title: cardTitle(privacyPolicyPage.page),
+      description: cardDescription(privacyPolicyPage.page),
       path: ['privacy-policy'],
     },
     {
-      title: imprintPage.page.title,
-      description: imprintPage.page.description,
+      title: cardTitle(imprintPage.page),
+      description: cardDescription(imprintPage.page),
       path: ['imprint'],
     },
     {
-      title: notFoundPage.page.title,
-      description: notFoundPage.page.description,
+      title: cardTitle(notFoundPage.page),
+      description: cardDescription(notFoundPage.page),
       path: ['404'],
     },
   ]
@@ -145,7 +146,7 @@ async function preparePages(ctx: {
   pagePath: string
   titleField?: string
   descriptionField?: string
-  title?: string
+  badge?: string
   generate?: boolean
 }): Promise<DataItem[]> {
   const {
@@ -153,7 +154,7 @@ async function preparePages(ctx: {
     pagePath,
     titleField = 'title',
     descriptionField = 'excerpt',
-    title: inputTitle,
+    badge,
     generate,
   } = ctx
   const directoryPath = path.join(__dirname, '../../', 'content', folderName)
@@ -178,17 +179,29 @@ async function preparePages(ctx: {
     const frontMatterContent = readFrontMatter(content)
     const frontmatter = frontMatterContent.attributes as Record<string, any>
     const itemPath = dirent.name.replace(mdRegex, '')
-    const title = frontmatter[titleField]
-
     dataItems.push({
-      title: inputTitle || title,
-      subTitle: inputTitle ? title : undefined,
-      description: frontmatter[descriptionField],
+      badge,
+      title: frontmatter.og?.title ?? frontmatter[titleField],
+      description: frontmatter.og?.description ?? frontmatter[descriptionField],
       path: [pagePath, itemPath],
       generate,
     })
   }
   return dataItems
+}
+
+/**
+ * The title on a page's card: `og.title` when the content sets one, else the page's `<title>`.
+ * The `<title>` is written for search results and often ends in "- Cennso …", which the card's
+ * background already says.
+ */
+function cardTitle(page: Record<string, any>): string {
+  return page.og?.title ?? page.title
+}
+
+/** The description on a page's card: `og.description`, else the page's meta description. */
+function cardDescription(page: Record<string, any>): string {
+  return page.og?.description ?? page.description
 }
 
 async function loadContent(file: string): Promise<Record<string, any>> {

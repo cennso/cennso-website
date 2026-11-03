@@ -124,7 +124,7 @@ const BlogPage: NextPage<BlogPageProps> = ({ content, posts, categories }) => {
         </a>
       </PageHeader>
 
-      <Container className="mt-12 mb-24 px-8 lg:px-4">
+      <Container className="mt-12 mb-24 px-6 lg:px-4">
         <div className="flex flex-col gap-4">
           <div>
             <label

@@ -1,7 +1,5 @@
 import Image from 'next/image'
 
-import { FeatureCard } from '../../common'
-
 import type { FunctionComponent, PropsWithChildren } from 'react'
 
 interface QuoteProps extends PropsWithChildren {
@@ -25,31 +23,35 @@ export const Quote: FunctionComponent<QuoteProps> = ({
     (authorCompany ? ` at ${authorCompany}` : '')
 
   return (
-    <FeatureCard
-      className="flex flex-row items-center rounded-[32px] w-full"
-      dropShadow={false}
-    >
+    <div className="flex flex-row items-center w-full">
       <div className="flex flex-col gap-6 w-full">
-        <figure className="flex flex-col">
+        {/* mb-0! drops the 40px bottom margin the story's prose styles give
+            every <figure>; the card's own padding closes the block. */}
+        <figure className="flex flex-col mb-0!">
           <div className="relative z-0">
             <Image
               src="/assets/common/quotes.svg"
               alt=""
               width={150}
               height={118}
-              // Matches the w-24 (96px) it actually renders at, rather than the
-              // 150px intrinsic width.
-              sizes="96px"
-              className="absolute -top-[8px] left-0 z-[-1] w-24 h-auto"
+              // 115px wide (20% over the former 96px), raised 30% of its own
+              // ~91px height above the former -8px offset. `sizes` matches the
+              // rendered width rather than the 150px intrinsic one.
+              sizes="115px"
+              className="absolute top-[-35px] left-0 z-[-1] w-[115px] h-auto"
             />
-            <blockquote className="relative z-10 font-sans font-[300] leading-[1.5] italic text-[28px] text-white border-none">
+            <blockquote className="relative z-10 font-sans font-light leading-normal italic text-[28px] text-foreground border-none">
               {children}
             </blockquote>
           </div>
-          <figcaption className="mt-0 flex flex-row items-center gap-4">
+          {/* -mt-[35px]: the author row sits 35px closer to the quote than the
+              blockquote's own bottom margin would place it (owner's call). */}
+          <figcaption className="-mt-[35px] flex flex-row items-center gap-4">
+            {/* rounded-full! - ContentBlock rounds every body image to 14px,
+                which would otherwise square off this avatar. */}
             {avatar ? (
               <Image
-                className="rounded-full flex-none my-0"
+                className="rounded-full! flex-none my-0"
                 src={avatar}
                 title={authorDescription}
                 alt={authorDescription}
@@ -58,7 +60,7 @@ export const Quote: FunctionComponent<QuoteProps> = ({
                 sizes="92px"
               />
             ) : null}
-            <cite className="not-italic text-white text-[16px]">
+            <cite className="not-italic text-foreground text-[16px]">
               <span className="block font-bold">
                 {authorSocialLink ? (
                   <a
@@ -83,6 +85,6 @@ export const Quote: FunctionComponent<QuoteProps> = ({
           </figcaption>
         </figure>
       </div>
-    </FeatureCard>
+    </div>
   )
 }

@@ -1,5 +1,6 @@
 import { promises as fsPromises } from 'fs'
 import path from 'path'
+import { parse as YamlParse } from 'yaml'
 import { Link as LinkIcon } from 'lucide-react'
 
 import Image from 'next/image'
@@ -28,10 +29,12 @@ type SuccessStoryPageProps = {
   mdxSource: MDXRemoteProps
   currentPath: string
   successStoryQuery: string
+  backLinkLabel: string
 }
 
 const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
   successStoryQuery,
+  backLinkLabel,
   ...props
 }) => {
   const { frontmatter, toc, mdxSource, currentPath } = props
@@ -54,13 +57,31 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
             link: `/success-stories/${successStoryQuery}`,
           },
         ]}
+        backLink={{ href: '/success-stories', label: backLinkLabel }}
+        alignCenter
+        // The banner at one height on every story, not centred on text whose
+        // length differs from story to story - which made it jump vertically
+        // when moving between them. Where the published stories centred it:
+        // level with the heading below lg, 47px into the row from lg up.
+        bannerOffset="md:mt-24 lg:mt-[47px]"
+        // 20% smaller than the default heading (36/48px -> 29/38px) with 10%
+        // less line height (1.11/1.33 -> 1.0/1.2 of the font size).
+        titleClassName="text-[29px] leading-[1] lg:text-[38px] lg:leading-[46px]"
+        // Visible gap title -> summary ~32px: 22px margin plus ~10px of the two
+        // lines' own leading (was ~21px with mt-3).
+        descriptionSpacing="mt-[22px]"
+        // Same banner illustration as the /success-stories index header
+        // (pages/success-stories/index.tsx), drawn 20% narrower (586 -> 469px)
+        // so the story's longer title and summary get a ~20% wider column.
         background={{
-          src: '/assets/backgrounds/bg-header-success-story.webp',
-          title: 'Success story page background',
-          alt: 'Success story page background',
-          width: 425,
-          height: 200,
-          className: 'relative md:right-16 top-2',
+          src: '/assets/backgrounds/success-stories-illustration.webp',
+          alt: '',
+          'aria-hidden': 'true',
+          width: 586,
+          height: 362,
+          sizes: '(max-width: 767px) 0px, (max-width: 1023px) 256px, 469px',
+          className:
+            'block h-auto w-64 lg:w-[469px] lg:max-w-none lg:-mr-[37px]',
         }}
       />
 
@@ -121,7 +142,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
           <Container className="mt-12 mb-24">
             <SuccessStoryContext.Provider value={props}>
               <div className="flex flex-row gap-16 h-full w-full">
-                <article className="flex-1 max-w-full lg:max-w-[calc(100%-20rem)] w-full">
+                <article className="flex-1 max-w-full [&_a[aria-label=Anchor]]:hidden lg:max-w-[calc(100%-20rem)] w-full">
                   <div className="flex flex-col gap-12">
                     <Markdown mdxSource={mdxSource} />
 
@@ -131,7 +152,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
                           rel="noreferrer noopener"
                           target="_blank"
                           href={canonical}
-                          className="inline-flex flex-row items-center [text-shadow:_1.5px_1.5px_rgb(0_0_0_/_0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-gradient-to-r from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-[length:200%_200%] hover:bg-right rounded-full text-white text-lg"
+                          className="inline-flex flex-row items-center text-shadow-[1.5px_1.5px_rgb(0_0_0/0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-linear-to-r/srgb from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-size-[200%_200%] hover:bg-right rounded-full text-white text-lg"
                         >
                           Read rest of the blog post {'>'}
                         </a>
@@ -162,7 +183,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
           <Container className="mt-12 mb-24">
             <SuccessStoryContext.Provider value={props}>
               <div className="flex flex-row gap-16 h-full w-full">
-                <article className="flex-1 max-w-full w-full">
+                <article className="flex-1 max-w-full [&_a[aria-label=Anchor]]:hidden w-full">
                   <div className="flex flex-col gap-12">
                     <Markdown mdxSource={mdxSource} />
 
@@ -172,7 +193,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
                           rel="noreferrer noopener"
                           target="_blank"
                           href={canonical}
-                          className="inline-flex flex-row items-center [text-shadow:_1.5px_1.5px_rgb(0_0_0_/_0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-gradient-to-r from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-[length:200%_200%] hover:bg-right rounded-full text-white text-lg"
+                          className="inline-flex flex-row items-center text-shadow-[1.5px_1.5px_rgb(0_0_0/0.35)] font-bold px-4 py-1.5 transition-[background] ease-in-out duration-200 bg-linear-to-r/srgb from-[#1E94EA] via-[#1FC26D] to-[#1E94EA] bg-size-[200%_200%] hover:bg-right rounded-full text-white text-lg"
                         >
                           Read rest of the blog post {'>'}
                         </a>
@@ -217,6 +238,15 @@ export const getStaticProps: GetStaticProps<SuccessStoryPageProps> =
 
     const mdxSource = await parseMDX(mdContent)
     const toc = generateToc(mdContent)
+
+    // The back link's label lives with the listing page's own copy.
+    const listingContent = YamlParse(
+      (
+        await fsPromises.readFile(
+          path.join(process.cwd(), 'content', 'success-stories-page.yaml')
+        )
+      ).toString()
+    )
     const frontmatter = mdxSource.frontmatter as unknown as SuccessStoryMetadata
 
     return {
@@ -228,6 +258,8 @@ export const getStaticProps: GetStaticProps<SuccessStoryPageProps> =
         toc,
         mdxSource,
         successStoryQuery: successStory,
+        backLinkLabel:
+          listingContent?.content?.backLinkLabel || 'Success stories',
         currentPath: `https://www.cennso.com/success-stories/${successStory}`,
         $$app: {
           navigation: await createNavigation(),

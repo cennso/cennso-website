@@ -96,9 +96,18 @@ def detect_missing_name_role_value(file_path: Path, lines: List[str]) -> List[Co
         snippet = content[start:start+200]
         line_no = content[:start].count('\n') + 1
 
+        # Search the whole element, up to its closing tag, when there is one nearby: long props or
+        # comments on the opening tag can push its children past the first 200 characters.
+        element = snippet
+        if m.group(1):
+            tag_name = content[start + 1:start + 1 + len(m.group(1))]
+            close = content.find(f'</{tag_name}>', start)
+            if close != -1 and close - start <= 3000:
+                element = content[start:close + len(tag_name) + 3]
+
         # If the tag contains aria-label or aria-labelledby (or the React camelCase prop ariaLabelledBy)
         # or has text content, it's fine. Also treat JSX expression children like >{...}< as visible content
-        if re.search(r'aria-label=|aria-labelledby=|ariaLabelledBy=|ariaLabelledby=|>[^<]+<|>\s*\{', snippet, re.IGNORECASE):
+        if re.search(r'aria-label=|aria-labelledby=|ariaLabelledBy=|ariaLabelledby=|>[^<]+<|>\s*\{', element, re.IGNORECASE):
             continue
 
         # For anchors, if href present and text content absent, flag

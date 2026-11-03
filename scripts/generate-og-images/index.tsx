@@ -1,6 +1,6 @@
 import { prepareImage, saveImage } from './image'
 import { prepareData } from './data'
-import { __dirname, loadFonts, removeDirectory } from './common'
+import { loadFonts, removeDirectory } from './common'
 
 async function main() {
   console.log('🎨 Starting OG image generation...\n')
@@ -24,8 +24,8 @@ async function main() {
 
       const image = await prepareImage({
         fonts,
+        badge: item.badge,
         title: item.title,
-        subTitle: item.subTitle,
         description: item.description,
       })
       await saveImage({ image, destination: item.path })
