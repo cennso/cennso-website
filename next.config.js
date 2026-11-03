@@ -97,6 +97,9 @@ const nextConfig = {
     return config
   },
   output: 'standalone',
+  // Pin tracing to this directory; inside a .worktrees/<name> checkout Next
+  // would infer the parent repo as root and nest the standalone output.
+  outputFileTracingRoot: __dirname,
   images: {
     // Device sizes for responsive images (used with sizes prop)
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
