@@ -181,8 +181,8 @@ Search engines recognize the website as authoritative on specific topics through
 - **FR-014**: Homepage MUST include Organization schema with company name, logo, contact information, and social media profiles
 - **FR-015**: Blog post pages MUST include Article schema with headline, author, datePublished, dateModified, and image properties
 - **FR-016**: Success story pages MUST include appropriate schema (Case Study or Article) with relevant business information
-- **FR-017**: Contact page MUST include LocalBusiness schema with address, telephone, geo coordinates, and opening hours
-- **FR-018**: All pages MUST include BreadcrumbList schema showing navigation hierarchy
+- **FR-017**: ~~Contact page MUST include LocalBusiness schema~~ Superseded by spec 002 FR-005: the company's address and contact are on the Organization on every page, the contact page is a ContactPage _(amended 2026-11-13, CENNSO-4534)_
+- **FR-018**: Pages whose visible trail has two or more crumbs MUST include it as a BreadcrumbList (see spec 002 FR-007) _(amended 2026-11-13, CENNSO-4534; was: all pages)_
 - **FR-019**: Job listing pages MUST include JobPosting schema with position title, description, date posted, and employment type
 - **FR-020**: System MUST validate all structured data using Google's Rich Results Test before deployment
 
