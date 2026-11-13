@@ -107,6 +107,13 @@ const MARKDOWN_HEADERS = [
   { key: 'X-Robots-Tag', value: 'noindex' },
 ]
 
+/**
+ * A page's markdown names the page it copies as canonical - the HTML is what a
+ * search engine should list - and, like the page, the index covering it.
+ */
+const markdownLinks = (page) =>
+  `<https://www.cennso.com${page}>; rel="canonical", </llms.txt>; rel="describedby"`
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -166,8 +173,16 @@ const nextConfig = {
         ],
       },
       {
-        source: '/:path(.+\\.md)',
-        headers: MARKDOWN_HEADERS,
+        source: '/:path(.+)\\.md',
+        headers: [
+          ...MARKDOWN_HEADERS,
+          { key: 'Link', value: markdownLinks('/:path') },
+        ],
+      },
+      {
+        // After the rule above, so its Link wins: the home page is `/`.
+        source: '/index.md',
+        headers: [{ key: 'Link', value: markdownLinks('/') }],
       },
       {
         source: '/:file(llms\\.txt|llms-full\\.txt)',
