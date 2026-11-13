@@ -71,7 +71,7 @@ is separate.
 `yarn build && yarn next start`, then the check (default
 `http://localhost:3000`). CI runs it in `lighthouse.yml` on the Vercel preview. A
 `fail` blocks, a `warn` is reported. Known warns on 2026-11-13:
-`llms-txt-links-resolve` (`https://docs.cennso.com/llms.txt` 404 until the docs
+`llms-txt-links-resolve` (`docs.cennso.com/llms.txt` answers 404 until the docs
 portal deploys it), `content-start-position` (header and navigation before
 `<main>`), `rendering-strategy` (`/success-stories` has only cards).
 
