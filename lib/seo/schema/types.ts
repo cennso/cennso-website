@@ -12,6 +12,9 @@ export interface BaseSchema {
   '@context': 'https://schema.org'
   '@type': string | string[]
   '@id'?: string
+  // Any other schema.org property: lets every schema here be a node of the
+  // page's graph (`GraphNode` in ./graph).
+  [property: string]: unknown
 }
 
 /**
@@ -57,7 +60,8 @@ export interface ArticleSchema extends BaseSchema {
   author: PersonSchema | PersonSchema[]
   datePublished: string
   dateModified: string
-  publisher: OrganizationSchema
+  /** The company, by its node's @id in the page's graph. */
+  publisher: OrganizationSchema | { '@id': string }
   image: string | ImageObject | ImageObject[]
   description?: string
   articleBody?: string

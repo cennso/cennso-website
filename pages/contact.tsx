@@ -9,10 +9,6 @@ import { CircleAvatar, Container, PENCIL_BANNER } from '../components/common'
 import { PageHeader } from '../components/PageHeader'
 import { SEO } from '../components/SEO'
 import { pageCard } from '../lib/seo/card'
-import {
-  generateLocalBusinessSchema,
-  type LocalBusinessData,
-} from '../lib/seo/schema'
 
 import { createNavigation } from '../lib/navigation'
 import { loadFooterData } from '../lib/footer'
@@ -58,12 +54,7 @@ const MailSolid: FunctionComponent<{ className?: string }> = ({
 )
 
 const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
-  const { page, sections, localBusiness } = content
-
-  // Generate LocalBusiness schema if data is available
-  const localBusinessSchema = localBusiness
-    ? generateLocalBusinessSchema(localBusiness as LocalBusinessData)
-    : undefined
+  const { page, sections } = content
 
   return (
     <>
@@ -71,7 +62,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
         title={page.title}
         description={page.description}
         card={pageCard(page)}
-        structuredData={localBusinessSchema}
+        pageType="contact"
       />
 
       <PageHeader

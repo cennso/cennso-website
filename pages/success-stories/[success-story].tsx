@@ -51,7 +51,7 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
           { title, description: excerpt },
           CARD_BADGE.successStory
         )}
-        openGraph={{ type: 'article' }}
+        pageType="article"
       />
 
       <PageHeader

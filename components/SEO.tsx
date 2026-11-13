@@ -3,8 +3,6 @@ import { useRouter } from 'next/router'
 
 import siteMetadata from '../siteMetadata'
 import { SchemaOrg } from './common/SchemaOrg'
-import { StructuredData } from '@/lib/seo/types'
-import type { SchemaType, SchemaCollection } from '@/lib/seo/schema/types'
 import { canonicalPath, getCanonicalUrl } from '@/lib/seo/canonical'
 import {
   CARD_CONTENT_TYPE,
@@ -15,9 +13,13 @@ import {
   type CardText,
 } from '@/lib/seo/card'
 import {
-  generateOrganizationSchema,
-  generateBreadcrumbSchema,
-} from '@/lib/seo/schema'
+  articleNode,
+  contactPageNode,
+  graph,
+  organizationNode,
+  websiteNode,
+  type GraphNode,
+} from '@/lib/seo/schema/graph'
 
 import type { FunctionComponent } from 'react'
 import type { NextSeoProps } from 'next-seo'
@@ -49,11 +51,14 @@ export interface SEOProps
    * it answers at whatever address was not found.
    */
   notFound?: boolean
-  structuredData?:
-    | StructuredData
-    | StructuredData[]
-    | SchemaType
-    | SchemaCollection
+  /**
+   * What the page is, for its structured data: a success story is an
+   * `article` (and `og:type` article), the contact page `contact`. Anything
+   * else is described by the site's nodes alone.
+   */
+  pageType?: 'article' | 'contact'
+  /** More nodes for the page's graph, e.g. a blog post's or an FAQ's. */
+  structuredData?: GraphNode | GraphNode[]
 }
 
 /** The site's name: what every tab title ends with and what previews call the site. */
@@ -73,6 +78,7 @@ export const SEO: FunctionComponent<SEOProps> = ({
   absoluteTitle,
   card,
   notFound = false,
+  pageType,
   structuredData,
   description: pageDescription,
   canonical,
@@ -110,7 +116,7 @@ export const SEO: FunctionComponent<SEOProps> = ({
       ]
 
   const openGraph: NextSeoProps['openGraph'] = {
-    type: 'website',
+    type: pageType === 'article' ? 'article' : 'website',
     locale: openGraphLocale(siteMetadata.locale),
     siteName: SITE_NAME,
     url: canonicalUrl,
@@ -120,14 +126,20 @@ export const SEO: FunctionComponent<SEOProps> = ({
     images,
   }
 
-  // Generate global schemas that appear on all pages
-  const organizationSchema = generateOrganizationSchema()
-  const breadcrumbSchema = generateBreadcrumbSchema(router.asPath)
-
-  // Combine global schemas with page-specific schemas
-  const allSchemas = [
-    organizationSchema,
-    breadcrumbSchema,
+  // One graph: the company and the site on every page, then what this page
+  // is. The breadcrumb trail is PageHeader's, which draws it. The 404 page
+  // describes nothing.
+  const page = {
+    url: canonicalUrl ?? '',
+    title,
+    description,
+    image: images[0]?.url,
+  }
+  const nodes: GraphNode[] = [
+    organizationNode(),
+    websiteNode(),
+    ...(pageType === 'article' ? [articleNode(page)] : []),
+    ...(pageType === 'contact' ? [contactPageNode(page)] : []),
     ...(structuredData
       ? Array.isArray(structuredData)
         ? structuredData
@@ -151,7 +163,7 @@ export const SEO: FunctionComponent<SEOProps> = ({
         // from the Open Graph tags.
         twitter={{ cardType: 'summary_large_image' }}
       />
-      <SchemaOrg data={allSchemas} />
+      {notFound ? null : <SchemaOrg data={graph(nodes)} />}
     </>
   )
 }
