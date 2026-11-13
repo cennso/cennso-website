@@ -10,7 +10,9 @@ script's docstring lists them. Structure is an ERROR: one
 `og:site_name` "Cennso", `og:locale` `en_US`, `twitter:card`, one `theme-color`
 per theme, canonical = `og:url` = the page's own address (home page with its
 slash), the 404 page noindex with no canonical, and the sitemap listing exactly
-the canonical URLs. Lengths are WARNINGS only - a title over 60 characters, a
+the canonical URLs, and robots.txt (the Content Signals policy word for word,
+one `*` group, Content-Signal, `Allow: /`, no Disallow, the sitemap and llms
+addresses). Lengths are WARNINGS only - a title over 60 characters, a
 description outside 50-160 - so a long success-story title passes the build and
 is a review call, not a defect.
 

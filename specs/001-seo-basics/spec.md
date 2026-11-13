@@ -160,7 +160,7 @@ Search engines recognize the website as authoritative on specific topics through
 #### Technical SEO Foundation
 
 - **FR-001**: System MUST generate and serve a valid sitemap.xml file containing all public pages with correct last modification dates and priorities
-- **FR-002**: System MUST provide a robots.txt file that allows search engine crawling while excluding administrative or duplicate content paths
+- **FR-002**: System MUST provide a robots.txt file that allows crawling of the whole site (`User-agent: *`, `Allow: /`, no `Disallow`: blocking `/_next/` would hide the scripts and styles a search engine renders the page with), states what the content may be used for with Cloudflare's Content Signals policy word for word and `Content-Signal: search=yes, ai-input=yes, ai-train=yes`, and names the sitemap and llms.txt / llms-full.txt _(amended 2026-11-13, CENNSO-4534; was: excluding administrative or duplicate content paths)_
 - **FR-003**: All indexable pages MUST include a canonical link tag, and `og:url` equal to it: `https://www.cennso.com` plus the page's path, the home page with its slash (`https://www.cennso.com/`, the form `new URL('/', base)` serialises) and every other page without one. The 404 page MUST be `noindex` with no canonical. The sitemap MUST list exactly the indexable pages by their canonical URLs _(amended 2026-11-13, CENNSO-4534)_
 - **FR-004**: System MUST generate semantic, keyword-rich URLs using hyphens as word separators (e.g., /blog/seo-best-practices, not /blog/123)
 - **FR-005**: System MUST implement proper 301 redirects for any changed or removed URLs to preserve search engine ranking value

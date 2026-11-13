@@ -141,6 +141,7 @@ Changes in v2.3.0 (MINOR):
     - Added: Link preview requirements (og:site_name "Cennso", og:locale en_US, twitter:card, card type and alt text, versioned card address)
     - Added: theme-color per theme, and the default theme follows the system
     - Changed: Canonical form - home page with its slash, every other page without; the 404 page is noindex with no canonical
+    - Added: robots.txt with the Content Signals policy and Content-Signal, Allow: / and no Disallow, sitemap and llms.txt addresses
   - Changes in v2.7.0 (MINOR):
     - Performance: OG image generation improvements and validation
     - Added: PNG optimization with sharp (~70% file size reduction)
@@ -315,6 +316,12 @@ All pages MUST have optimized metadata for search engine discoverability:
 - The card's text and the tags describing it come from the same functions (`lib/seo/card.ts`)
 - `robots` allows a snippet of any length and a large image preview (`max-snippet:-1, max-image-preview:large`)
 
+**robots.txt:**
+
+- `public/robots.txt` starts with Cloudflare's Content Signals policy, word for word (CC0, https://blog.cloudflare.com/content-signals-policy/); its last paragraph makes a "no" an express reservation of rights under Article 4 of EU Directive 2019/790
+- One group, `User-agent: *`, with `Content-Signal: search=yes, ai-input=yes, ai-train=yes` and `Allow: /`; no `Disallow` (blocking `/_next/` would hide the scripts and styles search engines render pages with)
+- Then `Sitemap: https://www.cennso.com/sitemap.xml`, and the llms.txt and llms-full.txt addresses as a comment
+
 **Theme Colour:**
 
 - One `theme-color` per theme, each under the `prefers-color-scheme` that picks it, and `color-scheme: light dark`; a reader's chosen theme replaces them once the page is interactive (`components/ThemeColor.tsx`)
@@ -330,7 +337,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 **Validation:**
 
 - Automated validation: `yarn seo:validate` MUST pass
-- Errors (block merge): missing or duplicate title or description, more than one `<title>`, title pattern, `og:title`, `og:site_name`, `og:locale`, `og:type`, `twitter:card`, `theme-color`, canonical and `og:url`, 404 noindex, sitemap vs. canonical
+- Errors (block merge): missing or duplicate title or description, more than one `<title>`, title pattern, `og:title`, `og:site_name`, `og:locale`, `og:type`, `twitter:card`, `theme-color`, canonical and `og:url`, 404 noindex, sitemap vs. canonical, robots.txt (policy word for word, one `*` group, Content-Signal format with search=yes, `Allow: /`, no Disallow, sitemap and llms addresses)
 - Warnings (reported, do not block): title over 60 characters, description over 160 or under 50 characters
 - `yarn validate:ogimages` checks the cards: size, file, `og:image:type`, `og:image:alt`, versioned address
 - Scans: All built HTML files in `.next/server/pages/` (excludes auto-generated 500.html)
