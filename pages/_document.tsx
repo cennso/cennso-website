@@ -15,6 +15,10 @@ export default function Document() {
         <link rel="icon" href="/icon.png" type="image/png" sizes="192x192" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
+        {/* The llms.txt that covers every page, as llms.txt's second version
+            names the relation; the response's Link header says the same
+            (next.config.js), with the page's own markdown beside it. */}
+        <link rel="describedby" type="text/markdown" href="/llms.txt" />
         {/* The browser's own chrome in the page's theme, before any script
             runs: one colour per theme, each under the system setting that
             picks it, since a first visit follows the system. A reader who

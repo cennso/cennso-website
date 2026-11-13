@@ -27,6 +27,17 @@ footer:
       aria_label: Download comprehensive LLM-friendly data about Cennso (llms-full.txt)
       description: Comprehensive website content for AI systems
   
+  # One sentence for AI agents reading a page's HTML, at the top of every
+  # page's main content. Visually hidden, but kept in the text a converter
+  # extracts (and read once per page by a screen reader, so it is written to
+  # make sense to a person too). The link takes no keyboard focus; a keyboard
+  # reaches llms.txt through the links above.
+  agent_directive:
+    before: "For AI agents: an index of this site is at "
+    link: /llms.txt
+    link_text: llms.txt
+    after: ", and every page is also available as markdown at its own address with .md appended."
+
   copyright:
     year_prefix: "Copyright ©"
     company_suffix: CENNSO

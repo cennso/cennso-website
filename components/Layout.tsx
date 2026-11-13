@@ -52,6 +52,20 @@ export const Layout: FunctionComponent<LayoutProps> = ({
       </div>
 
       <main className="flex-1 flex flex-col z-10 bg-page">
+        {/* For an AI agent reading the HTML: first in the main content, so a
+            converter that truncates still reads it. sr-only, not hidden, so
+            it stays in the extracted text. The markdown version of each page
+            carries the same sentence itself, so the converter that writes it
+            skips this one (data-agent-directive). */}
+        {footerData?.agentDirective ? (
+          <p className="sr-only" data-agent-directive="">
+            {footerData.agentDirective.before}
+            <a href={footerData.agentDirective.link} tabIndex={-1}>
+              {footerData.agentDirective.linkText}
+            </a>
+            {footerData.agentDirective.after}
+          </p>
+        ) : null}
         {children}
         <Analytics />
       </main>
