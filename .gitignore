@@ -62,6 +62,8 @@ next-env.d.ts
 # Generated files
 /public/llms.txt
 /public/llms-full.txt
+# every page as markdown, written after the build by scripts/generate-agent-files
+/public/**/*.md
 
 # Python virtual environment
 /scripts/.venv

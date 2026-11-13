@@ -61,6 +61,14 @@ const siteMetadata = {
   explore: {
     cloudPortal: 'https://cloud.cennso.com/',
     documentationPortal: 'https://docs.cennso.com/',
+    // What llms.txt says about the documentation: that it is there, not here,
+    // and where its own llms.txt is.
+    documentation: {
+      name: 'Cennso Documentation',
+      llms: 'https://docs.cennso.com/llms.txt',
+      description:
+        'Guides, references and release notes for Cennso components and solutions: requirements, installation, configuration, operation and what changed in each release.',
+    },
   },
 }
 

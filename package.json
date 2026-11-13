@@ -6,10 +6,10 @@
     "dev": "next dev",
     "generate:ogimages": "tsx scripts/generate-og-images/index.tsx",
     "generate:icons": "tsx scripts/generate-icons/index.ts",
-    "generate:llm": "node --import tsx scripts/generate-llm-data/index.ts",
-    "prebuild": "yarn generate:ogimages && yarn generate:icons && yarn generate:llm",
+    "generate:agents": "tsx scripts/generate-agent-files/index.ts",
+    "prebuild": "yarn generate:ogimages && yarn generate:icons",
     "build": "next build",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap && yarn generate:agents",
     "start": "next start",
     "test": "echo 'No tests.'",
     "lint": "next lint",
@@ -111,11 +111,15 @@
     "postcss": "^8.4.33",
     "prettier": "^3.2.4",
     "puppeteer-core": "^22.15.0",
+    "rehype-parse": "^9.0.1",
+    "rehype-remark": "^10.0.1",
+    "remark-stringify": "^11.0.0",
     "satori": "^0.11.2",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.20.6",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "unified": "^11.0.5"
   },
   "browserslist": {
     "production": [
