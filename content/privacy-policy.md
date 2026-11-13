@@ -73,7 +73,7 @@ As the controller, we have implemented numerous technical and organizational mea
    39179 Barleben<br/>
    Germany
 
-   Phone: +49 (391) 660 98560<br/>
+   Phone: +49 (0) 391 – 660 999 99<br/>
    Email: info@cennso.com<br/>
    Website: https://www.cennso.com
 
