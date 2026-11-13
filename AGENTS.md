@@ -72,8 +72,9 @@ pip install -r scripts/requirements.txt
 
 ```bash
 yarn dev                   # Local dev server (port 3000)
-yarn build                 # Production build (draws OG images and icons, writes llms.txt first)
+yarn build                 # Production build (draws OG images and icons first; writes the sitemap, llms.txt, llms-full.txt and every page's .md after)
 yarn generate:icons        # Draw the icons and web manifest into public/ (part of prebuild)
+yarn generate:agents       # Write llms.txt, llms-full.txt and every page's .md from the build (part of postbuild)
 ANALYZE=true yarn build    # Production build with Webpack Bundle Analyzer (opens visualization in browser)
 yarn lint                  # ESLint check
 yarn lint:fix              # autofix ESLint check

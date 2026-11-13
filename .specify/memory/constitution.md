@@ -142,6 +142,7 @@ Changes in v2.3.0 (MINOR):
     - Added: theme-color per theme, and the default theme follows the system
     - Changed: Canonical form - home page with its slash, every other page without; the 404 page is noindex with no canonical
     - Added: robots.txt with the Content Signals policy and Content-Signal, Allow: / and no Disallow, sitemap and llms.txt addresses
+    - Added: Files for AI agents (llms.txt in the llmstxt.org shape, llms-full.txt, every page as markdown, Link headers, Accept: text/markdown) written after every build from the rendered pages
     - Added: Icons and web manifest drawn before every build from one drawing of the Cennso sign (scripts/generate-icons), checked by yarn seo:validate
   - Changes in v2.7.0 (MINOR):
     - Performance: OG image generation improvements and validation
@@ -327,6 +328,13 @@ All pages MUST have optimized metadata for search engine discoverability:
 - One group, `User-agent: *`, with `Content-Signal: search=yes, ai-input=yes, ai-train=yes` and `Allow: /`; no `Disallow` (blocking `/_next/` would hide the scripts and styles search engines render pages with)
 - Then `Sitemap: https://www.cennso.com/sitemap.xml`, and the llms.txt and llms-full.txt addresses as a comment
 
+**Files for AI agents:**
+
+- Written after every build by `scripts/generate-agent-files` from the pages the build rendered, so a page switched off with `notFound` is in none of them
+- `llms.txt` in the llmstxt.org shape, `llms-full.txt`, and every page as markdown at its address with `.md` appended (`/index.md` for the home page), converted from the rendered main content
+- Every page answers with `Link` (`alternate` markdown, `describedby` llms.txt) and `Vary: Accept`; `Accept: text/markdown` gets the markdown at the page's own address; the HTML carries a visually hidden sentence for agents at the top of the main content
+- Format and rules: `specs/003-generate-llm-files/contracts/llms-txt-format.txt`
+
 **Theme Colour:**
 
 - One `theme-color` per theme, each under the `prefers-color-scheme` that picks it, and `color-scheme: light dark`; a reader's chosen theme replaces them once the page is interactive (`components/ThemeColor.tsx`)
@@ -342,7 +350,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 **Validation:**
 
 - Automated validation: `yarn seo:validate` MUST pass
-- Errors (block merge): missing or duplicate title or description, more than one `<title>`, title pattern, `og:title`, `og:site_name`, `og:locale`, `og:type`, `twitter:card`, `theme-color`, canonical and `og:url`, 404 noindex, sitemap vs. canonical, robots.txt (policy word for word, one `*` group, Content-Signal format with search=yes, `Allow: /`, no Disallow, sitemap and llms addresses)
+- Errors (block merge): missing or duplicate title or description, more than one `<title>`, title pattern, `og:title`, `og:site_name`, `og:locale`, `og:type`, `twitter:card`, `theme-color`, canonical and `og:url`, 404 noindex, sitemap vs. canonical, robots.txt (policy word for word, one `*` group, Content-Signal format with search=yes, `Allow: /`, no Disallow, sitemap and llms addresses), files for agents (the sentence and `describedby` link on every page, every page's markdown, llms.txt format, size and links)
 - Warnings (reported, do not block): title over 60 characters, description over 160 or under 50 characters
 - `yarn validate:ogimages` checks the cards: size, file, `og:image:type`, `og:image:alt`, versioned address
 - Scans: All built HTML files in `.next/server/pages/` (excludes auto-generated 500.html)
