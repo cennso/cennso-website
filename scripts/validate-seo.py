@@ -27,6 +27,13 @@ ERRORS fail the check. They are the things that are either right or wrong:
   the manifest; the files exist at their sizes (the Apple icon and the logo
   opaque, the logo square and at least 112 px, as Google requires); the
   manifest parses, names the site, and every icon it lists exists at its size
+- agents: every page carries the sentence for agents (pointing at llms.txt)
+  and <link rel="describedby" href="/llms.txt">, and has its markdown
+  (/<page>.md, /index.md for the home page) opening with the same sentence;
+  llms.txt has the llmstxt.org shape (one H1, a > summary, only
+  `- [name](url): description` lines under its H2s) under 50 000 characters,
+  links every page's markdown, and every address of this site in it exists in
+  the build; no "undefined" in any of these files
 
 WARNINGS are reported and do not fail the check. They are lengths, which content
 sometimes needs to exceed (a success story's title, say):
@@ -132,6 +139,9 @@ ICON_FILES = {
 FAVICON_SIZES = {(16, 16), (32, 32), (48, 48)}
 LOGO_MIN = 112
 
+LLMS_MAX = 50_000
+LLMS_ENTRY = re.compile(r"^- \[[^\]]+\]\((https://[^)\s]+)\)(: .+)?$")
+
 CONTENT_SIGNAL = re.compile(
     r"^search=(yes|no), ai-input=(yes|no), ai-train=(yes|no)$"
 )
@@ -232,6 +242,16 @@ def check_page(html_file: Path) -> Dict:
     for tag in theme_colours:
         if not COLOUR.match(tag.get("content") or ""):
             errors.append(f'theme-color is not a colour: "{tag.get("content")}"')
+
+    # The way to llms.txt for an agent reading the HTML (components/Layout.tsx).
+    sentence = soup.find(attrs={"data-agent-directive": True})
+    if sentence is None or sentence.find("a", href="/llms.txt") is None:
+        errors.append("the sentence for agents, linking /llms.txt, is missing")
+    if ("describedby", "/llms.txt") not in {
+        (" ".join(link.get("rel", [])), link.get("href"))
+        for link in head.find_all("link")
+    }:
+        errors.append('<link rel="describedby" href="/llms.txt"> missing')
 
     # Icons, the same on every page (pages/_document.tsx).
     linked = {
@@ -335,6 +355,73 @@ def check_robots() -> List[str]:
     for name in re.findall(rf"{re.escape(SITE_URL)}/(llms[\w-]*\.txt)", text):
         if find_public(name) is None:
             errors.append(f"robots.txt names {SITE_URL}/{name}, which the build does not have")
+
+    return errors
+
+
+def markdown_path(page_path: str) -> str:
+    """A page's markdown file under public/: index.md for the home page."""
+    return "index.md" if page_path == "/" else f"{page_path.lstrip('/')}.md"
+
+
+def check_agents(page_paths: List[str]) -> List[str]:
+    """llms.txt and every page's markdown: see the module docstring."""
+    errors: List[str] = []
+
+    for page_path in page_paths:
+        markdown = find_public(markdown_path(page_path))
+        if markdown is None:
+            errors.append(f"{page_path} has no markdown ({markdown_path(page_path)})")
+            continue
+        text = markdown.read_text(encoding="utf-8")
+        if not text.startswith("> For AI agents"):
+            errors.append(f"{markdown_path(page_path)} must open with the sentence for agents")
+        if "undefined" in text:
+            errors.append(f'{markdown_path(page_path)} contains "undefined"')
+
+    llms_path = find_public("llms.txt")
+    if llms_path is None:
+        return errors + ["llms.txt not found - run 'yarn build'"]
+    llms = llms_path.read_text(encoding="utf-8")
+    lines = llms.splitlines()
+
+    if len(llms) > LLMS_MAX:
+        errors.append(f"llms.txt is {len(llms)} characters; keep it under {LLMS_MAX}")
+    if not lines or not lines[0].startswith("# ") or sum(l.startswith("# ") for l in lines) != 1:
+        errors.append("llms.txt must open with its one H1")
+    if not any(line.startswith("> ") for line in lines[:4]):
+        errors.append("llms.txt needs a > summary under its H1")
+    if "undefined" in llms:
+        errors.append('llms.txt contains "undefined"')
+
+    linked = set()
+    in_section = False
+    for line in lines:
+        if line.startswith("## "):
+            in_section = True
+            continue
+        if not in_section or not line.strip():
+            continue
+        match = LLMS_ENTRY.match(line)
+        if match is None:
+            errors.append(f"llms.txt line under a section is not a link entry: {line[:80]}")
+            continue
+        url = match.group(1)
+        if url.startswith(f"{SITE_URL}/"):
+            linked.add(url)
+            if find_public(url[len(SITE_URL) + 1 :]) is None:
+                errors.append(f"llms.txt links {url}, which the build does not have")
+
+    for page_path in page_paths:
+        url = f"{SITE_URL}/{markdown_path(page_path)}"
+        if url not in linked:
+            errors.append(f"llms.txt does not link {url}")
+
+    full = find_public("llms-full.txt")
+    if full is None:
+        errors.append("llms-full.txt not found - run 'yarn build'")
+    elif "undefined" in full.read_text(encoding="utf-8"):
+        errors.append('llms-full.txt contains "undefined"')
 
     return errors
 
@@ -485,6 +572,14 @@ def main() -> int:
         print()
 
     icon_errors = check_icons()
+
+    agent_errors = check_agents(
+        [page["path"] for page in pages if page["canonical"]]
+    )
+    for error in agent_errors:
+        print(f"{RED}❌ AGENTS: {error}{RESET}")
+    if agent_errors:
+        print()
     for error in icon_errors:
         print(f"{RED}❌ ICONS: {error}{RESET}")
     if icon_errors:
@@ -504,6 +599,7 @@ def main() -> int:
         or sitemap_errors
         or robots_errors
         or icon_errors
+        or agent_errors
     )
 
     print("=" * 85)
@@ -515,6 +611,7 @@ def main() -> int:
     print(f"   Sitemap errors: {len(sitemap_errors)}")
     print(f"   robots.txt errors: {len(robots_errors)}")
     print(f"   Icon errors: {len(icon_errors)}")
+    print(f"   Agent file errors: {len(agent_errors)}")
     print()
 
     if has_errors:
