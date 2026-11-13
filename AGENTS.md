@@ -87,6 +87,7 @@ yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
 yarn seo:validate          # Validate SEO metadata (title pattern, canonical, link-preview tags, sitemap; lengths warn)
 yarn seo:rich              # Validate structured data against schema.org and Google's rich-result rules (part of yarn seo)
+yarn agents:check [url]    # afdocs: how AI agents read a served build (default localhost:3000; CI runs it on the Vercel preview)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn design:review:where   # Where to write the frames fetched from Figma, and under what names
 yarn design:review         # Diff the built site against those frames, both themes (local, needs Figma MCP)
@@ -173,6 +174,8 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 2. Runs audits against the Vercel deployment URL
 3. Posts results to PR
 4. Blocks merge if any category < 95%
+
+The same workflow runs **afdocs** on the preview (job `Agent-friendly docs (afdocs)`, `yarn agents:check <preview URL>`): a `fail` blocks, warnings and the table of every check go to the job summary (no PR comment). Locally: `yarn build && yarn next start`, then `yarn agents:check` (or pass the URL of another port). Settings and the reasons for them: `agent-docs.config.yml`.
 
 ## Important Notes
 

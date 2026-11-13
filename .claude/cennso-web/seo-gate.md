@@ -66,6 +66,15 @@ removal of a `<SEO` call from a page as critical.
 four read built HTML, so they need `yarn build` first. `yarn validate:ogimages`
 is separate.
 
+`yarn agents:check [url]` (afdocs, `scripts/check-agent-docs.mjs`,
+`agent-docs.config.yml`) reads a SERVED site, not the build's files:
+`yarn build && yarn next start`, then the check (default
+`http://localhost:3000`). CI runs it in `lighthouse.yml` on the Vercel preview. A
+`fail` blocks, a `warn` is reported. Known warns on 2026-11-13:
+`llms-txt-links-resolve` (`https://docs.cennso.com/llms.txt` 404 until the docs
+portal deploys it), `content-start-position` (header and navigation before
+`<main>`), `rendering-strategy` (`/success-stories` has only cards).
+
 ## Also immune to markup changes
 
 `validate-seo.py`, `validate-structured-data.py`, `check-internal-links.py` and
