@@ -42,6 +42,15 @@ next-env.d.ts
 # assets artefacts
 /public/assets/og-images
 
+# icon artefacts: drawn before every build by scripts/generate-icons
+/public/favicon.ico
+/public/icon.svg
+/public/icon.png
+/public/apple-touch-icon.png
+/public/icons
+/public/assets/logo.png
+/public/manifest.webmanifest
+
 # sitemap artefacts
 /public/sitemap.xml
 
