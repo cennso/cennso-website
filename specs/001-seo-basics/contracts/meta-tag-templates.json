@@ -6,91 +6,104 @@
   "templates": {
     "titleTemplates": {
       "default": {
-        "pattern": "{pageTitle} | Cennso",
-        "description": "Standard page title format",
+        "pattern": "{pageName} · Cennso",
+        "description": "Every page: its name, then the site's name - the documentation portal's pattern (\"{chapter} · Cennso Documentation\"). <SEO title> takes the page name and adds the suffix.",
         "maxLength": 60,
+        "lengthIsWarning": true,
         "examples": [
-          "About Us | Cennso",
-          "Contact | Cennso",
-          "Careers | Cennso"
+          "Contact · Cennso",
+          "Success Stories · Cennso",
+          "Privacy Policy · Cennso"
         ]
       },
       "home": {
-        "pattern": "Cennso - {tagline}",
-        "description": "Homepage title format",
+        "pattern": "Cennso · {tagline}",
+        "description": "The home page sets its whole title with <SEO absoluteTitle>; it starts with the site's name",
         "maxLength": 60,
-        "examples": ["Cennso - Expert IT Consulting Services"]
+        "lengthIsWarning": true,
+        "examples": ["Cennso · 5G Network Solutions for MVNOs and Private 5G"]
       },
       "blogPost": {
-        "pattern": "{postTitle} | Cennso Blog",
+        "pattern": "{postTitle} · Cennso",
         "description": "Blog post title format",
         "maxLength": 60,
-        "examples": ["Getting Started with Next.js | Cennso Blog"]
+        "lengthIsWarning": true,
+        "examples": ["Getting Started with Next.js · Cennso"]
       },
       "solution": {
-        "pattern": "{solutionName} - {category} | Cennso",
+        "pattern": "{solutionName} · Cennso",
         "description": "Solution page title format",
         "maxLength": 60,
-        "examples": ["Cloud Migration - IT Services | Cennso"]
+        "lengthIsWarning": true,
+        "examples": ["Private 5G · Cennso"]
       },
       "jobPosting": {
-        "pattern": "{jobTitle} - {location} | Cennso Careers",
+        "pattern": "{jobTitle} · Cennso",
         "description": "Job posting title format",
         "maxLength": 60,
-        "examples": ["Senior Developer - Remote | Cennso Careers"]
+        "lengthIsWarning": true,
+        "examples": ["Senior Developer · Cennso"]
       },
       "successStory": {
-        "pattern": "{companyName} Success Story | Cennso",
-        "description": "Success story title format",
+        "pattern": "{storyTitle} · Cennso",
+        "description": "Success story title format; story titles run long, which is a warning only",
         "maxLength": 60,
-        "examples": ["Acme Corp Success Story | Cennso"]
+        "lengthIsWarning": true,
+        "examples": [
+          "Crossing borders without missing a beat: Cennso and IBM · Cennso"
+        ]
       }
     },
     "descriptionTemplates": {
       "default": {
         "pattern": "{pageDescription}",
         "description": "Standard meta description",
-        "minLength": 150,
+        "minLength": 50,
         "maxLength": 160,
         "guidelines": [
           "Include primary keyword naturally",
           "Add clear call-to-action",
           "Focus on user benefit",
           "Avoid keyword stuffing"
-        ]
+        ],
+        "lengthIsWarning": true
       },
       "home": {
         "pattern": "{companyDescription} {services} {cta}",
         "description": "Homepage meta description",
-        "minLength": 150,
+        "minLength": 50,
         "maxLength": 160,
         "examples": [
           "Cennso provides expert IT consulting services including cloud migration, DevOps automation, and digital transformation. Contact us today for a free consultation."
-        ]
+        ],
+        "lengthIsWarning": true
       },
       "blogPost": {
         "pattern": "{excerpt} Read more on the Cennso blog.",
         "description": "Blog post meta description",
-        "minLength": 150,
-        "maxLength": 160
+        "minLength": 50,
+        "maxLength": 160,
+        "lengthIsWarning": true
       },
       "solution": {
         "pattern": "Learn how Cennso's {solutionName} services help businesses {benefit}. {cta}",
         "description": "Solution page meta description",
-        "minLength": 150,
+        "minLength": 50,
         "maxLength": 160,
         "examples": [
           "Learn how Cennso's cloud migration services help businesses reduce costs and improve scalability. Schedule a consultation today."
-        ]
+        ],
+        "lengthIsWarning": true
       },
       "jobPosting": {
         "pattern": "Join Cennso as a {jobTitle} in {location}. {keyResponsibility} {benefit}",
         "description": "Job posting meta description",
-        "minLength": 150,
+        "minLength": 50,
         "maxLength": 160,
         "examples": [
           "Join Cennso as a Senior Developer in Berlin. Build cutting-edge solutions for enterprise clients. Competitive salary and remote work options."
-        ]
+        ],
+        "lengthIsWarning": true
       }
     },
     "openGraphTemplates": {
@@ -104,10 +117,10 @@
         ],
         "properties": {
           "og:type": "article",
-          "og:title": "{postTitle}",
+          "og:title": "{pageName}",
           "og:description": "{excerpt}",
-          "og:image": "{ogImageUrl}",
-          "og:image:alt": "{imageAltText}",
+          "og:image": "{cardUrl}?v={cardTextHash}",
+          "og:image:alt": "{cardText}",
           "og:image:width": "1200",
           "og:image:height": "630",
           "og:url": "{canonicalUrl}",
@@ -116,7 +129,8 @@
           "article:modified_time": "{modifiedDate}",
           "article:author": "{authorUrl}",
           "article:section": "{category}",
-          "article:tag": "{tags}"
+          "article:tag": "{tags}",
+          "og:image:type": "image/png"
         }
       },
       "website": {
@@ -129,47 +143,39 @@
         ],
         "properties": {
           "og:type": "website",
-          "og:title": "{pageTitle}",
+          "og:title": "{pageName}",
           "og:description": "{pageDescription}",
-          "og:image": "{ogImageUrl}",
-          "og:image:alt": "{imageAltText}",
+          "og:image": "{cardUrl}?v={cardTextHash}",
+          "og:image:alt": "{cardText}",
           "og:image:width": "1200",
           "og:image:height": "630",
           "og:url": "{canonicalUrl}",
           "og:site_name": "Cennso",
-          "og:locale": "en_US"
+          "og:locale": "en_US",
+          "og:image:type": "image/png"
         }
       },
       "profile": {
         "required": ["og:type", "og:title", "og:image", "og:url"],
         "properties": {
           "og:type": "profile",
-          "og:title": "{authorName}",
+          "og:title": "{pageName}",
           "og:description": "{authorBio}",
-          "og:image": "{authorAvatarUrl}",
+          "og:image": "{cardUrl}?v={cardTextHash}",
           "og:url": "{authorProfileUrl}",
           "profile:first_name": "{firstName}",
           "profile:last_name": "{lastName}",
-          "profile:username": "{username}"
+          "profile:username": "{username}",
+          "og:image:type": "image/png",
+          "og:image:alt": "{cardText}"
         }
       }
     },
     "twitterCardTemplates": {
       "summaryLargeImage": {
-        "required": [
-          "twitter:card",
-          "twitter:title",
-          "twitter:description",
-          "twitter:image"
-        ],
+        "required": ["twitter:card"],
         "properties": {
-          "twitter:card": "summary_large_image",
-          "twitter:site": "@cennso",
-          "twitter:creator": "{authorTwitterHandle}",
-          "twitter:title": "{pageTitle}",
-          "twitter:description": "{pageDescription}",
-          "twitter:image": "{twitterImageUrl}",
-          "twitter:image:alt": "{imageAltText}"
+          "twitter:card": "summary_large_image"
         },
         "imageRequirements": {
           "aspectRatio": "2:1",
@@ -177,7 +183,8 @@
           "minHeight": 157,
           "maxSize": "5MB",
           "formats": ["JPG", "PNG", "WebP", "GIF"]
-        }
+        },
+        "description": "No X account: only the card type is written; X reads title, description and image from the Open Graph tags"
       },
       "summary": {
         "required": ["twitter:card", "twitter:title", "twitter:description"],
@@ -200,8 +207,8 @@
     },
     "robotsMetaTemplates": {
       "default": {
-        "content": "index, follow",
-        "description": "Allow indexing and following links"
+        "content": "index, follow, max-snippet:-1, max-image-preview:large",
+        "description": "Allow indexing, a snippet of any length and a large image preview"
       },
       "noindex": {
         "content": "noindex, follow",
@@ -231,9 +238,12 @@
       "production": {
         "baseUrl": "https://www.cennso.com",
         "pattern": "{baseUrl}{pagePath}",
+        "homePage": "https://www.cennso.com/",
+        "description": "The home page with its slash (as new URL('/', base) serialises it, and as the documentation and cloud portals name this site); every other page without one. The 404 page has none and is noindex.",
         "examples": [
-          "https://www.cennso.com/blog/post-slug",
-          "https://www.cennso.com/solutions/cloud-migration"
+          "https://www.cennso.com/",
+          "https://www.cennso.com/contact",
+          "https://www.cennso.com/success-stories/cennso-on-ibm-cloud"
         ]
       },
       "preview": {
@@ -259,7 +269,9 @@
       },
       "themeColor": {
         "name": "theme-color",
-        "content": "#ffffff"
+        "content": "hsl(<theme --background>)",
+        "media": "(prefers-color-scheme: light|dark)",
+        "description": "One per theme, each under the system setting that picks it; replaced by the chosen theme's colour once the page is interactive. Plus <meta name=\"color-scheme\" content=\"light dark\">."
       },
       "author": {
         "name": "author",
@@ -277,14 +289,13 @@
   },
   "validationRules": {
     "titleLength": {
-      "min": 30,
       "max": 60,
-      "optimal": 55
+      "severity": "warning"
     },
     "descriptionLength": {
-      "min": 150,
+      "min": 50,
       "max": 160,
-      "optimal": 155
+      "severity": "warning"
     },
     "ogImageDimensions": {
       "width": 1200,
@@ -305,17 +316,15 @@
     },
     "urlFormat": {
       "protocol": "https",
-      "trailingSlash": false,
+      "trailingSlash": "home page only",
       "lowercase": true,
       "specialCharacters": false
     }
   },
   "fallbackValues": {
-    "defaultOgImage": "/assets/og-images/default-og-image.png",
-    "defaultTwitterImage": "/assets/og-images/default-og-image.png",
+    "defaultOgImage": "none: every page has its own generated card",
     "defaultDescription": "Cennso provides expert IT consulting services to help businesses innovate and grow through technology.",
     "siteName": "Cennso",
-    "locale": "en_US",
-    "twitterHandle": "@cennso"
+    "locale": "en_US"
   }
 }

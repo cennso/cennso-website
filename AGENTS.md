@@ -83,7 +83,7 @@ yarn a11y:autocomplete     # Validate autocomplete attributes (tel not phone, gi
 yarn perf:images           # Validate all images are WebP and under 100KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
-yarn seo:validate          # Validate SEO metadata (titles 50-60 chars, descriptions 150-160 chars)
+yarn seo:validate          # Validate SEO metadata (title pattern, canonical, link-preview tags, sitemap; lengths warn)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn design:review:where   # Where to write the frames fetched from Figma, and under what names
 yarn design:review         # Diff the built site against those frames, both themes (local, needs Figma MCP)
@@ -185,9 +185,11 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
   - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
   - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
 - **Bundle analysis**: `next.config.js` includes `@next/bundle-analyzer` configured via `ANALYZE=true` env var
-- **SEO metadata**: All pages MUST have unique titles (50-60 chars) and descriptions (150-160 chars)
-  - Validated by `yarn seo:validate` which scans built HTML
-  - Titles come from YAML `page.title` or MDX frontmatter `title`
+- **SEO metadata**: All pages MUST have unique titles and descriptions; the rules are the documentation portal's (constitution VI)
+  - Validated by `yarn seo:validate` which scans built HTML and the sitemap: structure is an error, length a warning
+  - Titles come from YAML `page.title` or MDX frontmatter `title` - the page's NAME ("Contact"); `<SEO>` adds " · Cennso". The home page passes its whole title as `absoluteTitle`
+  - Canonical: home page `https://www.cennso.com/` (with slash), every other page without; 404 is noindex
+  - Cards: `<SEO card={pageCard(page)}>` - `lib/seo/card.ts` is shared with the card generator
   - Descriptions from YAML `page.description` or MDX frontmatter `excerpt`
   - SEO component in `components/SEO.tsx` handles meta tag generation
   - BeautifulSoup4 required for validation (in `scripts/requirements.txt`)
@@ -285,9 +287,9 @@ All code changes must comply with constitution principles:
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, 45vw"` (blog cards)
 - **SEO**: All pages MUST have optimized metadata
-  - Titles: 50-60 characters, unique across pages
-  - Descriptions: 150-160 characters, unique across pages
-  - Canonical URLs: Present on all pages
+  - Titles: `<page name> · Cennso`, unique across pages; over 60 characters is a warning
+  - Descriptions: unique across pages; outside 50-160 characters is a warning
+  - Canonical URLs: present on every indexable page, equal to `og:url`, listed in the sitemap
   - Validated by `yarn seo:validate` (scans `.next/server/pages/*.html`)
   - No duplicate titles or descriptions allowed
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed

@@ -12,8 +12,8 @@
 
 **Properties**:
 
-- `title` (string, required): Page title tag content (50-60 characters recommended)
-- `description` (string, required): Meta description content (150-160 characters recommended)
+- `title` (string, required): The page's name; the title tag is `<title> · Cennso` (60 characters or fewer recommended, a warning only)
+- `description` (string, required): Meta description content (50-160 characters recommended, a warning only)
 - `canonical` (string, required): Canonical URL (absolute, HTTPS)
 - `ogTitle` (string, optional): Open Graph title (defaults to `title`)
 - `ogDescription` (string, optional): Open Graph description (defaults to `description`)

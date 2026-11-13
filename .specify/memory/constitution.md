@@ -1,6 +1,6 @@
 <!--
 Sync Impact Report:
-- Version: Initial → 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 → 1.5.0 → 1.6.0 → 1.7.0 → 1.8.0 → 1.9.0 → 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0 → 2.4.0 → 2.5.0 → 2.6.0 → 2.6.1 → 2.7.0
+- Version: Initial → 1.0.0 → 1.1.0 → 1.2.0 → 1.3.0 → 1.4.0 → 1.5.0 → 1.6.0 → 1.7.0 → 1.8.0 → 1.9.0 → 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0 → 2.4.0 → 2.5.0 → 2.6.0 → 2.6.1 → 2.7.0 → 2.8.0
 - Changes in v1.1.0:
   - Testing Policy expanded with specific technology stack (Playwright, Vitest, React Testing Library)
   - Test organization requirements added
@@ -135,6 +135,13 @@ Changes in v2.3.0 (MINOR):
     - Added: HTML spec validation for autocomplete tokens (tel, email, given-name, etc.)
     - Added: Common mistakes detection (phone→tel, firstname→given-name, etc.)
     - Quality Gates: All accessibility checks now include autocomplete validation
+  - Changes in v2.8.0 (MINOR):
+    - SEO Standards (VI) aligned with the documentation portal (cennso/cloud, apps/docs-portal), so the site and the portals describe themselves the same way
+    - Changed: Titles are "<page name> · Cennso" (the home page: starts with "Cennso"); the 50-60 range and the no-site-name rule are dropped
+    - Changed: Title and description lengths are warnings, not requirements; structure (one title, the pattern, uniqueness, canonical, sitemap) is an error
+    - Added: Link preview requirements (og:site_name "Cennso", og:locale en_US, twitter:card, card type and alt text, versioned card address)
+    - Added: theme-color per theme, and the default theme follows the system
+    - Changed: Canonical form - home page with its slash, every other page without; the 404 page is noindex with no canonical
   - Changes in v2.7.0 (MINOR):
     - Performance: OG image generation improvements and validation
     - Added: PNG optimization with sharp (~70% file size reduction)
@@ -269,59 +276,70 @@ All pages MUST have optimized metadata for search engine discoverability:
 
 **Title Requirements:**
 
-- All pages MUST have unique, descriptive titles
-- Title length MUST be 50-60 characters (optimal for search results)
-- Titles MUST NOT be duplicated across pages
-- Titles come from:
-  - YAML files: `page.title` property (e.g., `content/contact-page.yaml`)
-  - MDX frontmatter: `title` property (e.g., blog posts, success stories)
-  - Page components: `title` prop passed to `<SEO>` component
-- Format: Use descriptive title directly (no concatenation with site name)
+- All pages MUST have a unique title, and exactly one `<title>` in `<head>`
+- Format: `<page name> · Cennso` - the page's name followed by the site's name, the way the documentation portal writes `<page> · Cennso Documentation`
+  - The page name comes from `page.title` (YAML) or `title` (MDX frontmatter) and is passed to `<SEO title>`; the component adds ` · Cennso`
+  - The home page sets its whole title with `<SEO absoluteTitle>`, and it MUST start with "Cennso"
+- `og:title` is the page name alone; link previews print the site's name beside it from `og:site_name`
+- Length: aim for 60 characters or fewer in total. Longer titles are a warning, not an error: search results cut the end, which is the site's name
 - Examples:
-  - ✅ "Contact Cennso - Mobile Core Network Solutions & Support" (51 chars)
-  - ❌ "Contact us" (10 chars - too short)
-  - ❌ "Contact us | Cennso Mobile Core Network Solutions" (87 chars - too long)
+  - ✅ "Contact · Cennso"
+  - ✅ "Cennso · 5G Network Solutions for MVNOs and Private 5G" (home page)
+  - ❌ "Contact Cennso - Mobile Core Network Solutions & Support" (no site name in the pattern)
 
 **Description Requirements:**
 
-- All pages MUST have unique, descriptive meta descriptions
-- Description length MUST be 150-160 characters (optimal for search snippets)
-- Descriptions MUST NOT be duplicated across pages
+- All pages MUST have a unique meta description
 - Descriptions come from:
   - YAML files: `page.description` property
   - MDX frontmatter: `excerpt` property
   - Page components: `description` prop passed to `<SEO>` component
 - Content: Summarize page purpose, include relevant keywords naturally
-- Examples:
-  - ✅ "Get in touch with Cennso's Solution and Channel Partners. Learn how we can help you build custom mobile core network solutions for your business needs." (151 chars)
-  - ❌ "Contact us to learn more." (26 chars - too short)
-  - ❌ "Contact us to learn more about our mobile core network solutions, consulting services, partnership opportunities, and how we can help your business." (182 chars - too long)
+- Length: aim for 50-160 characters. Outside that range is a warning, not an error (a success story sometimes needs more)
 
 **Canonical URL Requirements:**
 
-- All pages MUST have canonical URL meta tag
-- Format: `<link rel="canonical" href="https://www.cennso.com/page-path" />`
-- Handled automatically by `<SEO>` component
-- Prevents duplicate content issues
+- Every indexable page MUST have a canonical URL, and `og:url` MUST equal it
+- Format: `https://www.cennso.com` plus the page's own path, no query string or fragment
+  - The home page with its slash: `https://www.cennso.com/` - the form `new URL('/', base)` produces and the documentation and cloud portals use for this site (their structured data names `https://www.cennso.com/#organization`)
+  - Every other page without one: `https://www.cennso.com/contact`
+- The 404 page MUST be `noindex` and MUST have no canonical or `og:url`
+- The sitemap MUST list exactly the indexable pages, each by its canonical URL
+- Handled automatically by `<SEO>` (`lib/seo/canonical.ts`) and `next-sitemap.config.js`
+
+**Link Preview Requirements:**
+
+- `og:site_name` MUST be "Cennso"; `og:locale` MUST be `en_US`; `og:type` `article` for success stories and blog posts, `website` otherwise
+- `twitter:card` MUST be `summary_large_image`
+- Every page has its own card (see Principle IV): `og:image` with `og:image:type` `image/png`, 1200×630, and `og:image:alt` = the card's text
+- The card's address carries a hash of its text (`?v=…`), so networks that keep a shared card fetch it again when its text changes
+- The card's text and the tags describing it come from the same functions (`lib/seo/card.ts`)
+- `robots` allows a snippet of any length and a large image preview (`max-snippet:-1, max-image-preview:large`)
+
+**Theme Colour:**
+
+- One `theme-color` per theme, each under the `prefers-color-scheme` that picks it, and `color-scheme: light dark`; a reader's chosen theme replaces them once the page is interactive (`components/ThemeColor.tsx`)
+- The default theme follows the system, as the documentation portal's does
 
 **Implementation:**
 
-- Use `<SEO title="..." description="..." />` component on all pages
+- Use `<SEO title="..." description="..." card={...} />` component on all pages
 - SEO component location: `components/SEO.tsx`
-- Component handles: title tag, meta description, canonical URL, Open Graph tags
+- Component handles: title tag, meta description, canonical URL, Open Graph and Twitter tags, robots
 - Built HTML location: `.next/server/pages/*.html` (minified)
 
 **Validation:**
 
 - Automated validation: `yarn seo:validate` MUST pass
-- Validates: Title length (50-60 chars), description length (150-160 chars), canonical URLs
-- Detects: Duplicate titles, duplicate descriptions, missing metadata
+- Errors (block merge): missing or duplicate title or description, more than one `<title>`, title pattern, `og:title`, `og:site_name`, `og:locale`, `og:type`, `twitter:card`, `theme-color`, canonical and `og:url`, 404 noindex, sitemap vs. canonical
+- Warnings (reported, do not block): title over 60 characters, description over 160 or under 50 characters
+- `yarn validate:ogimages` checks the cards: size, file, `og:image:type`, `og:image:alt`, versioned address
 - Scans: All built HTML files in `.next/server/pages/` (excludes auto-generated 500.html)
 - Dependencies: BeautifulSoup4 (defined in `scripts/requirements.txt`)
 - Script location: `scripts/validate-seo.py`
 - CI/CD enforcement: Exit code 1 on errors (blocks merge)
 
-**Rationale**: SEO metadata is critical for search engine rankings and click-through rates. Titles and descriptions are the first impression users see in search results. Optimal character lengths maximize visibility in search snippets without truncation. Unique content prevents duplicate content penalties. Canonical URLs prevent indexing issues.
+**Rationale**: SEO metadata is critical for search engine rankings and click-through rates. Titles and descriptions are the first impression users see in search results. One pattern across cennso.com and the documentation portal makes the sites read as one organisation, in search results and in link previews alike. Lengths are guidance because content sometimes needs more; structure is checked strictly because it is either right or wrong. Unique content prevents duplicate content penalties. Canonical URLs prevent indexing issues.
 
 **Keyboard Accessible (WCAG 2.1 Guideline 2.1 - EN 301 549 Section 9.2.1):**
 
@@ -1005,10 +1023,10 @@ Before any PR can be merged, ALL of the following MUST pass:
    - Readable (`yarn a11y:readable`)
    - Autocomplete attributes (`yarn a11y:autocomplete`)
 6. **SEO**: `yarn seo:validate` passes all metadata requirements:
-   - All titles 50-60 characters
-   - All descriptions 150-160 characters
+   - All titles `<page name> · Cennso` (the home page's starts with "Cennso"), one per page
    - No duplicate titles or descriptions
-   - All pages have canonical URLs
+   - Canonical URLs, link-preview tags and sitemap as section VI requires
+   - Title and description lengths are warnings, not failures
 7. **Lighthouse**: `yarn lighthouse` passes with **≥95% scores on all 4 categories**:
    - Performance (page speed, optimization)
    - Accessibility (WCAG 2.1 AA compliance)
@@ -1062,4 +1080,4 @@ This constitution defines the non-negotiable standards for the Cennso Website pr
 - AGENTS.md serves as runtime guidance for AI assistants and human developers
 - Template files in `.specify/templates/` enforce constitution through structured workflows
 
-**Version**: 2.6.1 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-01-10
+**Version**: 2.8.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2026-11-13

@@ -63,7 +63,7 @@ export default function MyPage({ pageData }) {
     <>
       <SEO
         title="My Page Title"
-        description="A compelling description between 150-160 characters that includes the primary keyword and a call-to-action."
+        description="A compelling description of up to 160 characters that includes the primary keyword and a call-to-action."
         canonical="https://www.cennso.com/my-page"
         openGraph={{
           type: 'website',
@@ -96,21 +96,20 @@ Refer to `contracts/meta-tag-templates.json` for standardized patterns:
 
 **Title Templates:**
 
-- Default: `"{pageTitle} | Cennso"` (max 60 chars)
-- Blog: `"{postTitle} | Cennso Blog"` (max 60 chars)
-- Solution: `"{solutionName} - {category} | Cennso"` (max 60 chars)
+- Every page: `"{pageName} · Cennso"` - pass the page name as `<SEO title>`, the component adds the suffix
+- Home page: `"Cennso · {tagline}"`, passed whole as `<SEO absoluteTitle>`
+- Over 60 characters is a warning, not an error
 
 **Description Templates:**
 
-- Min: 150 characters
-- Max: 160 characters
+- 50-160 characters recommended (a warning outside it)
 - Must include primary keyword + CTA
 
 **Example:**
 
 ```tsx
 // ✅ Good - Uses template pattern
-title: 'Cloud Migration - IT Services | Cennso'
+title: 'Cloud Migration' // rendered as "Cloud Migration · Cennso"
 description: "Learn how Cennso's cloud migration services help businesses reduce costs and improve scalability. Schedule a consultation today."
 
 // ❌ Bad - Too short, no CTA
@@ -137,7 +136,7 @@ const canonicalUrl = `${baseUrl}${router.asPath}`
 
 - ✅ HTTPS only
 - ✅ Absolute URLs
-- ✅ No trailing slashes (unless homepage)
+- ✅ No trailing slashes, except the homepage: `https://www.cennso.com/`
 - ✅ Lowercase
 - ❌ No query parameters (unless essential for content)
 
@@ -277,7 +276,7 @@ const breadcrumbSchema = {
 
 **Rules:**
 
-- ✅ 50-60 characters (optimal: 55)
+- ✅ The page's name; `<SEO>` adds " · Cennso" (60 characters or fewer in total recommended)
 - ✅ Include primary keyword near the beginning
 - ✅ Use template pattern from `contracts/meta-tag-templates.json`
 - ✅ Unique per page
@@ -301,7 +300,7 @@ const breadcrumbSchema = {
 
 **Rules:**
 
-- ✅ 150-160 characters (optimal: 155)
+- ✅ 50-160 characters recommended
 - ✅ Include primary keyword naturally
 - ✅ Add clear call-to-action
 - ✅ Focus on user benefit
@@ -571,8 +570,8 @@ yarn perf:images:optimize
 
 ### Checklist for New Pages
 
-- [ ] Added `<SEO>` component with title (50-60 chars)
-- [ ] Added meta description (150-160 chars)
+- [ ] Added `<SEO>` component with the page's name as title, and `card={pageCard(page)}`
+- [ ] Added meta description (50-160 chars recommended)
 - [ ] Added canonical URL (absolute HTTPS)
 - [ ] Added Open Graph tags (type, title, description, image)
 - [ ] Added Twitter Card tags (card type, title, description, image)
