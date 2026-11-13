@@ -39,7 +39,8 @@
     "seo:validate": "scripts/.venv/bin/python scripts/validate-seo.py",
     "seo:schema": "scripts/.venv/bin/python scripts/validate-structured-data.py",
     "seo:links": "scripts/.venv/bin/python scripts/check-internal-links.py",
-    "seo": "yarn seo:validate && yarn seo:schema && yarn seo:links",
+    "seo:rich": "node scripts/validate-rich-results.mjs",
+    "seo": "yarn seo:validate && yarn seo:schema && yarn seo:rich && yarn seo:links",
     "validate:ogimages": "scripts/.venv/bin/python scripts/validate-og-images.py",
     "design:review": "node scripts/review-design-fidelity.mjs",
     "design:review:where": "node scripts/review-design-fidelity.mjs --where",
@@ -88,7 +89,9 @@
     "yaml": "^2.3.4"
   },
   "devDependencies": {
+    "@adobe/structured-data-validator": "1.7.1",
     "@lhci/cli": "0.16.1",
+    "@marbec/web-auto-extractor": "2.2.1",
     "@next/bundle-analyzer": "^16.0.1",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/forms": "^0.5.7",

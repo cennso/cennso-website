@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@adobe/structured-data-validator@1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@adobe/structured-data-validator/-/structured-data-validator-1.7.1.tgz#ff660759fff755927e8e8d7e8afb0acdcd1950ce"
+  integrity sha512-zH6kpCWxCnW7ILDsVMWZ1p+UGNuQszSfo03tw+lL6bMdsTKNudl3L6+LQjCein6SVd1qvr9UXZWv6wF5cFGjSg==
+
 "@alloc/quick-lru@^5.2.0":
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.3.0.tgz#9073d52ad3cebbedd0d8c9f3e65aa5527fabd1e0"
@@ -1034,6 +1039,11 @@
     nopt "^8.0.0"
     semver "^7.5.3"
     tar "^7.4.0"
+
+"@marbec/web-auto-extractor@2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@marbec/web-auto-extractor/-/web-auto-extractor-2.2.1.tgz#4775c13ae174b1924a02b023d522202dca0cde00"
+  integrity sha512-xfUFMFH9+XoW/0vOknCcGtHSQMpwuzN/udMB1ZM8lHGOPxMlgPj0mAbpCQxdxlZ/BcgRKprVK4FZOL1+O7EO0A==
 
 "@mdx-js/mdx@^3.0.1":
   version "3.1.1"
@@ -9532,15 +9542,6 @@ string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
     is-fullwidth-code-point "^3.0.0"
     strip-ansi "^6.0.1"
 
-string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
-  version "4.2.3"
-  resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
-  integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
-  dependencies:
-    emoji-regex "^8.0.0"
-    is-fullwidth-code-point "^3.0.0"
-    strip-ansi "^6.0.1"
-
 string-width@^5.0.1, string-width@^5.1.2:
   version "5.1.2"
   resolved "https://registry.npmjs.org/string-width/-/string-width-5.1.2.tgz"
@@ -9663,13 +9664,6 @@ stringify-entities@^4.0.0:
     character-entities-legacy "^3.0.0"
 
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1":
-  version "6.0.1"
-  resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
-  integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
-  dependencies:
-    ansi-regex "^5.0.1"
-
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
   version "6.0.1"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
