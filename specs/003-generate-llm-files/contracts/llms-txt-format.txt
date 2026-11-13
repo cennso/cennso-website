@@ -1,7 +1,7 @@
 # llms.txt File Format Specification
 
-**Version**: 2.0
-**Date**: 2026-11-13 (CENNSO-4534; replaces 1.0 of 2025-11-12)
+**Version**: 2.1
+**Date**: 2026-11-13 (CENNSO-4534; replaces 1.0 of 2025-11-12; 2.1 drops the sitemap from Optional)
 **Based On**: https://llmstxt.org (including its second version's discovery relations)
 **Written by**: `scripts/generate-agent-files` after every build; checked by `yarn seo:validate`
 
@@ -30,7 +30,6 @@
 ## Optional
 
 - [Full content](https://www.cennso.com/llms-full.txt): every page of this site inline, as markdown
-- [Sitemap](https://www.cennso.com/sitemap.xml): the address of every page
 - [Imprint](https://www.cennso.com/imprint.md): <meta description>
 - [Privacy Policy](https://www.cennso.com/privacy-policy.md): <meta description>
 ```
@@ -43,6 +42,9 @@ Rules (errors in `yarn seo:validate`):
   written as `(` and `)`.
 - Absolute `https://` URLs. Every address on www.cennso.com exists in the build;
   every published page's markdown is linked.
+- Every link on www.cennso.com is markdown (a page's `.md` or `llms-full.txt`):
+  afdocs' `llms-txt-links-markdown` fails under 90%. The sitemap is named in
+  `robots.txt`, not here.
 - Under 50 000 characters. No generation date, no version.
 - Pages are the HTML the build rendered (the sitemap's list): a page switched
   off with `notFound` is not listed.

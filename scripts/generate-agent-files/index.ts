@@ -335,7 +335,6 @@ function llmsTxt(pages: readonly Page[]): string {
       `${SITE}/llms-full.txt`,
       'every page of this site inline, as markdown'
     ),
-    entry('Sitemap', `${SITE}/sitemap.xml`, 'the address of every page'),
     ...pages
       .filter((page) => LEGAL.has(page.path))
       .map((page) => entry(page.name, markdownUrl(page.path), page.description))

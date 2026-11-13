@@ -334,6 +334,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 - Written after every build by `scripts/generate-agent-files` from the pages the build rendered, so a page switched off with `notFound` is in none of them
 - `llms.txt` in the llmstxt.org shape, `llms-full.txt`, and every page as markdown at its address with `.md` appended (`/index.md` for the home page), converted from the rendered main content
 - Every page answers with `Link` (`alternate` markdown, `describedby` llms.txt) and `Vary: Accept`; `Accept: text/markdown` gets the markdown at the page's own address; the HTML carries a visually hidden sentence for agents at the top of the main content
+- Every link llms.txt gives on this site is markdown (a page's `.md` or `llms-full.txt`); the sitemap is named in `robots.txt`, not in llms.txt
 - Format and rules: `specs/003-generate-llm-files/contracts/llms-txt-format.txt`
 
 **Theme Colour:**
