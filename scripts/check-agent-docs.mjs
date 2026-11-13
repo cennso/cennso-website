@@ -42,7 +42,13 @@ function run() {
 }
 
 function summary(report, blocking, warnings) {
-  const cell = (text) => String(text ?? '').replace(/\|/g, '\\|')
+  // A table cell: backslashes first, so the escapes added for pipes stay
+  // escapes; a line break would end the row.
+  const cell = (text) =>
+    String(text ?? '')
+      .replace(/\\/g, '\\\\')
+      .replace(/\|/g, '\\|')
+      .replace(/\s*\n\s*/g, ' ')
   const rows = (results) =>
     results
       .map(
