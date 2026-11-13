@@ -113,7 +113,9 @@ def check_organization(node: Dict[str, Any]) -> List[str]:
         if not node.get(key):
             errors.append(f"Organization missing {key}")
     if not E164.match(str(node.get("telephone", ""))):
-        errors.append(f"Organization telephone must be E.164, got {node.get('telephone')}")
+        # The number itself stays out of the log (CodeQL counts phone numbers
+        # as private data); the page's source shows it.
+        errors.append("Organization telephone must be E.164: a plus sign, then 8 to 15 digits")
     if node.get("sameAs") != PROFILES:
         errors.append(f"Organization sameAs must be {PROFILES}, got {node.get('sameAs')}")
 
