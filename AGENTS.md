@@ -185,7 +185,7 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
   - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
   - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
 - **Bundle analysis**: `next.config.js` includes `@next/bundle-analyzer` configured via `ANALYZE=true` env var
-- **SEO metadata**: All pages MUST have unique titles and descriptions; the rules are the documentation portal's (constitution VI)
+- **SEO metadata**: All pages MUST have unique titles and descriptions (constitution VI)
   - Validated by `yarn seo:validate` which scans built HTML and the sitemap: structure is an error, length a warning
   - Titles come from YAML `page.title` or MDX frontmatter `title` - the page's NAME ("Contact"); `<SEO>` adds " · Cennso". The home page passes its whole title as `absoluteTitle`
   - Canonical: home page `https://www.cennso.com/` (with slash), every other page without; 404 is noindex

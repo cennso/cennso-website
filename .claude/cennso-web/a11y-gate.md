@@ -116,7 +116,7 @@ in the same diff that all do pass `render={<hN />}` and are verifiable.
 
 The site ships a light/dark theme, and a first-time visitor with no stored
 preference gets the **OS setting** (`ThemeProvider` and `themeScript()` with no
-default, as the documentation portal does; it was forced dark from `27fe485`
+default; it was forced dark from `27fe485`
 until CENNSO-4534). Any contrast or "looks right" claim needs to hold in both
 palettes. Note what that means for audits: headless Chrome, and therefore
 Lighthouse, reports a light system preference, so Lighthouse audits the

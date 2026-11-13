@@ -32,8 +32,7 @@ function colorFor(
  * setting that picks it. That is right for a reader who follows the system, and
  * wrong for one who chose the other theme, or switches. This writes the
  * resolved theme's colour into every `theme-color` tag, and the theme into
- * `color-scheme`, whenever the theme changes - as the documentation portal's
- * `ThemeColor` does.
+ * `color-scheme`, whenever the theme changes.
  */
 export function ThemeColor() {
   const { resolvedTheme } = useTheme()

@@ -59,7 +59,7 @@ export interface SEOProps
 /** The site's name: what every tab title ends with and what previews call the site. */
 const SITE_NAME = siteMetadata.title
 
-/** The separator between a page's name and the site's, as the documentation portal writes it. */
+/** The separator between a page's name and the site's. */
 const TITLE_SEPARATOR = ' · '
 
 /** `en-US` as Open Graph spells a locale: language and territory, `en_US`. */

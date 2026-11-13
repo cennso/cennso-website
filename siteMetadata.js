@@ -1,7 +1,6 @@
 const siteMetadata = {
   // The site's name: what every tab title ends with ("Contact · Cennso") and
-  // what link previews call the site (`og:site_name`), as the documentation
-  // portal is "Cennso Documentation".
+  // what link previews call the site (`og:site_name`).
   title: 'Cennso',
   description:
     'Our Mobile Core is engineered to accelerate time-to-market, giving you the agility to launch faster than ever. With optimized performance, it delivers seamless reliability and scale to meet the demands of modern networks. And by reducing operational costs, it ensures long-term efficiency without compromising quality—so you can grow smarter, faster, and more cost-effectively.',

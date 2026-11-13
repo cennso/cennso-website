@@ -136,7 +136,6 @@ Changes in v2.3.0 (MINOR):
     - Added: Common mistakes detection (phone→tel, firstname→given-name, etc.)
     - Quality Gates: All accessibility checks now include autocomplete validation
   - Changes in v2.8.0 (MINOR):
-    - SEO Standards (VI) aligned with the documentation portal (cennso/cloud, apps/docs-portal), so the site and the portals describe themselves the same way
     - Changed: Titles are "<page name> · Cennso" (the home page: starts with "Cennso"); the 50-60 range and the no-site-name rule are dropped
     - Changed: Title and description lengths are warnings, not requirements; structure (one title, the pattern, uniqueness, canonical, sitemap) is an error
     - Added: Link preview requirements (og:site_name "Cennso", og:locale en_US, twitter:card, card type and alt text, versioned card address)
@@ -277,7 +276,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 **Title Requirements:**
 
 - All pages MUST have a unique title, and exactly one `<title>` in `<head>`
-- Format: `<page name> · Cennso` - the page's name followed by the site's name, the way the documentation portal writes `<page> · Cennso Documentation`
+- Format: `<page name> · Cennso` - the page's name followed by the site's name
   - The page name comes from `page.title` (YAML) or `title` (MDX frontmatter) and is passed to `<SEO title>`; the component adds ` · Cennso`
   - The home page sets its whole title with `<SEO absoluteTitle>`, and it MUST start with "Cennso"
 - `og:title` is the page name alone; link previews print the site's name beside it from `og:site_name`
@@ -301,7 +300,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 
 - Every indexable page MUST have a canonical URL, and `og:url` MUST equal it
 - Format: `https://www.cennso.com` plus the page's own path, no query string or fragment
-  - The home page with its slash: `https://www.cennso.com/` - the form `new URL('/', base)` produces and the documentation and cloud portals use for this site (their structured data names `https://www.cennso.com/#organization`)
+  - The home page with its slash: `https://www.cennso.com/` - the form `new URL('/', base)` produces, and what the site's structured data builds its `@id`s on (`https://www.cennso.com/#organization`)
   - Every other page without one: `https://www.cennso.com/contact`
 - The 404 page MUST be `noindex` and MUST have no canonical or `og:url`
 - The sitemap MUST list exactly the indexable pages, each by its canonical URL
@@ -319,7 +318,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 **Theme Colour:**
 
 - One `theme-color` per theme, each under the `prefers-color-scheme` that picks it, and `color-scheme: light dark`; a reader's chosen theme replaces them once the page is interactive (`components/ThemeColor.tsx`)
-- The default theme follows the system, as the documentation portal's does
+- The default theme follows the system
 
 **Implementation:**
 
@@ -339,7 +338,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 - Script location: `scripts/validate-seo.py`
 - CI/CD enforcement: Exit code 1 on errors (blocks merge)
 
-**Rationale**: SEO metadata is critical for search engine rankings and click-through rates. Titles and descriptions are the first impression users see in search results. One pattern across cennso.com and the documentation portal makes the sites read as one organisation, in search results and in link previews alike. Lengths are guidance because content sometimes needs more; structure is checked strictly because it is either right or wrong. Unique content prevents duplicate content penalties. Canonical URLs prevent indexing issues.
+**Rationale**: SEO metadata is critical for search engine rankings and click-through rates. Titles and descriptions are the first impression users see in search results. One pattern on every page makes the site read as one, in search results and in link previews alike. Lengths are guidance because content sometimes needs more; structure is checked strictly because it is either right or wrong. Unique content prevents duplicate content penalties. Canonical URLs prevent indexing issues.
 
 **Keyboard Accessible (WCAG 2.1 Guideline 2.1 - EN 301 549 Section 9.2.1):**
 

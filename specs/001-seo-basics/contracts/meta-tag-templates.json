@@ -7,7 +7,7 @@
     "titleTemplates": {
       "default": {
         "pattern": "{pageName} · Cennso",
-        "description": "Every page: its name, then the site's name - the documentation portal's pattern (\"{chapter} · Cennso Documentation\"). <SEO title> takes the page name and adds the suffix.",
+        "description": "Every page: its name, then the site's name. <SEO title> takes the page name and adds the suffix.",
         "maxLength": 60,
         "lengthIsWarning": true,
         "examples": [
@@ -239,7 +239,7 @@
         "baseUrl": "https://www.cennso.com",
         "pattern": "{baseUrl}{pagePath}",
         "homePage": "https://www.cennso.com/",
-        "description": "The home page with its slash (as new URL('/', base) serialises it, and as the documentation and cloud portals name this site); every other page without one. The 404 page has none and is noindex.",
+        "description": "The home page with its slash (as new URL('/', base) serialises it, and as the site's structured data @ids are built on it); every other page without one. The 404 page has none and is noindex.",
         "examples": [
           "https://www.cennso.com/",
           "https://www.cennso.com/contact",

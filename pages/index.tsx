@@ -119,7 +119,7 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
   return (
     <>
       {/* The tab title as written (it starts with the site's name); the site's
-          name alone in link previews, as the documentation portal's home. */}
+          name alone in link previews. */}
       <SEO
         absoluteTitle={page.title}
         title={siteMetadata.title}

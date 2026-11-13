@@ -6,11 +6,10 @@
  *
  * The home page is written with its slash, `https://www.cennso.com/`, and every
  * other page without one, `https://www.cennso.com/contact`. The slash on the
- * home page is how a URL serialises (`new URL('/', base).href`), and it is the
- * form the documentation and cloud portals already use for this site: their
- * structured data names `https://www.cennso.com/#organization` as publisher,
- * and structured data matches nodes by the exact string. The sitemap writes the
- * same form (`next-sitemap.config.js`).
+ * home page is how a URL serialises (`new URL('/', base).href`), and the
+ * site's structured data builds its `@id`s on it
+ * (`https://www.cennso.com/#organization`), which other sites match by the
+ * exact string. The sitemap writes the same form (`next-sitemap.config.js`).
  */
 
 /**

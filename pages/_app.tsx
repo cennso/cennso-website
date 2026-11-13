@@ -106,8 +106,7 @@ export default function App({ Component, pageProps }: AppProps) {
           _document.tsx reads the cookie by name, and a browser sends a
           parent-domain cookie to every host under it. */}
       {/* No default setting: a first visit follows the system's theme, as the
-          documentation portal does, and as the themeScript in _document.tsx
-          assumes - the two must agree. */}
+          themeScript in _document.tsx assumes - the two must agree. */}
       <ThemeProvider cookie={{ domain: themeCookieDomain() }}>
         <ThemeColor />
         <Layout navigation={navigation} footerData={footerData}>

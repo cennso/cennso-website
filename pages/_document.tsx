@@ -24,7 +24,7 @@ export default function Document() {
         ))}
         <meta name="color-scheme" content="light dark" />
         {/* No default setting: the design system's default is the system's
-            theme, the same as the documentation portal's. */}
+            theme. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript() }} />
       </Head>
 

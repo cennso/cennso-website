@@ -3,8 +3,8 @@
 ## Metadata bands this repository enforces
 
 `scripts/validate-seo.py` reads the built HTML in `.next/server/pages/**/*.html`
-and the sitemap. The rules are the documentation portal's (constitution VI,
-CENNSO-4534), and the script's docstring lists them. Structure is an ERROR: one
+and the sitemap. The rules are in constitution VI (CENNSO-4534), and the
+script's docstring lists them. Structure is an ERROR: one
 `<title>` per page, the pattern `<page name> · Cennso` (home page: starts with
 "Cennso"), `og:title` = the page name, unique titles and descriptions,
 `og:site_name` "Cennso", `og:locale` `en_US`, `twitter:card`, one `theme-color`

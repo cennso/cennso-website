@@ -3,8 +3,7 @@
  * draws at build time, and what the page's `<head>` says about it.
  *
  * Both sides read the card's text through the functions here, so the image and
- * the tags that describe it cannot disagree. The same model as the
- * documentation portal's cards (`cennso/cloud`, `apps/docs-portal`).
+ * the tags that describe it cannot disagree.
  */
 
 /** What a card prints: an optional badge, its title and its description. */

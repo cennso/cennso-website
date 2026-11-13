@@ -5,9 +5,7 @@ SEO Metadata Validation Script
 Reads every page `next build` prerendered (.next/server/pages/*.html) and the
 sitemap, and checks what search engines and link previews read about each page.
 
-The rules are the documentation portal's (cennso/cloud, apps/docs-portal), so
-the site and the portals describe themselves the same way. See
-specs/001-seo-basics/spec.md (FR-003, FR-007 to FR-010) and the constitution,
+See specs/001-seo-basics/spec.md (FR-003, FR-007 to FR-010) and the constitution,
 section VI.
 
 ERRORS fail the check. They are the things that are either right or wrong:
