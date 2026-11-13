@@ -108,7 +108,7 @@ Cennso business information appears accurately in local search results, Google M
 - **FR-014**: Meta descriptions MUST directly answer potential search queries (150-160 characters)
 - **FR-015**: Title tags MUST include target keywords and match search intent (50-60 characters)
 - **FR-016**: Website MUST maintain consistent NAP (Name, Address, Phone) information across all pages: Cennso Technologies GmbH, Südstraße 6, 39179 Barleben, +49 (0) 391 – 660 999 99, as the company's imprint gives them _(amended 2026-11-13, CENNSO-4534: the LocalBusiness on the contact page carried another company's Magdeburg address and number)_
-- **FR-017**: Structured data MUST validate without errors in Google Rich Results Test and Schema Markup Validator
+- **FR-017**: Structured data MUST validate without errors in Google Rich Results Test and Schema Markup Validator. Every build checks it the same way with `yarn seo:rich` (part of `yarn seo`): `@adobe/structured-data-validator` against a pinned schema.org release (verified by its SHA-256) and Google's rich-result rules; a block that does not parse, a type or property schema.org does not define, or a missing required Google property is an error, a missing recommended one a warning. `yarn seo:schema` keeps checking what the site says about itself _(amended 2026-11-13, CENNSO-4534)_
 - **FR-018**: All structured data MUST be embedded as JSON-LD in page head (not microdata or RDFa)
 - **FR-019**: Website MUST include robots.txt file optimized for crawler access to all public content
 - **FR-020**: XML sitemap MUST include all public pages with accurate lastmod timestamps and priority indicators

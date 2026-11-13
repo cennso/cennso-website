@@ -86,6 +86,7 @@ yarn perf:images           # Validate all images are WebP and under 100KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
 yarn seo:validate          # Validate SEO metadata (title pattern, canonical, link-preview tags, sitemap; lengths warn)
+yarn seo:rich              # Validate structured data against schema.org and Google's rich-result rules (part of yarn seo)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn design:review:where   # Where to write the frames fetched from Figma, and under what names
 yarn design:review         # Diff the built site against those frames, both themes (local, needs Figma MCP)
@@ -345,6 +346,7 @@ This runs:
 - `yarn perf:mobile` - Mobile performance validation
 - `yarn seo:validate` - SEO metadata validation
 - `yarn seo:schema` - Schema.org structured data validation
+- `yarn seo:rich` - Structured data against schema.org and Google's rich-result rules
 - `yarn seo:links` - Internal links validation
 
 **If any check fails:**

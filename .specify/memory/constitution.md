@@ -144,6 +144,7 @@ Changes in v2.3.0 (MINOR):
     - Added: robots.txt with the Content Signals policy and Content-Signal, Allow: / and no Disallow, sitemap and llms.txt addresses
     - Added: Files for AI agents (llms.txt in the llmstxt.org shape, llms-full.txt, every page as markdown, Link headers, Accept: text/markdown) written after every build from the rendered pages
     - Added: Icons and web manifest drawn before every build from one drawing of the Cennso sign (scripts/generate-icons), checked by yarn seo:validate
+    - Added: Structured data checked against schema.org (pinned release) and Google's rich-result rules (yarn seo:rich, part of yarn seo)
   - Changes in v2.7.0 (MINOR):
     - Performance: OG image generation improvements and validation
     - Added: PNG optimization with sharp (~70% file size reduction)
@@ -353,6 +354,7 @@ All pages MUST have optimized metadata for search engine discoverability:
 - Errors (block merge): missing or duplicate title or description, more than one `<title>`, title pattern, `og:title`, `og:site_name`, `og:locale`, `og:type`, `twitter:card`, `theme-color`, canonical and `og:url`, 404 noindex, sitemap vs. canonical, robots.txt (policy word for word, one `*` group, Content-Signal format with search=yes, `Allow: /`, no Disallow, sitemap and llms addresses), files for agents (the sentence and `describedby` link on every page, every page's markdown, llms.txt format, size and links)
 - Warnings (reported, do not block): title over 60 characters, description over 160 or under 50 characters
 - `yarn validate:ogimages` checks the cards: size, file, `og:image:type`, `og:image:alt`, versioned address
+- `yarn seo:rich` MUST pass (part of `yarn seo`): every built page's structured data against the schema.org vocabulary (a pinned release, verified by its SHA-256) and Google's rich-result rules, with `@adobe/structured-data-validator` (`scripts/validate-rich-results.mjs`). Errors: a block that does not parse, a type or property schema.org does not define, a property Google requires missing or invalid. Warnings: a property Google recommends missing. It complements `yarn seo:schema` (`scripts/validate-structured-data.py`), which checks what the site says about itself
 - Scans: All built HTML files in `.next/server/pages/` (excludes auto-generated 500.html)
 - Dependencies: BeautifulSoup4 (defined in `scripts/requirements.txt`)
 - Script location: `scripts/validate-seo.py`

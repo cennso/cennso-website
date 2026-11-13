@@ -45,6 +45,14 @@ data as Cennso's imprint in the PDFs and the cloud portal.
 `scripts/validate-structured-data.py` checks the graph: the module docstring
 lists every rule.
 
+`scripts/validate-rich-results.mjs` (`yarn seo:rich`) checks the same JSON-LD
+against the schema.org vocabulary (release 30.1, downloaded once into
+`node_modules/.cache` and verified by SHA-256) and Google's rich-result rules,
+with `@adobe/structured-data-validator`. An unknown type or property, an
+unparsable block or a missing required Google property is an ERROR (the library
+calls an unknown property a warning; validator.schema.org calls it an error, and
+so do we); a missing recommended property is a WARNING.
+
 ## The rule that fails a build
 
 `scripts/check-navigable.py:161-170` matches the regex `<SEO\s` — `<SEO` followed
@@ -54,8 +62,9 @@ removal of a `<SEO` call from a page as critical.
 
 ## Commands
 
-`yarn seo` runs `seo:validate`, `seo:schema` and `seo:links`. All three read built
-HTML, so they need `yarn build` first. `yarn validate:ogimages` is separate.
+`yarn seo` runs `seo:validate`, `seo:schema`, `seo:rich` and `seo:links`. All
+four read built HTML, so they need `yarn build` first. `yarn validate:ogimages`
+is separate.
 
 ## Also immune to markup changes
 
