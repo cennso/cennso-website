@@ -23,6 +23,10 @@ ERRORS fail the check. They are the things that are either right or wrong:
   group with a well-formed Content-Signal (search=yes, since the site is
   indexed) and `Allow: /`, no Disallow, the sitemap's address, and every
   llms*.txt it names present in the build
+- icons: every page links favicon.ico, icon.svg, icon.png, the Apple icon and
+  the manifest; the files exist at their sizes (the Apple icon and the logo
+  opaque, the logo square and at least 112 px, as Google requires); the
+  manifest parses, names the site, and every icon it lists exists at its size
 
 WARNINGS are reported and do not fail the check. They are lengths, which content
 sometimes needs to exceed (a success story's title, say):
@@ -30,6 +34,7 @@ sometimes needs to exceed (a success story's title, say):
 - description longer than 160 characters, or shorter than 50
 """
 
+import json
 import re
 import sys
 import xml.etree.ElementTree as ElementTree
@@ -107,6 +112,26 @@ CONTENT_SIGNALS_POLICY = """# As a condition of accessing this website, you agre
 # UNION DIRECTIVE 2019/790 ON COPYRIGHT AND RELATED RIGHTS
 # IN THE DIGITAL SINGLE MARKET.
 """
+# What every page's <head> links: (rel, href). scripts/generate-icons draws the files.
+ICON_LINKS = (
+    ("icon", "/favicon.ico"),
+    ("icon", "/icon.svg"),
+    ("icon", "/icon.png"),
+    ("apple-touch-icon", "/apple-touch-icon.png"),
+    ("manifest", "/manifest.webmanifest"),
+)
+# Square PNGs under public/: size, and whether they must be opaque (iOS paints
+# transparency black; Google wants a logo that looks right on white).
+ICON_FILES = {
+    "icon.png": (192, False),
+    "apple-touch-icon.png": (180, True),
+    "icons/icon-512.png": (512, False),
+    "icons/maskable-512.png": (512, True),
+    "assets/logo.png": (512, True),
+}
+FAVICON_SIZES = {(16, 16), (32, 32), (48, 48)}
+LOGO_MIN = 112
+
 CONTENT_SIGNAL = re.compile(
     r"^search=(yes|no), ai-input=(yes|no), ai-train=(yes|no)$"
 )
@@ -208,6 +233,15 @@ def check_page(html_file: Path) -> Dict:
         if not COLOUR.match(tag.get("content") or ""):
             errors.append(f'theme-color is not a colour: "{tag.get("content")}"')
 
+    # Icons, the same on every page (pages/_document.tsx).
+    linked = {
+        (" ".join(link.get("rel", [])), link.get("href"))
+        for link in head.find_all("link")
+    }
+    for rel, href in ICON_LINKS:
+        if (rel, href) not in linked:
+            errors.append(f'<link rel="{rel}" href="{href}"> missing')
+
     # Address and indexing.
     canonical_tag = head.find("link", attrs={"rel": "canonical"})
     canonical = canonical_tag.get("href") if canonical_tag else None
@@ -305,6 +339,67 @@ def check_robots() -> List[str]:
     return errors
 
 
+def check_icons() -> List[str]:
+    """The icon files and the manifest: see the module docstring."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return ["Pillow is required to check the icons: pip install Pillow"]
+
+    errors: List[str] = []
+
+    def opened(name: str):
+        path = find_public(name)
+        if path is None:
+            errors.append(f"{name} not found in public/ - run 'yarn generate:icons'")
+            return None
+        return Image.open(path)
+
+    favicon = opened("favicon.ico")
+    if favicon is not None:
+        sizes = set(favicon.info.get("sizes", set()))
+        if sizes != FAVICON_SIZES:
+            errors.append(f"favicon.ico carries {sorted(sizes)}, expected {sorted(FAVICON_SIZES)}")
+
+    svg = find_public("icon.svg")
+    if svg is None or "<svg" not in svg.read_text(encoding="utf-8"):
+        errors.append("icon.svg missing or not an SVG")
+
+    for name, (size, opaque) in ICON_FILES.items():
+        image = opened(name)
+        if image is None:
+            continue
+        if image.format != "PNG" or image.size != (size, size):
+            errors.append(f"{name} is {image.format} {image.size}, expected PNG {size}×{size}")
+        transparent = "A" in image.getbands() or "transparency" in image.info
+        if opaque and transparent:
+            errors.append(f"{name} must be opaque")
+    logo = opened("assets/logo.png")
+    if logo is not None and (logo.size[0] != logo.size[1] or logo.size[0] < LOGO_MIN):
+        errors.append(f"assets/logo.png must be square and at least {LOGO_MIN} px")
+
+    manifest_path = find_public("manifest.webmanifest")
+    if manifest_path is None:
+        errors.append("manifest.webmanifest not found in public/")
+        return errors
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        return errors + [f"manifest.webmanifest is not JSON: {error}"]
+    if manifest.get("name") != SITE_NAME or manifest.get("start_url") != "/":
+        errors.append(f'manifest must name "{SITE_NAME}" and start at /')
+    icons = manifest.get("icons") or []
+    if not any(icon.get("purpose") == "maskable" for icon in icons):
+        errors.append("manifest lists no maskable icon")
+    for icon in icons:
+        name = str(icon.get("src", "")).lstrip("/")
+        image = opened(name)
+        if image is not None and f"{image.size[0]}x{image.size[1]}" != icon.get("sizes"):
+            errors.append(f"manifest says {name} is {icon.get('sizes')}, it is {image.size}")
+
+    return errors
+
+
 def report_duplicates(kind: str, pages: List[Dict]) -> int:
     groups: Dict[str, List[str]] = {}
     for page in pages:
@@ -389,6 +484,12 @@ def main() -> int:
     if sitemap_errors:
         print()
 
+    icon_errors = check_icons()
+    for error in icon_errors:
+        print(f"{RED}❌ ICONS: {error}{RESET}")
+    if icon_errors:
+        print()
+
     robots_errors = check_robots()
     for error in robots_errors:
         print(f"{RED}❌ ROBOTS: {error}{RESET}")
@@ -398,7 +499,11 @@ def main() -> int:
     pages_with_errors = [page for page in pages if page["errors"]]
     pages_with_warnings = [page for page in pages if page["warnings"] and not page["errors"]]
     has_errors = bool(
-        pages_with_errors or duplicate_count or sitemap_errors or robots_errors
+        pages_with_errors
+        or duplicate_count
+        or sitemap_errors
+        or robots_errors
+        or icon_errors
     )
 
     print("=" * 85)
@@ -409,6 +514,7 @@ def main() -> int:
     print(f"   Duplicate titles/descriptions: {duplicate_count}")
     print(f"   Sitemap errors: {len(sitemap_errors)}")
     print(f"   robots.txt errors: {len(robots_errors)}")
+    print(f"   Icon errors: {len(icon_errors)}")
     print()
 
     if has_errors:
