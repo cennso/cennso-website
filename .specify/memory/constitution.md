@@ -142,6 +142,7 @@ Changes in v2.3.0 (MINOR):
     - Added: theme-color per theme, and the default theme follows the system
     - Changed: Canonical form - home page with its slash, every other page without; the 404 page is noindex with no canonical
     - Added: robots.txt with the Content Signals policy and Content-Signal, Allow: / and no Disallow, sitemap and llms.txt addresses
+    - Added: Icons and web manifest drawn before every build from one drawing of the Cennso sign (scripts/generate-icons), checked by yarn seo:validate
   - Changes in v2.7.0 (MINOR):
     - Performance: OG image generation improvements and validation
     - Added: PNG optimization with sharp (~70% file size reduction)
@@ -261,6 +262,10 @@ Performance requirements that MUST be met:
   - File size: <300KB per image (validated by `yarn validate:ogimages`)
   - Adaptive font sizing based on content length to prevent overflow
   - Generated from page metadata (title, description) in `scripts/generate-og-images/`
+- Icons and the web manifest MUST be drawn during build (via `prebuild`) by `scripts/generate-icons/` from `scripts/generate-icons/sign.svg`, in the design system's light `primary` and `primary-foreground`
+  - `favicon.ico` (16/32/48), `icon.svg`, `icon.png` (192), `apple-touch-icon.png` (180, opaque), `icons/icon-512.png`, `icons/maskable-512.png` (opaque, sign inside the safe zone), `assets/logo.png` (512, opaque, on white: the logo structured data names), `manifest.webmanifest`
+  - Linked from every page's `<head>` (`pages/_document.tsx`); generated files are gitignored
+  - Validated by `yarn seo:validate`: links, sizes, opacity, the manifest and every icon it lists
 - No blocking JavaScript on initial page load; use dynamic imports for heavy components
 - Image optimization validated via `yarn perf:images` - all raster images must be WebP format and under 100KB
 

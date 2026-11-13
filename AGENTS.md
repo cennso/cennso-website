@@ -72,7 +72,8 @@ pip install -r scripts/requirements.txt
 
 ```bash
 yarn dev                   # Local dev server (port 3000)
-yarn build                 # Production build (runs OG image generation first)
+yarn build                 # Production build (draws OG images and icons, writes llms.txt first)
+yarn generate:icons        # Draw the icons and web manifest into public/ (part of prebuild)
 ANALYZE=true yarn build    # Production build with Webpack Bundle Analyzer (opens visualization in browser)
 yarn lint                  # ESLint check
 yarn lint:fix              # autofix ESLint check
@@ -175,6 +176,7 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 
 - Hot reload doesn't work for content changes (manual browser refresh needed)
 - OG images auto-generated during build via `scripts/generate-og-images`
+- Icons (favicon, Apple icon, manifest icons, `assets/logo.png`) and `manifest.webmanifest` drawn during build via `scripts/generate-icons` from `sign.svg`; gitignored, so run `yarn generate:icons` once before `yarn dev` if you need them there
 - All author/testimonial references use ID lookups from `authors.yaml`
 - **All UI text MUST come from YAML files in `/content` directory** - no hardcoded strings in components
 - File paths in content must be absolute from `/public` (e.g., `/assets/image.png`)

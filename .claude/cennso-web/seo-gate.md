@@ -12,7 +12,10 @@ per theme, canonical = `og:url` = the page's own address (home page with its
 slash), the 404 page noindex with no canonical, and the sitemap listing exactly
 the canonical URLs, and robots.txt (the Content Signals policy word for word,
 one `*` group, Content-Signal, `Allow: /`, no Disallow, the sitemap and llms
-addresses). Lengths are WARNINGS only - a title over 60 characters, a
+addresses), and the icons (every page links favicon.ico, icon.svg, icon.png,
+the Apple icon and the manifest; the files exist at their sizes, the Apple icon,
+the maskable icon and the logo opaque; the manifest's icons exist). Lengths are
+WARNINGS only - a title over 60 characters, a
 description outside 50-160 - so a long success-story title passes the build and
 is a review call, not a defect.
 
