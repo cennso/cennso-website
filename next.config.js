@@ -231,6 +231,19 @@ const nextConfig = {
           },
         ],
       },
+      // A page: after the rule above, so this wins. Every page is prerendered,
+      // and Vercel's edge keeps a deployment's pages for its lifetime whatever
+      // this says - after the rewrite, so it tells a page's HTML from its
+      // markdown. No other shared cache may keep a page: on Vercel the HTML's
+      // Vary is the one @vercel/next writes for every prerender, without
+      // Accept, so a proxy could hand the HTML to an agent that asked for
+      // markdown. Browsers revalidate, as they did.
+      ...['/', `/:path(${PAGE})`].map((source) => ({
+        source,
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      })),
     ]
   },
 }
