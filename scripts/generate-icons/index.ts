@@ -113,16 +113,28 @@ interface Sign {
   readonly viewBox: string
 }
 
+/**
+ * `text` without any match of `pattern`, removed until none is left: one pass
+ * can join the pieces around a match into a new one (`<!<!---->--`).
+ */
+function removeAll(text: string, pattern: RegExp): string {
+  let previous: string
+  do {
+    previous = text
+    text = text.replace(pattern, '')
+  } while (text !== previous)
+  return text
+}
+
 /** The drawing's shapes without their colours, and the box its pixels occupy, in its own units. */
 async function readSign(file: string): Promise<Sign> {
-  const source = readFileSync(file, 'utf8').replace(/<!--[\s\S]*?-->/g, '')
+  const source = removeAll(readFileSync(file, 'utf8'), /<!--[\s\S]*?-->/g)
   const root = /<svg\b([^>]*)>([\s\S]*)<\/svg>\s*$/.exec(source)
   if (root === null) throw new Error(`${file}: no <svg> element`)
   const viewBox = /\bviewBox="([^"]+)"/.exec(root[1])?.[1]
   if (viewBox === undefined)
     throw new Error(`${file}: the <svg> has no viewBox`)
-  const shapes = root[2]
-    .replace(/<style\b[\s\S]*?<\/style>/g, '')
+  const shapes = removeAll(root[2], /<style\b[\s\S]*?<\/style>/g)
     .replace(/\s(?:fill|stroke|stroke-width|style|class)="[^"]*"/g, '')
     .trim()
   const fillRule = /evenodd/.test(source) ? 'evenodd' : 'nonzero'
