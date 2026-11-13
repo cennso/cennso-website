@@ -464,8 +464,8 @@ All pages MUST have optimized metadata for search engine discoverability:
 **Page Titled (WCAG 2.1 SC 2.4.2 - Level A):**
 
 - All pages MUST have descriptive page titles that identify the topic or purpose
-- Title format: `{page.title} | {siteMetadata.title}` (handled by `<SEO>` component)
-- Landing page can use default title (siteMetadata.title only)
+- Title format: `{page.title} · Cennso` (handled by `<SEO>` component; see VI)
+- Landing page sets its whole title with `<SEO absoluteTitle>`, starting with "Cennso"
 - Page titles MUST NOT be generic (e.g., "Untitled", "Page", "New Page")
 - `<SEO>` component MUST be used on every page with `title` prop
 - Title should describe page content and help users navigate via browser tabs/bookmarks
