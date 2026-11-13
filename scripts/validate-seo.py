@@ -19,6 +19,10 @@ ERRORS fail the check. They are the things that are either right or wrong:
   with its slash and every other page without one; og:url the same
 - the 404 page: noindex, and no canonical or og:url
 - the sitemap lists exactly the indexable pages, each by its canonical URL
+- robots.txt: the Content Signals policy word for word, one `User-agent: *`
+  group with a well-formed Content-Signal (search=yes, since the site is
+  indexed) and `Allow: /`, no Disallow, the sitemap's address, and every
+  llms*.txt it names present in the build
 
 WARNINGS are reported and do not fail the check. They are lengths, which content
 sometimes needs to exceed (a success story's title, say):
@@ -64,6 +68,48 @@ SITEMAP_CANDIDATES = (
     Path(".next/standalone/public/sitemap.xml"),
 )
 SITEMAP_NAMESPACE = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+
+# public/robots.txt is in git; llms.txt and llms-full.txt are generated into
+# public/ before the build, and CI has only the standalone copy.
+PUBLIC_DIRS = (Path("public"), Path(".next/standalone/public"))
+
+# Cloudflare's Content Signals Policy, released under CC0 for any robots.txt
+# (https://blog.cloudflare.com/content-signals-policy/). It must stay word for
+# word: a crawler that honours Content-Signal reads the line against these
+# definitions, and the last paragraph is what makes a "no" an express
+# reservation of rights under Article 4 of EU Directive 2019/790.
+CONTENT_SIGNALS_POLICY = """# As a condition of accessing this website, you agree to
+# abide by the following content signals:
+
+# (a)  If a content-signal = yes, you may collect content
+# for the corresponding use.
+# (b)  If a content-signal = no, you may not collect content
+# for the corresponding use.
+# (c)  If the website operator does not include a content
+# signal for a corresponding use, the website operator
+# neither grants nor restricts permission via content signal
+# with respect to the corresponding use.
+
+# The content signals and their meanings are:
+
+# search: building a search index and providing search
+# results (e.g., returning hyperlinks and short excerpts
+# from your website's contents).  Search does not include
+# providing AI-generated search summaries.
+# ai-input: inputting content into one or more AI models
+# (e.g., retrieval augmented generation, grounding, or other
+# real-time taking of content for generative AI search
+# answers).
+# ai-train: training or fine-tuning AI models.
+
+# ANY RESTRICTIONS EXPRESSED VIA CONTENT SIGNALS ARE EXPRESS
+# RESERVATIONS OF RIGHTS UNDER ARTICLE 4 OF THE EUROPEAN
+# UNION DIRECTIVE 2019/790 ON COPYRIGHT AND RELATED RIGHTS
+# IN THE DIGITAL SINGLE MARKET.
+"""
+CONTENT_SIGNAL = re.compile(
+    r"^search=(yes|no), ai-input=(yes|no), ai-train=(yes|no)$"
+)
 
 # A CSS colour as a theme-color carries one: hex, or a functional notation.
 COLOUR = re.compile(r"^(#[0-9a-fA-F]{3,8}|(rgb|rgba|hsl|hsla|oklch|oklab)\(.+\))$")
@@ -201,6 +247,64 @@ def read_sitemap() -> Optional[List[str]]:
     return None
 
 
+def find_public(name: str) -> Optional[Path]:
+    for directory in PUBLIC_DIRS:
+        candidate = directory / name
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def check_robots() -> List[str]:
+    """What robots.txt says: see the module docstring."""
+    robots = find_public("robots.txt")
+    if robots is None:
+        return ["robots.txt not found in public/"]
+    text = robots.read_text(encoding="utf-8")
+    errors: List[str] = []
+
+    if not text.startswith(CONTENT_SIGNALS_POLICY):
+        errors.append(
+            "robots.txt must start with the Content Signals policy, word for word"
+        )
+
+    directives = [
+        line.split(":", 1)
+        for line in text.splitlines()
+        if line.strip() and not line.startswith("#") and ":" in line
+    ]
+    fields = [(name.strip().lower(), value.strip()) for name, value in directives]
+
+    agents = [value for name, value in fields if name == "user-agent"]
+    if agents != ["*"]:
+        errors.append(f"robots.txt must have one group, User-agent: *, found {agents}")
+
+    signals = [value for name, value in fields if name == "content-signal"]
+    if len(signals) != 1 or not CONTENT_SIGNAL.match(signals[0]):
+        errors.append(
+            "robots.txt needs one Content-Signal: search=yes|no, ai-input=yes|no, "
+            f"ai-train=yes|no, found {signals}"
+        )
+    elif not signals[0].startswith("search=yes"):
+        errors.append("robots.txt allows crawling, so Content-Signal must say search=yes")
+
+    if ("allow", "/") not in fields:
+        errors.append("robots.txt must say Allow: /")
+    disallowed = [value for name, value in fields if name == "disallow"]
+    if disallowed:
+        errors.append(f"robots.txt must disallow nothing, found {disallowed}")
+
+    sitemaps = [value for name, value in fields if name == "sitemap"]
+    if sitemaps != [f"{SITE_URL}/sitemap.xml"]:
+        errors.append(f"robots.txt must name {SITE_URL}/sitemap.xml, found {sitemaps}")
+
+    for name in re.findall(rf"{re.escape(SITE_URL)}/(llms[\w-]*\.txt)", text):
+        if find_public(name) is None:
+            errors.append(f"robots.txt names {SITE_URL}/{name}, which the build does not have")
+
+    return errors
+
+
 def report_duplicates(kind: str, pages: List[Dict]) -> int:
     groups: Dict[str, List[str]] = {}
     for page in pages:
@@ -285,9 +389,17 @@ def main() -> int:
     if sitemap_errors:
         print()
 
+    robots_errors = check_robots()
+    for error in robots_errors:
+        print(f"{RED}❌ ROBOTS: {error}{RESET}")
+    if robots_errors:
+        print()
+
     pages_with_errors = [page for page in pages if page["errors"]]
     pages_with_warnings = [page for page in pages if page["warnings"] and not page["errors"]]
-    has_errors = bool(pages_with_errors or duplicate_count or sitemap_errors)
+    has_errors = bool(
+        pages_with_errors or duplicate_count or sitemap_errors or robots_errors
+    )
 
     print("=" * 85)
     print(f"{BLUE}SUMMARY:{RESET}")
@@ -296,6 +408,7 @@ def main() -> int:
     print(f"   Pages with warnings only: {len(pages_with_warnings)}")
     print(f"   Duplicate titles/descriptions: {duplicate_count}")
     print(f"   Sitemap errors: {len(sitemap_errors)}")
+    print(f"   robots.txt errors: {len(robots_errors)}")
     print()
 
     if has_errors:
