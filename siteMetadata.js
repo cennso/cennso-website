@@ -2,6 +2,12 @@ const siteMetadata = {
   // The site's name: what every tab title ends with ("Contact · Cennso") and
   // what link previews call the site (`og:site_name`).
   title: 'Cennso',
+  // The company's slogan, for what machines read about the site: the
+  // Organization's `slogan` in structured data and the summary in llms.txt.
+  // People read it as the home page's headline and on its preview card, both
+  // written in content/landing-page.yaml (`hero.headline`, `page.og.title`) -
+  // change all three together.
+  slogan: 'Build Network Solutions. Anywhere.',
   description:
     'Our Mobile Core is engineered to accelerate time-to-market, giving you the agility to launch faster than ever. With optimized performance, it delivers seamless reliability and scale to meet the demands of modern networks. And by reducing operational costs, it ensures long-term efficiency without compromising quality—so you can grow smarter, faster, and more cost-effectively.',
   author: 'Cennso Technologies GmbH',
