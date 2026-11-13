@@ -1,6 +1,8 @@
 ---
 page:
-  title: Imprint - Legal Information for Cennso Technologies GmbH
+  # The page's name. The tab title is it plus the site's name ("Imprint · Cennso");
+  # link previews print it beside the site's name.
+  title: Imprint
   description: Legal information and company details for Cennso Technologies GmbH. Find our address, registration details, and contact information for official communications.
   og:
     title: Imprint

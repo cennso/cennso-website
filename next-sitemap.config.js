@@ -47,10 +47,13 @@ module.exports = {
   generateRobotsTxt: false,
   generateIndexSitemap: false,
   transform(_, pagePath) {
-    // landing page - highest priority, check daily
+    // landing page - highest priority, check daily. Written with its slash,
+    // `https://www.cennso.com/`, the same as the page's canonical address
+    // (lib/seo/canonical.ts); every other page without one.
     if (pagePath === '/') {
       return {
         loc: pagePath,
+        trailingSlash: true,
         changefreq: 'daily',
         priority: 1.0,
       }

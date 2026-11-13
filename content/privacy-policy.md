@@ -1,6 +1,8 @@
 ---
 page:
-  title: Privacy Policy - Data Protection & GDPR Compliance
+  # The page's name. The tab title is it plus the site's name ("Privacy Policy · Cennso");
+  # link previews print it beside the site's name.
+  title: Privacy Policy
   description: Learn how Cennso Technologies protects your personal data. Our comprehensive privacy policy covers data collection, processing, and your rights under GDPR.
   og:
     title: Privacy Policy

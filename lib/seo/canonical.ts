@@ -3,6 +3,14 @@
  *
  * Generates canonical URLs for pages based on environment configuration.
  * Uses NEXT_PUBLIC_SITE_URL for production URLs.
+ *
+ * The home page is written with its slash, `https://www.cennso.com/`, and every
+ * other page without one, `https://www.cennso.com/contact`. The slash on the
+ * home page is how a URL serialises (`new URL('/', base).href`), and it is the
+ * form the documentation and cloud portals already use for this site: their
+ * structured data names `https://www.cennso.com/#organization` as publisher,
+ * and structured data matches nodes by the exact string. The sitemap writes the
+ * same form (`next-sitemap.config.js`).
  */
 
 /**
@@ -24,6 +32,23 @@ export function getBaseSiteUrl(): string {
 }
 
 /**
+ * A page's path in its canonical form: no query string, no fragment, a leading
+ * slash, and no trailing slash except for the home page, which is `/`.
+ *
+ * @example
+ * canonicalPath('/contact/?utm_source=x') // '/contact'
+ * canonicalPath('') // '/'
+ */
+export function canonicalPath(path: string): string {
+  const cleanedPath = path.split('?')[0].split('#')[0]
+  const normalizedPath = cleanedPath.startsWith('/')
+    ? cleanedPath
+    : `/${cleanedPath}`
+
+  return normalizedPath === '/' ? '/' : normalizedPath.replace(/\/+$/, '')
+}
+
+/**
  * Generate canonical URL for a given path
  *
  * @param path - The page path (e.g., '/blog/my-post', '/about')
@@ -33,31 +58,10 @@ export function getBaseSiteUrl(): string {
  * getCanonicalUrl('/blog/my-post') // 'https://www.cennso.com/blog/my-post'
  * getCanonicalUrl('/blog/my-post?id=123') // 'https://www.cennso.com/blog/my-post'
  * getCanonicalUrl('/blog/my-post#section') // 'https://www.cennso.com/blog/my-post'
- * getCanonicalUrl('/') // 'https://www.cennso.com'
+ * getCanonicalUrl('/') // 'https://www.cennso.com/'
  */
 export function getCanonicalUrl(path: string): string {
-  const baseUrl = getBaseSiteUrl()
-
-  // Strip query string (everything after ?)
-  const pathWithoutQuery = path.split('?')[0]
-
-  // Strip fragment (everything after #)
-  const cleanedPath = pathWithoutQuery.split('#')[0]
-
-  // Handle root path
-  if (cleanedPath === '/' || cleanedPath === '') {
-    return baseUrl
-  }
-
-  // Ensure path starts with /
-  const normalizedPath = cleanedPath.startsWith('/')
-    ? cleanedPath
-    : `/${cleanedPath}`
-
-  // Remove trailing slash (except for root)
-  const finalPath = normalizedPath.replace(/\/$/, '')
-
-  return `${baseUrl}${finalPath}`
+  return `${getBaseSiteUrl()}${canonicalPath(path)}`
 }
 
 /**

@@ -17,6 +17,8 @@ import {
 import { LogoBand } from '../components/Home/LogoBand'
 import { StatCard } from '../components/Home/StatCard'
 import { SEO } from '../components/SEO'
+import siteMetadata from '../siteMetadata'
+import { pageCard } from '../lib/seo/card'
 
 import { createNavigation } from '../lib/navigation'
 import { loadFooterData } from '../lib/footer'
@@ -116,7 +118,14 @@ const LandingPage: NextPage<LandingPageProps> = ({ content }) => {
 
   return (
     <>
-      <SEO title={page.title} description={page.description} />
+      {/* The tab title as written (it starts with the site's name); the site's
+          name alone in link previews, as the documentation portal's home. */}
+      <SEO
+        absoluteTitle={page.title}
+        title={siteMetadata.title}
+        description={page.description}
+        card={pageCard(page)}
+      />
 
       {/* No `bg-secondary` band: both 4.0 main-page frames paint one flat
           plate edge to edge (#001a2a dark / #e1eaf0 light) and draw no

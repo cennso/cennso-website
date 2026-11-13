@@ -8,6 +8,7 @@ import { ContactForm } from '../components/Contact/ContactForm'
 import { CircleAvatar, Container, PENCIL_BANNER } from '../components/common'
 import { PageHeader } from '../components/PageHeader'
 import { SEO } from '../components/SEO'
+import { pageCard } from '../lib/seo/card'
 import {
   generateLocalBusinessSchema,
   type LocalBusinessData,
@@ -69,6 +70,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
       <SEO
         title={page.title}
         description={page.description}
+        card={pageCard(page)}
         structuredData={localBusinessSchema}
       />
 

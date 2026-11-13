@@ -1,14 +1,15 @@
 const siteMetadata = {
-  title: 'Mobile Core: Built faster, performs better, costs less.',
+  // The site's name: what every tab title ends with ("Contact · Cennso") and
+  // what link previews call the site (`og:site_name`), as the documentation
+  // portal is "Cennso Documentation".
+  title: 'Cennso',
   description:
     'Our Mobile Core is engineered to accelerate time-to-market, giving you the agility to launch faster than ever. With optimized performance, it delivers seamless reliability and scale to meet the demands of modern networks. And by reducing operational costs, it ensures long-term efficiency without compromising quality—so you can grow smarter, faster, and more cost-effectively.',
   author: 'Cennso Technologies GmbH',
   language: 'en-us',
   locale: 'en-US',
-  theme: 'light',
   siteUrl: 'https://www.cennso.com',
   siteLogo: '/logo.svg',
-  socialBanner: '/assets/thumbnails/cennso-thumbnail.webp',
   companyName: 'Cennso Technologies GmbH',
   contact: {
     phone: '+49 (391) 660 98560',
