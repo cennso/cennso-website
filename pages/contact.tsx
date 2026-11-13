@@ -53,6 +53,15 @@ const MailSolid: FunctionComponent<{ className?: string }> = ({
   </svg>
 )
 
+/**
+ * A phone number as a `tel:` link dials it: E.164, `+` and digits only. The
+ * written form keeps the trunk prefix in brackets for callers inside Germany,
+ * "+49 (0) 391 – 660 999 99", which an international number must drop.
+ */
+function telHref(phone: string): string {
+  return phone.replace(/\(0\)/g, '').replace(/[^\d+]/g, '')
+}
+
 const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
   const { page, sections } = content
 
@@ -152,7 +161,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                           ) : null}
                           {section.contact.phone ? (
                             <a
-                              href={`tel:${section.contact.phone.replace(' ', '')}`}
+                              href={`tel:${telHref(section.contact.phone)}`}
                               className="flex flex-row gap-4 items-center text-[20px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
                               <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">
