@@ -183,16 +183,23 @@ git push -u origin feat/<short-name>         # 3. push to the FORK (needs fresh 
   produced. The authoritative local procedure is a fresh `yarn build`, then
   `yarn next start -p <port>`, then `yarn lhci autorun` with a config that
   requires `./lighthouse.desktop.base.js` and overrides `ci.collect.url`.
-- **The ≥95 gate is a CI gate, not a local one — locally it fails on `main`.**
-  Measured on `upstream/main` with the repo's own desktop config: Performance
-  0.90-0.93, Accessibility 0.96-0.98, Best Practices **0.92**, SEO 1.00. Two audits
-  cap it off-platform and neither is a code defect: `errors-in-console` fails on a
-  404 for `/_vercel/insights/script.js`, the Vercel Analytics beacon that only
-  exists when served from Vercel, and `valid-source-maps` fails on `_app`'s missing
-  map. So a local run below 95 is not evidence of a regression. **Compare against a
-  baseline you measured on `upstream/main` on the same machine**, and let the CI run
-  against the Vercel preview be the authority. Do not chase the local number, and
-  never report a local run as if it were the gate.
+- **The ≥95 gate is a CI gate, not a local one — locally `main` clears it by a
+  point or two at best.** Measured on `upstream/main` on 2026-11-13 with the CI
+  configs (Lighthouse 13.6.0, via `@lhci/cli` 0.16.1), desktop and mobile alike:
+  Performance 1.00, Accessibility **0.96-0.97**, Best Practices **0.96**, SEO 1.00.
+  Two audits fail and hold it there. `errors-in-console` fails on a 404 for
+  `/_vercel/insights/script.js`, the Vercel Analytics beacon that only exists
+  when served from Vercel — environmental, not a code defect. `color-contrast`
+  fails on white text on the `#ff6e14` CTA buttons (2.8:1) — a real defect, and
+  Lighthouse 12+ weights it heavily enough that Accessibility sits one point above
+  the gate, on the preview too. The Lighthouse version is the one `lhci` bundles
+  (check `lighthouseVersion` in a report), not whatever `lighthouse` resolves to
+  elsewhere: until 2026-11 CI ran 10.1.0 while the repo also declared 11.x, and
+  10.1.0 scored the same page Accessibility 0.98 and Best Practices 0.92. So a
+  local number is not evidence of a regression either way. **Compare against a
+  baseline you measured on `upstream/main` on the same machine**, and let the CI
+  run against the Vercel preview be the authority. Do not chase the local number,
+  and never report a local run as if it were the gate.
 - **The baseline is the PREVIEW, not production. Getting this wrong inverts the
   answer.** CI audits the Vercel preview deployment. `www.cennso.com` is a
   different host with different caching and different third-party scripts, and it

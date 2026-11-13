@@ -85,11 +85,13 @@
 ## Lighthouse baseline
 
 The ≥95 gate runs against a Vercel preview, not a local `yarn dev` server.
-Measured on `upstream/main` on the same machine: performance 0.90-0.93,
-accessibility 0.96-0.98, best practices 0.92, SEO 1.00.
+Measured on `upstream/main` on 2026-11-13 with the CI configs and Lighthouse
+13.6.0 (`@lhci/cli` 0.16.1), desktop and mobile: performance 1.00,
+accessibility 0.96-0.97, best practices 0.96, SEO 1.00.
 `errors-in-console` fails on a 404 for `/_vercel/insights/script.js` (the
-Vercel Analytics beacon, present only on Vercel), and `valid-source-maps`
-fails on `_app`'s missing map — both environmental, not code defects. A local
-sub-95 run is not evidence of a regression on its own; compare against a
+Vercel Analytics beacon, present only on Vercel) — environmental, not a code
+defect. `color-contrast` fails on white text on the `#ff6e14` CTA buttons
+(2.8:1) — a real, pre-existing defect that leaves accessibility one point above
+the gate. A local run is not evidence of a regression on its own; compare against a
 baseline measured the same way (same machine, same "local" caveats) on
 `upstream/main`, not against the raw 95 threshold.
