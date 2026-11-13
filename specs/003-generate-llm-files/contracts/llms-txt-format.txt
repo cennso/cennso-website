@@ -1,7 +1,7 @@
 # llms.txt File Format Specification
 
-**Version**: 2.1
-**Date**: 2026-11-13 (CENNSO-4534; replaces 1.0 of 2025-11-12; 2.1 drops the sitemap from Optional)
+**Version**: 2.2
+**Date**: 2026-11-13 (CENNSO-4534; replaces 1.0 of 2025-11-12; 2.1 drops the sitemap from Optional; 2.2 adds the markdown's Link and the pages' cache policy)
 **Based On**: https://llmstxt.org (including its second version's discovery relations)
 **Written by**: `scripts/generate-agent-files` after every build; checked by `yarn seo:validate`
 
@@ -79,6 +79,12 @@ made absolute; an image drawn once per theme listed once.
 
 - `llms.txt`, `llms-full.txt`, `*.md`: `text/markdown; charset=utf-8`,
   `X-Robots-Tag: noindex`.
+- A page's markdown (`/<page>.md`): `Link: <https://www.cennso.com/<page>>; rel="canonical", </llms.txt>; rel="describedby"`:
+  the HTML is the page a search engine lists.
 - Every page: `Link: </<page>.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"`,
   `Vary: Accept`; with `Accept: text/markdown` the page's address answers its
   markdown (`next.config.js` rewrites).
+- Every page: `Cache-Control: public, max-age=0, must-revalidate`. On Vercel
+  the HTML's `Vary` is the one `@vercel/next` writes for every prerender,
+  without `Accept`; Vercel's edge caches after the rewrite and keeps both
+  answers apart, so no other shared cache may keep a page.

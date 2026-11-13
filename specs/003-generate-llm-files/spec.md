@@ -86,7 +86,7 @@ Documentation clearly explains the LLM data format, generation process, validati
 - **FR-012**: System MUST include Schema.org structured data references where applicable (Articles for blog posts, JobPosting for jobs, Organization for company info)
 - **FR-013**: Validation script MUST check for duplicate content, broken internal references, and missing required sections
 - **FR-014**: System MUST document the LLM file format, generation process, and validation requirements in the `/docs` directory
-- **FR-015**: LLM files and pages' markdown MUST be served as `text/markdown; charset=utf-8` with `X-Robots-Tag: noindex` _(amended 2026-11-13, CENNSO-4534)_
+- **FR-015**: LLM files and pages' markdown MUST be served as `text/markdown; charset=utf-8` with `X-Robots-Tag: noindex`; a page's markdown names the page as `rel="canonical"` and llms.txt as `rel="describedby"`; a page lets no shared cache but Vercel's keep it _(amended 2026-11-13, CENNSO-4534)_
 - **FR-016**: The served site MUST pass afdocs (the Agent-Friendly Documentation Spec) with no `fail`: `yarn agents:check [url]` on a production build (`yarn next start`, default `http://localhost:3000`), and in CI on the Vercel preview (`.github/workflows/lighthouse.yml`). Every page llms.txt links is checked (`samplingStrategy: deterministic`), addresses on www.cennso.com are rewritten to the target (`canonicalOrigin`), and no check is skipped (`agent-docs.config.yml`). A `warn` is reported in the log and the job summary, not blocking _(added 2026-11-13, CENNSO-4534)_
 
 ### Key Entities
