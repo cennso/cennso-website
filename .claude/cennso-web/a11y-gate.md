@@ -112,15 +112,15 @@ prop — a visually-hidden `<Typography variant="h2" className="sr-only">`
 landmark heading for the stats grid — sitting next to three sibling headings
 in the same diff that all do pass `render={<hN />}` and are verifiable.
 
-## Default theme is dark; check both, not just the one you're used to
+## Default theme follows the system; check both, not just the one you're used to
 
-Since `27fe485`, the site ships a light/dark theme (`ThemeProvider`
-`defaultSetting="dark"` in `_app.tsx`, `themeScript({ defaultSetting: 'dark'
-})` in `_document.tsx`) — a first-time visitor with no stored preference
-sees **dark**, not light, regardless of OS setting. Any contrast or
-"looks right" claim needs to hold in both palettes, and dark is the one a
-first visit actually renders — don't default your own mental check to light
-just because that was this site's only palette before phase 4.
+The site ships a light/dark theme, and a first-time visitor with no stored
+preference gets the **OS setting** (`ThemeProvider` and `themeScript()` with no
+default, as the documentation portal does; it was forced dark from `27fe485`
+until CENNSO-4534). Any contrast or "looks right" claim needs to hold in both
+palettes. Note what that means for audits: headless Chrome, and therefore
+Lighthouse, reports a light system preference, so Lighthouse audits the
+**light** palette unless you emulate dark.
 
 ## `yarn a11y:contrast` proves nothing
 
