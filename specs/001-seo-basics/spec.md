@@ -160,18 +160,18 @@ Search engines recognize the website as authoritative on specific topics through
 #### Technical SEO Foundation
 
 - **FR-001**: System MUST generate and serve a valid sitemap.xml file containing all public pages with correct last modification dates and priorities
-- **FR-002**: System MUST provide a robots.txt file that allows search engine crawling while excluding administrative or duplicate content paths
-- **FR-003**: All pages MUST include canonical link tags indicating the preferred URL version to prevent duplicate content issues
+- **FR-002**: System MUST provide a robots.txt file that allows crawling of the whole site (`User-agent: *`, `Allow: /`, no `Disallow`: blocking `/_next/` would hide the scripts and styles a search engine renders the page with), states what the content may be used for with Cloudflare's Content Signals policy word for word and `Content-Signal: search=yes, ai-input=yes, ai-train=yes`, and names the sitemap and llms.txt / llms-full.txt _(amended 2026-11-13, CENNSO-4534; was: excluding administrative or duplicate content paths)_
+- **FR-003**: All indexable pages MUST include a canonical link tag, and `og:url` equal to it: `https://www.cennso.com` plus the page's path, the home page with its slash (`https://www.cennso.com/`, the form `new URL('/', base)` serialises) and every other page without one. The 404 page MUST be `noindex` with no canonical. The sitemap MUST list exactly the indexable pages by their canonical URLs _(amended 2026-11-13, CENNSO-4534)_
 - **FR-004**: System MUST generate semantic, keyword-rich URLs using hyphens as word separators (e.g., /blog/seo-best-practices, not /blog/123)
 - **FR-005**: System MUST implement proper 301 redirects for any changed or removed URLs to preserve search engine ranking value
 - **FR-006**: All pages MUST use semantic HTML5 elements (header, nav, main, article, aside, footer) for proper content structure
 
 #### Meta Tags and Page Metadata
 
-- **FR-007**: Every page MUST include a unique, descriptive title tag between 50-60 characters that includes primary target keywords
-- **FR-008**: Every page MUST include a unique meta description between 150-160 characters that encourages click-through from search results
-- **FR-009**: All pages MUST include Open Graph meta tags (og:title, og:description, og:image, og:url, og:type) for social media sharing
-- **FR-010**: All pages MUST include Twitter Card meta tags (twitter:card, twitter:title, twitter:description, twitter:image) for Twitter sharing
+- **FR-007**: Every page MUST include exactly one unique title tag in the form `<page name> · Cennso`; the home page's title starts with "Cennso" (`Cennso · 5G Network Solutions for MVNOs and Private 5G`). `og:title` is the page name alone. Up to 60 characters is recommended; longer is a warning, not an error _(amended 2026-11-13, CENNSO-4534; was: 50-60 characters, no site name)_
+- **FR-008**: Every page MUST include a unique meta description that encourages click-through from search results; 50-160 characters is recommended, outside it is a warning, not an error _(amended 2026-11-13, CENNSO-4534; was: 150-160 characters)_
+- **FR-009**: All pages MUST include Open Graph meta tags (og:title, og:description, og:image, og:url, og:type) for social media sharing, with `og:site_name` "Cennso", `og:locale` `en_US`, `og:image:type` `image/png`, `og:image:alt` = the card's text, and the card's address versioned by a hash of its text (`?v=…`). Pages also carry one `theme-color` per theme (`prefers-color-scheme`) and the default theme follows the system _(amended 2026-11-13, CENNSO-4534)_
+- **FR-010**: All pages MUST include `twitter:card` `summary_large_image`; with no X account to name, X reads title, description and image from the Open Graph tags _(amended 2026-11-13, CENNSO-4534; was: twitter:title, twitter:description, twitter:image too)_
 - **FR-011**: Blog posts and articles MUST include article:published_time, article:modified_time, and article:author meta tags
 - **FR-012**: System MUST generate and serve unique Open Graph images for each major content type (blog posts, success stories, solutions) sized at 1200x630px
 - **FR-013**: All images MUST include descriptive alt attributes that provide context for both accessibility and image search optimization
@@ -181,8 +181,8 @@ Search engines recognize the website as authoritative on specific topics through
 - **FR-014**: Homepage MUST include Organization schema with company name, logo, contact information, and social media profiles
 - **FR-015**: Blog post pages MUST include Article schema with headline, author, datePublished, dateModified, and image properties
 - **FR-016**: Success story pages MUST include appropriate schema (Case Study or Article) with relevant business information
-- **FR-017**: Contact page MUST include LocalBusiness schema with address, telephone, geo coordinates, and opening hours
-- **FR-018**: All pages MUST include BreadcrumbList schema showing navigation hierarchy
+- **FR-017**: ~~Contact page MUST include LocalBusiness schema~~ Superseded by spec 002 FR-005: the company's address and contact are on the Organization on every page, the contact page is a ContactPage _(amended 2026-11-13, CENNSO-4534)_
+- **FR-018**: Pages whose visible trail has two or more crumbs MUST include it as a BreadcrumbList (see spec 002 FR-007) _(amended 2026-11-13, CENNSO-4534; was: all pages)_
 - **FR-019**: Job listing pages MUST include JobPosting schema with position title, description, date posted, and employment type
 - **FR-020**: System MUST validate all structured data using Google's Rich Results Test before deployment
 

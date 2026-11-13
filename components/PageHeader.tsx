@@ -1,11 +1,11 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
-import { BreadcrumbJsonLd } from 'next-seo'
 
 import { Container } from './common'
+import { SchemaOrg } from './common/SchemaOrg'
 
-import siteMetadata from '../siteMetadata'
+import { breadcrumbNode, graph } from '../lib/seo/schema/graph'
 
 import type { FunctionComponent, PropsWithChildren } from 'react'
 import type { ImageProps } from 'next/image'
@@ -45,18 +45,13 @@ export const PageHeader: FunctionComponent<PageHeaderProps> = ({
   children,
 }) => {
   const bannerSelf = alignCenter ? 'md:self-center' : 'md:self-start'
+  // The trail for search engines is the one drawn here, so the two cannot
+  // differ; none at all for a trail of one crumb.
+  const trail = breadcrumbNode(breadcrumbs)
 
   return (
     <>
-      <BreadcrumbJsonLd
-        useAppDir={false}
-        keyOverride="breadcrumbs"
-        itemListElements={breadcrumbs.map((breadcrumb, index) => ({
-          position: index + 1,
-          name: breadcrumb.title,
-          item: `${siteMetadata.siteUrl}${breadcrumb.link}`,
-        }))}
-      />
+      {trail ? <SchemaOrg data={graph([trail])} /> : null}
 
       <Container
         subClassName={

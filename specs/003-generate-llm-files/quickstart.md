@@ -1,3 +1,8 @@
+> **Superseded (2026-11-13, CENNSO-4534).** The files are now written after the build by
+> `scripts/generate-agent-files` (`yarn generate:agents`, part of `postbuild`), not by
+> `scripts/generate-llm-data` (removed). See spec FR-001 to FR-015 and
+> `contracts/llms-txt-format.txt` for the current shape.
+
 # Quickstart: LLM-Friendly Data Exposure
 
 **Feature**: LLM-Friendly Data Exposure  

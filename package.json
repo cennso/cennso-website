@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev",
     "generate:ogimages": "tsx scripts/generate-og-images/index.tsx",
-    "generate:llm": "node --import tsx scripts/generate-llm-data/index.ts",
-    "prebuild": "yarn generate:ogimages && yarn generate:llm",
+    "generate:icons": "tsx scripts/generate-icons/index.ts",
+    "generate:agents": "tsx scripts/generate-agent-files/index.ts",
+    "prebuild": "yarn generate:ogimages && yarn generate:icons",
     "build": "next build",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap && yarn generate:agents",
     "start": "next start",
     "test": "echo 'No tests.'",
     "lint": "next lint",
@@ -38,7 +39,9 @@
     "seo:validate": "scripts/.venv/bin/python scripts/validate-seo.py",
     "seo:schema": "scripts/.venv/bin/python scripts/validate-structured-data.py",
     "seo:links": "scripts/.venv/bin/python scripts/check-internal-links.py",
-    "seo": "yarn seo:validate && yarn seo:schema && yarn seo:links",
+    "seo:rich": "node scripts/validate-rich-results.mjs",
+    "seo": "yarn seo:validate && yarn seo:schema && yarn seo:rich && yarn seo:links",
+    "agents:check": "node scripts/check-agent-docs.mjs",
     "validate:ogimages": "scripts/.venv/bin/python scripts/validate-og-images.py",
     "design:review": "node scripts/review-design-fidelity.mjs",
     "design:review:where": "node scripts/review-design-fidelity.mjs --where",
@@ -87,7 +90,9 @@
     "yaml": "^2.3.4"
   },
   "devDependencies": {
+    "@adobe/structured-data-validator": "1.7.1",
     "@lhci/cli": "0.16.1",
+    "@marbec/web-auto-extractor": "2.2.1",
     "@next/bundle-analyzer": "^16.0.1",
     "@resvg/resvg-js": "^2.6.2",
     "@tailwindcss/forms": "^0.5.7",
@@ -102,6 +107,7 @@
     "@types/react-syntax-highlighter": "^15.5.11",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@vercel/node": "^5.5.4",
+    "afdocs": "0.23.0",
     "chrome-launcher": "^0.13.4",
     "eslint": "^8.56.0",
     "eslint-config-next": "^15.5.0",
@@ -110,11 +116,15 @@
     "postcss": "^8.4.33",
     "prettier": "^3.2.4",
     "puppeteer-core": "^22.15.0",
+    "rehype-parse": "^9.0.1",
+    "rehype-remark": "^10.0.1",
+    "remark-stringify": "^11.0.0",
     "satori": "^0.11.2",
     "tailwind-scrollbar": "^4.0.2",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.20.6",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "unified": "^11.0.5"
   },
   "browserslist": {
     "production": [

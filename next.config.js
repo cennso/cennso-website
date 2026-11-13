@@ -83,6 +83,37 @@ function assertLucideShimIsComplete() {
   }
 }
 
+/**
+ * A page's address, for the rules that give agents its markdown: no dot (a
+ * page has none, a file does), and nothing under Next's own paths or the
+ * site's files. scripts/generate-agent-files writes `/<page>.md` beside every
+ * page after the build, and `/index.md` for the home page.
+ */
+const PAGE = '(?!_next/|api/|assets/|icons/|feeds/)[^.]+'
+
+/** Where agents find a page's markdown and the index covering it (llms.txt v2). */
+const agentLinks = (markdown) =>
+  `<${markdown}>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"`
+
+/** What an agent asking for markdown sends: Claude Code, Cursor and others. */
+const ASKS_FOR_MARKDOWN = [
+  { type: 'header', key: 'accept', value: '.*text/markdown.*' },
+]
+
+/** llms.txt and every page's markdown: markdown, and not themselves search results. */
+const MARKDOWN_HEADERS = [
+  { key: 'Content-Type', value: 'text/markdown; charset=utf-8' },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Robots-Tag', value: 'noindex' },
+]
+
+/**
+ * A page's markdown names the page it copies as canonical - the HTML is what a
+ * search engine should list - and, like the page, the index covering it.
+ */
+const markdownLinks = (page) =>
+  `<https://www.cennso.com${page}>; rel="canonical", </llms.txt>; rel="describedby"`
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -111,8 +142,52 @@ const nextConfig = {
     minimumCacheTTL: 5184000,
   },
   // Custom headers for caching and compression
+  // A request that asks for markdown gets the page's markdown at the page's
+  // own address; anything else gets the HTML. Before the pages, so it wins.
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: '/', has: ASKS_FOR_MARKDOWN, destination: '/index.md' },
+        {
+          source: `/:path(${PAGE})`,
+          has: ASKS_FOR_MARKDOWN,
+          destination: '/:path.md',
+        },
+      ],
+    }
+  },
   async headers() {
     return [
+      {
+        source: '/',
+        headers: [
+          { key: 'Link', value: agentLinks('/index.md') },
+          { key: 'Vary', value: 'Accept' },
+        ],
+      },
+      {
+        source: `/:path(${PAGE})`,
+        headers: [
+          { key: 'Link', value: agentLinks('/:path.md') },
+          { key: 'Vary', value: 'Accept' },
+        ],
+      },
+      {
+        source: '/:path(.+)\\.md',
+        headers: [
+          ...MARKDOWN_HEADERS,
+          { key: 'Link', value: markdownLinks('/:path') },
+        ],
+      },
+      {
+        // After the rule above, so its Link wins: the home page is `/`.
+        source: '/index.md',
+        headers: [{ key: 'Link', value: markdownLinks('/') }],
+      },
+      {
+        source: '/:file(llms\\.txt|llms-full\\.txt)',
+        headers: MARKDOWN_HEADERS,
+      },
       {
         // Cache static assets with short client TTL but longer CDN TTL
         // Allows asset updates to propagate quickly to clients while CDN still caches
@@ -156,6 +231,19 @@ const nextConfig = {
           },
         ],
       },
+      // A page: after the rule above, so this wins. Every page is prerendered,
+      // and Vercel's edge keeps a deployment's pages for its lifetime whatever
+      // this says - after the rewrite, so it tells a page's HTML from its
+      // markdown. No other shared cache may keep a page: on Vercel the HTML's
+      // Vary is the one @vercel/next writes for every prerender, without
+      // Accept, so a proxy could hand the HTML to an agent that asked for
+      // markdown. Browsers revalidate, as they did.
+      ...['/', `/:path(${PAGE})`].map((source) => ({
+        source,
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, must-revalidate' },
+        ],
+      })),
     ]
   },
 }

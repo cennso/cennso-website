@@ -8,6 +8,7 @@ import { ArrowLeft } from 'lucide-react'
 import { Button, Empty } from '@cennso/ui'
 
 import { SEO } from '../components/SEO'
+import { pageCard } from '../lib/seo/card'
 
 import { createNavigation } from '../lib/navigation'
 import { loadFooterData } from '../lib/footer'
@@ -34,7 +35,12 @@ const Custom404Page: NextPage<Custom404PageProps> = ({ content }) => {
 
   return (
     <>
-      <SEO title={page.title} description={page.description} />
+      <SEO
+        notFound
+        title={page.title}
+        description={page.description}
+        card={pageCard(page)}
+      />
 
       <Empty className="w-full flex-1 justify-center py-24">
         <Empty.Header className="max-w-2xl">

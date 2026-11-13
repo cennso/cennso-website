@@ -1,43 +1,15 @@
 page:
-  title: Contact Cennso - Mobile Core Network Solutions & Support
+  # The page's name. The tab title is it plus the site's name ("Contact · Cennso");
+  # link previews print it beside the site's name.
+  title: Contact
   description: Get in touch with Cennso's Solution and Channel Partners. Learn how we can help you build custom mobile core network solutions for your business needs.
   og:
     title: Let's Talk About Your Project
   # Visible hero heading/paragraph shown on the page itself. Kept separate from
-  # title/description above, which stay tuned for the <title> tag and meta
+  # title/description above, which name the page in the <title> tag and meta
   # description - the two audiences want different copy.
   heading: Let's Talk About Your Project
   subheading: Connect with our experts to explore reliable solutions tailored to your business needs.
-
-# Contact information for Schema.org ContactPoint
-# Telephone format: E.164 standard (no spaces/parentheses) for Schema.org structured data
-# E.164 ensures machine-readability for search engines, voice assistants, and click-to-call functionality
-contactPoint:
-  telephone: '+493916609856'
-  email: 'info@cennso.com'
-  contactType: 'customer service'
-  availableLanguage: 
-    - 'English'
-    - 'German'
-
-# Local business information for Schema.org LocalBusiness
-# Telephone format: E.164 standard required by Schema.org LocalBusiness schema
-localBusiness:
-  name: 'Cennso'
-  telephone: '+493916609856'
-  email: 'info@cennso.com'
-  address:
-    streetAddress: 'Berliner Chaussee 88'
-    addressLocality: 'Magdeburg'
-    addressRegion: 'Saxony-Anhalt'
-    postalCode: '39114'
-    addressCountry: 'DE'
-  geo:
-    latitude: 52.1205
-    longitude: 11.6276
-  openingHours:
-    - 'Mo-Fr 09:00-17:00'
-  image: '/assets/logo.png'
 
 form:
   sendLabel: Send
@@ -66,7 +38,7 @@ sections:
       - As a trusted Cennso Solution Provider, Travelping specializes in creating high-performance, scalable Cennso Network Solutions tailored to your needs. With deep expertise in network design and integration, Travelping delivers end-to-end solutions for top clients worldwide.
       - Contact us today, and the solution team will get back to you!
     contact:
-      phone: '+49 (391) 660 98560'
+      phone: '+49 (0) 391 – 660 999 99'
       email: info@cennso.com
     person: sina-mara-friede
 

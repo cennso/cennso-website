@@ -7,7 +7,7 @@
 
 import type { ArticleSchema, PersonSchema } from './types'
 import { toAbsoluteUrl, formatSchemaDate, truncateHeadline } from './utils'
-import { generateOrganizationSchema } from './organization'
+import { ORGANIZATION_ID } from './graph'
 import { generatePersonSchema, AuthorData } from './person'
 
 export interface BlogPostData {
@@ -46,7 +46,8 @@ export function generateArticleSchema(
     author,
     datePublished: formatSchemaDate(post.date),
     dateModified: formatSchemaDate(post.updatedDate || post.date),
-    publisher: generateOrganizationSchema(),
+    // The company's node in the page's graph, by its @id.
+    publisher: { '@id': ORGANIZATION_ID },
     image: post.cover
       ? toAbsoluteUrl(post.cover)
       : toAbsoluteUrl('/assets/logo.png'),

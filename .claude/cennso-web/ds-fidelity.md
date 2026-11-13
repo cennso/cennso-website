@@ -18,7 +18,7 @@ load-bearing precisely because v4 dropped that default (see the Preflight
 `cursor: pointer` restore at `styles/tailwind.css:22-27`).
 
 The site has a light/dark theme
-(`ThemeProvider` in `_app.tsx`, `default dark` — see `a11y-gate.md`); judge
+(`ThemeProvider` in `_app.tsx`, default follows the system — see `a11y-gate.md`); judge
 colour usage against theme tokens (`hsl(var(--foreground))`, `bg-card`,
 `border-border`, etc.), not against a single fixed palette.
 

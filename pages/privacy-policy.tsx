@@ -5,6 +5,7 @@ import { PageHeader } from '../components/PageHeader'
 import { Markdown } from '../components/Markdown/Markdown'
 import { Container, PENCIL_BANNER } from '../components/common'
 import { SEO } from '../components/SEO'
+import { pageCard } from '../lib/seo/card'
 
 import { parseMDX } from '../lib/mdx'
 import { createNavigation } from '../lib/navigation'
@@ -25,6 +26,7 @@ const PrivacyPolicyPage: NextPage<PrivacyPolicyPageProps> = ({ mdxSource }) => {
       <SEO
         title={frontmatter.page.title}
         description={frontmatter.page.description}
+        card={pageCard(frontmatter.page)}
       />
 
       <PageHeader

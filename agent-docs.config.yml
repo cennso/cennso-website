@@ -1,0 +1,21 @@
+# afdocs (https://afdocs.dev): how AI agents find and read this site, checked
+# against the Agent-Friendly Documentation Spec. Run with `yarn agents:check
+# [url]` (scripts/check-agent-docs.mjs), which passes the URL and reads the JSON
+# result: a fail or an error blocks, a warn is reported. See spec 003 and the
+# constitution, section VI.
+
+# A production build served by `yarn next start`; CI passes the Vercel preview.
+url: http://localhost:3000
+
+options:
+  # Every page llms.txt links. The site is small, so nothing is sampled away.
+  samplingStrategy: deterministic
+  # llms.txt and the markdown link https://www.cennso.com; afdocs rewrites
+  # those addresses to the target, so a local build or a preview checks its
+  # own pages, not production's.
+  canonicalOrigin: https://www.cennso.com
+
+# Nothing is skipped. The checks written for documentation portals (tabbed
+# content, section headers, code fences, embedded data) pass on this site
+# because it has none of those; skipping them would only hide a regression.
+skipChecks: []

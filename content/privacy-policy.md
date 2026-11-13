@@ -1,6 +1,8 @@
 ---
 page:
-  title: Privacy Policy - Data Protection & GDPR Compliance
+  # The page's name. The tab title is it plus the site's name ("Privacy Policy · Cennso");
+  # link previews print it beside the site's name.
+  title: Privacy Policy
   description: Learn how Cennso Technologies protects your personal data. Our comprehensive privacy policy covers data collection, processing, and your rights under GDPR.
   og:
     title: Privacy Policy
@@ -71,7 +73,7 @@ As the controller, we have implemented numerous technical and organizational mea
    39179 Barleben<br/>
    Germany
 
-   Phone: +49 (391) 660 98560<br/>
+   Phone: +49 (0) 391 – 660 999 99<br/>
    Email: info@cennso.com<br/>
    Website: https://www.cennso.com
 

@@ -42,6 +42,15 @@ next-env.d.ts
 # assets artefacts
 /public/assets/og-images
 
+# icon artefacts: drawn before every build by scripts/generate-icons
+/public/favicon.ico
+/public/icon.svg
+/public/icon.png
+/public/apple-touch-icon.png
+/public/icons
+/public/assets/logo.png
+/public/manifest.webmanifest
+
 # sitemap artefacts
 /public/sitemap.xml
 
@@ -53,6 +62,8 @@ next-env.d.ts
 # Generated files
 /public/llms.txt
 /public/llms-full.txt
+# every page as markdown, written after the build by scripts/generate-agent-files
+/public/**/*.md
 
 # Python virtual environment
 /scripts/.venv

@@ -33,11 +33,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
     footerLinks: [],
     exploreLinks: [],
     llmLinks: [],
-    copyright: {
-      yearPrefix: 'Copyright ©',
-      companySuffix: 'CENNSO',
-      rights: 'All rights reserved',
-    },
+    copyright: '© Cennso Technologies GmbH {year}',
   }
 
   const { footerLinks, exploreLinks, llmLinks, copyright } =
@@ -60,8 +56,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ footerData }) => {
         <div className="flex flex-col order-last xl:order-0 mt-0 2xl:mt-2">
           <Logo className="w-44 fill-white" />
           <div className="flex flex-col mt-4 text-white text-sm">
-            <span>{`${copyright.yearPrefix} ${year} ${copyright.companySuffix}`}</span>
-            <span>{copyright.rights}</span>
+            <span>{copyright.replaceAll('{year}', String(year))}</span>
           </div>
         </div>
 
