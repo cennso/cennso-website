@@ -38,7 +38,7 @@ footer:
     link_text: llms.txt
     after: ", and every page is also available as markdown at its own address with .md appended."
 
-  copyright:
-    year_prefix: "Copyright ©"
-    company_suffix: CENNSO
-    rights: All rights reserved
+  # The copyright line, as Cennso's imprint writes it (the same line the PDFs,
+  # the documentation portal and the cloud portal print); {year} is the
+  # current year.
+  copyright: "© Cennso Technologies GmbH {year}"

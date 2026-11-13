@@ -32,11 +32,7 @@ interface FooterYAML {
       link_text: string
       after: string
     }
-    copyright: {
-      year_prefix: string
-      company_suffix: string
-      rights: string
-    }
+    copyright: string
   }
 }
 
@@ -53,11 +49,8 @@ export interface FooterData {
   exploreLinks: FooterLink[]
   llmLinks: FooterLink[]
   agentDirective: AgentDirective
-  copyright: {
-    yearPrefix: string
-    companySuffix: string
-    rights: string
-  }
+  /** The copyright line, with `{year}` where the current year goes. */
+  copyright: string
 }
 
 /**
@@ -101,10 +94,6 @@ export async function loadFooterData(): Promise<FooterData> {
       linkText: yaml.footer.agent_directive.link_text,
       after: yaml.footer.agent_directive.after,
     },
-    copyright: {
-      yearPrefix: yaml.footer.copyright.year_prefix,
-      companySuffix: yaml.footer.copyright.company_suffix,
-      rights: yaml.footer.copyright.rights,
-    },
+    copyright: yaml.footer.copyright,
   }
 }
