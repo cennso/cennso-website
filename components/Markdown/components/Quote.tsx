@@ -75,11 +75,20 @@ export const Quote: FunctionComponent<QuoteProps> = ({
                   authorName
                 )}
               </span>
+              {/* The spaces keep the lines apart in the page's text (what
+                  agents, search engines and a copy read); the spans are blocks,
+                  so nothing changes on screen. */}
               {authorPosition ? (
-                <span className="block font-normal">{authorPosition}</span>
+                <>
+                  {' '}
+                  <span className="block font-normal">{authorPosition}</span>
+                </>
               ) : null}
               {authorCompany ? (
-                <span className="block font-normal">{authorCompany}</span>
+                <>
+                  {' '}
+                  <span className="block font-normal">{authorCompany}</span>
+                </>
               ) : null}
             </cite>
           </figcaption>

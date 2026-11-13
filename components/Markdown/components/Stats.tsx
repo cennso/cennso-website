@@ -24,6 +24,8 @@ export const Stat: FunctionComponent<StatProps> = ({ value, label }) => {
         <span className="text-primary text-[72px] font-bold leading-tight">
           {value}
         </span>
+        {/* Keeps "50+ IBM Cloud locations" apart in the page's text; a flex
+            container drops the space on screen. */}{' '}
         <span className="text-foreground font-bold text-base">{label}</span>
       </div>
     </li>
