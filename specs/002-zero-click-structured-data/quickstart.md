@@ -140,7 +140,8 @@ export function SEO({ ...props }) {
 yarn build
 
 # Run structured data validation
-yarn seo:schema
+yarn seo:schema   # what the site says about itself
+yarn seo:rich     # schema.org vocabulary and Google's rich-result rules
 
 # Test in Google Rich Results Test
 # Visit: https://search.google.com/test/rich-results
@@ -302,6 +303,7 @@ After implementing each phase:
 
 - [ ] Run `yarn build` - Builds successfully
 - [ ] Run `yarn seo:schema` - All schemas validate
+- [ ] Run `yarn seo:rich` - No errors against schema.org and Google's rich-result rules
 - [ ] Test in [Google Rich Results Test](https://search.google.com/test/rich-results)
 - [ ] View page source - Verify JSON-LD in `<head>`
 - [ ] Check Google Search Console - No structured data errors

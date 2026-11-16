@@ -71,22 +71,23 @@ Documentation clearly explains the LLM data format, generation process, validati
 
 ### Functional Requirements
 
-- **FR-001**: System MUST generate `/llms.txt` file containing basic website information (name, description, primary services, contact information)
-- **FR-002**: System MUST generate `/llms-full.txt` file containing comprehensive structured data including all pages, blog posts, solutions, success stories, testimonials, job postings, and team information
-- **FR-003**: System MUST run generation scripts automatically during the build process (integrated into `yarn build`)
+- **FR-001**: System MUST generate `/llms.txt` in the llmstxt.org shape: one H1 (the site's name), a `>` summary (slogan and description), a short paragraph (address, contact, the cloud portal), then H2 sections whose every line is `- [name](url): description` - the published pages, the pages under each of them, the documentation's own llms.txt, and an Optional section (llms-full.txt, legal pages). Every link on this site is markdown (the sitemap is named in robots.txt, not here); no address of a page the build did not render _(amended 2026-11-13, CENNSO-4534)_
+- **FR-002**: System MUST generate `/llms-full.txt`: the same opening, then every published page's markdown in one file, each under its name with its address _(amended 2026-11-13, CENNSO-4534)_
+- **FR-003**: System MUST generate the files after every build (`postbuild`, `scripts/generate-agent-files`) from the pages the build rendered - the sitemap's list - so a page switched off with `notFound` disappears from every file with no manual step _(amended 2026-11-13, CENNSO-4534)_
 - **FR-004**: System MUST validate generated LLM files for proper formatting, required fields, data completeness, and size constraints
 - **FR-005**: System MUST fail the build if LLM validation detects critical errors
 - **FR-006**: Website footer MUST include visible links to both `/llms.txt` and `/llms-full.txt` with clear labels explaining their purpose
 - **FR-006**: Website footer MUST include visible links to both `/llms.txt` and `/llms-full.txt` with clear labels explaining their purpose
 - **FR-007**: LLM files MUST use UTF-8 encoding and handle special characters correctly
-- **FR-008**: System MUST follow the llms.txt specification (based on established patterns like robots.txt) for file structure and formatting
-- **FR-009**: System MUST include proper metadata headers in LLM files (last updated timestamp, version, content summary)
+- **FR-008**: System MUST follow the llms.txt specification (https://llmstxt.org), including its second version's discovery: every page answers with `Link: <page.md>; rel="alternate"; type="text/markdown", </llms.txt>; rel="describedby"` and links `/llms.txt` as `<link rel="describedby">` _(amended 2026-11-13, CENNSO-4534)_
+- **FR-009**: ~~Metadata headers (timestamp, version)~~ The files carry no generation date or version: the llms.txt format has none, and a date that changes on every build says nothing about the content _(amended 2026-11-13, CENNSO-4534)_
 - **FR-010**: System MUST use absolute URLs for all links and resources within LLM files
-- **FR-011**: Generated content MUST strip HTML/JSX formatting and provide clean, readable text suitable for LLM consumption
+- **FR-011**: Every published page MUST also be markdown at its own address with `.md` appended (`/index.md` for the home page), converted from the page's rendered main content so it says what the page says, opening with the sentence for agents; the same address with `Accept: text/markdown` answers that markdown. Every page's HTML carries the sentence for agents (visually hidden, at the top of the main content) pointing to llms.txt _(amended 2026-11-13, CENNSO-4534)_
 - **FR-012**: System MUST include Schema.org structured data references where applicable (Articles for blog posts, JobPosting for jobs, Organization for company info)
 - **FR-013**: Validation script MUST check for duplicate content, broken internal references, and missing required sections
 - **FR-014**: System MUST document the LLM file format, generation process, and validation requirements in the `/docs` directory
-- **FR-015**: LLM files MUST be accessible via standard HTTP GET requests with appropriate caching headers
+- **FR-015**: LLM files and pages' markdown MUST be served as `text/markdown; charset=utf-8` with `X-Robots-Tag: noindex`; a page's markdown names the page as `rel="canonical"` and llms.txt as `rel="describedby"`; a page lets no shared cache but Vercel's keep it _(amended 2026-11-13, CENNSO-4534)_
+- **FR-016**: The served site MUST pass afdocs (the Agent-Friendly Documentation Spec) with no `fail`: `yarn agents:check [url]` on a production build (`yarn next start`, default `http://localhost:3000`), and in CI on the Vercel preview (`.github/workflows/lighthouse.yml`). Every page llms.txt links is checked (`samplingStrategy: deterministic`), addresses on www.cennso.com are rewritten to the target (`canonicalOrigin`), and no check is skipped (`agent-docs.config.yml`). A `warn` is reported in the log and the job summary, not blocking _(added 2026-11-13, CENNSO-4534)_
 
 ### Key Entities
 

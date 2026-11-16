@@ -9,6 +9,7 @@ import { Pagination } from '@cennso/ui'
 import { PageHeader } from '../../components/PageHeader'
 import { SuccessStoryItem } from '../../components/SuccessStories/SuccessStoryItem'
 import { SEO } from '../../components/SEO'
+import { pageCard } from '../../lib/seo/card'
 import { Container } from '../../components/common'
 
 import { mdRegex } from '../../lib/markdown'
@@ -46,7 +47,11 @@ const SuccessStoriesPage: NextPage<SuccessStoriesPageProps> = ({
 
   return (
     <>
-      <SEO title={page.title} description={page.description} />
+      <SEO
+        title={page.title}
+        description={page.description}
+        card={pageCard(page)}
+      />
 
       <PageHeader
         title={page.heading}

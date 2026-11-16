@@ -147,7 +147,8 @@ def check_page_titled(file_path: Path, lines: List[str]) -> List[NavigableIssue]
     
     Notes:
     - <SEO> component uses next-seo to set page title
-    - Title format: "{page.title} | {siteMetadata.title}" or default
+    - Title format: "{page.title} · Cennso"; the home page passes its whole title
+      as absoluteTitle, starting with "Cennso" (constitution VI)
     """
     issues = []
     

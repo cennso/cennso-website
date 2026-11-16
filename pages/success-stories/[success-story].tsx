@@ -10,6 +10,7 @@ import { Markdown } from '../../components/Markdown/Markdown'
 import { Share } from '../../components/Markdown/Share'
 import { TableOfContents } from '../../components/Markdown/TableOfContents'
 import { SEO } from '../../components/SEO'
+import { CARD_BADGE, pageCard } from '../../lib/seo/card'
 import { Container, FeatureCard } from '../../components/common'
 import { SuccessStoryContext } from '../../contexts'
 
@@ -42,7 +43,16 @@ const SuccessStoryPage: NextPage<SuccessStoryPageProps> = ({
 
   return (
     <>
-      <SEO title={title} description={excerpt} canonical={canonical} />
+      <SEO
+        title={title}
+        description={excerpt}
+        canonical={canonical}
+        card={pageCard(
+          { title, description: excerpt },
+          CARD_BADGE.successStory
+        )}
+        pageType="article"
+      />
 
       <PageHeader
         title={title}

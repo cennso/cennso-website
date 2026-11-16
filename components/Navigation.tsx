@@ -25,8 +25,7 @@ import type { NavigationLink } from '../contexts'
  * Every literal below is the frame's: 37px radius (`rounded-btn`), 16px
  * horizontal padding, 9px gap, Poppins Medium 18px, 36px tall. `dark:` resolves
  * to `:root:not([data-theme="light"])` via the theme preset, so the dark
- * treatment is the one that survives if the attribute is ever missing - which
- * matches `defaultSetting="dark"`.
+ * treatment is the one that survives if the attribute is ever missing.
  */
 const NAV_CTA_CLASS = [
   'inline-flex h-9 items-center gap-[9px] rounded-btn border px-4',
@@ -65,7 +64,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({
     // the page plate (#001a2a vs the token's #001929) - hence
     // `dark:bg-background` rather than a second literal. `dark:` resolves to
     // `:root:not([data-theme="light"])` via the theme preset, so the dark
-    // treatment survives a missing attribute, matching `defaultSetting="dark"`.
+    // treatment survives a missing attribute.
     // White raises the light-theme nav link and wordmark contrast (both
     // #185f99) from 5.49:1 to 6.70:1, so nothing loses headroom by this.
     //

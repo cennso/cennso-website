@@ -9,7 +9,10 @@ This script validates:
 - Correct dimensions (1200×630px)
 - File size limits (<300KB recommended, <500KB warning)
 - All expected images are generated
-- OG meta tags in HTML (og:image, og:image:width, og:image:height)
+- OG meta tags in HTML (og:image, og:image:width, og:image:height,
+  og:image:type, og:image:alt)
+- The card's address carries a version (?v=<hash of its text>) so networks
+  that keep a shared card refetch it when its text changes
 - Absolute URLs with domain
 - Image files exist at specified paths
 """
@@ -137,6 +140,8 @@ def validate_og_images():
             og_image_tag = soup.find('meta', property='og:image')
             og_width_tag = soup.find('meta', property='og:image:width')
             og_height_tag = soup.find('meta', property='og:image:height')
+            og_type_tag = soup.find('meta', property='og:image:type')
+            og_alt_tag = soup.find('meta', property='og:image:alt')
             og_title_tag = soup.find('meta', property='og:title')
             og_desc_tag = soup.find('meta', property='og:description')
             
@@ -173,6 +178,19 @@ def validate_og_images():
                         f"{page_path}: og:image:height is {height_value} (expected {EXPECTED_HEIGHT})"
                     )
             
+            # Validate og:image:type: every card is a PNG
+            og_type = og_type_tag.get('content', '') if og_type_tag else None
+            if og_type != 'image/png':
+                issues.append(f"{page_path}: og:image:type is {og_type} (expected image/png)")
+
+            # Validate og:image:alt: the card's text, for readers who cannot see it
+            if not og_alt_tag or not og_alt_tag.get('content', '').strip():
+                issues.append(f"{page_path}: Missing og:image:alt meta tag")
+
+            # Validate the card's address carries its version
+            if '/assets/og-images/' in og_image_url and '?v=' not in og_image_url:
+                issues.append(f"{page_path}: og:image has no ?v= version: {og_image_url}")
+
             # Validate og:title exists
             if not og_title_tag:
                 warnings.append(f"{page_path}: Missing og:title meta tag")
@@ -184,7 +202,7 @@ def validate_og_images():
             # Validate image file exists (check against the actual build output path)
             if og_image_url.startswith(EXPECTED_DOMAIN):
                 # Extract the path after domain (e.g., /assets/og-images/blog/post/image.png)
-                url_path = og_image_url.replace(EXPECTED_DOMAIN, '')
+                url_path = og_image_url.replace(EXPECTED_DOMAIN, '').split('?')[0]
                 # Convert to filesystem path using build_public_path variable
                 image_file = build_public_path / url_path.lstrip('/')
                 if not image_file.exists():

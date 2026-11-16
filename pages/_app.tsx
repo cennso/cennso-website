@@ -3,6 +3,7 @@ import { Poppins } from 'next/font/google'
 import { ThemeProvider } from '@cennso/ui'
 
 import { Layout } from '../components/Layout'
+import { ThemeColor } from '../components/ThemeColor'
 
 import type { AppProps } from 'next/app'
 
@@ -104,10 +105,10 @@ export default function App({ Component, pageProps }: AppProps) {
       {/* Only the provider takes the cookie's domain: the inline themeScript in
           _document.tsx reads the cookie by name, and a browser sends a
           parent-domain cookie to every host under it. */}
-      <ThemeProvider
-        defaultSetting="dark"
-        cookie={{ domain: themeCookieDomain() }}
-      >
+      {/* No default setting: a first visit follows the system's theme, as the
+          themeScript in _document.tsx assumes - the two must agree. */}
+      <ThemeProvider cookie={{ domain: themeCookieDomain() }}>
+        <ThemeColor />
         <Layout navigation={navigation} footerData={footerData}>
           <Component {...rest} />
         </Layout>

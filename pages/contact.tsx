@@ -8,10 +8,7 @@ import { ContactForm } from '../components/Contact/ContactForm'
 import { CircleAvatar, Container, PENCIL_BANNER } from '../components/common'
 import { PageHeader } from '../components/PageHeader'
 import { SEO } from '../components/SEO'
-import {
-  generateLocalBusinessSchema,
-  type LocalBusinessData,
-} from '../lib/seo/schema'
+import { pageCard } from '../lib/seo/card'
 
 import { createNavigation } from '../lib/navigation'
 import { loadFooterData } from '../lib/footer'
@@ -56,20 +53,25 @@ const MailSolid: FunctionComponent<{ className?: string }> = ({
   </svg>
 )
 
-const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
-  const { page, sections, localBusiness } = content
+/**
+ * A phone number as a `tel:` link dials it: E.164, `+` and digits only. The
+ * written form keeps the trunk prefix in brackets for callers inside Germany,
+ * "+49 (0) 391 – 660 999 99", which an international number must drop.
+ */
+function telHref(phone: string): string {
+  return phone.replace(/\(0\)/g, '').replace(/[^\d+]/g, '')
+}
 
-  // Generate LocalBusiness schema if data is available
-  const localBusinessSchema = localBusiness
-    ? generateLocalBusinessSchema(localBusiness as LocalBusinessData)
-    : undefined
+const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
+  const { page, sections } = content
 
   return (
     <>
       <SEO
         title={page.title}
         description={page.description}
-        structuredData={localBusinessSchema}
+        card={pageCard(page)}
+        pageType="contact"
       />
 
       <PageHeader
@@ -159,7 +161,7 @@ const ContactPage: NextPage<ContactPageProps> = ({ content }) => {
                           ) : null}
                           {section.contact.phone ? (
                             <a
-                              href={`tel:${section.contact.phone.replace(' ', '')}`}
+                              href={`tel:${telHref(section.contact.phone)}`}
                               className="flex flex-row gap-4 items-center text-[20px] text-foreground hover:text-primary transition duration-300 ease-in-out"
                             >
                               <span className="flex items-center justify-center w-14 h-14 rounded-full border-2 border-primary shrink-0">

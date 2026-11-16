@@ -47,12 +47,10 @@ what it found vs. what it should have found, verdict `correct` / `missed` /
    heading-hierarchy blindness already documented in
    `docs/accessibility-checkers-and-cennso-ui.md`.
 
-5. Two `BreadcrumbList` JSON-LD blocks are emitted per page that renders
-   `PageHeader`: one from `components/SEO.tsx:85`, one from
-   `components/PageHeader.tsx:28-36` (`next-seo`'s `BreadcrumbJsonLd`) —
-   `seo-gate`. This is pre-existing and outside the diff, so `unverifiable`
-   is the honest place for it, and silence on it is the review's failure, not
-   the correct behavior.
+5. (Resolved in CENNSO-4534.) Pages used to emit two `BreadcrumbList` JSON-LD
+   blocks, one from `SEO.tsx` and one from `PageHeader.tsx`. Now only
+   `PageHeader` writes the trail, and only when it has two or more crumbs; a
+   second trail on a page is a regression `yarn seo:schema` fails.
 
 6. `@heroicons/react` and `react-icons` were removed and `lucide-react` was
    the (already-present) survivor — `perf-gate` should treat this as a

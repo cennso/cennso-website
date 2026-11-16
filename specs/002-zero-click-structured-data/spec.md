@@ -95,10 +95,10 @@ Cennso business information appears accurately in local search results, Google M
 - **FR-001**: Website MUST implement Schema.org structured data for all content types (Organization, Article, BlogPosting, Person, FAQPage, HowTo, BreadcrumbList)
 - **FR-002**: Blog posts MUST include Article schema with required properties: headline, author, datePublished, dateModified, publisher, image
 - **FR-003**: Author pages MUST include Person schema with name, url, image, jobTitle, worksFor properties
-- **FR-004**: Success stories MUST include Case Study or Article schema with company information, problem/solution narrative, and measurable results
-- **FR-005**: Contact page MUST include Organization schema with complete NAP data, logo, social profiles, and contact points
+- **FR-004**: Success stories MUST include an Article (headline, description, own address, the preview card as image, the Organization as publisher and author, part of the WebSite); no dates or person until the content has them _(amended 2026-11-13, CENNSO-4534)_
+- **FR-005**: Every page but the 404 MUST include the Organization, `@id` `https://www.cennso.com/#organization` (other sites name it as their publisher, so it never changes), with name, legal name, home page, logo, description, slogan, address, email, telephone, contact point, VAT ID and profiles, all from `siteMetadata` and matching the imprint; and the WebSite (`#website`, name Cennso, alternate name Cennso Technologies, published by the Organization, no SearchAction). The contact page adds a ContactPage _(amended 2026-11-13, CENNSO-4534; was: Organization on the contact page only)_
 - **FR-006**: FAQ content MUST be marked up with FAQPage schema containing Question and Answer pairs
-- **FR-007**: All pages MUST include properly nested BreadcrumbList schema for navigation hierarchy
+- **FR-007**: A page whose visible breadcrumb trail has two or more crumbs MUST include it as one BreadcrumbList, the same crumbs under the same names, without a home crumb, ending at the page itself; a page with fewer crumbs includes none _(amended 2026-11-13, CENNSO-4534; was: all pages)_
 - **FR-008**: Content MUST be structured with clear headings (H1, H2, H3) that match search query patterns
 - **FR-009**: Key information MUST appear in the first 100 words of content for featured snippet extraction
 - **FR-010**: Lists and tables MUST be properly formatted with semantic HTML for rich result eligibility
@@ -107,8 +107,8 @@ Cennso business information appears accurately in local search results, Google M
 - **FR-013**: Author bylines MUST be visible on blog posts and linked to author profile pages
 - **FR-014**: Meta descriptions MUST directly answer potential search queries (150-160 characters)
 - **FR-015**: Title tags MUST include target keywords and match search intent (50-60 characters)
-- **FR-016**: Website MUST maintain consistent NAP (Name, Address, Phone) information across all pages
-- **FR-017**: Structured data MUST validate without errors in Google Rich Results Test and Schema Markup Validator
+- **FR-016**: Website MUST maintain consistent NAP (Name, Address, Phone) information across all pages: Cennso Technologies GmbH, Südstraße 6, 39179 Barleben, +49 (0) 391 – 660 999 99, as the company's imprint gives them _(amended 2026-11-13, CENNSO-4534: the LocalBusiness on the contact page carried another company's Magdeburg address and number)_
+- **FR-017**: Structured data MUST validate without errors in Google Rich Results Test and Schema Markup Validator. Every build checks it the same way with `yarn seo:rich` (part of `yarn seo`): `@adobe/structured-data-validator` against a pinned schema.org release (verified by its SHA-256) and Google's rich-result rules; a block that does not parse, a type or property schema.org does not define, or a missing required Google property is an error, a missing recommended one a warning. `yarn seo:schema` keeps checking what the site says about itself _(amended 2026-11-13, CENNSO-4534)_
 - **FR-018**: All structured data MUST be embedded as JSON-LD in page head (not microdata or RDFa)
 - **FR-019**: Website MUST include robots.txt file optimized for crawler access to all public content
 - **FR-020**: XML sitemap MUST include all public pages with accurate lastmod timestamps and priority indicators

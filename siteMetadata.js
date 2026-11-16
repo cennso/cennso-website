@@ -1,69 +1,74 @@
 const siteMetadata = {
-  title: 'Mobile Core: Built faster, performs better, costs less.',
+  // The site's name: what every tab title ends with ("Contact · Cennso") and
+  // what link previews call the site (`og:site_name`).
+  title: 'Cennso',
+  // The company's slogan, for what machines read about the site: the
+  // Organization's `slogan` in structured data and the summary in llms.txt.
+  // People read it as the home page's headline and on its preview card, both
+  // written in content/landing-page.yaml (`hero.headline`, `page.og.title`) -
+  // change all three together.
+  slogan: 'Build Network Solutions. Anywhere.',
+  // Another name the site goes by, for the WebSite in structured data.
+  alternateName: 'Cennso Technologies',
+  // What the company does, in one sentence: the Organization's description in
+  // structured data and the summary of llms.txt. The home page's meta
+  // description says the same (content/landing-page.yaml, `page.description`).
   description:
-    'Our Mobile Core is engineered to accelerate time-to-market, giving you the agility to launch faster than ever. With optimized performance, it delivers seamless reliability and scale to meet the demands of modern networks. And by reducing operational costs, it ensures long-term efficiency without compromising quality—so you can grow smarter, faster, and more cost-effectively.',
+    'Cennso lets you deploy 5G anywhere - build MVNOs, travel SIM solutions, or private networks with seamless interoperability and centralized control today.',
   author: 'Cennso Technologies GmbH',
   language: 'en-us',
   locale: 'en-US',
-  theme: 'light',
   siteUrl: 'https://www.cennso.com',
   siteLogo: '/logo.svg',
-  socialBanner: '/assets/thumbnails/cennso-thumbnail.webp',
   companyName: 'Cennso Technologies GmbH',
+  // Cennso Technologies GmbH's own contact details, as its imprint gives them
+  // (the same as the PDFs and the cloud portal print). The number on the
+  // contact page's solution-provider card is Travelping's, not this one.
   contact: {
-    phone: '+49 (391) 660 98560',
+    phone: '+49 (0) 391 – 660 999 99',
+    // The same number as a `tel:` link and structured data write it (E.164).
+    tel: '+4939166099999',
     email: 'info@cennso.com',
     address: {
       place: [
         'Cennso Technologies GmbH',
-        'Südstr. 6',
+        'Südstraße 6',
         '39179 Barleben',
         'Germany',
       ],
+      streetAddress: 'Südstraße 6',
+      postalCode: '39179',
+      addressLocality: 'Barleben',
+      // ISO 3166-1 alpha-2, as schema.org's PostalAddress takes it.
+      addressCountry: 'DE',
       googleMaps:
         'https://www.google.com/maps/place/S%C3%BCdstra%C3%9Fe+6,+39179+Barleben,+Germany/@52.1991585,11.6199481,17z/data=!3m1!4b1!4m6!3m5!1s0x47af5e898a2f52a9:0x819e861701827256!8m2!3d52.1991585!4d11.622523!16s%2Fg%2F11c4kj5w9j!5m1!1e4?entry=ttu&g_ep=EgoyMDI1MTAwOC4wIKXMDSoASAFQAw%3D%3D',
     },
+    // As the imprint gives it (content/imprint.md).
+    vatID: 'DE250071497',
   },
   social: {
+    // What the footer draws an icon for.
     platforms: {
       linkedIn: 'https://www.linkedin.com/company/cennso-technologies/',
     },
+    // The company's own profiles elsewhere: the Organization's `sameAs`.
+    profiles: [
+      'https://github.com/cennso',
+      'https://www.linkedin.com/company/cennso-technologies',
+    ],
   },
   explore: {
     cloudPortal: 'https://cloud.cennso.com/',
     documentationPortal: 'https://docs.cennso.com/',
-  },
-}
-
-// Generate Organization schema from existing metadata to avoid duplication
-siteMetadata.organization = {
-  '@type': 'Organization',
-  name: siteMetadata.companyName,
-  url: siteMetadata.siteUrl,
-  logo: {
-    '@type': 'ImageObject',
-    url: `${siteMetadata.siteUrl}${siteMetadata.siteLogo}`,
-    width: 372,
-    height: 73,
-  },
-  description: siteMetadata.description,
-  email: siteMetadata.contact.email,
-  telephone: siteMetadata.contact.phone,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Südstr. 6',
-    addressLocality: 'Barleben',
-    postalCode: '39179',
-    addressCountry: 'DE',
-  },
-  sameAs: [siteMetadata.social.platforms.linkedIn],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    telephone: siteMetadata.contact.phone,
-    contactType: 'customer service',
-    email: siteMetadata.contact.email,
-    areaServed: 'DE',
-    availableLanguage: ['en', 'de'],
+    // What llms.txt says about the documentation: that it is there, not here,
+    // and where its own llms.txt is.
+    documentation: {
+      name: 'Cennso Documentation',
+      llms: 'https://docs.cennso.com/llms.txt',
+      description:
+        'Guides, references and release notes for Cennso components and solutions: requirements, installation, configuration, operation and what changed in each release.',
+    },
   },
 }
 

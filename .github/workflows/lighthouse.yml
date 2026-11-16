@@ -114,3 +114,32 @@ jobs:
           path: |
             ${{ matrix.output-json }}
             ${{ matrix.output-html }}
+
+  # How AI agents find and read the preview: llms.txt, every page's markdown,
+  # the Link headers and Accept: text/markdown. afdocs checks a served site, so
+  # it runs here on the preview, not on the build. A fail blocks; the result
+  # table goes to the job summary, not to a PR comment.
+  agent-docs:
+    name: Agent-friendly docs (afdocs)
+    needs: wait-for-deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      # afdocs needs Node >= 22; yarn enforces its engines on install, as it
+      # does @lhci/cli's above, so an older runner Node fails loudly there.
+      - name: Set up NodeJS
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - name: Install Yarn
+        env:
+          YARN_VERSION: 1.22.22
+        run: |-
+          npm install -g "yarn@${YARN_VERSION}"
+          yarn -v
+      # afdocs is a devDependency pinned in yarn.lock; no npx.
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Check the preview with afdocs
+        env:
+          DEPLOY_URL: ${{ needs.wait-for-deployment.outputs.url }}
+        run: yarn agents:check "$DEPLOY_URL"

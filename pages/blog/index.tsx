@@ -301,7 +301,7 @@ async function generateRssFeed(posts: BlogPostItemType[]) {
     lastBuildDate: new Date().toUTCString(),
     ttl: 60, // refresh per hour
     image: {
-      url: `${siteUrl}/favicon.png`,
+      url: `${siteUrl}/icon.png`,
       link: siteUrl,
       title: `Blog | ${siteMetadata.title}`,
     },

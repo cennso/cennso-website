@@ -1,5 +1,7 @@
 page:
-  title: Cennso - 5G Network Solutions for MVNOs and Private 5G
+  # The whole tab title, as written: the home page's starts with the site's
+  # name, so nothing is added to it (every other page is "<name> · Cennso").
+  title: Cennso · 5G Network Solutions for MVNOs and Private 5G
   description: >-
     Cennso lets you deploy 5G anywhere - build MVNOs, travel SIM solutions, or
     private networks with seamless interoperability and centralized control

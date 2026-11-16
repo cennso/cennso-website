@@ -72,7 +72,9 @@ pip install -r scripts/requirements.txt
 
 ```bash
 yarn dev                   # Local dev server (port 3000)
-yarn build                 # Production build (runs OG image generation first)
+yarn build                 # Production build (draws OG images and icons first; writes the sitemap, llms.txt, llms-full.txt and every page's .md after)
+yarn generate:icons        # Draw the icons and web manifest into public/ (part of prebuild)
+yarn generate:agents       # Write llms.txt, llms-full.txt and every page's .md from the build (part of postbuild)
 ANALYZE=true yarn build    # Production build with Webpack Bundle Analyzer (opens visualization in browser)
 yarn lint                  # ESLint check
 yarn lint:fix              # autofix ESLint check
@@ -83,7 +85,9 @@ yarn a11y:autocomplete     # Validate autocomplete attributes (tel not phone, gi
 yarn perf:images           # Validate all images are WebP and under 100KB
 yarn perf:images:optimize  # Automatically optimize images to WebP format
 yarn perf:mobile           # Validate mobile performance (viewport, font size, Image sizes prop)
-yarn seo:validate          # Validate SEO metadata (titles 50-60 chars, descriptions 150-160 chars)
+yarn seo:validate          # Validate SEO metadata (title pattern, canonical, link-preview tags, sitemap; lengths warn)
+yarn seo:rich              # Validate structured data against schema.org and Google's rich-result rules (part of yarn seo)
+yarn agents:check [url]    # afdocs: how AI agents read a served build (default localhost:3000; CI runs it on the Vercel preview)
 yarn lighthouse            # Run Lighthouse audit (requires dev server running)
 yarn design:review:where   # Where to write the frames fetched from Figma, and under what names
 yarn design:review         # Diff the built site against those frames, both themes (local, needs Figma MCP)
@@ -171,10 +175,13 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
 3. Posts results to PR
 4. Blocks merge if any category < 95%
 
+The same workflow runs **afdocs** on the preview (job `Agent-friendly docs (afdocs)`, `yarn agents:check <preview URL>`): a `fail` blocks, warnings and the table of every check go to the job summary (no PR comment). Locally: `yarn build && yarn next start`, then `yarn agents:check` (or pass the URL of another port). Settings and the reasons for them: `agent-docs.config.yml`.
+
 ## Important Notes
 
 - Hot reload doesn't work for content changes (manual browser refresh needed)
 - OG images auto-generated during build via `scripts/generate-og-images`
+- Icons (favicon, Apple icon, manifest icons, `assets/logo.png`) and `manifest.webmanifest` drawn during build via `scripts/generate-icons` from `sign.svg`; gitignored, so run `yarn generate:icons` once before `yarn dev` if you need them there
 - All author/testimonial references use ID lookups from `authors.yaml`
 - **All UI text MUST come from YAML files in `/content` directory** - no hardcoded strings in components
 - File paths in content must be absolute from `/public` (e.g., `/assets/image.png`)
@@ -185,9 +192,11 @@ Lighthouse workflow (`.github/workflows/lighthouse.yml`) automatically:
   - Without `sizes`, Next.js may serve 828px image when displaying at 550px (wasteful bandwidth)
   - `next.config.js` configures deviceSizes/imageSizes, but components need `sizes` prop to use them
 - **Bundle analysis**: `next.config.js` includes `@next/bundle-analyzer` configured via `ANALYZE=true` env var
-- **SEO metadata**: All pages MUST have unique titles (50-60 chars) and descriptions (150-160 chars)
-  - Validated by `yarn seo:validate` which scans built HTML
-  - Titles come from YAML `page.title` or MDX frontmatter `title`
+- **SEO metadata**: All pages MUST have unique titles and descriptions (constitution VI)
+  - Validated by `yarn seo:validate` which scans built HTML and the sitemap: structure is an error, length a warning
+  - Titles come from YAML `page.title` or MDX frontmatter `title` - the page's NAME ("Contact"); `<SEO>` adds " · Cennso". The home page passes its whole title as `absoluteTitle`
+  - Canonical: home page `https://www.cennso.com/` (with slash), every other page without; 404 is noindex
+  - Cards: `<SEO card={pageCard(page)}>` - `lib/seo/card.ts` is shared with the card generator
   - Descriptions from YAML `page.description` or MDX frontmatter `excerpt`
   - SEO component in `components/SEO.tsx` handles meta tag generation
   - BeautifulSoup4 required for validation (in `scripts/requirements.txt`)
@@ -285,9 +294,9 @@ All code changes must comply with constitution principles:
     - Responsive: `sizes="(max-width: 768px) 100vw, 50vw"` (hero images)
     - Hidden on mobile: `sizes="(max-width: 768px) 0px, 45vw"` (blog cards)
 - **SEO**: All pages MUST have optimized metadata
-  - Titles: 50-60 characters, unique across pages
-  - Descriptions: 150-160 characters, unique across pages
-  - Canonical URLs: Present on all pages
+  - Titles: `<page name> · Cennso`, unique across pages; over 60 characters is a warning
+  - Descriptions: unique across pages; outside 50-160 characters is a warning
+  - Canonical URLs: present on every indexable page, equal to `og:url`, listed in the sitemap
   - Validated by `yarn seo:validate` (scans `.next/server/pages/*.html`)
   - No duplicate titles or descriptions allowed
 - **Components**: Feature-based organization, one primary component per file, props explicitly typed
@@ -340,6 +349,7 @@ This runs:
 - `yarn perf:mobile` - Mobile performance validation
 - `yarn seo:validate` - SEO metadata validation
 - `yarn seo:schema` - Schema.org structured data validation
+- `yarn seo:rich` - Structured data against schema.org and Google's rich-result rules
 - `yarn seo:links` - Internal links validation
 
 **If any check fails:**

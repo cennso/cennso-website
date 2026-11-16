@@ -26,23 +26,31 @@ interface FooterYAML {
       aria_label: string
       description: string
     }>
-    copyright: {
-      year_prefix: string
-      company_suffix: string
-      rights: string
+    agent_directive: {
+      before: string
+      link: string
+      link_text: string
+      after: string
     }
+    copyright: string
   }
+}
+
+/** The sentence for AI agents at the top of every page: text, then a link, then text. */
+export interface AgentDirective {
+  before: string
+  link: string
+  linkText: string
+  after: string
 }
 
 export interface FooterData {
   footerLinks: FooterLink[]
   exploreLinks: FooterLink[]
   llmLinks: FooterLink[]
-  copyright: {
-    yearPrefix: string
-    companySuffix: string
-    rights: string
-  }
+  agentDirective: AgentDirective
+  /** The copyright line, with `{year}` where the current year goes. */
+  copyright: string
 }
 
 /**
@@ -80,10 +88,12 @@ export async function loadFooterData(): Promise<FooterData> {
       link: link.link,
       ariaLabel: link.aria_label,
     })),
-    copyright: {
-      yearPrefix: yaml.footer.copyright.year_prefix,
-      companySuffix: yaml.footer.copyright.company_suffix,
-      rights: yaml.footer.copyright.rights,
+    agentDirective: {
+      before: yaml.footer.agent_directive.before,
+      link: yaml.footer.agent_directive.link,
+      linkText: yaml.footer.agent_directive.link_text,
+      after: yaml.footer.agent_directive.after,
     },
+    copyright: yaml.footer.copyright,
   }
 }
